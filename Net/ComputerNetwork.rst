@@ -1116,5 +1116,7 @@ SMTP Client
 
 Wireshark LAB
 =============
+通过wireshark观察各层协议。
+
 
       物理层如何理解？

@@ -1,20 +1,23 @@
+=======
+Linux
+=======
 .. raw:: html
 
    <center> </center>
 
    <!-- more -->
 
--  `LinuxOS <#linuxos>`__
 
 
     Linux内核设计与实现 第三版 《趣谈Linux操作系统——刘超》——极客时间
 
-Linux
-=======
+内核
+====
 
 https://kernel.org/pub/linux/kernel/
 
 `Linux内核版本号： <http://en.wikipedia.org/wiki/Linux_kernel#Version_numbering>`__
+
 1. 2.x 版本奇数表示开发版、偶数表示稳定版。2.6.x系列覆盖了2003-2011年。
 2. 3.0开始，版本号基于时间变化（近2个月更新一次小版本号），不代表有重大的内容更新。同时避免小版本号超过20。
 3. 当前5.11为15-Feb-2021发布
@@ -28,4 +31,6 @@ https://kernel.org/pub/linux/kernel/
 -  RC：release candidates。
 
 
+编译并更换内核
+--------------
 
