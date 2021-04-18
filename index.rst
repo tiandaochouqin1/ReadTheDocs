@@ -14,6 +14,7 @@ Welcome to My Notes!
 
    Net/ComputerNetwork.rst
    OS/OSC.rst
+   OS/LinuxOS.rst
 
 
 
