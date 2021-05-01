@@ -15,6 +15,7 @@ Welcome to My Notes!
    Net/ComputerNetwork.rst
    OS/OSC.rst
    OS/Linux.rst
+   OS/makefile.rst
 
 
 
