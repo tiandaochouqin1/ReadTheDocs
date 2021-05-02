@@ -9,8 +9,10 @@ makefile
 
 `gnu make manual <https://www.gnu.org/software/make/manual/make.html>`__
 
-`make
-tutor <https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/>`__
+`make tutor <https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/>`__
+
+`Cmake入门实践 <https://www.hahack.com/codes/cmake/>`__
+
 
 GCC编译过程
 ===========
@@ -211,3 +213,7 @@ GNU的make工作时的执行步骤如下：（其它的make也是类似）
 ----------
 
 函数库文件是对Object文件(程序编译的中间文件)，一般由命令\ ``ar``\ 完成。
+
+
+Cmake
+======
