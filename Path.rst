@@ -58,6 +58,15 @@ C语言
    FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
 7. The Standard C Library
 
+
+思维
+-----
+
+1. Computer Systems: A Programmer’s perspective
+2. 《C语言的科学和艺术》（《The Art and Science of C》）
+3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)
+
+
 嵌入式
 ------
 
@@ -65,6 +74,9 @@ C语言
    :alt: 嵌入式学习
 
    嵌入式学习
+
+
+`嵌入式学习的几种线路 <http://www.embeddedlinux.org.cn/emb-linux/entry-level/201701/02-6070.html>`__
 
 `gnu software <https://www.gnu.org/software/>`__\ ：包括linux、emacs、gcc、gdb、make、libc等。
 
@@ -210,15 +222,9 @@ Linux内核
 
 动手实践： 30天自制操作系统
 
-思维
-----
-
-1. Computer Systems: A Programmer’s perspective
-2. 《C语言的科学和艺术》（《The Art and Science of C》）
-3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)
 
 软件工程
---------
+=========
 
 1. 代码整洁之道
 2. 代码大全2
@@ -269,3 +275,12 @@ Java
 5. onedrive极客时间专栏
 
 .. |TechRadar| image:: ./images/TechRadar.png
+
+
+lessons&labs
+=============
+
+* MIT 6.828 :Operating Systems + xv6
+* CS164 : Programming Languages and Compilers.
+* CS142 : Web Applications
+* CS140e : OS+Rust+Raspi 3b
