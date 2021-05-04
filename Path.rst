@@ -4,34 +4,11 @@ Route
 
 :Date:   2020-08-21 21:18:08
 
-.. raw:: html
-
-   <!-- more -->
-
--  `行业趋势 <#行业趋势>`__
--  `C语言 <#c语言>`__
-
-   -  `嵌入式 <#嵌入式>`__
-
--  `计算机科学 <#计算机科学>`__
--  `网络 <#网络>`__
--  `算法 <#算法>`__
--  `Linux内核 <#linux内核>`__
-
-   -  `思维 <#思维>`__
-   -  `软件工程 <#软件工程>`__
-
--  `编程语言 <#编程语言>`__
-
-   -  `Java <#java>`__
-   -  `数据库 <#数据库>`__
-
--  `资源集合 <#资源集合>`__
 
 行业趋势
 ========
 
-`技术雷达 <https://www.thoughtworks.com/radar>`__:现在（20210215）还看不懂。
+`技术雷达 <https://www.thoughtworks.com/radar>`__:（20210215）看不懂。
 |TechRadar| >technology-radar-vol-23 待阅读
 
 `infoq国际版 <https://www.infoq.com/>`__
@@ -39,7 +16,7 @@ Route
 `infoq国内版 <https://www.infoq.cn/>`__
 
 `分享 GitHub 上有趣、入门级的开源项目 <https://hellogithub.com/>`__
-`GitHub中文排行榜 <https://github.com/kon9chunkit/GitHub-Chinese-Top-Charts>`__
+
 
 `科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
 
@@ -54,8 +31,7 @@ C语言
 3. Pointers on C———人民邮电出版社《c和指针》，Kenneth A.Reek著，徐波译。
 4. C Traps and Pitfalls
 5. Expert C Programming
-6. `C Programming
-   FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
+6. `C Programming  FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
 7. The Standard C Library
 
 
@@ -112,7 +88,7 @@ http://gitbook.net/c_standard_library/
 计算机科学
 ==========
 
-`自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN>`__\ ：列出了9门科目并分析了一些学习方法，其中\ ``CSAPP和DDIA``\ 回报率最高。
+`自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：列出了9门科目并分析了一些学习方法，其中\ ``CSAPP和DDIA``\ 回报率最高。
 
 +---------+-------------------+--------------------------------+-------+
 | 科目    | 为何要学？        | 最佳书籍                       | 最佳  |
@@ -217,10 +193,12 @@ Linux内核
 -  LINUX KERNEL技术手册：参考手册，很薄，值得一看。
 -  Linux内核完全注释:Linux 0.11,2w行代码。
 -  linux内核源代码情景分析
+-  30天自制操作系统:动手实践
 
-可结合专栏-趣谈Linux操作系统 学习。
+专栏-趣谈Linux操作系统。
 
-动手实践： 30天自制操作系统
+.. figure:: ./images/LinuxPath.jpg
+   :alt: 嵌入式学习
 
 
 软件工程

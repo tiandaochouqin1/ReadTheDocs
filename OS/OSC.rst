@@ -810,8 +810,7 @@ Perterson解决方案
 4. 可以在中断上下文执行。由于不睡眠，因此spin
    lock可以在中断上下文中适用。
 
-`Linux内核同步机制之（四）：spin
-lock <http://www.wowotech.net/kernel_synchronization/spinlock.html>`__
+`Linux内核同步机制之（四）：spin lock <http://www.wowotech.net/kernel_synchronization/spinlock.html>`__
 
 自旋锁和互斥锁比较
 ~~~~~~~~~~~~~~~~~~
