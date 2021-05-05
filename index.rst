@@ -17,6 +17,7 @@ Welcome to My Notes!
    OS/Linux.rst
    OS/makefile.rst
    Common/Git.rst
+   Common/regex.rst
    Path.rst
 
 
