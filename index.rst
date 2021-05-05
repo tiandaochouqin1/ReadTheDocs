@@ -16,6 +16,7 @@ Welcome to My Notes!
    OS/OSC.rst
    OS/Linux.rst
    OS/makefile.rst
+   Common/Git.rst
    Path.rst
 
 
