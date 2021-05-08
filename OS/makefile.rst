@@ -5,13 +5,13 @@ makefile
 :Date:   2020-07-15 22:45:43
 
 
-`跟我一起写Makefile <https://wiki.ubuntu.org.cn/%E8%B7%9F%E6%88%91%E4%B8%80%E8%B5%B7%E5%86%99Makefile>`__
+参考链接
+===========
 
-`gnu make manual <https://www.gnu.org/software/make/manual/make.html>`__
-
-`make tutor <https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/>`__
-
-`Cmake入门实践 <https://www.hahack.com/codes/cmake/>`__
+1. `跟我一起写Makefile <https://wiki.ubuntu.org.cn/%E8%B7%9F%E6%88%91%E4%B8%80%E8%B5%B7%E5%86%99Makefile>`__
+2. `gnu make manual <https://www.gnu.org/software/make/manual/make.html>`__
+3. `make tutor <https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/>`__
+4. `Cmake入门实践 <https://www.hahack.com/codes/cmake/>`__
 
 
 GCC编译过程
@@ -36,8 +36,8 @@ GCC编译过程
       使用的时候 gcc test.c -L/path -lxxx -o test
    2. 动态库： gcc -fPIC -shared file1.c -o libxxx.so
 
-Makefile
-========
+Makefile简介
+============
 
 make的工作流程
 --------------

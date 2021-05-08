@@ -1,22 +1,27 @@
-======
+==============
 Linux
-======
+==============
 
 :Date:   2021-04-24 16:52:25
+
+
+
+问题记录
+========
+1. int 0x80和syscall/sysenter的区别？int的工作原理？
+2. 段选择子的作用？三级页表的工作原理？
+
 
 
 内核开发入门
 ============
 
-参考资料
+参考文档
 --------
 
 https://www.kernel.org/doc/html/latest/translations/zh_CN/
-
 https://kernelnewbies.org/
-
 https://lwn.net/
-
 https://kernel.org/pub/linux/kernel/
 
 
@@ -28,8 +33,13 @@ https://kernel.org/pub/linux/kernel/
 3. Linux Devices Driver
 4. Proffesional Linux Kernel Architecture
 
-基本概念
+参考链接
 ~~~~~~~~
+1. `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
+2. `知乎-MIT 6.828   实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__
+
+基本概念
+--------
 内核态拥有受保护的内存空间和访问硬件设备的所有权限。
 
 应用程序通过库函数或系统调用让内核代替完成各种任务。
