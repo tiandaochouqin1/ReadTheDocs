@@ -8,6 +8,7 @@ Linux
 
 问题记录
 ========
+
 1. int 0x80和syscall/sysenter的区别？int的工作原理？
 2. 段选择子的作用？三级页表的工作原理？
 
@@ -177,5 +178,186 @@ dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
 =====
 进程管理
 ---------
+进程：处于执行期的程序以及相关资源的总称。程序：存放在存储介质上的目标吗。
+
+
+任务队列：task_struct双向循环列表。
+进程描述符（task_struct）中保存了能完整描述一个正在执行的程序的左右数据。1.7KB(32位及机器)。
+使用slab分配器分配，实现对象复用和缓存着色。
+thread info结构在进程内核栈尾端分配，包含了指向task_struct的指针。
+current宏：找到当前进程的进程描述符。
+
+进程的五种状态
+~~~~~~~~~~~~~~
+
+1. TASK_RUNNING: 运行——可执行的,即正在执行或在运行队列中等待。用户空间进程的唯一状态；内核进程也有此状态。
+2. TASK_INTERRUPTIBLE: 可中断的——睡眠中，等待特定条件达成，可被信号唤醒。
+3. TASK_UNINTERRUPTIBLE: 不可中断——睡眠中，不会被信号唤醒。在进程等待过程必须不受干扰或等待事件很快会发生时使用。
+4. __TASK_TRACED: 被其他进程跟踪，如ptrace。
+5. __TASK_STOPPED: 停止执行，进程没有投入运行也不能投入运行。通常发生在接收SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU等信号时。
+
+.. figure:: ../images/task_status.png
+
+           任务状态
+
+
+::
+
+   linux 5.8
+   /*
+    * Task state bitmask. NOTE! These bits are also
+    * encoded in fs/proc/array.c: get_task_state().
+    *
+    * We have two separate sets of flags: task->state
+    * is about runnability, while task->exit_state are
+    * about the task exiting. Confusing, but this way
+    * modifying one set can't modify the other one by
+    * mistake.
+    */
+
+   /* Used in tsk->state: */
+   #define TASK_RUNNING			0x0000
+   #define TASK_INTERRUPTIBLE		0x0001
+   #define TASK_UNINTERRUPTIBLE		0x0002
+   #define __TASK_STOPPED			0x0004
+   #define __TASK_TRACED			0x0008
+   /* Used in tsk->exit_state: */
+   #define EXIT_DEAD			0x0010
+   #define EXIT_ZOMBIE			0x0020
+   #define EXIT_TRACE			(EXIT_ZOMBIE | EXIT_DEAD)
+   /* Used in tsk->state again: */
+   #define TASK_PARKED			0x0040
+   #define TASK_DEAD			0x0080
+   #define TASK_WAKEKILL			0x0100
+   #define TASK_WAKING			0x0200
+   #define TASK_NOLOAD			0x0400
+   #define TASK_NEW			0x0800
+   #define TASK_STATE_MAX			0x1000
+
+
+fork -> exec -> exit + wait
+
+fork
+开销：复制父进程的页表和创建子进程的进程描述符。
+资源采用写时复制，即只有在需要写入时才拷贝页，是他们拥有独立的数据副本
+
+
+线程：Linux中，只是进程间共享资源的手段。共享文件系统资源、地址空间、文件描述符和信号处理程序。
+
+内核进程：没有独立的地址空间，可以被调度和抢占。
+
+进程的生命周期
+~~~~~~~~~~~~~~
+
+fork -> clone -> _do_fork -> copy_process
+
+1.  dup_task_struct(): 创建内核栈、task_struct、thread_info.
+2.  检查当前用户进程数目是否超出限制。
+3.  清除任务描述法的部分统计信息，如运行统计。
+4.  设置为 TASK_INTERRUPTIBLE。
+5.  copy_flags()更新flags。
+6.  alloc_pid()分配新PID。
+7.  根据clone()传递的参数标识，copy_process()拷贝或共享 
+    打开的文件、文件系统、信号处理函数、进程地址空间、命名空间等。
+8. copy_process()返回指向子进程的指针。
+9. _do_fork -> wake_up_new_task。
+   设置为 TASK_RUNNING;
+   activate_task 加入对应的调度队列；
+   check_preempt_wakeup 设置父进程TIF_NEED_RESCHED，即在返回时抢占父进程，
+   子进程先执行，避免写时复制的开销
+
+exit() -> do_exit()
+
+1. 设置task_struct的标识成员为PF_EXITING,表示正在退出。
+2. 删除内核定时器。
+3. 释放地址空间mm_struct。
+4. exit_fs()、exit_files()，分别递减文件系统、文件描述符的引用计数。
+5. 设置EXIT_ZOMBIE，调用schedule切换到新进程。
+   
+   * 这是进程执行的最后一段代码，do_exit永不返回。
+   * 此时与进程相关的所有资源都被释放掉了。
+   * 进程此时占有的内存只有内核栈、thread_info、task_struct。
+
+6. 父进程可获取已终止的子进程信息wait4()，然后通知内核释放所占用的剩余资源，
+   release_task() -> _exit_signal()
+
+::
+
+   kernel/exit.c
+   void __noreturn do_exit(long code)
+   {
+
+   		preempt_count_set(PREEMPT_ENABLED);
+
+   		set_current_state(TASK_UNINTERRUPTIBLE);
+   		schedule();
+
+   	exit_signals(tsk);  /* sets PF_EXITING */
+
+   	exit_mm();
+
+   	exit_sem(tsk);
+   	exit_shm(tsk);
+   	exit_files(tsk);
+   	exit_fs(tsk);
+   	if (group_dead)
+   		disassociate_ctty(1);
+   	exit_task_namespaces(tsk);
+   	exit_task_work(tsk);
+   	exit_thread(tsk);
+   	exit_umh(tsk);
+
+   	debug_check_no_locks_held();
+
+   	if (tsk->io_context)
+   		exit_io_context(tsk);
+
+   	if (tsk->splice_pipe)
+   		free_pipe_info(tsk->splice_pipe);
+
+   	if (tsk->task_frag.page)
+   		put_page(tsk->task_frag.page);
+
+   	validate_creds_for_do_exit(tsk);
+
+   	check_stack_usage();
+   	preempt_disable();
+
+   	exit_rcu();
+   	exit_tasks_rcu_finish();
+
+   	lockdep_free_task(tsk);
+   	do_task_dead();
+   }
+
+进程调度
+-----------
+
+Linux提供抢占式多任务模式。
+
+时间片：进程在被抢占之前能够运行的时间，预先分配的。
+
+
+O(1)调度
+~~~~~~~~~
+
+1. 140个成员的array,各成员各对应一个FIFO队列；
+2. 使用位图来各队列是否为空；
+3. 调度时间复杂度为 O(1).
+
+.. figure:: ../images/O(1)_schedule.jpg
+
+           Linux2.6.23以前的O(1)调度
+
+
+
+
+
+
+
+
+
+
+
 
 
