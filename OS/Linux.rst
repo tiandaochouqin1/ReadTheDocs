@@ -9,12 +9,14 @@ Linux
 问题记录
 ========
 
-1. int 0x80和syscall/sysenter的区别？int的工作原理？
-2. 段选择子的作用？三级页表的工作原理？
+   
+1. 段选择子的作用？三级页表的工作原理？
+2. 上下文切换的具体过程？
 
 
 
-内核开发入门
+
+内核入门
 ============
 
 参考文档
@@ -330,12 +332,19 @@ exit() -> do_exit()
    	do_task_dead();
    }
 
+
+
 进程调度
 -----------
 
-Linux提供抢占式多任务模式。
+Linux提供抢占式多任务模式（preemptive multitaking）。
 
-时间片：进程在被抢占之前能够运行的时间，预先分配的。
+
+调度程序：在TASK_RUNNING的进程之间分配有限的处理器时间资源。
+
+调度策略的平衡： 优先调度IO消耗型以保证短的响应时间，或优先调度CPU消耗型以保证高吞吐量。
+
+Linux更倾向于优先调度IO消耗型进程，以保证响应时间（交互式应用和桌面系统等）。
 
 
 O(1)调度
@@ -350,14 +359,177 @@ O(1)调度
            Linux2.6.23以前的O(1)调度
 
 
+时间片与nice
+~~~~~~~~~~~~
+时间片：进程在被抢占之前能够运行的时间，预先分配的。
+nice：决定处理器的使用比例。
+
+采用固定时间片则会引发固定的切换频率，会影响公平性。
+
+1. 若将nice映射到绝对的时间片，则进程切换无法最优化进行。如高nice值的进程切换会更频繁；同时nice值±1的效果取决于nice本身初始值。
+2. 基于优先级的调度器为了优化交互任务，需要提升刚唤醒的进程的优先级，这样的优先级提升实际上是不公平的。
+3. 时间片会随着定时器节拍改变，即最小时间片必须是定时器节拍的整数倍。
+
+
+CFS调度
+--------
+
+1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
+2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
+3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
+
+实时策略与普通策略
+~~~~~~~~~~~~~~~~~~
+`sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
+
+调度器为每个优先级维护一个等待list。选择最高优先级的非空list的第一个成员来执行。
+调度策略只能决定同一等待list（同一优先级）的进程执行顺序。
+
+1. normal scheduling policies： (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH), sched_priority must be specified as 0.
+
+   The nice value  (SCHED_OTHER, SCHED_BATCH) influence the CPU scheduler to favor or disfavor a process in scheduling decisions.
+   the range is -20 (high priority) to +19 (low priority).
+
+2. real-time policies：(SCHED_FIFO, SCHED_RR, SCHED_DEADLINE) have a sched_priority value in the range 1
+(low) to 99 (high).
+
+Linux的实时调度算法提供了一种软实时的工作方式，即尽力使进程在它的限定时间到来前运行，但内核不保证总能满足要求。
+
+Linux调度程序默认试图使进程尽量在同一个处理器运行（软亲和性），同时提供了强制亲和性（通过task_struct的cpus_allowed位掩码标志）。
+
+
+**六大调度策略**
+
+1. SCHED_FIFO: 先进先出，无时间片。
+2. SCHED_RR：时间片轮转，可抢占。
+3. SCHED_DEADLINE：按照任务deadline来调度选择其 deadline 距离当前时间点最近的任务。
+4. SCHED_OTHER：Linux中又名SCHED_NORMAL，根据nice值调度。
+5. SCHED_BATCH：假定任务是CPU-intensive，对唤醒的进程做调度惩罚，即不提倡频繁切换。
+6. SCHED_IDLE: nice值小于19，即用于优先级非常低的任务。
+
+
+调度的实现
+------------
+
+时间记账
+~~~~~~~~~~~
+CFS使用调度器实体结构来维护每个进程运行的时间记张。（linux/sched.h -> struct_sched_entity）
+
+
+vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加权计算结果。单位ns，与定时器节拍不相关。
+``虚拟运行时间 vruntime += 实际运行时间 delta_exec * NICE_0_LOAD/ 权重``
+
+系统定时器周期性调用 update_curr()，以更新所有进程的vruntime(包括可运行和阻塞态的所有进程)。
+
+进程选择
+~~~~~~~~~~~~
+选择具有最小vruntime的任务。
+
+使用红黑树rbtree来组织可运行的进程队列，节点键值即vruntime。
+
+
+1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。
+此处不需要遍历树来查找最左节点，因为最左节点已经被缓存起来的（在更新rbtree时缓存的）。
+
+2. 在rbtree插入进程：进程被唤醒或fork()创建进程时。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
+3. 删除进程：进程阻塞或终止时。dequeue_entity()。
+
+调度器
+~~~~~~~~~~~
+每个CPU都有自己的 struct rq 结构，其用于描述在此 CPU 上所运行的所有进程，其包括一个实时进程队列 rt_rq 和一个 CFS 运行队列 cfs_rq。
+
+调度类sched_class定义了很多种方法，用于操作上述调度队列上的任务。每种调度策略各实现了一种调度类，并放在同一个链表中。
+
+调度类中的方法，如pick_next_task在不同的调度类中有不同的实现，返回空时则继续操作下一个队列。
+fair_sched_class 的实现是 pick_next_task_fair，rt_sched_class 的实现是 pick_next_task_rt；
+pick_next_task_rt 操作的是 rt_rq，pick_next_task_fair 操作的是 cfs_rq。
+
+调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
+
+.. figure:: ../images/sched.jfif
+
+           调度过程
+
+
+休眠与唤醒
+~~~~~~~~~~~~
+
+休眠（被阻塞）通过等待队列处理，有两种状态，TASK_INTTERUPTIBLE和TASK_UNITTERUPTIBLE。
+当与等待队列相关的时间发生时，队列上所有进程都会被唤醒（存在虚假唤醒）。
+
+1. DEFINE_WAIT()创建一个等待队列的项；
+2. add_wait_queue()加入队列中；
+3. prepare_to_wait()设置进程状态为TASK_INTTERUPTIBLE或TASK_UNITTERUPTIBLE；
+4. 若被信号唤醒，则检查条件是否为真；
+5. 条件满足后设置状态为TASK_RUNNING并调用finish_wait()移出等待队列。
+
+wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此函数，比如磁盘数据到来时，VFS需要调用。
+
+1. 设置状态为TASK_RUNNIN并调用finish_wait；
+2. enqueue_task()放入调度队列；
+3. 若被唤醒的进程优先级比正在运行的进程优先级高，则设置need_resched标志。
 
 
 
 
+抢占和上下文切换
+------------------
+
+上下文切换：即从一个可执行程序切换到另一个可执行程序。context_switch()完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
 
 
 
+need_resched
+~~~~~~~~~~~~~~
+表明需要重新执行一次调度，强制调度，有调度延时。
 
+当某个进程应该被抢占时，或更高优先级的进程进入可执行状态时，需要设置此标志。
+
+该标志包含在进程描述符内，访问进程描述符内的变量比访问全局变量快（current宏速度快且进程描述符通常在告诉缓存内）。
+
+
+用户抢占与内核抢占
+~~~~~~~~~~~~~~~~~~~~~
+用户抢占发生在：
+
+1. 从系统调用返回用户空间时；
+2. 从中断处理程序返回用户空间时。
+
+内核抢占：
+可以在任何时间抢占任务（只要没有锁），通常发生在 preempt_enable() 中。
+preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count 和 TIF_NEED_RESCHED 看是否可以被抢占。
+如果可以，就调用 preempt_schedule->preempt_schedule_common->__schedule 进行调度。
+
+.. figure:: ../images/schedule_and_preempt.png
+
+            抢占式调度
+
+
+
+系统调用
+=============
+`the-definitive-guide-to-linux-system-calls <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
+
+`深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
+
+int 0x80和syscall/sysenter的区别
+---------------------------------
+https://www.cnblogs.com/LittleHann/p/4111692.html
+
+1. 通过INT 0x80中断方式。
+   
+   * 在 2.6以前的 Linux 2.4 内核中，用户态 Ring3 代码请求内核态 Ring0 代码完成某些功能是通过系统调用完成的，而系统调用的是通过软中断指令(int 0x80) 实现的。在 x86 保护模式中，处理 INT 中断指令时
+   * 在发生系统调用，由 Ring3 进入 Ring0 的这个过程浪费了不少的 CPU 周期，例如，系统调用必然需要由 Ring3 进入 Ring0，权限提升之前和之后的级别是固定的。
+      
+   1) CPU 首先从中断描述表 IDT 取出对应的门描述符
+   2) 判断门描述符的种类
+   3) 检查门描述符的级别 DPL 和 INT 指令调用者的级别 CPL，当 CPL<=DPL 也就是说 INT 调用者级别高于描述符指定级别时，才能成功调用
+   4) 根据描述符的内容，进行压栈、跳转、权限级别提升
+   5) 内核代码执行完毕之后，调用 IRET 指令返回，IRET 指令恢复用户栈，并跳转会低级别的代码 .
+    
+2. 通过sysenter指令方式。
+sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
+sysenter和sysexit都是CPU原生支持的指令集
 
 
 
