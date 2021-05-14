@@ -1159,3 +1159,27 @@ Wireshark LAB
 
 
 `如果看了这个你还是不会用Wireshark <https://www.dell.com/community/%E5%85%A5%E9%97%A8%E7%BA%A7%E5%92%8C%E4%B8%AD%E7%AB%AF/%E5%A6%82%E6%9E%9C%E7%9C%8B%E4%BA%86%E8%BF%99%E4%B8%AA%E4%BD%A0%E8%BF%98%E6%98%AF%E4%B8%8D%E4%BC%9A%E7%94%A8Wireshark-%E9%82%A3%E5%B0%B1%E6%9D%A5%E6%89%BE%E6%88%91%E5%90%A7-8%E6%9C%886%E6%97%A5%E5%AE%8C%E7%BB%93/m-p/7007033>`__
+
+
+OpenFlow协议
+============
+
+.. figure:: ../images/traditional_switch.png
+
+traditional_switch
+
+.. figure:: ../images/open_flow.png
+
+           OpenFlow
+
+
+mininet： Emulator for rapid prototyping of Software Defined Networks
+
+搭建SDN https://github.com/mininet/openflow-tutorial/wiki
+
+协议详解：http://www.h3c.com/cn/d_201811/1131080_30005_0.htm
+
+学习方式： https://www.zhihu.com/question/21834316
+
+《重构网络 sdn架构与实现》
+
