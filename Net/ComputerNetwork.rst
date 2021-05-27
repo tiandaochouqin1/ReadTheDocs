@@ -843,6 +843,22 @@ SNMP代理向管理服务器发送一种陷阱报文以通知一种异常情况�
 第六章 链路层和局域网
 =====================
 
+.. figure:: ../images/EthernetFormat.png
+
+
+::
+
+   The Ethernet (IEEE 802.3) frame format contains source and  destination addresses,
+   an overloaded Length/Type field, a field for data, and a frame
+   check sequence (a CRC32). 
+   Additions to the basic frame format provide for a tag  containing a VLAN ID and priority information (802.1p/q) and more recently for an
+   extensible number of tags. 
+   The preamble and SFD are used for synchronizing  receivers. 
+   When half-duplex operation is used with Ethernet running at 100Mb/s or
+   more, additional bits may be appended to short frames as a carrier extension to
+   ensure that the collision detection circuitry operates properly
+
+
 链路层概述
 ----------
 
