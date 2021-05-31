@@ -13,7 +13,7 @@ Linux Kernel
 1. 段选择子的作用？三级页表的工作原理？
 2. 上下文切换的具体过程？
 3. RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
-4. 异常、陷阱、中断、系统调用等概念辨析；
+4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
 5. 系统调用的细节：看参考博客文章。
    
 
@@ -39,10 +39,12 @@ Linux Kernel
 参考书籍
 ~~~~~~~~
 
-1. Linux内核设计与实现 第三版
+1. Linux Kernel Development V2.6.34
 2. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__
-3. Linux Devices Driver
-4. Proffesional Linux Kernel Architecture
+3. Linux Devices Driver V2.6.10
+4. Proffesional Linux Kernel Architecture V2.6.24 
+5. Understanding The Linux Kernel  V2.6.11
+
 
 参考链接
 ~~~~~~~~
@@ -593,5 +595,17 @@ https://www.cnblogs.com/LittleHann/p/4111692.html
 sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
 sysenter和sysexit都是CPU原生支持的指令集
 
+中断为什么不能休眠
+--------------------
+https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
+
+中断只能被其他中断中止、抢占，进程不能中止、抢占中断。
+
+中断是一种紧急事务，需要操作系统立即处理，不是不能做到睡眠，是没必要睡眠。
+
+1. 无法被唤醒。在中断context中，唯一能打断当前中断handler的只有更高优先级的中断；所有的wake_up_xxx都是针对进程task_struct而言，
+   Linux是以进程为调度单位的，调度器只看到进程内核栈，而看不到中断栈。
+
+2. 导致上下文错乱。nanosleep等会调用schedule导致进程切换。
 
 
