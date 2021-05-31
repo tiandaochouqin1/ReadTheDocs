@@ -603,9 +603,11 @@ https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
 
 中断是一种紧急事务，需要操作系统立即处理，不是不能做到睡眠，是没必要睡眠。
 
+ISR在执行过程中要借用进程的系统堆栈。
+
 1. 无法被唤醒。在中断context中，唯一能打断当前中断handler的只有更高优先级的中断；所有的wake_up_xxx都是针对进程task_struct而言，
    Linux是以进程为调度单位的，调度器只看到进程内核栈，而看不到中断栈。
 
-2. 导致上下文错乱。nanosleep等会调用schedule导致进程切换。
+2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
 
 
