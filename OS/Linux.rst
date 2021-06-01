@@ -421,8 +421,8 @@ Linux调度程序默认试图使进程尽量在同一个处理器运行（软亲
 调度的实现
 ------------
 
-时间记账
-~~~~~~~~~~~
+时间记账vruntime
+~~~~~~~~~~~~~~~~~
 CFS使用调度器实体结构来维护每个进程运行的时间记张。（linux/sched.h -> struct_sched_entity）
 
 
@@ -430,6 +430,10 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 ``虚拟运行时间 vruntime += 实际运行时间 delta_exec * NICE_0_LOAD/ 权重``
 
 系统定时器周期性调用 update_curr()，以更新所有进程的vruntime(包括可运行和阻塞态的所有进程)。
+
+针对刚创建的进程会进行一定的惩罚，将虚拟时间加上一个值。
+
+`CFS调度器（2）-源码解析 <http://www.wowotech.net/process_management/448.html>`__
 
 进程选择
 ~~~~~~~~~~~~
