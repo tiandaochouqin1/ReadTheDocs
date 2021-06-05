@@ -14,10 +14,9 @@ VIM
 4. help usr_03.txt
 5. help usr_29.txt
 
+
 定位与编辑
 ==========
-
-
 
 行定位
 ------------
@@ -25,18 +24,24 @@ VIM
 
     Ctrl + g
     3G or :3 
+
+
     Ctrl+O ：上一个位置
     Ctrl+I/Tab ：下一个位置
     `.  ：上一次编辑所在行
     '.  ：上一次编辑的精确位置
 
+
     Ctrl+d/u ：翻半页
     Ctrl+f/b ：翻一页
 
+
     { or }  ：移动到段首/段尾 （段落以空行区分）
+
 
     zz/zt/zb or M/H/L：移动到屏幕中间/顶部/底部
     nzz      ：第n行移动到中间
+    .zz      ：当前行移动到中间
 
     Ctrl + e/y  ：向下/向上移动一行屏幕
 
@@ -46,11 +51,13 @@ VIM
 
 
 
-    
-
 
 行内定位
 ----------
+``w/b/e``
+
+``^/$/0``
+
 ``f/F + char``：移动到下/上一个char的位置。
 
 ``t/T + char``：移动到下/上一个char的前一个位置。
@@ -117,7 +124,6 @@ grep
 ``%``  ：找到行内最近的括号，并左右移动
 
 
-
 寄存器
 ----------
 
@@ -154,7 +160,6 @@ Buffer
     :bprevious   缩写 :bp
     :blast  缩写 :bl
     :bfirst 缩写 :bf
-
 
 
 标签
@@ -220,12 +225,10 @@ VIM基本配置
 
 
 
-
 cscope
 ------------
 
 ``cscope -Rbkq``
-
 
 快捷键映射+自动添加数据库：
 
@@ -233,9 +236,8 @@ cscope
 
 https://github.webxp.ml/adah1972/cscope_maps.vim/blob/master/plugin/cscope_maps.vim
 
+
 ``:cs find {querytype} {name}``
-
-
 
 其中：
 
@@ -292,22 +294,16 @@ https://github.webxp.ml/adah1972/cscope_maps.vim/blob/master/plugin/cscope_maps.
     au BufEnter /* call LoadCscope()
 
 
-
 或者使用``autoload_cscope.vim``
 
 https://vim.fandom.com/wiki/Autoloading_Cscope_Database
 
 
 
-
-
-
 ctags
-
 --------
 
 ``ctags --languages=c --langmap=c:.c.h --fields=+S -R .``
-
 
 常用命令：
 
@@ -323,23 +319,24 @@ ctags
 
 　　:ts　　　　            // 列出所有匹配的标签
 
-    :ta symbol  查找
+    :ta symbol   //查找
 
 
 
 **自动使用tags文件：**
 
-" 加入记录系统头文件的标签文件和上层的 tags 文件
-
-set tags=./tags,../tags,../../tags,../../../tags,../../../../tags,tags,/usr/local/etc/systags
-
-" 也可使用
-
-set tags=tags;  
-
-set autochdir 
+::
 
 
+    " 加入记录系统头文件的标签文件和上层的 tags 文件
+
+    set tags=./tags,../tags,../../tags,../../../tags,../../../../tags,tags,/usr/local/etc/systags
+
+    " 也可使用
+
+    set tags=tags;  
+
+    set autochdir 
 
 
 
@@ -348,7 +345,6 @@ set autochdir
 自动更新影响操作，使用bash快捷别名手动更新。
 
 ``alias tagu='ctags -a --languages=c --langmap=c:.c.h --fields=+S -R . && cscope -Rbkq'``
-
 
 
 
