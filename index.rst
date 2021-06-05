@@ -14,12 +14,16 @@ Welcome to My Notes!
 
    OS/Linux.rst
    OS/makefile.rst
+   OS/vim.rst
    Common/Git.rst
    Common/regex.rst
    Path.rst
    Net/ComputerNetwork.rst
    OS/OSC.rst
-
+..   Language/DP.rst
+   Language/Asm.rst
+   Language/MarkdownAndRst.rst
+   Net/iptables.rst
 
 
 
