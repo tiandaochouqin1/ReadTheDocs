@@ -40,16 +40,17 @@ Linux Kernel
 ~~~~~~~~
 
 1. Linux Kernel Development V2.6.34
-2. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__
-3. Linux Devices Driver V2.6.10
-4. Proffesional Linux Kernel Architecture V2.6.24 
-5. Understanding The Linux Kernel  V2.6.11
+2. Linux Devices Driver V2.6.10
+3. Proffesional Linux Kernel Architecture V2.6.24 
+4. Understanding The Linux Kernel  V2.6.11
 
 
 参考链接
 ~~~~~~~~
 1. `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
 2. `知乎-MIT 6.828   实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__
+3. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__
+4. 操作系统实战45讲
 
 基本概念
 --------
