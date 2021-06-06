@@ -1,5 +1,5 @@
 ==============
-VIM
+Vim
 ==============
 
 :Date:   2021-06-05 21:29:25
@@ -303,23 +303,29 @@ https://vim.fandom.com/wiki/Autoloading_Cscope_Database
 ctags
 --------
 
-``ctags --languages=c --langmap=c:.c.h --fields=+S -R .``
+::
 
-常用命令：
+    ctags --languages=c --langmap=c:.c.h --fields=+S -R .
+
+
+    
+**常用快捷键**
 
 ::
 
-　　Ctrl + ]　或 g + ]　　　  // 跳转到光标所在变量、宏、函数的定义处
+    Ctrl + ]　or  g + ]　　　 // 跳转到光标所在变量、宏、函数的定义处
 
-　　Ctrl + T 　　　　　// 返回到跳转前的位置
+    Ctrl + T 　　　　　// 返回到跳转前的位置
 
-　　Ctrl + W + ]　　 　// 分割当前窗口，并在新窗口中显示跳转到的定义
+    Ctrl + W + ]　　 　// 分割当前窗口，并在新窗口中显示跳转到的定义
 
-　　Ctrl + O　　           // 返回之前的位置
+    Ctrl + O　　           // 返回之前的位置
 
-　　:ts　　　　            // 列出所有匹配的标签
+    :ts　　　　            // 列出所有匹配的标签
 
-    :ta symbol   //查找
+    :ta　　　　            // 查找
+
+
 
 
 
