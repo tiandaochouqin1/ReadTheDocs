@@ -17,7 +17,9 @@ Operating System Concept
 `有没有好的操作系统的书 <https://www.zhihu.com/question/31863104>`__
 
 1. 推荐\ `Operating Systems: Three Easy
-   Pieces <https://pages.cs.wisc.edu/~remzi/OSTEP/>`__\ ：众多US高校的教材。\ `PDF <../bookss/OPERATING%20SYSTEMS%20Three%20Pieces.pdf>`__
+   Pieces <https://pages.cs.wisc.edu/~remzi/OSTEP/>`__\ ：众多US高校的教材。
+
+   :download:`PDF <../books/OperatingSystemThreePieces.pdf>`
 
 2. 实践第一：\ `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
 
@@ -1280,8 +1282,9 @@ CPU 能向寄存器中写入或者读取数据，这些寄存器都应具有唯�
 
 ..
 
-   参考\ `ARM System Developer’s Guide Designing and Optimizing System
-   Software <../books/ARM_System_Developers_Guide-Designing_and_Optimizing_System_Software.pdf>`__
+   参考\ 
+   :download:`ARM System Developer’s Guide Designing and Optimizing System
+   Software <../books/ARM_System_Developers_Guide-Designing_and_Optimizing_System_Software.pdf>`
 
 -  非屏蔽中断：保留用于诸如不可恢复的内存错误等事件。
 -  可屏蔽中断：在执行不得中断的关键指令序列之前，可由CPU关闭。
