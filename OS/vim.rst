@@ -141,8 +141,9 @@ grep
 ``@+reg``：应用宏。
 
 
-标签与窗口
+标签与会话
 ===========
+
 标签与分屏可同时存在。
 
 ``mksession name.session``：保存会话。
@@ -191,6 +192,26 @@ Buffer
 ``:set scb / scb!``：同步滚动。
 
 
+session
+------------
+https://blog.easwy.com/archives/advanced-vim-skills-session-file-and-viminfo/
+
+插件相关的信息不会保存.
+
+打开wb[.session]后会自动执行 wbx.vim内的命令。
+
+session中当前行高亮失效，使用此方法解决。
+
+::
+
+    :mksession session.name
+
+    :wviminfo [file]  //viminfo保存了命令历史、缓冲区、寄存器等等
+
+    :rviminfo [file]
+
+
+
 
 配置与插件
 ==========
@@ -199,8 +220,11 @@ Buffer
 
 插件等放到 ``~/.vim``
 
+1. tagbar替换taglist;
+2. vim-airline\neocomplete
 
-VIM基本配置
+
+Vim基本配置
 ------------
 
 ::
@@ -222,6 +246,43 @@ VIM基本配置
     set expandtab
 
     set autoindent
+
+    " 高亮当前行，可选颜色有限（:h highlight）
+    set cursorline
+    
+    hi CursorLine   cterm=NONE  ctermfg=blue guifg=blue
+
+
+补全键
+~~~~~~~~~~~~~
+
+使用pumvisible()来判断下拉菜单是否显示，如果下拉菜单显示了，键映射为了另一个值。
+
+::
+
+
+    " mapping
+
+    inoremap <expr> <CR>       pumvisible()?"\<C-Y>":"\<CR>"
+
+    inoremap <expr> <C-J>      pumvisible()?"\<PageDown>\<C-N>\<C-P>":"\<C-X><C-O>"
+
+    inoremap <expr> <C-K>      pumvisible()?"\<PageUp>\<C-P>\<C-N>":"\<C-K>"
+
+    inoremap <expr> <C-U>      pumvisible()?"\<C-E>":"\<C-U>" 
+
+
+备份文件
+~~~~~~~~~
+
+::
+
+    set nobackup       "不生成备份文件 filename~
+    
+    set noswapfile     "不生成交换文件 .filename.swp
+    
+    set noundofile     "不生成undo备份 .filename.un~
+
 
 
 
@@ -398,3 +459,159 @@ vim可定义自动命令的动作 http://vimdoc.sourceforge.net/htmldoc/autocmd.
 BufWritePost（使用vim进行写入时）是比较合适的触发条件。
 
 
+
+taglist
+---------
+
+https://blog.easwy.com/archives/advanced-vim-skills-taglist-plugin/
+
+
+同一session中多个tab打开taglist会出现buffer冲突。
+
+
+使用下面的命令生成帮助标签（下面的操作在vim中进行）：
+
+
+``:helptags ~/.vim/doc``
+
+生成帮助标签后，你就可以用下面的命令查看taglist的帮助了：
+
+``:help taglist.txt`` 
+
+
+::
+
+
+    """"""""""""""""""""""""""""""
+
+    " Tag list (ctags)
+
+    """"""""""""""""""""""""""""""
+
+    "if MySys() == "windows"                "设定windows系统中ctags程序的位置
+
+    "let Tlist_Ctags_Cmd = 'ctags'
+
+    "elseif MySys() == "linux"              "设定linux系统中ctags程序的位置
+
+    let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+
+    "endif
+
+    let Tlist_Show_One_File = 1            "不同时显示多个文件的tag，只显示当前文件的
+
+    let Tlist_Exit_OnlyWindow = 1          "如果taglist窗口是最后一个窗口，则退出vim
+
+    let Tlist_Use_Right_Window = 1         "在右侧窗口中显示taglist窗口 
+
+
+    map <silent> <F9> :TlistToggle<cr> 
+
+
+
+在taglist窗口中，可以使用下面的快捷键：
+
+::
+
+
+    <CR>          跳到光标下tag所定义的位置，用鼠标双击此tag功能也一样
+
+    o             在一个新打开的窗口中显示光标下tag
+
+    <Space>       显示光标下tag的原型定义
+
+    u             更新taglist窗口中的tag
+
+    s             更改排序方式，在按名字排序和按出现顺序排序间切换
+
+    x             taglist窗口放大和缩小，方便查看较长的tag
+
+    +             打开一个折叠，同zo
+
+    -             将tag折叠起来，同zc
+
+    *             打开所有的折叠，同zR
+
+    =             将所有tag折叠起来，同zM
+
+    [[            跳到前一个文件
+
+    ]]            跳到后一个文件
+
+    q             关闭taglist窗口
+
+    <F1>          显示帮助 
+
+
+
+
+
+lookupfile
+------------
+
+https://blog.easwy.com/archives/advanced-vim-skills-lookupfile-plugin/
+
+支持vim的正则。 开头加\c忽略大小写。
+
+::
+
+
+    """"""""""""""""""""""""""""""
+
+    " lookupfile setting
+
+    """"""""""""""""""""""""""""""
+
+    let g:LookupFile_MinPatLength = 2               "最少输入2个字符才开始查找
+
+    let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符串
+
+    let g:LookupFile_PreservePatternHistory = 1     "保存查找历史
+
+    let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项目
+
+    let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文件
+
+    if filereadable("./filenametags")                "设置tag文件的名字
+
+    let g:LookupFile_TagExpr = '"./filenametags"'
+
+    endif
+
+    "映射LookupFile为,lk
+
+    nmap <silent> <leader>lk :LUTags<cr>
+
+    "映射LUBufs为,ll
+
+    nmap <silent> <leader>ll :LUBufs<cr>
+
+    "映射LUWalk为,lw
+
+    nmap <silent> <leader>lw :LUWalk<cr>
+
+
+
+
+
+shell脚本，生成一个文件名tag文件。(ctags文件搜索太慢)
+
+::
+
+    #!/bin/sh
+
+    # generate tag file for lookupfile plugin
+
+    echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
+
+    find . -not -regex '.*\.\(c~\|un~\)' -type f -printf "%f\t%p\t1\n" | \
+
+        sort -f >> filenametags 
+
+
+
+需要指定tags路径，否则默认使用ctags文件
+
+::
+
+    :let g:LookupFile_TagExpr = '"./filenametags"'  
