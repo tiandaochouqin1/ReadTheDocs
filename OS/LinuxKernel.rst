@@ -31,10 +31,11 @@ Linux Kernel
 3. https://lwn.net/
 4. https://kernel.org/pub/linux/kernel/
 
-在线源码搜索，包括linux/glibc等。
+在线源码搜索，包括linux、glibc、gcc等。
 
 1. https://elixir.bootlin.com/linux/v5.10/C/ident/ 
 2. http://sbexr.rabexc.org/latest/sources/meta/index
+3. https://code.woboq.org/
 
 参考书籍
 ~~~~~~~~

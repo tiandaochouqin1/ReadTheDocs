@@ -545,6 +545,34 @@ https://blog.easwy.com/archives/advanced-vim-skills-taglist-plugin/
 
 
 
+tagbar
+------------------
+https://www.vim.org/scripts/script.php?script_id=3465
+
+tagbar+ctrlp 替代taglist
+
+安装：
+
+::
+
+    vim tagbar.vba
+    :so %
+    :q
+
+
+
+配置：
+
+::
+
+     nmap <silent> <F8> :TagbarToggle<CR>        "按F8即可打开tagbar界面
+     let g:tagbar_ctags_bin = 'ctags'                       "tagbar以来ctags插件
+     let g:tagbar_left = 1                                          "让tagbar在页面左侧显示，默认右边
+     let g:tagbar_width = 30                                     "设置tagbar的宽度为30列，默认40
+     let g:tagbar_autofocus = 1                                "这是tagbar一打开，光标即在tagbar页面内，默认在vim打开的文件内
+     let g:tagbar_sort = 0                                         "设置标签不排序，默认排序
+
+
 
 lookupfile
 ------------
