@@ -617,3 +617,68 @@ ISR在执行过程中要借用进程的系统堆栈。
 2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
 
 
+内核数据结构
+============
+提倡在开发时重用Linux内建数据结构。
+
+
+链表
+----------
+静态数组：编译时需知道元素数量。
+
+链表：动态创建并插入元素，无需占用连续内存。
+
+Linux内核的标准链表为环形双向链表，灵活性高。
+
+使用方法
+~~~~~~~~~~~
+在数据结构中嵌入链表。
+
+::
+
+   struct list_head {
+       struct list_head *next;
+       struct list_head *prev;
+   }
+
+   获取包含list_head的父类型结构体
+   list_entry(ptr, type, member)
+
+   遍历链表,O(n)
+   list_for_each_entry(pos, head, member)
+
+
+增加、删除、移动、合并节点的时间复杂度均为O(1) ，这些操作对应内部链表操作函数。在已有next/prev指针的情况下可直接调用内部链表函数。
+
+
+
+
+队列
+--------------
+也称为FIFO。
+
+
+kfifo为Linux内核通用队列实现。
+
+两个主要操作：enqueue和dequeue（kfifo_in、kfifo_out）。维护两个偏移量：入口偏移和出口偏移。
+
+
+
+
+映射
+-------------
+也称为关联数组。键到值的关联关系即为映射。可通过散列表、二叉搜索树来实现。
+
+Linux内核提供的映射idr：将唯一的UID映射到一个指针。支持的操作 add、remove、lookup、allocate。
+
+::
+
+   使用idp指向的idr分配一个UID，并关联到ptr。
+   idr__get_new(struct idr *idp, void *ptr,int *id)
+
+
+
+
+二叉树
+-----------------
+Linux实现的红黑树为rbtree，为平衡二叉搜索树。
