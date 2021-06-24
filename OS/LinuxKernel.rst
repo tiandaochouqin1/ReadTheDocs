@@ -432,6 +432,8 @@ RT进程和普通进程之间有一个分配带宽的比例，默认情况是 RT
 CFS调度
 --------
 
+`CFS调度器（2）-源码解析 <http://www.wowotech.net/process_management/448.html>`__
+
 1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
 2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
 3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
@@ -578,7 +580,10 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 系统调用
 =============
-`the-definitive-guide-to-linux-system-calls <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
+`the-definitive-guide-to-linux-system-calls 
+  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
+`中文版 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
+   系统学习，有源码分析
 
 `深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
 
@@ -613,6 +618,55 @@ eax：存放系统调用号、返回值。
 
 参数验证：系统调用必须仔细检查参数是否合法。
 
+
+syscall
+~~~~~~~~~~~
+不是所有的系统调用在glibc中都有对应的封装。
+
+use syscall from glibc to call exit with exit status of 42:
+
+::
+
+   #include <unistd.h>
+
+   int
+   main(int argc, char *argv[])
+   {
+   unsigned long syscall_nr = 60;
+   long exit_status = 42;
+
+   syscall(syscall_nr, exit_status);
+   }
+
+
+   
+**syscall wrapper function**: sysdeps/unix/sysv/linux/x86_64/syscall.S
+
+::
+
+   /* Usage: long syscall (syscall_number, arg1, arg2, arg3, arg4, arg5, arg6)
+      We need to do some arg shifting, the syscall_number will be in
+      rax.  */
+
+
+         .text
+   ENTRY (syscall)
+         movq %rdi, %rax         /* Syscall number -> rax.  */
+         movq %rsi, %rdi         /* shift arg1 - arg5.  */
+         movq %rdx, %rsi
+         movq %rcx, %rdx
+         movq %r8, %r10
+         movq %r9, %r8
+         movq 8(%rsp),%r9        /* arg6 is on the stack.  */
+         syscall                 /* Do the system call.  */
+         cmpq $-4095, %rax       /* Check %rax for error.  */
+         jae SYSCALL_ERROR_LABEL /* Jump to error handler if error.  */
+   L(pseudo_end):
+         ret                     /* Return to caller.  */
+~
+
+
+
 系统调用上下文
 ~~~~~~~~~~~~~~
 内核在执行系统调用时处于进程上下文。
@@ -636,8 +690,13 @@ _syscalln() -> K_INLINE_SYSCALL : 内联汇编
 1. 实现一个设备节点，然后使用read/write；
 2. 使用文件描述符来表示。
 
+
+快速系统调用
+-------------------
+
+
 int 0x80和syscall/sysenter的区别
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 https://www.cnblogs.com/LittleHann/p/4111692.html
 
 1. 通过INT 0x80中断方式。
@@ -655,20 +714,28 @@ https://www.cnblogs.com/LittleHann/p/4111692.html
 sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
 sysenter和sysexit都是CPU原生支持的指令集
 
-中断为什么不能休眠
---------------------
-https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
+_kernel_vsyscall
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-中断只能被其他中断中止、抢占，进程不能中止、抢占中断。
+它在内核实现，但每个用户进程启动的时候它会映射到用户进程
 
-中断是一种紧急事务，需要操作系统立即处理，不是不能做到睡眠，是没必要睡眠。
+虚拟系统调用vDSO
+----------------------
+例如gettimeofday。
 
-ISR在执行过程中要借用进程的系统堆栈。
+Linux virtual Dynamic Shared Object (vDSO)
 
-1. 无法被唤醒。在中断context中，唯一能打断当前中断handler的只有更高优先级的中断；所有的wake_up_xxx都是针对进程task_struct而言，
-   Linux是以进程为调度单位的，调度器只看到进程内核栈，而看不到中断栈。
+The Linux vDSO is a set of code that is part of the kernel, b
+ut is mapped into the address space of a user program to be run in userland.
 
-2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
+
+**地址随机(安全)：**
+
+Due to `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
+the vDSO will be loaded at a random address when a program is started.
+
+**程序如何找到地址？**
+
 
 
 内核数据结构
@@ -803,4 +870,21 @@ tasklet
 因为内核线程在用户空间没有相关的内存映射。
 
 系统调用时内核代表用户空间的进程运行，可访问用户空间，会映射用户空间的内存。
+
+
+中断为什么不能休眠
+--------------------
+https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
+
+中断只能被其他中断中止、抢占，进程不能中止、抢占中断。
+
+中断是一种紧急事务，需要操作系统立即处理，不是不能做到睡眠，是没必要睡眠。
+
+ISR在执行过程中要借用进程的系统堆栈。
+
+1. 无法被唤醒。在中断context中，唯一能打断当前中断handler的只有更高优先级的中断；所有的wake_up_xxx都是针对进程task_struct而言，
+   Linux是以进程为调度单位的，调度器只看到进程内核栈，而看不到中断栈。
+
+2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
+
 
