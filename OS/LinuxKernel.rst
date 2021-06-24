@@ -14,9 +14,10 @@ Linux Kernel
    
 1. 段选择子的作用？三级页表的工作原理？
 2. 上下文切换的具体过程？
-3. RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
+3. 时间子系统——RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
 5. 系统调用的细节：看参考博客文章。
+
    
 
 
@@ -371,6 +372,71 @@ O(1)调度
            Linux2.6.23以前的O(1)调度
 
 
+
+六大调度策略
+----------------
+`sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
+
+1. SCHED_FIFO: 先进先出，无时间片。
+2. SCHED_RR：时间片轮转，可抢占。
+3. SCHED_DEADLINE：按照任务deadline来调度选择其 deadline 距离当前时间点最近的任务。
+4. SCHED_OTHER：Linux中又名SCHED_NORMAL，根据nice值调度。
+5. SCHED_BATCH：假定任务是CPU-intensive，对唤醒的进程做调度惩罚，即不提倡频繁切换。
+6. SCHED_IDLE: nice值小于19，即用于优先级非常低的任务。
+
+不同类型进程优先级为
+
+::
+
+    __stop_sched_class -> __dl_sched_class -> __rt_sched_class -> __fair_sched_class -> __idle_sched_class
+
+
+实时策略
+------------
+
+
+调度器为每个优先级维护一个等待list。选择最高优先级的非空list的第一个成员来执行。
+调度策略只能决定同一等待list（同一优先级）的进程执行顺序。
+
+1. normal scheduling policies： (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH), sched_priority must be specified as 0.
+
+   The nice value  (SCHED_OTHER, SCHED_BATCH) influence the CPU scheduler to favor or disfavor a process in scheduling decisions.
+   the range is -20 (high priority) to +19 (low priority).
+
+2. **real-time policies**：(SCHED_FIFO, SCHED_RR, SCHED_DEADLINE) have a sched_priority value in the range **1 (low) to 99 (high)**.
+
+Linux的实时调度算法提供了一种软实时的工作方式，即尽力使进程在它的限定时间到来前运行，但内核不保证总能满足要求。
+
+Linux调度程序默认试图使进程尽量在同一个处理器运行（软亲和性），同时提供了强制亲和性（通过task_struct的cpus_allowed位掩码标志）。
+
+FIFO与RR
+~~~~~~~~~~~~~
+`实时调度类分析 <https://www.cnblogs.com/arnoldlu/p/9025981.html>`__ （源码分析）
+
+`Linux进程调度总结 <https://zhuanlan.zhihu.com/p/335846858>`__ (图不错)
+
+FIFO:严格按照优先级来执行，同一优先级先进先得到执行。
+
+RR:调度策略，:存在一个RR_TIMESLICE时隙设置，可以通过调节时隙让各进程得到相对公平的机会。
+
+当相同优先级的FIFO和RR进程执行时，RR相对吃亏，因为FIFO一旦抢占会执行到主动放弃。
+
+
+RT Bandwith
+~~~~~~~~~~~~~~~~~~~~~~
+RT进程和普通进程之间有一个分配带宽的比例，默认情况是 RT:CFS=95:5。
+
+通过/proc/sys/kernel/sched_rt_period_us和/proc/sys/kernel/sched_rt_runtime_us来设置。
+
+
+CFS调度
+--------
+
+1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
+2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
+3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
+
+
 时间片与nice
 ~~~~~~~~~~~~
 时间片：进程在被抢占之前能够运行的时间，预先分配的。
@@ -382,43 +448,17 @@ nice：决定处理器的使用比例。
 2. 基于优先级的调度器为了优化交互任务，需要提升刚唤醒的进程的优先级，这样的优先级提升实际上是不公平的。
 3. 时间片会随着定时器节拍改变，即最小时间片必须是定时器节拍的整数倍。
 
+调度延时
+~~~~~~~~~
+又被称为调度周期，即该时间内所有任务均会被运行一次。
 
-CFS调度
---------
+当进程数 < sched_nr_latency（８）时，值固定的为sysctl_sched_latency（６ms）
 
-1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
-2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
-3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
+当进程数 > sched_nr_latency（８）时,为进程数乘以sched_min_granularity_ns(0.75ms)
 
-实时策略与普通策略
-~~~~~~~~~~~~~~~~~~
-`sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
+**sysctl_sched_latency  =   cat /proc/sys/kernel/sched_latency_ns**
 
-调度器为每个优先级维护一个等待list。选择最高优先级的非空list的第一个成员来执行。
-调度策略只能决定同一等待list（同一优先级）的进程执行顺序。
-
-1. normal scheduling policies： (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH), sched_priority must be specified as 0.
-
-   The nice value  (SCHED_OTHER, SCHED_BATCH) influence the CPU scheduler to favor or disfavor a process in scheduling decisions.
-   the range is -20 (high priority) to +19 (low priority).
-
-2. real-time policies：(SCHED_FIFO, SCHED_RR, SCHED_DEADLINE) have a sched_priority value in the range 1
-(low) to 99 (high).
-
-Linux的实时调度算法提供了一种软实时的工作方式，即尽力使进程在它的限定时间到来前运行，但内核不保证总能满足要求。
-
-Linux调度程序默认试图使进程尽量在同一个处理器运行（软亲和性），同时提供了强制亲和性（通过task_struct的cpus_allowed位掩码标志）。
-
-
-**六大调度策略**
-
-1. SCHED_FIFO: 先进先出，无时间片。
-2. SCHED_RR：时间片轮转，可抢占。
-3. SCHED_DEADLINE：按照任务deadline来调度选择其 deadline 距离当前时间点最近的任务。
-4. SCHED_OTHER：Linux中又名SCHED_NORMAL，根据nice值调度。
-5. SCHED_BATCH：假定任务是CPU-intensive，对唤醒的进程做调度惩罚，即不提倡频繁切换。
-6. SCHED_IDLE: nice值小于19，即用于优先级非常低的任务。
-
+`[scheduler] 调度时延，调度最小抢占粒度，调度唤醒抢占粒度详解 <https://blog.csdn.net/wukongmingjing/article/details/105433479>`__
 
 调度的实现
 ------------
@@ -506,19 +546,33 @@ need_resched
 
 用户抢占与内核抢占
 ~~~~~~~~~~~~~~~~~~~~~
-用户抢占发生在：
+**用户抢占时机**
 
 1. 从系统调用返回用户空间时；
 2. 从中断处理程序返回用户空间时。
 
-内核抢占：
-可以在任何时间抢占任务（只要没有锁），通常发生在 preempt_enable() 中。
+
+**内核抢占时机**
+
+可以在任何时间抢占任务（只要没有锁），通常发生在 **preempt_enable()** 中。
+
 preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count 和 TIF_NEED_RESCHED 看是否可以被抢占。
 如果可以，就调用 preempt_schedule->preempt_schedule_common->__schedule 进行调度。
 
 .. figure:: ../images/schedule_and_preempt.png
 
             抢占式调度
+
+
+上下文切换
+~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../images/context_switch.jpg
+
+               context_switch
+
+进程优先级的表示
+-----------------
 
 
 

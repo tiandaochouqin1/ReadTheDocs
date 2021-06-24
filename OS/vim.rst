@@ -7,12 +7,27 @@ Vim
 
 参考资料
 ==========
+Doc
+-----------
 
-1. https://github.com/yianwillis/vimcdoc/releases
-2. `vi/vim使用进阶: 目录 <https://blog.easwy.com/archives/advanced-vim-skills-catalog/>`__
+
+1. `VimDoc <https://yianwillis.github.io/vimcdoc/doc/help.html>`__
+2. 《Vim - Vi Improved - by Steve Oualline
 3. 《VIM实用技巧第2版》
 4. help usr_03.txt
 5. help usr_29.txt
+
+
+Tutor&CheetSheet
+---------------------
+
+1. `vi/vim使用进阶: 目录 <https://blog.easwy.com/archives/advanced-vim-skills-catalog/>`__
+2. `Vim 从入门到精通 <https://github.com/wsdjeg/vim-galore-zh_cn>`__ 
+3. `CheetSheet <https://vim.rtorr.com/lang/zh_cn>`__
+
+.. figure:: ../images/vim_cheetsheet.png
+
+            vim_cheetsheet
 
 
 定位与编辑
