@@ -46,7 +46,7 @@ C语言
 嵌入式
 ------
 
-.. figure:: ./images/emmbed.jpg
+.. figure:: ../images/emmbed.jpg
    :alt: 嵌入式学习
 
    嵌入式学习
@@ -197,7 +197,7 @@ Linux内核
 
 专栏-趣谈Linux操作系统。
 
-.. figure:: ./images/LinuxPath.jpg
+.. figure:: ../images/LinuxPath.jpg
    :alt: 嵌入式学习
 
 
@@ -252,7 +252,7 @@ Java
 4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
 5. onedrive极客时间专栏
 
-.. |TechRadar| image:: ./images/TechRadar.png
+.. |TechRadar| image:: ../images/TechRadar.png
 
 
 lessons&labs

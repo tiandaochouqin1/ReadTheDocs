@@ -3,25 +3,30 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+   
+   
 My NoteBook
 =================================
+   
+系统归纳，时常翻阅。
+
+
+.. note::
+
+   本网站只作个人知识记录所用，工后续翻阅提供便利。
+
+
 
 .. toctree::
    :maxdepth: 2
-   :caption:  Contents:
+   :numbered: 3
 
+   
+   Common/index
+   OS/index
+   Net/index
+   Language/index
 
-
-   OS/LinuxKernel.rst
-   OS/makefile.rst
-   OS/vim.rst
-   Common/Git.rst
-   Common/regex.rst
-   Net/LinuxRoute.rst
-   Net/ComputerNetwork.rst
-   OS/OSC.rst
-   Language/Blog.rst
-   Learn.rst
 ..   Language/DP.rst
    Language/Asm.rst
 

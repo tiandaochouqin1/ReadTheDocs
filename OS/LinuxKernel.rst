@@ -3,7 +3,6 @@ Linux Kernel
 =================
 
 
-
 :Date:   2021-04-24 16:52:25
 
 
@@ -16,7 +15,7 @@ Linux Kernel
 2. 上下文切换的具体过程？
 3. 时间子系统——RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
-5. 系统调用的细节：看参考博客文章。
+5. 系统调用的细节：看参考博客文章。-
 
    
 
@@ -27,6 +26,7 @@ Linux Kernel
 参考文档
 --------
 
+内核相关文档
 1. https://www.kernel.org/doc/html/latest/translations/zh_CN/
 2. https://kernelnewbies.org/
 3. https://lwn.net/
@@ -580,8 +580,7 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 系统调用
 =============
-`the-definitive-guide-to-linux-system-calls 
-  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
+`the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
 `中文版 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
    系统学习，有源码分析
 
@@ -627,15 +626,21 @@ use syscall from glibc to call exit with exit status of 42:
 
 ::
 
-   #include <unistd.h>
-
    int
    main(int argc, char *argv[])
    {
    unsigned long syscall_nr = 60;
    long exit_status = 42;
 
-   syscall(syscall_nr, exit_status);
+   asm ("movq %0, %%rax\n"
+         "movq %1, %%rdi\n"
+         "syscall"
+      : /* output parameters, we aren't outputting anything, no none */
+         /* (none) */
+      : /* input parameters mapped to %0 and %1, repsectively */
+         "m" (syscall_nr), "m" (exit_status)
+      : /* registers that we are "clobbering", unneeded since we are calling exit */
+         "rax", "rdi");
    }
 
 
@@ -663,7 +668,10 @@ use syscall from glibc to call exit with exit status of 42:
          jae SYSCALL_ERROR_LABEL /* Jump to error handler if error.  */
    L(pseudo_end):
          ret                     /* Return to caller.  */
-~
+
+
+这段代码同时展示了两个调用约定：传递给这个函数的参数 符合 用户空间调用约定，
+然后将这些参数移动到其他寄存器，使得它们在通过 syscall 进入内核之前符合 内核调用约定。
 
 
 
@@ -714,14 +722,11 @@ https://www.cnblogs.com/LittleHann/p/4111692.html
 sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
 sysenter和sysexit都是CPU原生支持的指令集
 
-_kernel_vsyscall
-~~~~~~~~~~~~~~~~~~~~~~~~
 
-它在内核实现，但每个用户进程启动的时候它会映射到用户进程
 
 虚拟系统调用vDSO
 ----------------------
-例如gettimeofday。
+不进入内核即可执行系统调用，例如gettimeofday。
 
 Linux virtual Dynamic Shared Object (vDSO)
 
@@ -734,9 +739,22 @@ ut is mapped into the address space of a user program to be run in userland.
 Due to `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
 the vDSO will be loaded at a random address when a program is started.
 
-**程序如何找到地址？**
 
 
+_kernel_vsyscall
+~~~~~~~~~~~~~~~~~~~~~~~~
+内核函数 __kernel_vsyscall 封装了 sysenter 调用约定（calling convention）,
+应该使用 __kernel_vsyscall而不是手动实现调用sysenter。
+
+它在内核实现，但每个用户进程启动的时候它会映射到用户进程。
+
+**程序如何找到调用的地址？**
+
+__kernel_vsyscall 的地址写入了 ELF auxiliary vector （辅助功能矢量），
+用户程序能（典型情况下通过 glibc）找到后者并使用它。寻找 ELF auxiliary vector 有多种方式：
+
+1. 通过 getauxval，带 AT_SYSINFO 参数
+2. 遍历环境变量，从内存解析
 
 内核数据结构
 ============
