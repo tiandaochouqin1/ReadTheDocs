@@ -4,7 +4,8 @@ Operating System
 
 .. toctree::
    :maxdepth: 2
-
+   :numbered: 3
+   
    LinuxKernel.rst
    makefile.rst
    OSC.rst

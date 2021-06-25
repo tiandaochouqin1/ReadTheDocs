@@ -19,7 +19,6 @@ My NoteBook
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 3
 
    
    Common/index

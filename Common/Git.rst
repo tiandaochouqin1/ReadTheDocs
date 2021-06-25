@@ -488,11 +488,16 @@ git文件树
            │       └── master    # 标识了远端项目中的master分支指向的当前commit的哈希值。
            └── tags    # 记录任何对象名称（不一定是提交对象或指向提交对象的标签对象）。
 
+
+忽略文件
+~~~~~~~~~~~~~~
 gitignore
-~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 `gitignore模板地址 <https://github.com/github/gitignore>`__
 
 项目开始时（第一次push前）就创建.gitignore文件。
+
+
 
 github插件
 ----------

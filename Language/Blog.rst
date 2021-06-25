@@ -41,6 +41,9 @@ Read the Docs
 readthedocs配置
 ---------------
 
+可参考 `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 的源码。
+
+
 待补充。
 
 语法
