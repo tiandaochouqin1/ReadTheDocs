@@ -1,6 +1,6 @@
-=================
+===============
 Linux Kernel
-=================
+===============
 
 
 :Date:   2021-04-24 16:52:25
@@ -376,6 +376,8 @@ O(1)调度
 六大调度策略
 ----------------
 `sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
+`翻译版 <https://www.cnblogs.com/charlieroro/p/12133100.html>`__ 。
+
 
 1. SCHED_FIFO: 先进先出，无时间片。
 2. SCHED_RR：时间片轮转，可抢占。
@@ -477,7 +479,6 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 
 针对刚创建的进程会进行一定的惩罚，将虚拟时间加上一个值。
 
-`CFS调度器（2）-源码解析 <http://www.wowotech.net/process_management/448.html>`__
 
 进程选择
 ~~~~~~~~~~~~
@@ -575,6 +576,30 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 进程优先级的表示
 -----------------
+`关于Linux进程优先级数字混乱的彻底澄清 <https://mp.weixin.qq.com/s/44Gamu17Vkl77OGV2KkRmQ>`__
+
+**用户态：**
+最常用，sched_priority(chrt、/proc/pid/stat 字段40)，
+       nice(/proc/pid/stat 字段19),policy(字段41)
+
+
+sched_priority : 1(low) to 99(high)
+
+nice :-19(high) to 20(low)
+
+**内核态：**
+
+内核调度bitmap使用。 /proc/pid/sched。小->优先级高。
+
+prio = 99 - sched_priority
+
+normal = 120 + nice
+
+**top命令：**
+
+/proc/pid/stat 字段18.
+
+top_prio = -1 -sched_priority
 
 
 

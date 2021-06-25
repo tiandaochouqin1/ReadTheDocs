@@ -491,6 +491,15 @@ git文件树
 
 忽略文件
 ~~~~~~~~~~~~~~
+
+`忽略不想要提交的本地修改-比较 <https://mengqi92.github.io/2020/07/17/hide-files-from-git/>`__
+
+
+1. gitignore 文件.
+2. .git/info/exclude 文件
+3. git update-index --assume-unchanged （官方文档）
+4. git update-index --skip-worktree（官方文档）
+
 gitignore
 ^^^^^^^^^^^^^^^^
 `gitignore模板地址 <https://github.com/github/gitignore>`__
