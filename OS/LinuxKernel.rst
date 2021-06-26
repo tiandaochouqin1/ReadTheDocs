@@ -580,7 +580,7 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 **用户态：**
 最常用，sched_priority(chrt、/proc/pid/stat 字段40)，
-       nice(/proc/pid/stat 字段19),policy(字段41)
+nice(/proc/pid/stat 字段19),policy(字段41)
 
 
 sched_priority : 1(low) to 99(high)
@@ -607,7 +607,7 @@ top_prio = -1 -sched_priority
 =============
 `the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
 `中文版 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
-   系统学习，有源码分析
+系统学习，有源码分析
 
 `深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
 
@@ -930,4 +930,12 @@ ISR在执行过程中要借用进程的系统堆栈。
 
 2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
 
+
+内存管理
+=============
+
+
+
+虚拟文件系统
+===============
 

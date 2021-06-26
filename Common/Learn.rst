@@ -4,44 +4,33 @@ Learn
 
 :Date:   2020-08-21 21:18:08
 
+综合内容
+==========
 
-行业趋势
-========
+资讯网站
+------------
 
-`技术雷达 <https://www.thoughtworks.com/radar>`__:（20210215）看不懂。
+1. `技术雷达 <https://www.thoughtworks.com/radar>`__:（20210215）看不懂。
+
 |TechRadar| >technology-radar-vol-23 待阅读
 
-`infoq国际版 <https://www.infoq.com/>`__
-
+2. `infoq国际版 <https://www.infoq.com/>`__ Or
 `infoq国内版 <https://www.infoq.cn/>`__
 
-`分享 GitHub 上有趣、入门级的开源项目 <https://hellogithub.com/>`__
+3. `分享 GitHub 上有趣、入门级的开源项目 <https://hellogithub.com/>`__
 
 
-`科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
-
-C语言
-=====
-
-`Why Aren’t There C Conferences <https://nullprogram.com/blog/2018/11/21/>`__
-
-1. C Programming Language (2nd
-   Edition,1988)。\ `Solution1 <https://clc-wiki.net/wiki/K&R2_solutions>`__\ ，\ `Solution2 <https://github.com/ccpalettes/the-c-programming-language-second-edition-solutions>`__\ ，\ `Solution3 <https://github.com/gleesik/the-c-programming-language-2nd-edition-solutions>`__
-2. C Primer Plus 5th(2005，比6th薄)
-3. Pointers on C———人民邮电出版社《c和指针》，Kenneth A.Reek著，徐波译。
-4. C Traps and Pitfalls
-5. Expert C Programming
-6. `C Programming  FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
-7. The Standard C Library
+4. `科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
 
 
-思维
------
 
-1. Computer Systems: A Programmer’s perspective
-2. 《C语言的科学和艺术》（《The Art and Science of C》）
-3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)
 
+
+性能分析
+-------------
+
+1. BPF Performance Tools，
+   `作者的网站 <http://www.brendangregg.com/linuxperf.html>`__
 
 嵌入式
 ------
@@ -52,41 +41,39 @@ C语言
    嵌入式学习
 
 
-`嵌入式学习的几种线路 <http://www.embeddedlinux.org.cn/emb-linux/entry-level/201701/02-6070.html>`__
-
-`gnu software <https://www.gnu.org/software/>`__\ ：包括linux、emacs、gcc、gdb、make、libc等。
-
-`gnu glibc <http://ftp.gnu.org/gnu/glibc>`__:Linux中，包括C标准库的实现，也包括所有系统函数.
-
-`bsd libc <https://svnweb.freebsd.org/base/head/lib/libc>`__:便于阅读。
-
-https://en.cppreference.com/w/c/header
-
-http://gitbook.net/c_standard_library/
-
-`BusyBox <http://www.busybox.net/>`__\ ：一个集成300+Unix工具/命令的软件包，运行于POSIX环境（包括Linux、Android、freebsd）。嵌入式系统常用。
-
-::
-
-   进阶主要在一些技法和陷阱方面。C Traps and Pitfalls、Pointers on C、Expert C Programming。
-   还有一本国内没有上市：C Programming FAQs，不过在网上可以找到内容：http://c-faq.com/。
-   关键还是要多读多写代码。可以看看The Standard C Library，学习C标准库是怎么实现的。
-   还有本非常好的书是Linux Programming by Example: The Fundamentals，基于真实的GNU或UNIX代码讲解。
+1. `嵌入式学习的几种线路 <http://www.embeddedlinux.org.cn/emb-linux/entry-level/201701/02-6070.html>`__
 
 
-   技术：C Traps and Pitfalls、Pointers on C、Expert C Programming、C Interfaces and Implementations:Techniques for Creating Reusable Software，这五本书，够够的了！
 
-   辅助进阶：21st Century C（中文名：C程序设计新思维）、Advanced C and C++ Compiling、C Programming FAQs：Frequently Asked Questions。
-   算法：Mastering Algorithms with C。
+资源集合
+-------------------
 
-   机制：The Art of UNIX Programming、Advanced Programming in the UNIX Environment,Third Edition、UNIX Network Programming,Volume 2:Interprocess Communications,2nd Edition、Unix Network Programming,Volume 1:The Sockets Networking API,3rd Edition，这四本书，够够的了！
+   学习路径参考：《程序员练级攻略》——左耳听风。知识面全，从入门到深入。
 
+`极客时间专栏 <https://zter.ml/>`__
 
-   对于基础入门，说点，K&R 的书所描述的内容（标准）太陈旧了。不建议学习。很早看过 C Primer Plus 5th，虽然描述的标准是C99，但写的很赞，推荐初学者。第六版太厚了，会吓跑初学者的。
-   另外，有些基础了，建议读读lisp的书，比如Common LISP: A Gentle Introduction to Symbolic Computation，很可惜这书没有中文版。
+1. `学习C语言的教材 <http://www.ruanyifeng.com/blog/2011/09/c_programming_language_textbooks.html>`__
+2. https://github.com/fuhmmin/it-ebooks-cn
+3. https://github.com/guanpengchn/awesome-books
+4. https://kinegratii.github.io/library/
 
+网盘合集：
+
+1. `手机版书籍合计 <https://itpanda.cc/>`__
+2. 天翼网盘：https://cloud.189.cn/t/jmA7rmRVFr22 (访问码：ksx8)
+3. onedrive: https://1drv.ms/u/s!Ao7o_dk8V3yEoGxyAZQsxZaNG0l3?e=iddq04
+4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
+5. onedrive极客时间专栏
+
+.. |TechRadar| image:: ../images/TechRadar.png
+   
+   
+   
 计算机科学
 ==========
+
+导论
+---------
 
 `自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：列出了9门科目并分析了一些学习方法，其中\ ``CSAPP和DDIA``\ 回报率最高。
 
@@ -157,19 +144,34 @@ http://gitbook.net/c_standard_library/
 +---------+-------------------+--------------------------------+-------+
 
 网络
-====
+-----------
 
 1. Unix环境高级编程
 2. TCP/IP详解
 3. Unix网络编程
+4. 深入Linux网络技术内幕
 
 算法
-====
+----------------
 
 1. Mastering Algorithms with C
+2. 数据结构与算法——极客时间专栏
+
+软件工程
+---------------------
+
+1. 代码整洁之道
+2. 代码大全2
+3. 重构_改善既有代码的设计2,\ `link1 <https://github.com/gdut-yy/Refactoring2-zh>`__
+4. 敏捷软件开发 原则模式与实践
+5. 设计模式
+6. Effective c++
+7. 计算机软件的构造与解释
+
+
 
 Linux内核
-=========
+--------------
 
 `Linux Kernel <https://www.kernel.org/>`__
 
@@ -201,16 +203,13 @@ Linux内核
    :alt: 嵌入式学习
 
 
-软件工程
-=========
+lessons&labs
+------------------
 
-1. 代码整洁之道
-2. 代码大全2
-3. 重构_改善既有代码的设计2,\ `link1 <https://github.com/gdut-yy/Refactoring2-zh>`__
-4. 敏捷软件开发 原则模式与实践
-5. 设计模式
-6. Effective c++
-7. 计算机软件的构造与解释
+* MIT 6.828 :Operating Systems + xv6
+* CS164 : Programming Languages and Compilers.
+* CS142 : Web Applications
+* CS140e : OS+Rust+Raspi 3b
 
 编程语言
 ========
@@ -232,33 +231,64 @@ Java
 2. 高性能Mysql
 3. Mysql实战45讲
 
-资源集合
-========
-
-   学习路径参考：《程序员练级攻略》——左耳听风。知识面全，从入门到深入。
-
-`极客时间专栏 <https://zter.ml/>`__
-
-1. `学习C语言的教材 <http://www.ruanyifeng.com/blog/2011/09/c_programming_language_textbooks.html>`__
-2. https://github.com/fuhmmin/it-ebooks-cn
-3. https://github.com/guanpengchn/awesome-books
-4. https://kinegratii.github.io/library/
-
-网盘合集：
-
-1. `手机版书籍合计 <https://itpanda.cc/>`__
-2. 天翼网盘：https://cloud.189.cn/t/jmA7rmRVFr22 (访问码：ksx8)
-3. onedrive: https://1drv.ms/u/s!Ao7o_dk8V3yEoGxyAZQsxZaNG0l3?e=iddq04
-4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
-5. onedrive极客时间专栏
-
-.. |TechRadar| image:: ../images/TechRadar.png
 
 
-lessons&labs
-=============
+C语言
+-----------
 
-* MIT 6.828 :Operating Systems + xv6
-* CS164 : Programming Languages and Compilers.
-* CS142 : Web Applications
-* CS140e : OS+Rust+Raspi 3b
+`Why Aren’t There C Conferences <https://nullprogram.com/blog/2018/11/21/>`__
+
+1. C Programming Language (2nd
+   Edition,1988)。\ `Solution1 <https://clc-wiki.net/wiki/K&R2_solutions>`__\ ，\ `Solution2 <https://github.com/ccpalettes/the-c-programming-language-second-edition-solutions>`__\ ，\ `Solution3 <https://github.com/gleesik/the-c-programming-language-2nd-edition-solutions>`__
+2. C Primer Plus 5th(2005，比6th薄)
+3. Pointers on C———人民邮电出版社《c和指针》，Kenneth A.Reek著，徐波译。
+4. C Traps and Pitfalls
+5. Expert C Programming
+6. `C Programming  FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
+7. The Standard C Library
+
+
+
+::
+
+   进阶主要在一些技法和陷阱方面。C Traps and Pitfalls、Pointers on C、Expert C Programming。
+   还有一本国内没有上市：C Programming FAQs，不过在网上可以找到内容：http://c-faq.com/。
+   关键还是要多读多写代码。可以看看The Standard C Library，学习C标准库是怎么实现的。
+   还有本非常好的书是Linux Programming by Example: The Fundamentals，基于真实的GNU或UNIX代码讲解。
+
+
+   技术：C Traps and Pitfalls、Pointers on C、Expert C Programming、C Interfaces and Implementations:Techniques for Creating Reusable Software，这五本书，够够的了！
+
+   辅助进阶：21st Century C（中文名：C程序设计新思维）、Advanced C and C++ Compiling、C Programming FAQs：Frequently Asked Questions。
+   算法：Mastering Algorithms with C。
+
+   机制：The Art of UNIX Programming、Advanced Programming in the UNIX Environment,Third Edition、UNIX Network Programming,Volume 2:Interprocess Communications,2nd Edition、Unix Network Programming,Volume 1:The Sockets Networking API,3rd Edition，这四本书，够够的了！
+
+
+   对于基础入门，说点，K&R 的书所描述的内容（标准）太陈旧了。不建议学习。很早看过 C Primer Plus 5th，虽然描述的标准是C99，但写的很赞，推荐初学者。第六版太厚了，会吓跑初学者的。
+   另外，有些基础了，建议读读lisp的书，比如Common LISP: A Gentle Introduction to Symbolic Computation，很可惜这书没有中文版。
+
+
+常用链接
+~~~~~~~~~~~~~
+
+1. `gnu software <https://www.gnu.org/software/>`__\ ：包括linux、emacs、gcc、gdb、make、libc等。
+
+2. `gnu glibc <http://ftp.gnu.org/gnu/glibc>`__:Linux中，包括C标准库的实现，也包括所有系统函数.
+
+3. `bsd libc <https://svnweb.freebsd.org/base/head/lib/libc>`__:便于阅读。
+
+4. https://en.cppreference.com/w/c/header
+
+5. http://gitbook.net/c_standard_library/
+
+6. `BusyBox <http://www.busybox.net/>`__\ ：一个集成300+Unix工具/命令的软件包，运行于POSIX环境（包括Linux、Android、freebsd）。嵌入式系统常用。
+
+
+
+思维
+~~~~~~~~~~~~~~~
+
+1. Computer Systems: A Programmer’s perspective
+2. 《C语言的科学和艺术》（《The Art and Science of C》）
+3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)

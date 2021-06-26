@@ -13,6 +13,7 @@ Basics
    Git.rst
    regex.rst
    vim.rst
+   Blog.rst
    Learn.rst
 
 
