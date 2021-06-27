@@ -23,14 +23,26 @@ Learn
 4. `科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
 
 
+博客专栏
+----------------
 
+1. https://lrita.github.io/wiki/books/
+2. `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 
+3. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ 
+4. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
+   `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 
 
 性能分析
 -------------
 
+
 1. BPF Performance Tools，
-   `作者的网站 <http://www.brendangregg.com/linuxperf.html>`__
+2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
+3. `Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`__
+   
+`作者主页 <http://www.brendangregg.com/linuxperf.html>`__
+
 
 嵌入式
 ------
