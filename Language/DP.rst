@@ -34,15 +34,12 @@
 
 -  `常用状态转移方程 <#常用状态转移方程>`__
 
-.. raw:: html
 
-   <!-- /TOC -->
-
-| `动态规划 <http://cppblog.com/menjitianya/archive/2015/10/23/212084.html>`__
-| `上文的PDF版 <../files/DynamicProgramming.pdf>`__
+`动态规划 <http://cppblog.com/menjitianya/archive/2015/10/23/212084.html>`__
+:download:`PDF版 <../files/DynamicProgramming.pdf>`
 
 概念
-====
+=====
 
 Dynamic programming:“programming”指的是一种\ **表格法**\ 。
 **分治算法:**\ 将问题划分为互不相交的子问题，递归地求解子问题，再将他们的解组合起来。

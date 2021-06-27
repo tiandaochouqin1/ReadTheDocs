@@ -25,13 +25,12 @@ Learn
 
 博客专栏
 ----------------
-
-1. https://lrita.github.io/wiki/books/
-2. `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 
-3. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ 
-4. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
+ 
+1. `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 
+2. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ 
+3. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
-
+4. https://blog.csdn.net/dog250 ,网络相关。
 
 性能分析
 -------------
@@ -39,10 +38,13 @@ Learn
 
 1. BPF Performance Tools，
 2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
-3. `Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`__
-   
+3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
+   `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
+
+
 `作者主页 <http://www.brendangregg.com/linuxperf.html>`__
 
+https://lrita.github.io/wiki/books/
 
 嵌入式
 ------
