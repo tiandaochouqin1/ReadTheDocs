@@ -31,6 +31,7 @@ Learn
 3. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 4. https://blog.csdn.net/dog250 ,网络相关。
+5. http://www.wowotech.net/process_management/447.html
 
 性能分析
 -------------
