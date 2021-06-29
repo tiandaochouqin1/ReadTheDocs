@@ -153,6 +153,7 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
    git log (--pretty=oneline)  //查看记录
    git reflog        //本地对branch的每一次操作
    git blame file    //查看文件历史记录
+   git stash show -p stash@{0}
 
 pull request
 ------------

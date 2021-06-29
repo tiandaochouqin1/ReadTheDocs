@@ -7,7 +7,7 @@ Basics
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 3
+   :numbered: 4
    
 
    Git.rst
