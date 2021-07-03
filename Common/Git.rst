@@ -98,43 +98,16 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
    git push
    git commit --amend -m 'Fixes bug #43'
 
-新仓库
-------
-
-此时远程仓库为空
-
-::
-
-   git init
-   git add/commit somefile
-
-
-   若本地已有文件则只需以下操作：
-   git remote add origin //仓库地址//https和ssh两种地址
-   git branch -M main
-   git push -u origin main //第一次推送master分支的所有内容
-
-自建Git Server
-~~~~~~~~~~~~~~
-
-`搭建Git服务器 <https://www.liaoxuefeng.com/wiki/896043488029600/899998870925664>`__
-
-1. 远程服务器 git init –bare；
-2. 设置git用户登录及文件权限；
-3. 添加ssh key（否则每次操作都需要密码）；
-4. 按照上述步骤对新仓库进行初始化；
-5. 正常执行push/pull操作即可。
-
 分支操作
 --------
 
 ::
 
-   git branch
+   git branch -vv
    git branch new commitid//创建
-   git checkout -b new branch/commitid//创建
+   git checkout -b new branch/commitid  remote_branch //创建分支并跟踪远程
    git checkout master //切换
-   git branch -d (branchname)//删除
+   git branch -d/D (branchname)//删除
 
 一般使用master、dev、bug、feature等分支。
 
@@ -142,9 +115,10 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
 2. git pull 会将本地库更新至远程库的最新状态 ``git tag v0.9``
    //标签，版本号
 
-信息查看与log
--------------
 
+
+信息查看
+-----------
 ::
 
    git status      //查看项目的当前状态。
@@ -154,15 +128,53 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
    git reflog        //本地对branch的每一次操作
    git blame file    //查看文件历史记录
    git stash show -p stash@{0}
+   git show commit_id
 
-pull request
-------------
+diff
+--------------
+比较工作区与暂存区
+　　　　　　git diff 不加参数即默认比较工作区与暂存区
 
-即 请求别人pull自己的改动。
+工作区与指定commit-id的差异
+　　　　　　git diff commit-id/HEAD/branch_name  [<path>...] 
+
+暂存区与指定commit-id的差异
+　　　　　　git diff --cached [<commit-id>] [<path>...] 
+
+两个commit-id之间的差异
+　　　　　　git diff [<commit-id>] [<commit-id>]
+
+log
+-----
 
 ::
 
-      fork -> change -> pull request -> review&merge
+      git log file // 查看文件历史，-p查看详细diff
+      git blame file //
+      git show commit_id file //
+      git log [branch_name]
+         -n 最近n次提交
+         --since/after 指定时间之后
+         --until/before  指定时间之前
+         --author   指定作者
+         --commiter  指定提交者
+         --grep  指定提交说明
+         -S  匹配添加/删除的内容
+
+      git log --graph --decorate --oneline --simplify-by-deocration --all
+         --decorate 显示commit的引用
+         --oneline commit单行显示
+         --simplify-by-decoration 只显示被引用的commit
+         --all  指定要显示的branch
+
+         git branch --contains $COMMIT_ID //查找commit
+
+贮藏与清理
+-----------
+1. rm file
+2. git rm file [--cached]
+3. git clean -d [-f] [-n/--dry-run] : 移除没有忽略的未跟踪文件
+4. git stash push -m "comments"
 
 重置与回滚
 ==========
@@ -343,28 +355,14 @@ reset VS revert
 其它
 ====
 
-log
----
+pull request
+------------
+
+即 请求别人pull自己的改动。
 
 ::
 
-      git log file // 查看文件历史，-p查看详细diff
-      git blame file //
-      git show commitid file //
-      git log
-          -n 最近n次提交
-       --since/after 指定时间之后
-       --until/before  指定时间之前
-       --author   指定作者
-       --commiter  指定提交者
-       --grep  指定提交说明
-       -S  匹配添加/删除的内容
-
-      git log --graph --decorate --oneline --simplify-by-deocration --all
-          --decorate 显示commit的引用
-       --oneline commit单行显示
-       --simplify-by-decoration 只显示被引用的commit
-       --all  指定要显示的branch
+      fork -> change -> pull request -> review&merge
 
 config
 ------
@@ -515,3 +513,58 @@ github插件
 gayhub:生成readme目录。已停止开发。 Octotree:代码目录树。
 refined-github:代码编辑、Git相关的功能优化，下载目录。 gitzip for
 github:下载目录和文件。
+
+
+
+
+自建Git Server
+-----------------
+bare：裸仓库无工作区。
+
+`搭建Git服务器 <https://www.liaoxuefeng.com/wiki/896043488029600/899998870925664>`__
+
+1. 远程服务器 git init –bare；
+2. 设置git用户及文件夹权限；
+3. 添加ssh key（否则每次操作都需要密码）；
+4. git clone即可。
+5. 若需要指定ssh端口，则使用git clone ssh://git_user@ip_or_domian:port/fullpath
+
+
+::
+
+    sudo apt-get install git 
+    sudo adduser git 
+    sudo passwd -d git //删除用户密码，以使用秘钥
+    git init --bare test.git
+    sudor chown -R git:git test.git
+    vi /etc/passwd 
+    git用户shell改为/usr/bin/git-shell，关闭登录
+
+
+
+
+开启秘钥登录
+~~~~~~~~~~~~~~~~~~~~~
+1. ssh-keygen 生成id_rsa和id_rsa.pub到.ssh文件夹；
+2. id_rsa 复制到本地电脑用户目录下的.ssh文件夹中；
+3. 远程电脑需要开启秘钥免密登录，如以下选项：
+   PermitEmptyPasswords yes
+   PubkeyAuthentication yes
+
+   
+本地仓库关联远程
+~~~~~~~~~~~~~~~~~~~~~~~~~
+参考github新仓库创建后的提示。
+
+
+::
+   
+   //在非空文件夹创建仓库
+   git init
+   git add README.md
+   git commit -m "first commit"
+   
+   //关联远程仓库
+   git remote add origin git@github.com:gitpath or ssh://git_user@ip_or_domian:port/fullpath
+   git push -u origin master
+
