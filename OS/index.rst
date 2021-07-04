@@ -7,6 +7,7 @@ Operating System
    :numbered: 4
    
    LinuxKernel.rst
+   LinuxCompile.rst
    makefile.rst
    OSC.rst
 
