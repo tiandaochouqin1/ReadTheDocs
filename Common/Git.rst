@@ -115,7 +115,24 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
 2. git pull 会将本地库更新至远程库的最新状态 ``git tag v0.9``
    //标签，版本号
 
+远程分支创建与删除
+~~~~~~~~~~~~~~~~~~~~~~~~
+https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF
 
+本地的分支并不会自动与远程仓库同步——必须显式地推送想要分享的分支。
+
+**创建远程分支**
+
+git push origin serverfix
+等价于
+git push origin refs/heads/serverfix:refs/heads/serverfix
+
+
+**删除远程分支**
+
+git push origin --delete serverfix
+
+只是从服务器上移除这个指针。 Git 服务器通常会保留数据一段时间直到垃圾回收运行，所以通常是很容易恢复的。
 
 信息查看
 -----------
@@ -125,7 +142,7 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
    git diff        //来查看执行 git status 的结果的详细信息。
    git rm
    git log (--pretty=oneline)  //查看记录
-   git reflog        //本地对branch的每一次操作
+   git reflog        //本地的每一次操作！！
    git blame file    //查看文件历史记录
    git stash show -p stash@{0}
    git show commit_id
@@ -351,6 +368,22 @@ reset VS revert
    A，A这部分改变不会再次出现，git reset是直接把commit
    A在branch上删除，因而和老的branch再次merge时，这些被回滚的commit
    A还会被引入。
+
+
+merge和rebase
+------------------
+dev分支操作。
+
+git merge master :创建一个三方合并，做一个新的快照并且自动创建一个新的提交指向它。dev分支多出n+1个新提交（git pull）。
+
+   - git log : commit按时间排序。
+  
+   - git log --graph ：commit dev在前，master在后。理解为 将master的n个新commit克隆到dev分支之后。
+
+
+git rebase master: 找到和master共同的祖先，然后保存dev分支commit，更新dev分支为与master一致，然后应用刚保存的commit。g'i
+
+
 
 其它
 ====
