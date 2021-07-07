@@ -45,7 +45,13 @@ Learn
 
 `作者主页 <http://www.brendangregg.com/linuxperf.html>`__
 
+https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55
+
 https://lrita.github.io/wiki/books/
+
+.. figure:: ../images/linux_observability_tools.png
+
+   linux_observability_tools
 
 嵌入式
 ------
