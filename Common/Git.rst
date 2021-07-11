@@ -12,8 +12,8 @@ Git
 2. `Reference <https://git-scm.com/docs>`__
 3. `Git-Cheat-Sheet <https://github.com/flyhigher139/Git-Cheat-Sheet>`__
 4. `Git教程 <https://www.liaoxuefeng.com/wiki/896043488029600>`__
-5. `Git 少用 Pull 多用 Fetch 和
-   Merge <https://www.oschina.net/translate/git-fetch-and-merge?cmp>`__
+5. `Learn Git Branching <https://pcottle.github.io/learnGitBranching/>`__
+
 
 基本概念
 ========
@@ -383,7 +383,12 @@ git merge master :创建一个三方合并，做一个新的快照并且自动�
 
 git rebase master: 找到和master共同的祖先，然后保存dev分支commit，更新dev分支为与master一致，然后应用刚保存的commit。g'i
 
+https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%9A%84%E6%96%B0%E5%BB%BA%E4%B8%8E%E5%90%88%E5%B9%B6
 
+https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA
+
+
+* `Git 少用 Pull 多用 Fetch 和 Merge <https://www.oschina.net/translate/git-fetch-and-merge?cmp>`__
 
 其它
 ====
