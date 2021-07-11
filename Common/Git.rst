@@ -161,8 +161,8 @@ diff
 两个commit-id之间的差异
 　　　　　　git diff [<commit-id>] [<commit-id>]
 
-log
------
+log与查找
+----------
 
 ::
 
@@ -185,6 +185,8 @@ log
          --all  指定要显示的branch
 
          git branch --contains $COMMIT_ID //查找commit
+
+
 
 贮藏与清理
 -----------

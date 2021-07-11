@@ -6,7 +6,7 @@ Network
    :maxdepth: 2
    :numbered: 3
 
-   NetworkPerformace.rst
+   NetworkPerformance.rst
    NetworkTools.rst
    ComputerNetwork.rst
 
