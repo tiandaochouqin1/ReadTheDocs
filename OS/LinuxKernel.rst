@@ -524,7 +524,7 @@ top_prio = -1 -sched_priority
 系统调用
 =============
 `the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
-`中文版 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
+`系统调用权威指南 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
 系统学习，有源码分析
 
 `深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
@@ -724,10 +724,15 @@ Linux内核的标准链表为环形双向链表，灵活性高。
        struct list_head *prev;
    }
 
-   获取包含list_head的父类型结构体
+   //获取包含list_head的父类型结构体
    list_entry(ptr, type, member)
 
-   遍历链表,O(n)
+   // for 循环，利用传入的 pos 作为循环变量，从表头 head 开始，逐项向后（ next方向）移动 pos ，直至又回到 head
+   //head为数据结构的第一项成员时，与list_for_each_entry等价
+   list_for_each(pos, head) 
+
+
+   //遍历结构体head的成员member，存放到pos,O(n)
    list_for_each_entry(pos, head, member)
 
 

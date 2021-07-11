@@ -192,8 +192,26 @@ log与查找
 -----------
 1. rm file
 2. git rm file [--cached]
-3. git clean -d [-f] [-n/--dry-run] : 移除没有忽略的未跟踪文件
-4. git stash push -m "comments"
+3. git stash push -m "comments"
+
+git clean
+~~~~~~~~~~~~
+删除未跟踪文件
+
+git clean -d [-f] [-n/--dry-run] : 移除没有忽略的未跟踪文件
+ 
+**首先确认要删除的文件: git clean -fd -n**
+
+1. 删除 untracked files
+git clean -f
+ 
+2. 连 untracked 的目录也一起删掉
+git clean -fd
+ 
+3. 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，无法恢复！！！）
+git clean -xfd
+ 
+
 
 重置与回滚
 ==========
