@@ -16,6 +16,8 @@ Linux Kernel
 3. 时间子系统——RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
 5. 系统调用的细节：看参考博客文章。
+6. 自旋锁、互斥量、信号量的实现原理。
+   `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__
 
    
 
@@ -56,10 +58,15 @@ linux、glibc、gcc等。
 ~~~~~~~~
 
 1. `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
-2. `知乎-MIT 6.828   实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__
+2. `知乎-MIT 6.828  实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__
 3. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__
 4. 操作系统实战45讲
-5. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
+5. 有深度：`linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
+   `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
+6. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
+7. http://www.wowotech.net/
+
+
 
 
 基本概念

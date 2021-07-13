@@ -33,7 +33,7 @@ Performance
 
 4. `Linux 网络栈监控和调优：发送数据 <http://arthurchiao.art/blog/tuning-stack-tx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2017/02/06/monitoring-tuning-linux-networking-stack-sending-data/>`__；
-   属于`系列文章<https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__。
+   属于`系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__。
 
 5. `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
@@ -90,4 +90,15 @@ poll中会进行高精度sleep（ms）。
 		   struct timespec64 *end_time)
 
 源码：https://sbexr.rabexc.org/latest/sources/1c/441732eda22f11.html#00371001003c5001
+
+
+
+
+jiffies
+~~~~~~~~~~~~~~~
+查看jiffies值：本测试机为1000
+
+::
+
+   sudo cat /proc/timer_list |grep jiffies: ;sleep 1;sudo cat /proc/timer_list |grep jiffies:
 
