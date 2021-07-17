@@ -17,7 +17,10 @@ Linux Kernel
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
 5. 系统调用的细节：看参考博客文章。
 6. 自旋锁、互斥量、信号量的实现原理。
-   `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__
+   `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
+   `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
+
+7. `高速缓存与一致性 <https://zhuanlan.zhihu.com/cpu-cache>`__
 
    
 
@@ -52,6 +55,7 @@ linux、glibc、gcc等。
 2. Linux Devices Driver V2.6.10
 3. Proffesional Linux Kernel Architecture V2.6.24 
 4. Understanding The Linux Kernel  V2.6.11
+5. 奔跑吧Linux内核
 
 
 参考链接
@@ -1308,4 +1312,203 @@ laptop_mode：
 
 该策略意图将硬盘装懂的机械行为最小化，以节省电量。
 flusher会找准磁盘运转的时机，以执行所有其他的物理磁盘IO、刷新脏缓冲等。
+
+trace
+=============
+
+
+syslog与printk
+---------------
+
+syslog
+~~~~~~~~~~~~
+`内核日志及printk结构分析 <https://www.cnblogs.com/aaronLinux/p/6843131.html>`__
+
+1. /proc/sys/kern/printk_ratelimit :监测周期，在这个周期内只能发出下面的控制量的信息).
+2. /proc/sys/kernel/printk_ratelimit_burst :周期内的最大消息数.
+
+
+printk
+~~~~~~~~~~
+1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去调用console输出可能还产生中断。
+2. ring buffer只有1K。
+
+https://elixir.bootlin.com/linux/v4.4.157/source/kernel/printk/printk.c#L1659
+
+printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers 
+
+会遍历所有console。
+
+printk可以在任何环境中使用，而又要获取logbug_lock去保护环形缓冲区,所以需要禁止本地中断，防止死锁.
+
+
+`Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
+
+1. 如何把字符串放到缓存，如何从缓存写到串口。
+   首先是在关中断，关调度，保持logbuf_lock自旋锁的情况下，将数据格式化后，放到printk_buf缓冲区，其大小为1K，也就是说，每次printk只能打印1K的内容。格式化完毕后，将数据再复制到log_buf缓冲区。由于在向串口输出的过程中，会暂时打开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由驱动输出。简单的说：调用一次printk，需要打印的并不仅仅是本次printk需要输出的内容，还可能有其他CPU上输出的内容。
+   从缓存中输出到真实的设备是由注册的控制台个数决定的。注册多少个设备，就向多少个设备输出。也就是说，如果注册了两个串口控制台，那么关中断的时间就会增加一倍。
+2. 采用中断还是轮询。
+   采用的是轮询方式。
+
+
+c串口驱动
+~~~~~~~~~~~
+
+univ8250_console_write -> serial8250_console_write -> uart_console_write -> 
+serial8250_console_putchar -> wait_for_xmitr(此处最长循环等待10ms) -> io_serial_in
+
+https://elixir.bootlin.com/linux/v4.4.157/source/drivers/tty/serial/8250/8250_port.c#L1711
+
+::
+
+   /*
+   *	Wait for transmitter & holding register to empty
+   */
+   static void wait_for_xmitr(struct uart_8250_port *up, int bits)
+   {
+      unsigned int status, tmout = 10000;
+
+      /* Wait up to 10ms for the character(s) to be sent. */
+      for (;;) {
+         status = serial_in(up, UART_LSR);
+
+         up->lsr_saved_flags |= status & LSR_SAVE_FLAGS;
+
+         if ((status & bits) == bits)
+            break;
+         if (--tmout == 0)
+            break;
+         udelay(1);
+      }
+
+      /* Wait up to 1s for flow control if necessary */
+      if (up->port.flags & UPF_CONS_FLOW) {
+         unsigned int tmout;
+         for (tmout = 1000000; tmout; tmout--) {
+            unsigned int msr = serial_in(up, UART_MSR);
+            up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
+            if (msr & UART_MSR_CTS)
+               break;
+            udelay(1);
+            touch_nmi_watchdog();
+         }
+      }
+   }
+
+debugfs与ftrace
+-----------------
+
+debugfs
+~~~~~~~~~~~~
+https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
+
+
+CONFIG_DEBUG_FS
+CONFIG_GENERIC_IRQ_DEBUGFS 
+
+需要手动挂载
+
+mount -t debugfs none /sys/kernel/debug
+
+**Debugfs **exists as a simple way for kernel developers to
+ make information available to user space. Unlike /proc, 
+ which is only meant for information about a process, or sysfs, 
+ which has strict one-value-per-file rules, debugfs has no rules at all.
+  Developers can put any information they want there. 
+
+
+ftrace
+~~~~~~~~~~~~~
+
+https://www.kernel.org/doc/html/latest/trace/ftrace.html
+
+`Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
+
+`ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
+
+used for debugging or analyzing latencies and performance issues that take place outside of user-space.
+
+a framework of several assorted tracing utilities. 
+There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
+as well as for preemption and from a time a task is woken to the task is actually scheduled in.
+
+kprobe
+----------
+https://www.kernel.org/doc/Documentation/kprobes.txt
+
+动态地跟踪内核的行为、收集debug信息和性能信息。可以跟踪内核几乎所有的代码地址
+
+irq
+--------
+`中断处理流程 <https://peiyake.com/2020/09/16/kernel/linux%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F---%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B/>`__
+
+http://www.wowotech.net/sort/irq_subsystem
+
+
+No irq handler
+~~~~~~~~~~~~~~~~~~~~~
+do_IRQ: 1.55 No irq handler for vector
+
+
+**可能的原因**：  https://ilinuxkernel.com/?p=1192
+
+驱动卸载时，调用free_irq（）释放中断资源，但仍需调用pci_disable_device（）来关闭PCI设备。
+若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系，
+可能不会被解除。于是当再次加载该PCI设备驱动后，PCI设备发出中断，
+内核仍然会以旧的中断向量vector来解析中断号。
+但此时vector是第一次驱动加载时，内核分配的vector；
+而驱动卸载调用free_irq（）将vector与物理中断号irq对应关系解除。
+
+
+**调试方法**：https://unix.stackexchange.com/questions/535199/how-to-deduce-the-nature-of-an-interrupt-from-its-number
+
+If your current kernel has debugfs support and CONFIG_GENERIC_IRQ_DEBUGFS kernel option enabled,
+ you might get a lot of information on the state of IRQ vector 55 with the following commands as root:
+
+mount -t debugfs none /sys/kernel/debug
+grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
+
+do_IRQ
+~~~~~~~
+
+
+
+
+
+https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
+
+::
+
+   __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+   {
+      struct pt_regs *old_regs = set_irq_regs(regs);
+      struct irq_desc * desc;
+      /* high bit used in ret_from_ code  */
+      unsigned vector = ~regs->orig_ax;
+
+
+      entering_irq();
+
+      /* entering_irq() tells RCU that we're not quiescent.  Check it. */
+      RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
+
+      desc = __this_cpu_read(vector_irq[vector]);
+
+      if (!handle_irq(desc, regs)) {
+         ack_APIC_irq();
+
+         if (desc != VECTOR_RETRIGGERED) {
+            pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
+                     __func__, smp_processor_id(),
+                     vector);
+         } else {
+            __this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+         }
+      }
+
+      exiting_irq();
+
+      set_irq_regs(old_regs);
+      return 1;
+   }
 
