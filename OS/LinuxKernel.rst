@@ -1422,9 +1422,13 @@ ftrace
 
 https://www.kernel.org/doc/html/latest/trace/ftrace.html
 
+
 `Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
 
 `ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
+
+Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
+`Part2 <https://lwn.net/Articles/366796/>`__
 
 used for debugging or analyzing latencies and performance issues that take place outside of user-space.
 
@@ -1432,7 +1436,72 @@ a framework of several assorted tracing utilities.
 There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
 as well as for preemption and from a time a task is woken to the task is actually scheduled in.
 
-kprobe
+
+per_cpu
+^^^^^^^^^^
+每个核均有独自的：per_cpu/cpu0/trace 、per_cpu/cpu0/stats
+
+
+stack trace
+^^^^^^^^^^^^^^^
+“function”:Function call tracer to trace all kernel functions.
+
+::
+
+   echo 1  >  /proc/sys/kernel/stack_tracer_enabled
+   echo 0 >  /proc/sys/kernel/stack_tracer_enabled
+
+   stack trace的信息输出通过如下的节点上送给用户态：
+
+   /sys/kernel/debug/tracing/stack_max_size
+   /sys/kernel/debug/tracing/stack_trace 
+   /sys/kernel/debug/tracing/stack_trace_filter
+
+   指定pid
+   echo pid > /sys/kernel/debug/tracing/set_ftrace_pid
+    
+   指定核
+   echo 4 >tracing_cpumask
+
+
+
+irqsoff tracer
+^^^^^^^^^^^^^^^
+“irqsoff”：Traces the areas that disable interrupts and saves the trace with the longest max latency。
+
+ftrace的时间都是ms。
+
+
+使用方法：
+
+::
+
+   # echo 0 > options/function-trace
+   # echo irqsoff > current_tracer
+   # echo 1 > tracing_on
+   # echo 0 > tracing_max_latency //每次trace均需要执行一次才能生效
+   # echo 0 > tracing_on
+   # cat trace
+
+   #echo nop > current_tracer
+
+
+trace-cmd
+~~~~~~~~~~~~
+`ftrace利器之trace-cmd和kernelshark <https://www.cnblogs.com/arnoldlu/p/9014365.html>`__
+
+`trace-cmd - command line reader for ftrace <https://lwn.net/Articles/341902/>`__
+
+
+https://man7.org/linux/man-pages/man1/trace-cmd-record.1.html
+
+
+trace-cmd作为ftrace的前端，对ftrace的各种设置进行包装，同时能对结果进行处理，极大地提高了ftrace的使用效率。
+
+kernelshark作为trace-cmd的前端，借助图形化，灵活的filter，缩放功能，能更有效的帮助分析，高效的得到结果。
+
+
+   kprobe
 ----------
 https://www.kernel.org/doc/Documentation/kprobes.txt
 

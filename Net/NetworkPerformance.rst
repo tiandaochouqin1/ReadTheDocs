@@ -58,8 +58,22 @@ Performance
 9. sar -n TCP,ETCP 1
 10. top
 
-poll机制
+收包和poll
 =============
+收包过程
+---------------
+1. 加载网卡驱动，初始化
+2. 数据包从外部网络进入网卡
+3. 网卡（通过DMA）将包拷贝到内核内存中的ring buffer
+4. 产生硬件中断，通知系统收到了一个包
+5. 驱动调用 NAPI ，如果轮询（poll）还没有开始，就开始轮询
+6. ksoftirqd软中断调用 NAPI 的poll函数从ring buffer收包（poll 函数是网卡驱动在初始化阶段注册的；每个cpu上都运行着一个ksoftirqd进程，在系统启动期间就注册了）
+7. ring buffer里面对应的内存区域解除映射（unmapped）
+8. 如果 packet steering 功能打开，或者网卡有多队列，网卡收到的数据包会被分发到多个cpu
+9. 数据包从队列进入协议层
+10. 协议层处理数据包
+11. 数据包从协议层进入相应 socket 的接收队列
+
 
 NAPI
 ----------
