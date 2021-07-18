@@ -1056,10 +1056,10 @@ dentry
 
 目录项对象没有对应的磁盘数据结构，VFS根据字符串形式的路径名现场创建它。
 
-**目录项状态：**被使用、未被使用和负状态。
+**目录项状态**:被使用、未被使用和负状态。
 一个被使用或未被使用的目录项对应这一个有效的索引节点（由d_inode指向），而负状态的目录项则不对应索引节点（作为缓存）。
 
-**目录项缓存dcache：**文件访问具有空间和时间的局部性，故缓存非常重要。
+**目录项缓存dcache**:文件访问具有空间和时间的局部性，故缓存非常重要。
 
 1. “被使用的”目录项缓存链表，一个索引节点具有多个硬链接时则有多个目录项对象，因此inode中的i_dentry为链表；
 2. “最近被使用的”目录项双向链表，包含未被使用和负状态的目录项对象，头部插入尾部删除；
@@ -1090,7 +1090,7 @@ file的相关操作与系统调用和类似，如llseek、read、write、flush�
 2. vfsmount，描述一个安装文件系统的实例，即代表一个安装点。
 
 和进程相关的数据结构
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 1. file_struct：由进程描述符中的files指向，包含的fd_array指向已打开的文件对象。
 2. fs_struct：由进程描述符的fs指向，包含的当前工作目录和根目录路径结构体中包含目录项对象。
 3. mmt_namespace：由进程描述符的mmt_namespace指向，使得每个进程都看到唯一的安装文件系统，list域为已安装的文件系统的双向链表。
@@ -1284,7 +1284,7 @@ find_get_page -> radix_tree_lookup。
 
 
 缓冲区高速缓存cached
--------------------
+------------------------
 磁盘块通过块IO缓存被存入页高速缓存。
 
 映射内存中的页面到磁盘块，以减少块IO操作时的磁盘访问。
@@ -1312,272 +1312,3 @@ laptop_mode：
 
 该策略意图将硬盘装懂的机械行为最小化，以节省电量。
 flusher会找准磁盘运转的时机，以执行所有其他的物理磁盘IO、刷新脏缓冲等。
-
-trace
-=============
-
-
-syslog与printk
----------------
-
-syslog
-~~~~~~~~~~~~
-`内核日志及printk结构分析 <https://www.cnblogs.com/aaronLinux/p/6843131.html>`__
-
-1. /proc/sys/kern/printk_ratelimit :监测周期，在这个周期内只能发出下面的控制量的信息).
-2. /proc/sys/kernel/printk_ratelimit_burst :周期内的最大消息数.
-
-
-printk
-~~~~~~~~~~
-1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去调用console输出可能还产生中断。
-2. ring buffer只有1K。
-
-https://elixir.bootlin.com/linux/v4.4.157/source/kernel/printk/printk.c#L1659
-
-printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers 
-
-会遍历所有console。
-
-printk可以在任何环境中使用，而又要获取logbug_lock去保护环形缓冲区,所以需要禁止本地中断，防止死锁.
-
-
-`Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
-
-1. 如何把字符串放到缓存，如何从缓存写到串口。
-   首先是在关中断，关调度，保持logbuf_lock自旋锁的情况下，将数据格式化后，放到printk_buf缓冲区，其大小为1K，也就是说，每次printk只能打印1K的内容。格式化完毕后，将数据再复制到log_buf缓冲区。由于在向串口输出的过程中，会暂时打开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由驱动输出。简单的说：调用一次printk，需要打印的并不仅仅是本次printk需要输出的内容，还可能有其他CPU上输出的内容。
-   从缓存中输出到真实的设备是由注册的控制台个数决定的。注册多少个设备，就向多少个设备输出。也就是说，如果注册了两个串口控制台，那么关中断的时间就会增加一倍。
-2. 采用中断还是轮询。
-   采用的是轮询方式。
-
-
-c串口驱动
-~~~~~~~~~~~
-
-univ8250_console_write -> serial8250_console_write -> uart_console_write -> 
-serial8250_console_putchar -> wait_for_xmitr(此处最长循环等待10ms) -> io_serial_in
-
-https://elixir.bootlin.com/linux/v4.4.157/source/drivers/tty/serial/8250/8250_port.c#L1711
-
-::
-
-   /*
-   *	Wait for transmitter & holding register to empty
-   */
-   static void wait_for_xmitr(struct uart_8250_port *up, int bits)
-   {
-      unsigned int status, tmout = 10000;
-
-      /* Wait up to 10ms for the character(s) to be sent. */
-      for (;;) {
-         status = serial_in(up, UART_LSR);
-
-         up->lsr_saved_flags |= status & LSR_SAVE_FLAGS;
-
-         if ((status & bits) == bits)
-            break;
-         if (--tmout == 0)
-            break;
-         udelay(1);
-      }
-
-      /* Wait up to 1s for flow control if necessary */
-      if (up->port.flags & UPF_CONS_FLOW) {
-         unsigned int tmout;
-         for (tmout = 1000000; tmout; tmout--) {
-            unsigned int msr = serial_in(up, UART_MSR);
-            up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
-            if (msr & UART_MSR_CTS)
-               break;
-            udelay(1);
-            touch_nmi_watchdog();
-         }
-      }
-   }
-
-debugfs与ftrace
------------------
-
-debugfs
-~~~~~~~~~~~~
-https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
-
-
-CONFIG_DEBUG_FS
-CONFIG_GENERIC_IRQ_DEBUGFS 
-
-需要手动挂载
-
-mount -t debugfs none /sys/kernel/debug
-
-**Debugfs **exists as a simple way for kernel developers to
- make information available to user space. Unlike /proc, 
- which is only meant for information about a process, or sysfs, 
- which has strict one-value-per-file rules, debugfs has no rules at all.
-  Developers can put any information they want there. 
-
-
-ftrace
-~~~~~~~~~~~~~
-
-https://www.kernel.org/doc/html/latest/trace/ftrace.html
-
-
-`Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
-
-`ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
-
-Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
-`Part2 <https://lwn.net/Articles/366796/>`__
-
-used for debugging or analyzing latencies and performance issues that take place outside of user-space.
-
-a framework of several assorted tracing utilities. 
-There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
-as well as for preemption and from a time a task is woken to the task is actually scheduled in.
-
-
-per_cpu
-^^^^^^^^^^
-每个核均有独自的：per_cpu/cpu0/trace 、per_cpu/cpu0/stats
-
-
-stack trace
-^^^^^^^^^^^^^^^
-“function”:Function call tracer to trace all kernel functions.
-
-::
-
-   echo 1  >  /proc/sys/kernel/stack_tracer_enabled
-   echo 0 >  /proc/sys/kernel/stack_tracer_enabled
-
-   stack trace的信息输出通过如下的节点上送给用户态：
-
-   /sys/kernel/debug/tracing/stack_max_size
-   /sys/kernel/debug/tracing/stack_trace 
-   /sys/kernel/debug/tracing/stack_trace_filter
-
-   指定pid
-   echo pid > /sys/kernel/debug/tracing/set_ftrace_pid
-    
-   指定核
-   echo 4 >tracing_cpumask
-
-
-
-irqsoff tracer
-^^^^^^^^^^^^^^^
-“irqsoff”：Traces the areas that disable interrupts and saves the trace with the longest max latency。
-
-ftrace的时间都是ms。
-
-
-使用方法：
-
-::
-
-   # echo 0 > options/function-trace
-   # echo irqsoff > current_tracer
-   # echo 1 > tracing_on
-   # echo 0 > tracing_max_latency //每次trace均需要执行一次才能生效
-   # echo 0 > tracing_on
-   # cat trace
-
-   #echo nop > current_tracer
-
-
-trace-cmd
-~~~~~~~~~~~~
-`ftrace利器之trace-cmd和kernelshark <https://www.cnblogs.com/arnoldlu/p/9014365.html>`__
-
-`trace-cmd - command line reader for ftrace <https://lwn.net/Articles/341902/>`__
-
-
-https://man7.org/linux/man-pages/man1/trace-cmd-record.1.html
-
-
-trace-cmd作为ftrace的前端，对ftrace的各种设置进行包装，同时能对结果进行处理，极大地提高了ftrace的使用效率。
-
-kernelshark作为trace-cmd的前端，借助图形化，灵活的filter，缩放功能，能更有效的帮助分析，高效的得到结果。
-
-
-   kprobe
-----------
-https://www.kernel.org/doc/Documentation/kprobes.txt
-
-动态地跟踪内核的行为、收集debug信息和性能信息。可以跟踪内核几乎所有的代码地址
-
-irq
---------
-`中断处理流程 <https://peiyake.com/2020/09/16/kernel/linux%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F---%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B/>`__
-
-http://www.wowotech.net/sort/irq_subsystem
-
-
-No irq handler
-~~~~~~~~~~~~~~~~~~~~~
-do_IRQ: 1.55 No irq handler for vector
-
-
-**可能的原因**：  https://ilinuxkernel.com/?p=1192
-
-驱动卸载时，调用free_irq（）释放中断资源，但仍需调用pci_disable_device（）来关闭PCI设备。
-若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系，
-可能不会被解除。于是当再次加载该PCI设备驱动后，PCI设备发出中断，
-内核仍然会以旧的中断向量vector来解析中断号。
-但此时vector是第一次驱动加载时，内核分配的vector；
-而驱动卸载调用free_irq（）将vector与物理中断号irq对应关系解除。
-
-
-**调试方法**：https://unix.stackexchange.com/questions/535199/how-to-deduce-the-nature-of-an-interrupt-from-its-number
-
-If your current kernel has debugfs support and CONFIG_GENERIC_IRQ_DEBUGFS kernel option enabled,
- you might get a lot of information on the state of IRQ vector 55 with the following commands as root:
-
-mount -t debugfs none /sys/kernel/debug
-grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
-
-do_IRQ
-~~~~~~~
-
-
-
-
-
-https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
-
-::
-
-   __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
-   {
-      struct pt_regs *old_regs = set_irq_regs(regs);
-      struct irq_desc * desc;
-      /* high bit used in ret_from_ code  */
-      unsigned vector = ~regs->orig_ax;
-
-
-      entering_irq();
-
-      /* entering_irq() tells RCU that we're not quiescent.  Check it. */
-      RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
-
-      desc = __this_cpu_read(vector_irq[vector]);
-
-      if (!handle_irq(desc, regs)) {
-         ack_APIC_irq();
-
-         if (desc != VECTOR_RETRIGGERED) {
-            pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
-                     __func__, smp_processor_id(),
-                     vector);
-         } else {
-            __this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-         }
-      }
-
-      exiting_irq();
-
-      set_irq_regs(old_regs);
-      return 1;
-   }
-

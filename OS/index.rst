@@ -6,6 +6,7 @@ Operating System
    :maxdepth: 2
    :numbered: 4
    
+   KernelDebug.rst
    LinuxKernel.rst
    LinuxCompile.rst
    makefile.rst
