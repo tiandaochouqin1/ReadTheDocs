@@ -38,6 +38,7 @@ Linux Kernel
 2. https://kernelnewbies.org/
 3. https://lwn.net/
 4. https://kernel.org/pub/linux/kernel/
+5. https://wiki.linuxfoundation.org/realtime/start
 
 在线源码
 ~~~~~~~~~~~~~~~~~~

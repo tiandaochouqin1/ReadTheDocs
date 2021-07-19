@@ -40,6 +40,7 @@ Kbuild+Makefile
 
 编译内核并安装
 ----------------
+https://www.linuxprobe.com/linux-kernel-compilation.html
 
 1. 安装依赖
    sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
@@ -51,12 +52,15 @@ Kbuild+Makefile
 
 
 3. 编译内核与模块
+   
    make clean       清空一些编译信息
 
    make -j4 >> make.log
    此时make指令分别执行：make bzImage 和 make modules。内核与模块都已经编译好。
    此指令会生成生成相应内核版本的内核模块和vmlinuz，initrd.img，Symtem.map文件。
+
 4. 安装
+   
    make modules_install //安装启用的模块。在/lib/modules/目录下生成对应版本的内核模块。
 
    sudo make install //安装内核。这一步已经更新引导！！ 把System.map, vmlinux，config，initrd.img文件拷贝到/boot/目录下。
@@ -64,19 +68,27 @@ Kbuild+Makefile
 5. reboot
 
 
-
 ::
 
-   make[1]: *** No rule to make target 'debian/canonical-certs.pem', needed by 'certs/x509_certificate_list'.  Stop.
+   make[1]: *** No rule to make target 'debian/canonical-certs.pem',
+    needed by 'certs/x509_certificate_list'.  Stop.
    Makefile:1821: recipe for target 'certs' failed
    make: *** [certs] Error 2
 
    需要设置 CONFIG_SYSTEM_TRUSTED_KEYS="" 为空字符
 
 
+config
+~~~~~~~~~~
+内核配置好后，配置项存放在源代码内核源码根目录的 .config 文件中，
+可以直接修改该文件，修改后应该更新用 $ make oldconfig 更新配置
+
+
+menuconfig通过调用各级目录下Kconfig文件来形成图形界面的
+
 下载内核并安装
 ------------------
-1. 选择版本5.50，并下载 https://kernel.ubuntu.com/~kernel-ppa/mainline/
+1. 选择版本5.5.0，并下载 https://kernel.ubuntu.com/~kernel-ppa/mainline/
 
 ::
 
@@ -88,6 +100,7 @@ Kbuild+Makefile
    wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.5/linux-modules-5.5.0-050500-generic_5.5.0-050500.202001262030_amd64.deb
 
 2. sudo dpkg -i *.deb
+
 3. reboot
 
 5.5.0可正常安装，5.12.14安装headers报错。没找到解决办法，貌似不影响系统工作？
@@ -103,17 +116,21 @@ linux-headers-5.12.14-051214-generic
 1. 查看现有引导： grep menuentry /boot/grub/grub.cfg
 
 2. 更改引导。
+   
    sudo vi /etc/default/grub
    GRUB_DEFAULT="" //必须加双引号
+
 3. 目录引导：
+   
    序号是按照grub菜单目标编号的。有两层目录，均以0开始。首层0为默认第一个menuentry。
+   
    内核增删后，序号会变！！
 
    GRUB_DEFAULT="1>8" //其中编号4是步骤1中的menuentry顺序。
-   或
-   GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux 5.4.0-72-generic"
-   或
-   GRUB_DEFAULT="gnulinux-advanced-51c0823c-4ec6-4ce0-bdb7-a041e23f430c>gnulinux-5.4.0-72-generic-advanced-51c0823c-4ec6-4ce0-bdb7-a041e23f430c"
+
+   或   GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux 5.4.0-72-generic"
+   
+   或   GRUB_DEFAULT="gnulinux-advanced-51c0823c-4ec6-4ce0-bdb7-a041e23f430c>gnulinux-5.4.0-72-generic-advanced-51c0823c-4ec6-4ce0-bdb7-a041e23f430c"
 
 4. sudo update-grub ，检查并更新grub。注意查看命令结果。如
 

@@ -37,18 +37,43 @@ Kernel Debug & Trace
 8. **KDB**   访问内核内存和数据结构。需要打补丁并重新编译内核。
 
 
+debugfs
+===============
+https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
+
+**Debugfs **exists as a simple way for kernel developers to
+   make information available to user space. Unlike /proc, 
+   which is only meant for information about a process, or sysfs, 
+   which has strict one-value-per-file rules, debugfs has no rules at all.
+   Developers can put any information they want there. 
+
+挂载
+-----------
+::
+
+   打开内核编译选项
+
+   CONFIG_DEBUG_FS
+
+   CONFIG_GENERIC_IRQ_DEBUGFS // v5.10.31 not set by default
+
+   手动挂载
+   mount -t debugfs none /sys/kernel/debug
+
+
+`CONFIG_GENERIC_IRQ_DEBUGFS <https://www.kernel.org/doc/html/latest/core-api/irq/irq-domain.html>`__
+
 
 ftrace
 ============
 
-https://www.kernel.org/doc/html/latest/trace/ftrace.html
+1. https://www.kernel.org/doc/html/latest/trace/ftrace.html
 
+2. `Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
 
-`Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
+3. `ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
 
-`ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
-
-Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
+4. Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
 `Part2 <https://lwn.net/Articles/366796/>`__
 
 used for debugging or analyzing latencies and performance issues that take place outside of user-space.
@@ -57,32 +82,27 @@ a framework of several assorted tracing utilities.
 There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
 as well as for preemption and from a time a task is woken to the task is actually scheduled in.
 
-
-per_cpu
-~~~~~~~~~~~~~~~
-每个核均有独自的：per_cpu/cpu0/trace 、per_cpu/cpu0/stats
-
-
-stack trace
---------------
-“function”:Function call tracer to trace all kernel functions.
+挂载
+------
+依赖debugfs.
 
 ::
 
-   echo 1  >  /proc/sys/kernel/stack_tracer_enabled
-   echo 0 >  /proc/sys/kernel/stack_tracer_enabled
+   CONFIG_IRQSOFF_TRACER=y
 
-   stack trace的信息输出通过如下的节点上送给用户态：
+   mount -t tracefs nodev /sys/kernel/tracing
 
-   /sys/kernel/debug/tracing/stack_max_size
-   /sys/kernel/debug/tracing/stack_trace 
-   /sys/kernel/debug/tracing/stack_trace_filter
+   the tracefs file system will be automatically mounted at:
+   /sys/kernel/debug/tracing
 
-   指定pid
-   echo pid > /sys/kernel/debug/tracing/set_ftrace_pid
-    
-   指定核
-   echo 4 >tracing_cpumask
+   ln -s /sys/kernel/tracing /tracing
+
+
+后续操作均在文件夹 `/sys/kernel/tracing`中。
+
+per cpu
+~~~~~~~~~~~~~~~
+每个核均有独自的：per_cpu/cpu0/trace 、per_cpu/cpu0/stats
 
 
 
@@ -92,6 +112,8 @@ irqsoff tracer
 
 ftrace的时间都是ms。
 
+在内核源码根目录文件 .config 中搜索 IRQSOFF，看到 # CONFIG_IRQSOFF_TRACER is not set (即默认不开启)。
+在menuconfig中开启或直接修改.config即可。
 
 使用方法：
 
@@ -130,10 +152,41 @@ kernelshark作为trace-cmd的前端，借助图形化，灵活的filter，缩放
     sudo trace-cmd report |less
 
 
+stack trace
+--------------
 
-trace
-=============
+“function”:Function call tracer to trace all kernel functions.
 
+
+::
+
+   stack tracer有点特殊，需要在/proc 操作
+   echo 1  >  /proc/sys/kernel/stack_tracer_enabled
+   echo 0 >  /proc/sys/kernel/stack_tracer_enabled
+
+   stack trace的信息输出通过如下的节点上送给用户态：
+
+   /sys/kernel/debug/tracing/stack_max_size
+   /sys/kernel/debug/tracing/stack_trace 
+   /sys/kernel/debug/tracing/stack_trace_filter
+
+   指定pid
+   echo pid > /sys/kernel/debug/tracing/set_ftrace_pid
+   
+   指定核
+   echo 4 >tracing_cpumask
+
+
+
+kprobe
+==========
+https://www.kernel.org/doc/Documentation/kprobes.txt
+
+动态地跟踪内核的行为、收集debug信息和性能信息。可以跟踪内核几乎所有的代码地址
+
+
+syslog & printk
+====================
 
 syslog
 ----------------
@@ -212,31 +265,7 @@ https://elixir.bootlin.com/linux/v4.4.157/source/drivers/tty/serial/8250/8250_po
 
 
 
-debugfs
------------------
-https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
 
-
-CONFIG_DEBUG_FS
-CONFIG_GENERIC_IRQ_DEBUGFS 
-
-需要手动挂载
-
-mount -t debugfs none /sys/kernel/debug
-
-**Debugfs **exists as a simple way for kernel developers to
- make information available to user space. Unlike /proc, 
- which is only meant for information about a process, or sysfs, 
- which has strict one-value-per-file rules, debugfs has no rules at all.
-  Developers can put any information they want there. 
-
-
-
-kprobe
-----------
-https://www.kernel.org/doc/Documentation/kprobes.txt
-
-动态地跟踪内核的行为、收集debug信息和性能信息。可以跟踪内核几乎所有的代码地址
 
 irq处理流程
 -------------------
@@ -262,11 +291,15 @@ do_IRQ: 1.55 No irq handler for vector
 
 **调试方法**：https://unix.stackexchange.com/questions/535199/how-to-deduce-the-nature-of-an-interrupt-from-its-number
 
-If your current kernel has debugfs support and CONFIG_GENERIC_IRQ_DEBUGFS kernel option enabled,
+If your current kernel has debugfs support and **CONFIG_GENERIC_IRQ_DEBUGFS** kernel option enabled,
  you might get a lot of information on the state of IRQ vector 55 with the following commands as root:
 
-mount -t debugfs none /sys/kernel/debug
-grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
+::
+
+   mount -t debugfs none /sys/kernel/debug
+   grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
+
+
 
 do_IRQ
 ~~~~~~~
