@@ -41,11 +41,11 @@ debugfs
 ===============
 https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
 
-**Debugfs **exists as a simple way for kernel developers to
-   make information available to user space. Unlike /proc, 
-   which is only meant for information about a process, or sysfs, 
-   which has strict one-value-per-file rules, debugfs has no rules at all.
-   Developers can put any information they want there. 
+**Debugfs** exists as a simple way for kernel developers to
+make information available to user space. Unlike /proc, 
+which is only meant for information about a process, or sysfs, 
+which has strict one-value-per-file rules, debugfs has no rules at all.
+Developers can put any information they want there. 
 
 挂载
 -----------
@@ -82,8 +82,8 @@ a framework of several assorted tracing utilities.
 There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
 as well as for preemption and from a time a task is woken to the task is actually scheduled in.
 
-挂载
-------
+挂载debugfs
+---------------
 依赖debugfs.
 
 ::
@@ -98,7 +98,7 @@ as well as for preemption and from a time a task is woken to the task is actuall
    ln -s /sys/kernel/tracing /tracing
 
 
-后续操作均在文件夹 `/sys/kernel/tracing`中。
+后续操作均在文件夹  `/sys/kernel/tracing` 中。
 
 per cpu
 ~~~~~~~~~~~~~~~

@@ -184,7 +184,7 @@ log与查找
          --simplify-by-decoration 只显示被引用的commit
          --all  指定要显示的branch
 
-         git branch --contains $COMMIT_ID //查找commit
+         git branch --contains $COMMIT_ID --all //查找commit
 
 
 
