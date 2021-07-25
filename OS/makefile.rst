@@ -229,14 +229,86 @@ ELF结构
 - 文件头：readelf -h 
 - 段表：readelf -S 、 objdump -h(只显示关键段)。
 
-objdump -s -d -x:打印所有段内容（-s），并显示反汇编（-d）。显示文件头内容（-x）。
+1. objdump -s -d -x:打印所有段内容（-s），并显示反汇编（-d）。显示文件头内容（-x）。
 
-size SimpleSection: 查看text、data、bss的长度。
+2. size SimpleSection: 查看text、data、bss的长度。
 
-readelf -r .so ：查看重定位表。
+3. readelf -r .so ：查看重定位表。
 
 .. figure:: ../images/Elf-layout.png
 
     ELF结构
+
+
+指定段：在全局变量或函数前加上 `__attribute__((section("name")))`
+
+段位置与长度
+-------------
+
+::
+
+   # readelf -h SimpleSection.o
+   ELF Header:
+   Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+   Class:                             ELF64
+   Data:                              2's complement, little endian
+   Version:                           1 (current)
+   OS/ABI:                            UNIX - System V
+   ABI Version:                       0
+   Type:                              REL (Relocatable file)
+   Machine:                           Advanced Micro Devices X86-64
+   Version:                           0x1
+   Entry point address:               0x0
+   Start of program headers:          0 (bytes into file)
+   Start of section headers:          1040 (bytes into file)
+   Flags:                             0x0
+   Size of this header:               64 (bytes)
+   Size of program headers:           0 (bytes)
+   Number of program headers:         0
+   Size of section headers:           64 (bytes)
+   Number of section headers:         13
+   Section header string table index: 12
+
+   # readelf -S SimpleSection.o
+   There are 13 section headers, starting at offset 0x410:
+
+   Section Headers:
+   [Nr] Name              Type             Address           Offset
+         Size              EntSize          Flags  Link  Info  Align
+   [ 0]                   NULL             0000000000000000  00000000
+         0000000000000000  0000000000000000           0     0     0
+   [ 1] .text             PROGBITS         0000000000000000  00000040
+         0000000000000054  0000000000000000  AX       0     0     1
+   [ 2] .rela.text        RELA             0000000000000000  00000300
+         0000000000000078  0000000000000018   I      10     1     8
+   [ 3] .data             PROGBITS         0000000000000000  00000094
+         0000000000000008  0000000000000000  WA       0     0     4
+   [ 4] .bss              NOBITS           0000000000000000  0000009c
+         0000000000000004  0000000000000000  WA       0     0     4
+   [ 5] .rodata           PROGBITS         0000000000000000  0000009c
+         0000000000000004  0000000000000000   A       0     0     1
+   [ 6] .comment          PROGBITS         0000000000000000  000000a0
+         000000000000002e  0000000000000001  MS       0     0     1
+   [ 7] .note.GNU-stack   PROGBITS         0000000000000000  000000ce
+         0000000000000000  0000000000000000           0     0     1
+   [ 8] .eh_frame         PROGBITS         0000000000000000  000000d0
+         0000000000000058  0000000000000000   A       0     0     8
+   [ 9] .rela.eh_frame    RELA             0000000000000000  00000378
+         0000000000000030  0000000000000018   I      10     8     8
+   [10] .symtab           SYMTAB           0000000000000000  00000128
+         0000000000000180  0000000000000018          11    11     8
+   [11] .strtab           STRTAB           0000000000000000  000002a8
+         0000000000000053  0000000000000000           0     0     1
+   [12] .shstrtab         STRTAB           0000000000000000  000003a8
+         0000000000000061  0000000000000000           0     0     1
+
+       
+SimpleSection.o 大小为 1872（0x750）字节。
+
+shstrtab结束后长度为0x410（1040），段表长度为64×13=832（0x340）,刚好为文件长度。
+
+此处段表位于最后，与csapp的描述一致。
+
+
 
 
