@@ -188,14 +188,14 @@ log与查找
 
 
 
-贮藏与清理
+stash
 -----------
 1. rm file
 2. git rm file [--cached]
 3. git stash push -m "comments"
 
-git clean
-~~~~~~~~~~~~
+clean
+-----------~
 删除未跟踪文件
 
 git clean -d [-f] [-n/--dry-run] : 移除没有忽略的未跟踪文件
@@ -211,6 +211,29 @@ git clean -fd
 3. 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，无法恢复！！！）
 git clean -xfd
  
+
+补丁
+-----------
+1. git diff + git apply :不带commit信息。
+
+2. git format-patch + git am :每个commit生成一个patch。内容：作者信息 + commit信息 + `git diff -p --stat` 。
+
+
+::
+   
+	git format-patch <commit>             //生成某commit以来的修改patch（不包含该commit）
+	git format-patch -<range> <commit>    //某次提交（含）之前的n次提交,range值也可放到commit后。
+
+
+
+	git format-patch -1 <commit>  //生成指定commit号的补丁
+	git format-patch HEAD~1
+	git format-patch <r1>..<r2>       //生成两个commit间的修改的patch,包含两个commit
+
+
+	git apply --stat xxxx.patch   　　//查看patch的情况
+	git apply --check xxxx.patch   　//检查patch是否能够打上
+	git apply --reject xxx.patch   //强制打补丁
 
 
 重置与回滚
@@ -446,10 +469,43 @@ config
 ~~~~~~~~~~~
 ::
 
-   git config --global core.editor "notepad++"
+   git config --global push.default upstream //默认push目标
+   git config --global core.editor "notepad"
+	git config --global core.filemode true  //文件权限变化
+	git config --global pull.rebase  true     //
+	git config --global core.autocrlf input  //提交时 CRLF -> LF
+
    
 
+autocrlf
+^^^^^^^^^^^^
+Windows 使用回车（CR）和换行（LF）两个字符来结束一行，而 macOS 和 Linux 只使用换行（LF）一个字符.
 
+::
+
+	git config --global core.autocrlf true   //提交时 CRLF -> LF +  下载时 LF -> CRLF
+	git config --global core.autocrlf input  //提交时 CRLF -> LF
+
+
+whitespace
+^^^^^^^^^^^^
+
+共6个选项,前3个默认打开。 
+要想关闭某个选项，在输入设置选项时不指定它或在它前面加个 - .
+
+1. blank-at-eol
+2. blank-at-eof
+3. space-before-tab
+4. indent-with-non-tab
+5. tab-in-indent
+6. cr-at-eol
+
+::
+
+	git config --global core.whitespace \
+	trailing-space,-space-before-tab,indent-with-non-tab,tab-in-indent,cr-at-eol
+	
+	//trailing-space =  blank-at-eol	+ blank-at-eof
 
 仓库太大
 --------

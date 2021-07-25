@@ -237,11 +237,74 @@ dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
 
 
 
+
+
+配置工具链目录：
+
+::
+
+   export PATH=$PATH:/usr/local/arm/gcc-arm-none-eabi-10-2020-q4-major/bin
+   export命令只对当前shell生效，可加入.bashrc中并source。
+
+
+包管理器安装
+~~~~~~~~~~~~~~~
+centos默认安装的为gcc-4.8
+
+::
+
+   //32bit and 64bit ARM :
+
+   sudo apt-get install gcc-arm-linux-gnueabihf
+   sudo apt-get install gcc-aarch64-linux-gnu
+
+   //installed in /usr/bin 
+
+   export CROSS_COMPILE=arm-linux-gnueabihf-
+
+   export CROSS_COMPILE=aarch64-linux-gnu-
+
 编译strace
 -----------------
 下载源码：https://github.com/strace/strace。 阅读 README-configure 编译配置指南。
 
 `configure关于交叉编译的参数设置 <https://www.cnblogs.com/sky-heaven/p/8625248.html>`__
 
-最新版本依赖较多（多依赖librt.so.1），编译时需要静态链接才能使用。老版本依赖较少（如v4.18），可直接使用。
+- 最新版本依赖较多（多依赖librt.so.1），编译时需要静态链接才能使用。动态链接编译的程序无法在环境上运行（？？）
+- 老版本依赖较少（如v4.18），可使用。
+configure
+~~~~~~~~~~~~
+::
+
+   arm64，可在raspberry 4B运行。
+
+   ./configure --host=aarch64-linux-gnu   CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld AR=aarch64-linux-gnu-ar
+   strace v5.12版本需要加参数：--disable-mpers
+
+   make 
+
+
+安装
+~~~~~~~~~~~~~
+::
+
+   make install
+   make install -n  //只查看，不运行
+
+   install -c -m 644 "$file" "$inst"    //等于 cp、strip、chown、chmod
+
+注意事项
+~~~~~~~~~~~~~~~~
+1. 静态链接时，v5.12 CFLAGS参数需要加pthread 即：LDFLAGS='-static -pthread'
+https://github.com/strace/strace/issues/67
+   
+2. arm-none-eabi不可用于编译linux程序，需使用arm-linux-eabi。
+
+3. 工具链版本需要满足编译要求，不可太高或太低。可能有如下类似错误，使用gcc 7.5解决（gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu）。
+
+::
+
+   configure: error: C compiler cannot create executables
+
+
 
