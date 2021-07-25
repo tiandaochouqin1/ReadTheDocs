@@ -441,6 +441,16 @@ config
       git config --global -l
       git config --system -l
 
+
+常用配置
+~~~~~~~~~~~
+::
+
+   git config --global core.editor "notepad++"
+   
+
+
+
 仓库太大
 --------
 

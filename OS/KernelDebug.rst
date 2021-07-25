@@ -342,3 +342,18 @@ https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
       return 1;
    }
 
+
+
+perf
+=============
+
+https://www.cnblogs.com/arnoldlu/p/6241297.html
+
+最好sudo执行。-p pid
+
+- perf top：显示性能事件
+- perf stat：统计信息
+- perf record + report：精确分析，函数级别
+- perf sched：跟踪/测量调
+   
+   

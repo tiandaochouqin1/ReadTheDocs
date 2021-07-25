@@ -228,3 +228,20 @@ sudo apt purge linux-headers-3.19.0-15
 
 模块安装：``sudo insmod mod.ko``
 dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
+
+
+交叉编译
+==============
+
+`全网可用交叉编译工具链大全 <https://zhuanlan.zhihu.com/p/79043170>`__
+
+
+
+编译strace
+-----------------
+下载源码：https://github.com/strace/strace。 阅读 README-configure 编译配置指南。
+
+`configure关于交叉编译的参数设置 <https://www.cnblogs.com/sky-heaven/p/8625248.html>`__
+
+最新版本依赖较多（多依赖librt.so.1），编译时需要静态链接才能使用。老版本依赖较少（如v4.18），可直接使用。
+

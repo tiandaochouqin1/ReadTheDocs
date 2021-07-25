@@ -217,3 +217,26 @@ GNU的make工作时的执行步骤如下：（其它的make也是类似）
 
 Cmake
 ======
+
+
+
+
+ELF与链接
+==============
+
+ELF结构
+--------------
+- 文件头：readelf -h 
+- 段表：readelf -S 、 objdump -h(只显示关键段)。
+
+objdump -s -d -x:打印所有段内容（-s），并显示反汇编（-d）。显示文件头内容（-x）。
+
+size SimpleSection: 查看text、data、bss的长度。
+
+readelf -r .so ：查看重定位表。
+
+.. figure:: ../images/Elf-layout.png
+
+    ELF结构
+
+

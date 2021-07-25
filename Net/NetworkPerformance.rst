@@ -78,7 +78,7 @@ Performance
 NAPI
 ----------
 
-`Linux NAPI机制分析<https://www.codenong.com/cs106952430/>`__
+`Linux NAPI机制分析 <https://www.codenong.com/cs106952430/>`__
 
 
 .. figure:: ../images/NAPI.png
@@ -100,8 +100,7 @@ do_poll
 
 poll中会进行高精度sleep（ms）。
 
-函数原型： static int do_poll(struct poll_list *list, struct poll_wqueues *wait,
-		   struct timespec64 *end_time)
+函数原型： static int do_poll(struct poll_list *list, struct poll_wqueues *wait,  struct timespec64 *end_time)
 
 源码：https://sbexr.rabexc.org/latest/sources/1c/441732eda22f11.html#00371001003c5001
 
