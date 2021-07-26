@@ -36,6 +36,42 @@ GCC编译过程
       使用的时候 gcc test.c -L/path -lxxx -o test
    2. 动态库： gcc -fPIC -shared file1.c -o libxxx.so
 
+
+centos更换gcc
+--------------
+::
+
+      1、安装centos-release-scl
+
+      sudo yum install centos-release-scl
+      2、安装devtoolset，注意，如果想安装7.*版本的，就改成devtoolset-7-gcc*，以此类推
+
+      sudo yum install devtoolset-8-gcc*
+      3、激活对应的devtoolset，所以你可以一次安装多个版本的devtoolset，需要的时候用下面这条命令切换到对应的版本
+
+      scl enable devtoolset-8 bash
+
+
+
+      所以要想切换到某个版本，只需要执行
+
+      source /opt/rh/devtoolset-8/enable
+
+      4、直接替换旧的gcc
+
+
+      mv /usr/bin/gcc /usr/bin/gcc-4.8.5
+
+      ln -s /opt/rh/devtoolset-8/root/bin/gcc /usr/bin/gcc
+
+      mv /usr/bin/g++ /usr/bin/g++-4.8.5
+
+      ln -s /opt/rh/devtoolset-8/root/bin/g++ /usr/bin/g++
+
+      gcc --version
+
+      g++ --version
+
 Makefile简介
 ============
 
@@ -234,6 +270,9 @@ ELF结构
 2. size SimpleSection: 查看text、data、bss的长度。
 
 3. readelf -r .so ：查看重定位表。
+4. readelf -s : 符号表（nm、objdump -t）
+5. readelf -l : 程序头
+6. readelf -a : 所有
 
 .. figure:: ../images/Elf-layout.png
 
@@ -310,5 +349,17 @@ shstrtab结束后长度为0x410（1040），段表长度为64×13=832（0x340）
 此处段表位于最后，与csapp的描述一致。
 
 
+符号
+---------
+弱符号与强符号：处理链接时多次定义的情况。
+
+1. 强符号：函数与已初始化的全局变量；
+2. 弱符号：未初始化的全局变量，或 __attribute__((weak))
 
 
+强引用与弱引用：处理链接时找不到引用的外部符号的情况。
+
+1. 强引用：符号未定义错误；
+2. 弱引用：不报错，默认为0。__attribute__ ((weakref))
+
+弱符号和弱链接对于库很有用，使得程序功能更容易裁剪和组合。用户可覆盖库的弱符号；库可覆盖用户的弱引用。
