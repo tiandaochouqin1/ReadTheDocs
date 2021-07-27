@@ -16,11 +16,12 @@ Linux Kernel
 3. 时间子系统——RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？
 5. 系统调用的细节：看参考博客文章。
-6. 自旋锁、互斥量、信号量的实现原理。
+6. 自旋锁、互斥量、信号量的实现原理。无锁编程。
    `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
    `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
 
 7. `高速缓存与一致性 <https://zhuanlan.zhihu.com/cpu-cache>`__
+8. 如何查看中断向量表？实模式？
 
    
 

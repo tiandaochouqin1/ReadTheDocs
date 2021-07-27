@@ -38,7 +38,9 @@ Performance
 5. `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
 
-6. `极客时间-linux性能优化实战 <https://zter.ml/>`__
+6. `图解Linux网络包接收过程 <https://mp.weixin.qq.com/s/GoYDsfy9m0wRoXi_NCfCmg>`__
+
+7. `极客时间-linux性能优化实战 <https://zter.ml/>`__
 
 
 60秒快速分析linux性能
@@ -60,6 +62,8 @@ Performance
 
 收包和poll
 =============
+`分析request_irq和free_irq函数如何注册注销中断 <https://www.cnblogs.com/lifexy/p/7506613.html>`__
+
 收包过程
 ---------------
 1. 加载网卡驱动，初始化
