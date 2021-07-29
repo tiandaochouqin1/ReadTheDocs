@@ -455,3 +455,37 @@ execve:按照elf文件程序头表装载elf，并转交控制权给elf入口地�
 /lib/ld-linux.so.2本身是静态链接的，不能依赖其它共享对象。
 
 
+动态链接路径
+~~~~~~~~~~~~~~~~~
+按以下顺序查找：
+
+1. 环境变量LD_LIBRARY_PATH，或ld -library-path参数指定的路径；
+2. 路径缓存文件 /etc/ld.so.conf ;
+3. 默认共享库目录，先/usr/lib，然后/lib 。
+
+安装共享库：文件复制到共享库目录，然后运行ldconfig。
+
+其它环境变量：
+
+1. LD_PRELOAD：在动态链接器工作前加载指定的共享库或目标文件。
+2. LD_DEBUG:打印动态链接器的运行信息，可选参数有 files、bindings等。
+
+
+创建共享库：
+
+::
+
+      gcc -shared -fPIC -Wl,-soname,my_soname -o library_name source_files
+            1. -shared 表示输出共享类型
+            2. -fPIC 地址无关代码
+            3. -Wl指定传给链接器的参数，如soname
+
+      gcc -rpath /path -o program source_files
+            指定程序运行时查找动态库的路径
+
+      
+
+- strip ：清除符号和调试信息。
+- ld：-s消除所有符号信息；-S消除调试符号信息。
+
+
