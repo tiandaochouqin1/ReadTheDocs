@@ -737,8 +737,8 @@ Linux内核的标准链表为环形双向链表，灵活性高。
        struct list_head *prev;
    }
 
-   //获取包含list_head的父类型结构体
-   list_entry(ptr, type, member)
+   //返回包含list_head的父类型结构体（type），ptr为父结构体中的成员member。
+   list_entry(ptr, type, member) 
 
    // for 循环，利用传入的 pos 作为循环变量，从表头 head 开始，逐项向后（ next方向）移动 pos ，直至又回到 head
    //head为数据结构的第一项成员时，与list_for_each_entry等价
@@ -1314,3 +1314,19 @@ laptop_mode：
 
 该策略意图将硬盘装懂的机械行为最小化，以节省电量。
 flusher会找准磁盘运转的时机，以执行所有其他的物理磁盘IO、刷新脏缓冲等。
+
+
+定时器
+---------
+https://elixir.bootlin.com/linux/v2.6.32/source/kernel/timer.c
+
+1. Insert：
+定时器的插入，首先都要根据定时器的超时时间与每级时间轮所能表示的时长进行比较，来觉得插入到那个轮子中，再根据当前轮子已走的索引，计算出待插入定时器在该轮子中应插入的spoke。
+
+
+2. Schedule：
+多级时间轮定时器触发机制为周期性tick出发，每个tick到来，最低级的tv1的spoke index都会+1，如果该spoke中有timer，那么就处理该timer list中的所有超时timer。
+
+2. Cascade：
+Cascade可以翻译成降级处理。每个tick到来，都只会去检测最低级的tv1的时间轮，因为多级时间轮的设计决定了最低级的时间轮永远保存这最近要超时的定时器。
+多级时间轮最重要的一个处理流程就是cascade，当每一级(除了最高级)时间轮走到超出该级时间轮的范围时，就会触发上一级时间轮所在spoke+1的cascade过程，如果上一级时间轮也走出来时间轮的范围，也同样会触发cascade过程，这是一个递归过程。
