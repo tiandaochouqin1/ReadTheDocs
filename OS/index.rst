@@ -1,6 +1,6 @@
 Operating System
 ==================
-操作系统、编译等相关知识。
+Linux内核、操作系统、编译等相关知识。
 
 .. toctree::
    :maxdepth: 2

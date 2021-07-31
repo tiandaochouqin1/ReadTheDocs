@@ -475,3 +475,224 @@ ufw
 需要停止并关闭firewalld自启动。
 
 -  前面无法使用\ ``iptables-restore``\ 也是这个原因。
+
+
+
+
+测试目标是否在监听端口
+======================
+
+根据目标服务协议选择适合的工具！
+
+`如何测试端口通不通(四种方法） <https://blog.csdn.net/swazer_z/article/details/64442730>`__
+
+telnet只能用于测试TCP端口，而nc即可用于测试TCP端口也可用来测试UDP端口。
+
+
+
+方法概述
+----------
+
+需要主机在端口提供了服务，以web服务器为例。
+
+
+**准备环境**
+
+启动一个web服务器，提供端口.
+
+::
+
+       [wyq@localhost ~]$ python -m SimpleHTTPServer 8080
+       Serving HTTP on 0.0.0.0 port 8080 ...
+
+
+telnet连接tcp端口
+----------------------
+
+telnet是windows标准服务，可以直接用；如果是linux机器，需要安装telnet.
+
+**用法: telnet ip port**
+
+1）先用telnet连接不存在的端口
+
+::
+
+       [root@localhost ~]# telnet 10.0.250.3 80
+       Trying 10.0.250.3...
+       telnet: connect to address 10.0.250.3: Connection refused #直接提示连接被拒绝
+
+2）再连接存在的端口
+
+::
+
+       [root@localhost ~]# telnet localhost 22
+       Trying ::1...
+       Connected to localhost. #看到Connected就连接成功了
+       Escape character is '^]'.
+       SSH-2.0-OpenSSH_5.3
+       a
+       Protocol mismatch.
+       Connection closed by foreign host.
+
+ssh测试tcp端口
+------------------
+
+ssh是linux的标准配置并且最常用
+
+**用法: ssh -v -p port username@ip**
+
+-  -v 调试模式(会打印日志).
+-  -p 指定端口
+-  username可以随意
+
+1）连接不存在端口
+
+::
+
+       [root@localhost ~]# ssh 10.0.250.3 -p 80
+       ssh: connect to host 10.0.250.3 port 80: Connection refused
+       [root@localhost ~]# ssh 10.0.250.3 -p 80 -v
+       OpenSSH_5.3p1, OpenSSL 1.0.1e-fips 11 Feb 2013
+       debug1: Reading configuration data /etc/ssh/ssh_config
+       debug1: Applying options for *
+       debug1: Connecting to 10.0.250.3 [10.0.250.3] port 80.
+       debug1: connect to address 10.0.250.3 port 80: Connection refused
+       ssh: connect to host 10.0.250.3 port 80: Connection refused
+
+2）连接存在的端口
+
+[root@localhost ~]# ssh … -p
+
+::
+
+       [root@localhost ~]# ssh ... -p -v
+       OpenSSH_.p, OpenSSL ..e-fips Feb
+       debug: Reading configuration data /etc/ssh/ssh_config
+       debug: Applying options for *
+       debug: Connecting to ... [...] port .
+       debug: Connection established.
+       debug: permanently_set_uid: /
+       debug: identity file /root/.ssh/identity type -
+       debug: identity file /root/.ssh/identity-cert type -
+       debug: identity file /root/.ssh/id_rsa type -
+       debug: identity file /root/.ssh/id_rsa-cert type -
+       debug: identity file /root/.ssh/id_dsa type -
+       debug: identity file /root/.ssh/id_dsa-cert type -
+       a
+       ^C
+
+wget和curl
+------------
+支持的协议？
+
+
+wget是linux下的下载工具，需要先安装. 用法: ``wget ip:port``
+
+1）连接不存在的端口
+
+::
+
+       [root@localhost ~]# wget ...:
+       ---- ::-- http://.../
+       Connecting to ...:... failed: Connection refused.
+
+2）连接存在的端口
+
+::
+
+       [root@localhost ~]# wget ...:
+       ---- ::-- http://...:/
+       Connecting to ...:... connected.
+       HTTP request sent, awaiting response...
+
+专用工具tcping
+--------------
+
+`tcping <https://elifulkerson.com/projects/tcping.php>`__
+
+
+netstat扫描监听端口
+-------------------
+tcp/udp
+
+netstat参数解释：
+
+::
+
+       -l  (listen) 仅列出 Listen (监听) 的服务
+       -t  (tcp) 仅显示tcp相关内容
+       -n (numeric) 直接显示ip地址以及端口，不解析为服务名或者主机名
+       -p (pid) 显示出socket所属的进程PID 以及进程名字
+       --inet 显示ipv4相关协议的监听
+
+Nmap网络扫描和嗅探
+------------------
+支持tcp/udp
+
+
+1. `nmap命令-基础用法 <https://www.cnblogs.com/nmap/p/6232207.html>`__
+2. `Nmap <https://nmap.org/download.html>`__\ 是一款网络扫描和主机检测的非常有用的工具，可以用来作为一个漏洞探测器或安全扫描器。适用于winodws,linux,mac等操作系统
+
+**功能** 
+1. 扫描主机端口，嗅探所提供的网络服务 
+2. 探测一组主机是否在线 
+3. 推断主机所用的操作系统，到达主机经过的路由，系统已开放端口的软件版本
+
+扫描tcp端口
+~~~~~~~~~~~
+
+B机器上使用nmap扫描A机器所有端口（-p后面也可以跟空格）
+
+下面表示扫描A机器的1到65535所有在监听的tcp端口。
+
+``nmap 10.0.1.161  -p1-65535``
+
+指定端口范围使用-p参数。Nmap默认扫描从1到1024再加上nmap-services列出的端口。
+
+nmap-services是一个包含大约2200个著名的服务的数据库。
+
+nmap端口状态解析
+~~~~~~~~~~~~~~~~
+
++-----------------------------------+-----------------------------------+
+| 状态                              | 解析                              |
++===================================+===================================+
+| **open**                          | 应用程序在该端口接收 TCP 连接或者 |
+|                                   | UDP 报文。                        |
++-----------------------------------+-----------------------------------+
+| **closed**                        | 关闭的端口对于nmap也是可访问的，  |
+|                                   | 它接收nmap探测报文并作出          |
+|                                   | 响应。但没有应用程序在其上监听。  |
++-----------------------------------+-----------------------------------+
+| **filtered**                      | 于包过滤阻止探测报文到达端口，n   |
+|                                   | map无法确定该端口是否开放。过滤可 |
+|                                   | 能来自专业的防火墙设备，路由规则  |
+|                                   | 或者主机上的软件防火墙。          |
++-----------------------------------+-----------------------------------+
+| **unfiltered**                    | 未被过滤状态意味着端口可访问，但  |
+|                                   | 是nmap无法确定它是开放还是关闭。  |
+|                                   | 只有用于映射防火墙规则集的 ACK    |
+|                                   | 扫描才会把端口分类到这个状态。    |
++-----------------------------------+-----------------------------------+
+| **open/filtered**                 | 无法确定端口是开放还是被过滤，    |
+|                                   | 开放的端口不响应                  |
+|                                   | 就是一个例子。没有响应也可能意味  |
+|                                   | 着报文过滤器丢弃了探测报文或者它  |
+|                                   | 引发的任何反应。UDP，IP协议,FIN,  |
+|                                   | Null 等扫描会引起。               |
++-----------------------------------+-----------------------------------+
+| **closed/filtered**               | （关闭或者被过滤的）：            |
+|                                   | 无法确定端口是关闭的还是被过滤的  |
++-----------------------------------+-----------------------------------+
+
+其它功能
+~~~~~~~~
+
+1. 扫描一个IP的多个端口：连续的端口可以使用横线\ ``-``\ 连起来，端口之间可以使用\ ``,``\ 逗号隔开；
+2. 扫描多个IP：中间用空格分开；
+3. 扫描连续的ip地址：横线连接；
+4. 扫描一个子网网段所有IP：\ ``nmap  10.0.3.0/24``\ ；
+5. 扫描文件里的IP：\ ``nmap -iL ip.txt``\ ；
+6. 扫描地址段时排除某个IP地址:``nmap 10.0.1.161-162  --exclude 10.0.1.162``\ 。
+
+
