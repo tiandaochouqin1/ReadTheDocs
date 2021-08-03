@@ -11,7 +11,7 @@ Concurrency in C
 2. 并行:系统支持两个或多个动作同时执行。
 
 
-原子操作
+无锁编程
 ========
 
 1. `无锁队列的实现 <https://coolshell.cn/articles/8239.html>`__\ ：？？
@@ -186,4 +186,10 @@ option的选择：
 smp相关的内存屏障都加入了ish选项，也就是限制指令只针对inner shareable
 domain。
 
+锁
+==========
 
+自旋锁、互斥量、信号量的实现原理。
+
+`自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
+`Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__

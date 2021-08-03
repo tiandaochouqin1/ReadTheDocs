@@ -36,5 +36,13 @@ xv6的主要特征：
 
 LAB1
 ===========
+Part 1: PC Bootstrap
+-------------------------
+准备好代码和环境。此处使用ubuntu 18 x86_64 。
 
+::
 
+   实验代码：
+   git clone https://pdos.csail.mit.edu/6.828/2018/jos.git lab
+
+   qemu编译和调试

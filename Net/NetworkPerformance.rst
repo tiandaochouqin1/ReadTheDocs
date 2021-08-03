@@ -33,14 +33,16 @@ Performance
 
 4. `Linux 网络栈监控和调优：发送数据 <http://arthurchiao.art/blog/tuning-stack-tx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2017/02/06/monitoring-tuning-linux-networking-stack-sending-data/>`__；
-   属于`系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__。
+   属于 `系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__。
 
 5. `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
 
 6. `图解Linux网络包接收过程 <https://mp.weixin.qq.com/s/GoYDsfy9m0wRoXi_NCfCmg>`__
 
-7. `极客时间-linux性能优化实战 <https://zter.ml/>`__
+7. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
+
+8. `极客时间-linux性能优化实战 <https://zter.ml/>`__
 
 
 60秒快速分析linux性能
