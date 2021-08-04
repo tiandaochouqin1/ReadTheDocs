@@ -150,16 +150,16 @@ git push origin --delete serverfix
 diff
 --------------
 1. 比较工作区与暂存区
-　　　　　　git diff 不加参数即默认比较工作区与暂存区
+   git diff 不加参数即默认比较工作区与暂存区
 
 2. 工作区与指定commit-id的差异
-　　　　　　git diff commit-id/HEAD/branch_name  [<path>...] 
+   git diff commit-id/HEAD/branch_name  [<path>...] 
 
 3. 暂存区与指定commit-id的差异
-　　　　　　git diff --cached [<commit-id>] [<path>...] 
+   git diff --cached [<commit-id>] [<path>...] 
 
 4. 两个commit-id之间的差异
-　　　　　　git diff [<commit-id>] [<commit-id>]
+   git diff [<commit-id>] [<commit-id>]
 
 5. 优化diff显示：https://github.com/banga/git-split-diffs
 

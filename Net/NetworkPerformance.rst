@@ -47,7 +47,8 @@ Performance
 
 60秒快速分析linux性能
 =========================
-`60秒快速分析linux性能<https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55>`__
+
+`60秒快速分析linux性能 <https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55>`__
 
 
 
@@ -95,7 +96,7 @@ NAPI
 2. 每个napi的额度是weight_p，默认值是64），在一次poll流程里，ixgbe_poll每接收一个报文就消耗一个额度，
 3. 如果ixgbe_poll消耗的额度为napi的额度，说明此时网卡收到的报文比较多，因此需要继续下一次poll，
 4. 每次napi_poll消耗的额度会累加，当超过软中断线程的额度时，退出本次软中断处理流程；
-5. 当ixgbe_poll消耗的额度没有达到napi的额度时，说明网卡报文不多，因此重新开启队列中断，进入中断模式。**即收包很少时不会主动退出？！**
+5. 当ixgbe_poll消耗的额度没有达到napi的额度时，说明网卡报文不多，因此重新开启队列中断，进入中断模式。 **即收包很少时不会主动退出？！**
 
 
 
@@ -106,7 +107,7 @@ do_poll
 
 poll中会进行高精度sleep（ms）。
 
-函数原型： static int do_poll(struct poll_list *list, struct poll_wqueues *wait,  struct timespec64 *end_time)
+函数原型： ``static int do_poll(struct poll_list *list, struct poll_wqueues *wait,  struct timespec64 *end_time)``
 
 源码：https://sbexr.rabexc.org/latest/sources/1c/441732eda22f11.html#00371001003c5001
 

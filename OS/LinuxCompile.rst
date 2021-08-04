@@ -99,7 +99,7 @@ menuconfig通过调用各级目录下Kconfig文件来形成图形界面的
    wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.5/linux-image-unsigned-5.5.0-050500-generic_5.5.0-050500.202001262030_amd64.deb
    wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.5/linux-modules-5.5.0-050500-generic_5.5.0-050500.202001262030_amd64.deb
 
-2. sudo dpkg -i *.deb
+2. ``sudo dpkg -i *.deb``
 
 3. reboot
 
@@ -107,8 +107,8 @@ menuconfig通过调用各级目录下Kconfig文件来形成图形界面的
 
 ::
 
-Errors were encountered while processing:
-linux-headers-5.12.14-051214-generic
+   Errors were encountered while processing:
+   linux-headers-5.12.14-051214-generic
 
 
 引导grub
@@ -248,7 +248,7 @@ dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
 
 
 包管理器安装
-~~~~~~~~~~~~~~~
+------------------------
 centos默认安装的为gcc-4.8
 
 ::
@@ -272,6 +272,8 @@ centos默认安装的为gcc-4.8
 
 - 最新版本依赖较多（多依赖librt.so.1），编译时需要静态链接才能使用。动态链接编译的程序无法在环境上运行（？？）
 - 老版本依赖较少（如v4.18），可使用。
+
+
 configure
 ~~~~~~~~~~~~
 ::

@@ -658,3 +658,13 @@ shell脚本，生成一个文件名tag文件。(ctags文件搜索太慢)
 ::
 
     :let g:LookupFile_TagExpr = '"./filenametags"'  
+
+
+问题
+=========
+E212
+-------
+E212：无法打开并写入文件 的错误提示。
+
+1. 保存到临时文件 ``:wq ! ~/tmp`` ，更改属主后覆盖原文件。
+2. sudo保存 ``: w ! sudo tee %``。
