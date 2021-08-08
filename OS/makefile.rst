@@ -207,7 +207,7 @@ GNU的make工作时的执行步骤如下：（其它的make也是类似）
 -  ``$(addsuffix <suffix>,<names...>)``:增加后缀。add)
 -  ``$(dir <names..>)``:取目录名
 -  ``$(notdir <names...>)``:取文件名。
--  ``$(wildcard <pattern>)``:展开匹配模式地所有文件列表(在变量定义和函数引用中,普通的通配符会失效）。
+-  ``$(wildcard <pattern>)``:使用匹配pattern的文件列表(在变量定义和函数引用中,普通的通配符会失效）。
 -  ``$(strip <string>)``:去除字符串中开头和结尾的
 -  ``$(call <expression> <parm1>,<parm2>,<parm3>,...)``:向表达式传递参数。
 -  其它函数：
@@ -254,7 +254,11 @@ GNU的make工作时的执行步骤如下：（其它的make也是类似）
 Cmake
 ======
 
+1. `CMake 入门实战 <https://www.hahack.com/codes/cmake/>`__
+2. https://cmake.org/cmake/help/latest/guide/tutorial/index.html https://github.com/DaveGamble/cJSON
 
+语法
+-----------
 
 
 ELF与链接

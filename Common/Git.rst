@@ -629,8 +629,13 @@ gitignore
 ^^^^^^^^^^^^^^^^
 `gitignore模板地址 <https://github.com/github/gitignore>`__
 
-项目开始时（第一次push前）就创建.gitignore文件。
 
+
+::
+
+   git rm --cached  <file> //移除已跟踪文件
+   然后将<file>加入 .gitignore文件中
+   git add .gitignore
 
 
 github插件
@@ -693,4 +698,37 @@ bare：裸仓库无工作区。
    //关联远程仓库
    git remote add origin git@github.com:gitpath or ssh://git_user@ip_or_domian:port/fullpath
    git push -u origin master
+
+
+ssh key
+-------------------
+ssh默认使用 `.ssh/id_rsa` 这个私钥。
+
+多ssh账户
+~~~~~~~~~~~~
+当需要使用不同的ssh账号时（如同时使用github、gerrit、服务器等），需要配置使用对应的私钥。
+
+新建 `.ssh/config` :
+
+::
+
+   Host github.com #git项目里面的域名
+   User git
+   Hostname github.com
+   PreferredAuthentications publickey
+   IdentityFile /path/.ssh/id_rsa
+   IdentitiesOnly yes
+
+秘钥文件权限
+~~~~~~~~~~~~~
+不能设置太大，建议 `chmod 600 id_rsa`。否则git 使用时报错：
+
+Load key "/path/.ssh/github_id_rsa": bad permissions
+
+pub key comments
+~~~~~~~~~~~~~~~~~~~~~~~~~
+无实际作用。
+
+`ssh-keygen -C` 指定，默认为 `用户@主机名`。
+
 
