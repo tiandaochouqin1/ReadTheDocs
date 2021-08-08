@@ -8,6 +8,8 @@ C语言、汇编、MySQL、算法等。
    :numbered: 3
 
    Concurrncy.rst
+   Asm.rst
+   
    
 
 

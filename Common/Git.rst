@@ -641,9 +641,9 @@ gitignore
 github插件
 ----------
 
-gayhub:生成readme目录。已停止开发。 Octotree:代码目录树。
-refined-github:代码编辑、Git相关的功能优化，下载目录。 gitzip for
-github:下载目录和文件。
+1. gayhub:生成readme目录。已停止开发。 Octotree:代码目录树。
+2. refined-github:代码编辑、Git相关的功能优化，下载目录。 
+3. gitzip for github:下载目录和文件。
 
 
 
