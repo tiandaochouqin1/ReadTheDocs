@@ -7,8 +7,8 @@ Linux Kernel
 
 
 
-问题记录
-========
+问题记录TODO
+=============
 以下各问题可新开主题来回答。
    
 1. 虚拟内存？段选择子的作用？三级页表的工作原理？
@@ -53,24 +53,22 @@ linux、glibc、gcc等。
 参考书籍
 ~~~~~~~~
 
-1. Linux Kernel Development V2.6.34
-2. Linux Devices Driver V2.6.10
-3. Proffesional Linux Kernel Architecture V2.6.24 
-4. Understanding The Linux Kernel  V2.6.11
-5. 奔跑吧Linux内核
+1. Linux Kernel Development， V2.6.34
+2. Linux Devices Driver， V2.6.10
+3. Proffesional Linux Kernel Architecture， V2.6.24 
+4. Understanding The Linux Kernel，  V2.6.11
+5. 奔跑吧Linux内核：几个重点模块讲解较仔细。
 
 
 参考链接
 ~~~~~~~~
 
-1. `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
-2. `知乎-MIT 6.828  实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__
-3. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__
-4. 操作系统实战45讲
-5. 有深度：`linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
+1. `趣谈Linux操作系统——刘超 <https://zter.ml/>`__ :完成一遍，后一半的内容比较深入，后续可作为相关知识点的参考。
+2. 操作系统实战45讲
+3. 有深度：`linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
-6. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
-7. http://www.wowotech.net/
+4. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
+5. http://www.wowotech.net/ ：很多不错的文章
 
 
 

@@ -34,7 +34,7 @@ xv6的主要特征：
 4. `MIT 6.828 实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__ ，案例参考。
 
 
-LAB1
+LAB1:TODO
 ===========
 Part 1: PC Bootstrap
 -------------------------
@@ -46,3 +46,7 @@ Part 1: PC Bootstrap
    git clone https://pdos.csail.mit.edu/6.828/2018/jos.git lab
 
    qemu编译和调试
+
+
+
+

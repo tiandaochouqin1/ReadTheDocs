@@ -5,6 +5,10 @@ Packet Send & Recieve
 
 :Date:   2021-07-31 15:17:13
 
+
+参考文档TODO
+=============
+
 1. `Linux 网络栈监控和调优：发送数据 <http://arthurchiao.art/blog/tuning-stack-tx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2017/02/06/monitoring-tuning-linux-networking-stack-sending-data/>`__；
    属于 `系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__ 。
@@ -16,5 +20,21 @@ Packet Send & Recieve
 
 4. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
 
+5. 深入linux内核架构
 
-5. TCP/IP中tcp可靠性？其它层为什么不可靠？
+
+
+问题记录
+------------
+1. TCP/IP中tcp可靠性？其它层为什么不可靠？
+
+
+socket
+============
+
+
+
+
+
+内核协议栈
+=============

@@ -178,7 +178,7 @@ https://lrita.github.io/wiki/books/
 ----------------
 
 1. Mastering Algorithms with C
-2. 数据结构与算法——极客时间专栏
+2. 数据结构与算法——极客时间 :TODO
 
 软件工程
 ---------------------
@@ -252,7 +252,8 @@ Java
 
 1. DDIA
 2. 高性能Mysql
-3. Mysql实战45讲
+3. Mysql实战45讲:TODO
+4. https://sqlzoo.net/
 
 
 
@@ -261,8 +262,7 @@ C语言
 
 `Why Aren’t There C Conferences <https://nullprogram.com/blog/2018/11/21/>`__
 
-1. C Programming Language (2nd
-   Edition,1988)。\ `Solution1 <https://clc-wiki.net/wiki/K&R2_solutions>`__\ ，\ `Solution2 <https://github.com/ccpalettes/the-c-programming-language-second-edition-solutions>`__\ ，\ `Solution3 <https://github.com/gleesik/the-c-programming-language-2nd-edition-solutions>`__
+1. C Programming Language (2nd Edition,1988)。\ `Solution1 <https://clc-wiki.net/wiki/K&R2_solutions>`__\ ，\ `Solution2 <https://github.com/ccpalettes/the-c-programming-language-second-edition-solutions>`__\ ，\ `Solution3 <https://github.com/gleesik/the-c-programming-language-2nd-edition-solutions>`__
 2. C Primer Plus 5th(2005，比6th薄)
 3. Pointers on C———人民邮电出版社《c和指针》，Kenneth A.Reek著，徐波译。
 4. C Traps and Pitfalls
