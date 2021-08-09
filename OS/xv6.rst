@@ -36,17 +36,41 @@ xv6的主要特征：
 
 LAB1:TODO
 ===========
+
+1. `80386 Programmer's Reference Manual <https://pdos.csail.mit.edu/6.828/2018/readings/i386/toc.htm>`__
+2. PC Assembly Language 
+3. 
+
 Part 1: PC Bootstrap
 -------------------------
-准备好代码和环境。此处使用ubuntu 18 x86_64 。
+准备好代码和环境。此处使用ubuntu 18 x86_64(需要安装gcc-multilib以支持32位) 。
 
 ::
 
    实验代码：
    git clone https://pdos.csail.mit.edu/6.828/2018/jos.git lab
+   make // 编译obj/kern/kernel.img（boot+kernel）
 
-   qemu编译和调试
+   qemu编译
+   git clone https://github.com/mit-pdos/6.828-qemu.git qemu
+   installing the following packages: libsdl1.2-dev, libtool-bin, libglib2.0-dev, libz-dev, and libpixman-1-dev
+   ./configure --disable-kvm --disable-werror [--prefix=PFX] [--target-list="i386-softmmu x86_64-softmmu"]
+   make && make install
+
+   调试
+   make qemu-nox-gdb/qemu-gdb  //使用obj/kern/kernel.img启动
+   make gdb  //同一目录启动gdb
 
 
 
+
+
+PA & ROM
+~~~~~~~~~~~~~
+
+
+Part 2: The Boot Loader
+-------------------------------
+1. 阅读并理解源码oot/boot.S and  boot/main.c ；
+2. 阅读obj/boot/boot.asm ， 
 

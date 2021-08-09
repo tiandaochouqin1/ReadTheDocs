@@ -9,12 +9,13 @@ Assembly x86
 参考链接
 ========
 
-1. `GNU Assembler  Examples <https://cs.lmu.edu/~ray/notes/gasexamples/>`__
-2. `x86 Assembly  Guide <https://www.cs.virginia.edu/~evans/cs216/guides/x86.html>`__
-3. http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html
-4. https://web.stanford.edu/class/archive/cs/cs107/cs107.1194/guide/x86-64.html
-5. `汇编语言入门 <https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html>`__
-6. `Intel格式和AT&T格式汇编区别 <https://www.cnblogs.com/hdk1993/p/4820353.html>`__
+1. `Brennan's Guide to Inline Assembly <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>`__
+2. `GNU Assembler Examples <https://cs.lmu.edu/~ray/notes/gasexamples/>`__
+3. `x86 Assembly  Guide <https://www.cs.virginia.edu/~evans/cs216/guides/x86.html>`__
+4. http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html
+5. https://web.stanford.edu/class/archive/cs/cs107/cs107.1194/guide/x86-64.html
+6. `汇编语言入门 <https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html>`__
+7. `Intel格式和AT&T格式汇编区别 <https://www.cnblogs.com/hdk1993/p/4820353.html>`__
 
 .. figure:: ../images/x86-registers.png
    :alt: Registers

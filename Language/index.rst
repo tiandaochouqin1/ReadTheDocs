@@ -9,6 +9,7 @@ C语言、汇编、MySQL、算法等。
 
    Concurrncy.rst
    Asm.rst
+   MySQL.rst
    
    
 
