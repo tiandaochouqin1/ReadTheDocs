@@ -74,3 +74,4 @@ Part 2: The Boot Loader
 1. 阅读并理解源码oot/boot.S and  boot/main.c ；
 2. 阅读obj/boot/boot.asm ， 
 
+`boot代码解析 <https://www.cnblogs.com/fatsheep9146/p/5115086.html>`__

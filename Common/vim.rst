@@ -226,7 +226,84 @@ session中当前行高亮失效，使用此方法解决。
     :rviminfo [file]
 
 
+代码折叠
+------------
+https://yianwillis.github.io/vimcdoc/doc/fold.html#fold-commands
 
+配置
+
+::
+
+    ' 基于缩进进行代码折叠
+    set foldmethod=syntax
+    ' 启动 Vim 时关闭折叠
+    set nofoldenable
+
+
+快捷键：
+
+::
+
+    za //切换折叠与展开
+
+    zc //折叠一层
+    zo //展开一层
+
+    zC/O //折叠、展开所有层
+
+    zm //所有代码折叠更多层more
+    zr //所有代码展开更多层reduce
+
+    zM/R //所有代码展开/折叠所有层
+
+
+函数调用关系
+---------------
+doxygen和graphviz ?
+
+
+
+calltree
+~~~~~~~~~~~~
+:download:`calltree-2.3.tar.bz2 <../files/calltree-2.3.tar.bz2>` 
+
+
+2004年的软件,需要 `修改编译选项 <https://www.jianshu.com/p/da5086f9f91d>`__ 。
+
+编译
+^^^^^
+
+::
+
+    使用gmake（实际就是make）
+    cp ./Gmake.linux /usr/bin/Gmake 
+    cp RULES/i686-linux-cc.rul RULES/x86_64-linux-cc.rul
+
+    修改与gcc内部关键字冲突的变量
+    find . -name "*.[c|h]" |xargs sed -i -e "s/fexecve/fexecve_calltree/"
+    find . -name "*.[c|h]" |xargs sed -i -e "s/getline/getline_calltree/"
+
+    make
+
+    拷贝目录到/usr/local/
+    cp -rf ./calltree-2.3 /usr/local/
+    建立软链接
+    ln -s /usr/local/calltree-2.3/calltree/OBJ/x86_64-linux-cc/calltree /bin/calltree
+
+
+使用
+^^^^^^^^^
+
+`calltree看代码调用图 <https://www.cnblogs.com/mylinux/p/6145625.html>`__
+
+::
+
+    设置好（1）想要关心的函数（2）调用深度（3）关心的目录。文件多了查找仍然慢（如5.10内核就要查找很久）
+    calltree -np -b  list=start_kernel    depth=3 `find ./init/ ./kernel/ -name "*.c"` > maps
+
+    也可搭配graphviz使用。
+    calltree -np -b -dot list=start_kernel ./init/*.c > ~/start_kernel.dot
+    dot -T png start_kernel.dot -o ./testhaha.png
 
 配置与插件
 ==========
@@ -400,6 +477,8 @@ ctags
     :ts　　　　            // 列出所有匹配的标签
 
     :ta　　　　            // 查找
+
+    vi –t tag   //查找tag
 
 
 
