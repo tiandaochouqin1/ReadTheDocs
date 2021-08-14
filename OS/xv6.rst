@@ -31,7 +31,29 @@ xv6的主要特征：
    6.828 will be offered as a graduate-level seminar-style class focused on research in operating systems. 
 
 3. `xv6 book <ttps://pdos.csail.mit.edu/6.828/2018/xv6/book-rev10.pdf>`__ 阅读xv6源码过程中最好的参考资料。
-4. `MIT 6.828 实现操作系统 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__ ，案例参考。
+4. `MIT 6.828 实现操作系统--知乎 <https://zhuanlan.zhihu.com/c_1273723917820215296>`__ ，案例参考。
+5. `MIT 6.828 JOS 操作系统学习笔记--cnblogs <https://www.cnblogs.com/fatsheep9146/category/769143.html>`__
+
+GDB
+-----------
+1. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
+2. https://sourceware.org/gdb/onlinedocs/gdb/ 
+
+调试stripped程序
+~~~~~~~~~~~~~~~~~~~
+1. `Native Debugging Part 1 <https://www.humprog.org/~stephen//blog/2016/02/25/#native-debugging-part-1>`__
+2. `Native Debugging Part 2 <https://www.humprog.org/~stephen//blog/2017/01/30/#native-debugging-part-2>`__
+3. `stripped-binaries-in-gdb <https://tr0id.medium.com/working-with-stripped-binaries-in-gdb-cacacd7d5a33>`__
+
+The __libc_start_main() function shall initialize the process, call the main function with appropriate arguments, and handle the return from main().
+__libc_start_main() is not in the source standard; it is only in the binary standard.
+
+方法：
+
+1. info file 找到 Entry point ，并运行到该处；
+2. 找到 __libc_start_main (libc.so.6)，其入参即为 main 地址，断点该地址；
+3. 如何找到特定函数地址？
+
 
 
 LAB1:TODO

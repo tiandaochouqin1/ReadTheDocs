@@ -656,7 +656,7 @@ bare：裸仓库无工作区。
 
 1. 远程服务器 git init –bare；
 2. 设置git用户及文件夹权限；
-3. 添加ssh key（否则每次操作都需要密码）；
+3. 配置ssh key（否则每次操作都需要密码）；
 4. git clone即可。
 5. 若需要指定ssh端口，则使用git clone ssh://git_user@ip_or_domian:port/fullpath
 
@@ -677,8 +677,9 @@ bare：裸仓库无工作区。
 开启秘钥登录
 ~~~~~~~~~~~~~~~~~~~~~
 1. ssh-keygen 生成id_rsa和id_rsa.pub到.ssh文件夹；
-2. id_rsa 复制到本地电脑用户目录下的.ssh文件夹中；
-3. 远程电脑需要开启秘钥免密登录，如以下选项：
+2. 公钥导入到 `~/.ssh/authorized_keys` ，一行一个；
+3. id_rsa 复制到本地电脑用户目录下的.ssh文件夹中；
+4. 远程电脑需要开启秘钥免密登录，如以下选项：
    PermitEmptyPasswords yes
    PubkeyAuthentication yes
 
@@ -704,8 +705,8 @@ ssh key
 -------------------
 ssh默认使用 `.ssh/id_rsa` 这个私钥。
 
-多ssh账户
-~~~~~~~~~~~~
+多ssh账户私钥
+~~~~~~~~~~~~~
 当需要使用不同的ssh账号时（如同时使用github、gerrit、服务器等），需要配置使用对应的私钥。
 
 新建 `.ssh/config` :
@@ -721,6 +722,8 @@ ssh默认使用 `.ssh/id_rsa` 这个私钥。
 
 秘钥文件权限
 ~~~~~~~~~~~~~
+公钥和私钥都需要注意权限！！！
+
 不能设置太大，建议 `chmod 600 id_rsa`。否则git 使用时报错：
 
 Load key "/path/.ssh/github_id_rsa": bad permissions
@@ -732,3 +735,7 @@ pub key comments
 `ssh-keygen -C` 指定，默认为 `用户@主机名`。
 
 
+ssh指定秘钥
+~~~~~~~~~~~
+1. `ssh -i /path/private_key user@hostname -p port` 
+2. 一般客户端可指定秘钥路径
