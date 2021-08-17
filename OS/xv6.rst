@@ -56,7 +56,7 @@ __libc_start_main() is not in the source standard; it is only in the binary stan
 
 
 
-LAB1:TODO
+LAB1
 ===========
 
 1. `80386 Programmer's Reference Manual <https://pdos.csail.mit.edu/6.828/2018/readings/i386/toc.htm>`__
@@ -87,8 +87,46 @@ Part 1: PC Bootstrap
 
 
 
-PA & ROM
+PA 
 ~~~~~~~~~~~~~
+16位实模式地址访问： CS:IP，20位地址线。
+
+physical address = 16 * segment（CS） + offset(IP)
+
+
+::
+
+   +------------------+  <- 0xFFFFFFFF (4GB)
+   |      32-bit      |
+   |  memory mapped   |
+   |     devices      |
+   |                  |
+   /\/\/\/\/\/\/\/\/\/\
+
+   /\/\/\/\/\/\/\/\/\/\
+   |                  |
+   |      Unused      |
+   |                  |
+   +------------------+  <- depends on amount of RAM
+   |                  |
+   |                  |
+   | Extended Memory  |
+   |                  |
+   |                  |
+   +------------------+  <- 0x00100000 (1MB)
+   |     BIOS ROM     |
+   +------------------+  <- 0x000F0000 (960KB)
+   |  16-bit devices, |
+   |  expansion ROMs  |
+   +------------------+  <- 0x000C0000 (768KB)
+   |   VGA Display    |
+   +------------------+  <- 0x000A0000 (640KB)
+   |                  |
+   |    Low Memory    |
+   |                  |
+   +------------------+  <- 0x00000000
+
+
 
 
 Part 2: The Boot Loader
@@ -96,4 +134,13 @@ Part 2: The Boot Loader
 1. 阅读并理解源码oot/boot.S and  boot/main.c ；
 2. 阅读obj/boot/boot.asm ， 
 
+跟踪调试： 0x7c00 -> bootmain -> readsect
+
 `boot代码解析 <https://www.cnblogs.com/fatsheep9146/p/5115086.html>`__
+
+Part 3: The Boot Loader
+-------------------------------
+1. 虚拟内存的切换。进入内核后切换（entry  f010000c (virt)  0010000c (phys)）
+2. vprintfmt + putch 原理，增加vprintfmt oct进制打印。
+3. 内核栈的初始化
+4. 利用eip回溯调用栈。

@@ -460,7 +460,7 @@ ctags
 
     ctags --languages=c --langmap=c:.c.h --fields=+S -R .
 
-
+安装： `sudo apt-get install ctags\cscope`
     
 **常用快捷键**
 
