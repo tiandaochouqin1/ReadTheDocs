@@ -58,7 +58,8 @@ __libc_start_main() is not in the source standard; it is only in the binary stan
 
 LAB1
 ===========
-
+:download:`xv6 code-lab1 <../files/xv6.zip>`
+   
 1. `80386 Programmer's Reference Manual <https://pdos.csail.mit.edu/6.828/2018/readings/i386/toc.htm>`__
 2. PC Assembly Language 
 3. 
@@ -144,3 +145,8 @@ Part 3: The Boot Loader
 2. vprintfmt + putch 原理，增加vprintfmt oct进制打印。
 3. 内核栈的初始化
 4. 利用eip回溯调用栈。
+5. 结合asm和gdb分析test_backtrace每一层使用的栈空间（0x20）。
+
+参考
+
+1. `stabs调试信息 <https://sourceware.org/gdb/onlinedocs/stabs.html#Overview>`__
