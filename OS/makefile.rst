@@ -256,6 +256,7 @@ Cmake:TODO
 
 1. `CMake 入门实战 <https://www.hahack.com/codes/cmake/>`__
 2. https://cmake.org/cmake/help/latest/guide/tutorial/index.html https://github.com/DaveGamble/cJSON
+3. `cmake 实践 <https://cmake.readthedocs.io/en/latest/index.html>`__
 
 语法
 -----------

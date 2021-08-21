@@ -150,3 +150,67 @@ Part 3: The Boot Loader
 参考
 
 1. `stabs调试信息 <https://sourceware.org/gdb/onlinedocs/stabs.html#Overview>`__
+2. `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__
+3. `exercise12_print_more_info <https://www.cnblogs.com/wuhualong/p/lab01_exercise12_print_more_info.html>`__
+4. `glibc的backtrace实现 <https://elixir.bootlin.com/glibc/glibc-2.24/source/debug/backtrace.c#L89>`__
+
+
+backtrace实现
+~~~~~~~~~~~~~~
+gcc -g生成的XCOFF有stab和stabstr段表.
+
+STABS (Symbol TABle Strings) .
+
+1.  .stab : contains an array of fixed length structures, one struct per stab
+2. .stabstr : all the variable length strings that are referenced by stabs in the .stab section.
+
+stabstr符号表内容如下：
+
+1. Symnum是符号索引，即整个符号表看作一个数组，Symnum是当前符号在数组中的下标
+2. n_type是符号类型，FUN指函数名，SLINE指在text段中的行号
+3. n_othr目前没被使用，其值固定为0
+3. n_desc表示在文件中的行号
+4. n_value表示地址。只有FUN类型的符号的地址是绝对地址，SLINE符号的地址是偏移量，其实际地址为函数入口地址加上偏移量。
+   比如第3行的含义是地址f01000b8(=0xf01000a6+0x00000012)对应文件第34行。
+
+::
+
+      $ objdump -G obj/kern/kernel
+
+      obj/kern/kernel:     file format elf32-i386
+
+      Contents of .stab section:
+      
+      Symnum n_type n_othr n_desc n_value  n_strx String
+      
+      -1     HdrSym 0      1300   0000198d 1
+      0      SO     0      0      f0100000 1      {standard input}
+      1      SOL    0      0      f010000c 18     kern/entry.S
+      2      SLINE  0      44     f010000c 0
+    ....
+
+      12     SLINE  0      80     f0100039 0
+      13     SLINE  0      83     f010003e 0
+      14     SO     0      2      f0100040 31     kern/entrypgdir.c
+      15     OPT    0      0      00000000 49     gcc2_compiled.
+      16     LSYM   0      0      00000000 64     int:t(0,1)=r(0,1);-2147483648;2147483647;
+      17     LSYM   0      0      00000000 106    char:t(0,2)=r(0,2);0;127;
+      18     LSYM   0      0      00000000 132    long int:t(0,3)=r(0,3);-2147483648;2147483647;
+      19     LSYM   0      0      00000000 179    unsigned int:t(0,4)=r(0,4);0;4294967295;
+      
+
+
+ebp与eip的关系。
+::
+
+   (FP is the frame pointer register):
+
+   +-----------------+     +-----------------+
+   FP -> | previous FP --------> | previous FP ------>...
+   |                 |     |                 |
+   | return address  |     | return address  |
+   +-----------------+     +-----------------+
+
+
+
+根据ebp获得eip，使用*eip找到debug（stabs）信息， func -> line -> file(因为inline？所以放在最后)。
