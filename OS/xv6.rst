@@ -62,7 +62,7 @@ LAB1
    
 1. `80386 Programmer's Reference Manual <https://pdos.csail.mit.edu/6.828/2018/readings/i386/toc.htm>`__
 2. PC Assembly Language 
-3. 
+
 
 Part 1: PC Bootstrap
 -------------------------
@@ -88,7 +88,7 @@ Part 1: PC Bootstrap
 
 
 
-PA 
+PA Layout
 ~~~~~~~~~~~~~
 16位实模式地址访问： CS:IP，20位地址线。
 
@@ -135,17 +135,30 @@ Part 2: The Boot Loader
 1. 阅读并理解源码oot/boot.S and  boot/main.c ；
 2. 阅读obj/boot/boot.asm ， 
 
-跟踪调试： 0x7c00 -> bootmain -> readsect
+跟踪调试： boot.S(0x7c00) -> main.c(bootmain) -> readsect
 
 `boot代码解析 <https://www.cnblogs.com/fatsheep9146/p/5115086.html>`__
 
-Part 3: The Boot Loader
+boot流程
+~~~~~~~~~~~
+boot.S->main.c :
+
+关键寄存器清零->使能A20地址线->加载gdt表->使能保护模式->配置相关寄存器->创建stack->call bootmain
+->readseg->readsect
+
+此处bootloader(对应内容为boot.S和main.c)保存在disk第一个扇区，elf格式的kernel image的起始位置为第二扇区。
+
+1. cpu启动时加载BIOS到内存并执行；
+2. BIOS初始化设备、中断线，加载boot到内存并jump到boot；
+3. boot加载内核镜像的所有段到内存（位置为段指定的地址），并移交控制权给kernel。
+
+Part 3: The Kernel
 -------------------------------
-1. 虚拟内存的切换。进入内核后切换（entry  f010000c (virt)  0010000c (phys)）
-2. vprintfmt + putch 原理，增加vprintfmt oct进制打印。
-3. 内核栈的初始化
-4. 利用eip回溯调用栈。
-5. 结合asm和gdb分析test_backtrace每一层使用的栈空间（0x20）。
+关键lab内容：
+
+1. 虚实地址的切换。进入内核后切换（entry  f010000c (virt)  0010000c (phys)）
+2. vprintfmt + putch 原理，补充vprintfmt 8进制格式化代码。
+3. 内核栈的初始化；利用eip回溯调用栈；结合asm和gdb分析test_backtrace每一层使用的栈空间（0x20）。
 
 参考
 
@@ -154,9 +167,101 @@ Part 3: The Boot Loader
 3. `exercise12_print_more_info <https://www.cnblogs.com/wuhualong/p/lab01_exercise12_print_more_info.html>`__
 4. `glibc的backtrace实现 <https://elixir.bootlin.com/glibc/glibc-2.24/source/debug/backtrace.c#L89>`__
 
+cprintf
+~~~~~~~~~~
+cprintf -> vcprintf -> putch + vprintfmt
 
-backtrace实现
+1. vprintfmt: Main function to format and print a string.
+2. putch: 输出字符，如下:
+
+::
+
+   // `High'-level console I/O.  Used by readline and cprintf.
+   void
+   cputchar(int c)
+   {
+      cons_putc(c);
+   }
+
+   // output a character to the console
+   static void
+   cons_putc(int c)
+   {
+      serial_putc(c);  //串口
+      lpt_putc(c);     //并口
+      cga_putc(c);     //显示屏
+   }
+
+   ...
+   cga_putc
+   1. 打印属性处理，如颜色；
+   2. 特殊字符处理，如`\b \r \n \t`;
+   3. 记录字符到缓冲区；
+   4. 屏幕内容上下移动；
+   5. outb输出缓冲区内容：
+   /* move that little blinky thing */
+   outb(addr_6845, 14);
+   outb(addr_6845 + 1, crt_pos >> 8);
+   outb(addr_6845, 15);
+   outb(addr_6845 + 1, crt_pos);
+
+
+内核栈初始化
 ~~~~~~~~~~~~~~
+`Exercise 1.9 <https://www.cnblogs.com/fatsheep9146/p/5079177.html>`__
+
+1. 通过cr0/cr3寄存器加载页表，进入具有分页机制的模式(加载之后，直接jump到对应虚地址即可)；
+2. 然后初始化ebp、esp:
+
+::
+
+      movl    $0x0,%ebp            # nuke frame pointer
+      movl    $(bootstacktop),%esp  # 0xf0110000 ,KSTKSIZE = 8 * PGSIZE = 32KB
+      call    i386_init
+
+
+basic backtrace
+~~~~~~~~~~~~~~
+
+::
+
+   int* ebp;
+   asm volatile("movl %%ebp,%0" : "=r" (ebp));   //汇编获取当前ebp
+   ...
+   ebp = (int*)*(ebp);      //获取上一层的ebp
+   ....
+   debuginfo_eip(ebp[1], &dbg_info); //ebp[1]即eip地址,查找更多debug信息
+
+
+
+ebp(frame pointer,caller func的栈基址)与eip(Instruction Pointer Register,被保存为callee func返回地址）相邻：
+
+::
+
+   (FP is the frame pointer register——ebp):
+
+         +-----------------+     +-----------------+
+   FP -> | previous FP --------> | previous FP ------>...
+         |                 |     |                 |
+         | return address  |     | return address  |
+         +-----------------+     +-----------------+
+
+
+
+1. `gcc内建函数 <https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html>`__ ,
+   如 `void * __builtin_return_address (unsigned int level)` 、 `void * __builtin_frame_address (unsigned int level)`
+
+backtrace more
+~~~~~~~~~~~~~~~~~~~~
+上文已经可根据ebp获得eip。
+
+
+1. ld脚本中可将包含debug info的 section的起始、结束位置声明为全局变量，在代码中可直接使用，用于根据指令地址在section范围内查找debug信息；
+2. 使用指令地址 (\*eip) 查找该指令的debug（stabs）信息， func -> line -> file(因为inline？所以放在最后)。
+
+
+STABS 
+~~~~~~~~~~
 gcc -g生成的XCOFF有stab和stabstr段表.
 
 STABS (Symbol TABle Strings) .
@@ -200,17 +305,4 @@ stabstr符号表内容如下：
       
 
 
-ebp与eip的关系。
-::
 
-   (FP is the frame pointer register):
-
-   +-----------------+     +-----------------+
-   FP -> | previous FP --------> | previous FP ------>...
-   |                 |     |                 |
-   | return address  |     | return address  |
-   +-----------------+     +-----------------+
-
-
-
-根据ebp获得eip，使用*eip找到debug（stabs）信息， func -> line -> file(因为inline？所以放在最后)。
