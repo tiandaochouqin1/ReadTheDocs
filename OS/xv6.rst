@@ -59,16 +59,24 @@ __libc_start_main() is not in the source standard; it is only in the binary stan
 1. .gdbinit：`GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__，如指定符号文件;
 
 2. 单行调试： step(step into called func)和next(step over);
+
 3. 单指令调试：stepi和nexti;
+
 4. 运行：continue(运行到断点或Ctrl+C)、finish(运行到当前函数返回)、advance <location>(运行到指定地址);
-5. 断点：break <location>(地址、函数名、文件行号)，delete, disable, enable；
-6. 条件断点：break <location> if <condition> 、cond <number> <condition> adds a condition on an
-existing breakpoint;
+
+5. 断点：break <location>(地址、函数名、文件行号)，delete, disable, enable;
+
+6. 条件断点：break <location> if <condition>、cond <number> <condition>;
+
 7. 数据断点(watchpoints)：watch <expression>和watch -l <address> (value was changed)、rwatch [-l] <expression>( value was read);
-8. 打印：x(格式化打印，如x/x、x/i)、p(以c语句形式打印)、list <location>(打印func源码)；
+
+8. 打印：x(格式化打印，如x/x、x/i)、p(以c语句形式打印)、list <location>(打印func源码);
+
 9. info： info registers/frame/break;
+
 10. 符号文件更换：symbol-file obj/kern/kernel
-10. layout：显示调试窗口
+
+11. layout：显示调试窗口
 
 gdb调试的layout使用：
 
