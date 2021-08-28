@@ -20,7 +20,7 @@ Packet Send & Recieve
 
 4. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
 
-5. 深入linux内核架构
+5. 《深入linux内核架构》 ：大体框架了解了，需要细节学习。
 6. `结合中断分析TCP/IP协议栈在LINUX内核中的运行时序 <https://www.cnblogs.com/ypholic/p/14337328.html>`__
 
 
@@ -28,6 +28,7 @@ Packet Send & Recieve
 问题记录
 ------------
 1. TCP/IP中tcp可靠性？其它层为什么不可靠？
+2. dpdk、netfilter、ebpf
 
 
 socket

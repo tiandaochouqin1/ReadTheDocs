@@ -1337,14 +1337,13 @@ MISC
 
 signal原型
 ------------
-signal()的声明如下：
 
 ::
 
-   void ( * signal(int sig,void ( * func)(int)))(int);   # 此处主声明的是func!!  func和signal函数声明一致，但是不是同一个函数！！
+   signal()的原型
+   void ( * signal(int sig,void ( * func)(int)))(int);   #  func和signal函数声明一致，但是不是同一个函数！！
 
    需要拆分为两部分来理解：
-
    typedef void( * ptr_to_func)(int);
    ptr_to_func signal(int，ptr_to_func); # signal 
 
