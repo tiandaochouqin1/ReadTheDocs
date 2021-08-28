@@ -1328,3 +1328,69 @@ https://elixir.bootlin.com/linux/v2.6.32/source/kernel/timer.c
 2. Cascade：
 Cascade可以翻译成降级处理。每个tick到来，都只会去检测最低级的tv1的时间轮，因为多级时间轮的设计决定了最低级的时间轮永远保存这最近要超时的定时器。
 多级时间轮最重要的一个处理流程就是cascade，当每一级(除了最高级)时间轮走到超出该级时间轮的范围时，就会触发上一级时间轮所在spoke+1的cascade过程，如果上一级时间轮也走出来时间轮的范围，也同样会触发cascade过程，这是一个递归过程。
+
+
+
+
+MISC
+==========
+
+signal原型
+------------
+signal()的声明如下：
+
+::
+
+   void ( * signal(int sig,void ( * func)(int)))(int);   # 此处主声明的是func!!  func和signal函数声明一致，但是不是同一个函数！！
+
+   需要拆分为两部分来理解：
+
+   typedef void( * ptr_to_func)(int);
+   ptr_to_func signal(int，ptr_to_func); # signal 
+
+   或
+   typedef void ( * sighandler_t)(int);   # sighandler_t代表一种函数类型的原型
+   sighandler_t signal(int signum, sighandler_t handler); # signal的入参signum实际上作为sighandler_t 的入参int被使用！！ 
+
+
+示例代码：
+
+::
+
+   #include <stdio.h>
+   
+   enum { RED, GREEN, BLUE };
+   
+   void OutputSignal(int sig)
+   {
+         printf("The signal you /'ve input is: ");
+         switch(sig)
+         {
+               case RED:
+                     puts("RED!");
+                     break;
+            case GREEN:
+                     puts("GREEN!");
+                     break;
+            case BLUE:
+                     puts("BLUE!");
+                     break;
+         }
+   }
+   
+   void ( *signal( int sig, void (*func)(int) ) ) (int)
+   {
+            puts("Hello, world!");
+   
+            func(sig);
+   
+            return func;
+   }
+   
+   int main(void)
+   {
+            (*signal(GREEN, &OutputSignal))(RED);
+   
+            return 0;
+   }
+

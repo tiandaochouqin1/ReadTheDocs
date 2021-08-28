@@ -83,6 +83,61 @@ gdb调试的layout使用：
    Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。
 
 
+GDB原理
+-----------
+1. `GDB底层实现原理 <https://mp.weixin.qq.com/s/y3c07Hk7g3P-rd0oDzszlA>`__
+2. `一文带你看透 GDB 的 实现原理 -- ptrace真香 <https://blog.csdn.net/Z_Stand/article/details/108395906>`__
+3. `一窥GDB原理 <https://bbs.pediy.com/thread-265599.htm>`__
+
+
+> Todo: ptrace实现一个tracer
+
+ptrace系统调用
+~~~~~~~~~~~~~~~~
+进程(gdb)可以读写另外一个进程(test)的指令空间、数据空间、堆栈和寄存器的值。
+
+https://man7.org/linux/man-pages/man2/ptrace.2.html
+
+`long ptrace(enum __ptrace_request request,  pid_t pid, void *addr,  void *data);`
+
+
+1. request：指定调试的指令，指令的类型很多，如：PTRACE_TRACEME、PTRACE_PEEKUSER、PTRACE_CONT、PTRACE_GETREGS等等
+
+   - PTRACE_TRACEME表示被追踪进程调用，让父进程来追踪自己。通常是gdb调试新进程时使用。
+   - PTRACE_ATTACH父进程attach到正在运行的子进程上，这种追踪方式会检查权限，普通用户无法追踪root用户下的进程
+
+2. pid：进程的ID（这个不用解释了）。
+3. addr：进程的某个地址空间，可以通过这个参数对进程的某个地址进行读或写操作。addr参数值是从哪里获取到的（来源于elf?）？这个值是tracee的虚地址，这需要提前获取到tracee的地址空间？
+4. data：根据不同的指令，有不同的用途，下面会介绍。
+
+单步调试模式（PTRACE_SINGLESTEP）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. 当把 eflags 寄存器的 Trap Flag 设置为1后，CPU 每执行一条指令便会产生一个异常，然后会触发 Linux 的异常处理，Linux 便会发送一个 SIGTRAP 信号给被调试的进程。
+2. 被调试进程处理 SIGTRAP 信号时会发送一个 SIGCHLD 信号给父进程（调试进程），并且让自己停止执行。
+3. 父进程（调试进程）接收到 SIGCHLD 后，就可以对被调试的进程进行各种操作，比如读取被调试进程内存的数据和寄存器的数据，或者通过调用 ptrace(PTRACE_CONT, child,...) 来让被调试进程进行运行等。
+
+被调试进程处理SIGTRAP
+~~~~~~~~~~~~~~~~~~~~~
+1. ptrace() 对 PTRACE_TRACEME 的处理就是把当前进程标志为 PTRACE 状态。
+2. 被调试进程处理 SIGTRAP 信号时( do_signal),如果当前进程被标记为 PTRACE 状态，那么就
+   
+   1. 使自己进入停止运行状态。
+   2. 发送 SIGCHLD 信号给父进程。
+   3. 让出 CPU 的执行权限，使 CPU 执行其他进程。
+
+
+断点原理int 3
+~~~~~~~~~~~~~
+
+1. 读取addr处的指令的位置，存入GDB维护的断点链表中。
+
+2. 将中断指令 INT 3 （0xCC）打入原本的addr处。也就是将addr处的指令掉换成INT 3
+ 
+3. 当执行到addr处（INT 3）时，CPU执行这条指令的过程也就是发生断点异常（breakpoint exception），tracee产生一个SIGTRAP，
+   此时我们处于attach模式下，tracee的SIGTRAP会被tracer（GDB）捕捉。
+   然后GDB去他维护的断点链表中查找对应的位置，如果找到了，说明hit到了breakpoint。
+ 
+4. 接下来，如果我们想要tracee继续正常运行，GDB将INT 3指令换回原来正常的指令，回退重新运行正常指令，然后接着运行。
 
 调试stripped程序
 ------------------
