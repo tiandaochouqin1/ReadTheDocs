@@ -38,6 +38,7 @@ GDB
 ============
 1. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
 2. https://sourceware.org/gdb/onlinedocs/gdb/ 
+3. :download:`gdb_slides <../files/gdb_slides.pdf>`
 
 
 
@@ -57,9 +58,9 @@ GDB
 
 7. 数据断点(watchpoints)：watch <expression>和watch -l <address> (value was changed)、rwatch [-l] <expression>( value was read);
 
-8. 打印：x(格式化打印，如x/x、x/i)、p(以c语句形式打印)、list <location>(打印func源码);
+8. 打印：x(格式化打印，如x/10xw、x/10i)、p(以c语句形式打印)、list <location>(打印func源码);
 
-9. info： info registers/frame/break;
+9. info打印： info registers/frame/break;
 
 10. 符号文件更换：symbol-file obj/kern/kernel
 
