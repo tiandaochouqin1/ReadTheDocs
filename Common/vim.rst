@@ -376,6 +376,43 @@ Vim基本配置
     set noundofile     "不生成undo备份 .filename.un~
 
 
+包管理器
+-------------
+
+1. 使用内置包管理器。Vim 8增加了加载原生第三方插件的可能性。可以通过在〜/.vim/pack/foo中存储第三方软件包来使用此功能。
+2. 第三方插件管理器。Vundle、Pathogen等。
+
+内置包管理器
+~~~~~~~~~~~~~~
+没搞成功，无法自动加载。
+
+::
+
+    Loading packages automatically will not happen if loading plugins is disabled,
+    see |load-plugins|.
+
+
+
+查看文档 :h packages。
+
+
+`vim8原生内置(naive)插件安装 <https://blog.csdn.net/qq_27825451/article/details/100557133>`__
+
+
+Vim8 会自动加载 ~/.vim/pack/*/start/
+
+不想自动加载的插件可以放到 opt 目录下 ~/.vim/pack/*/opt
+随后在 ~/.vimrc 中使用 packadd 来手动加载插件，有应用场景如下
+可以根据某个编译版本来选择使用插件的版本。
+
+::
+
+    if foo_compiler_version > 34
+        packadd foo_new
+    else
+        packadd foo_old
+    endif
+
 
 
 cscope
@@ -556,6 +593,7 @@ BufWritePost（使用vim进行写入时）是比较合适的触发条件。
 
 taglist
 ---------
+https://sourceforge.net/projects/vim-taglist/files/
 
 https://blog.easwy.com/archives/advanced-vim-skills-taglist-plugin/
 
@@ -670,6 +708,7 @@ tagbar+ctrlp 替代taglist
 
 lookupfile
 ------------
+https://www.vim.org/scripts/script.php?script_id=1581
 
 https://blog.easwy.com/archives/advanced-vim-skills-lookupfile-plugin/
 
