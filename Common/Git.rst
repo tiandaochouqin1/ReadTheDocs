@@ -91,7 +91,9 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
 
 ::
 
-   git fetch 
+   git clone url /  git remote add origin url
+   git fetch origin
+
    git add 文件 
    git commit -m "信息" 
    //取得索引中的内容并将它保存为一个永久的快照， 然后创建一个指向该快照的提交对象，最后更新 master 来指向本次提交。
@@ -133,6 +135,31 @@ git push origin refs/heads/serverfix:refs/heads/serverfix
 git push origin --delete serverfix
 
 只是从服务器上移除这个指针。 Git 服务器通常会保留数据一段时间直到垃圾回收运行，所以通常是很容易恢复的。
+
+
+
+submodule
+~~~~~~~~~~~~~~
+在父仓库中只有一个引用（url + commit id）。
+
+子模块：用于别人维护、更新的项目。
+
+
+::
+
+   添加子模块：
+
+   git submodule add <url> <path>
+   其中，url为子模块的路径，path为该子模块存储的目录路径。
+
+
+   删除子模块：
+
+   rm -rf 子模块目录 删除子模块目录及源码
+   vi .gitmodules 删除项目目录下.gitmodules文件中子模块相关条目
+   vi .git/config 删除配置项中子模块相关条目
+   rm .git/module/* 删除模块下的子模块目录，每个子模块对应一个目录，注意只删除对应的子模块目录即可
+
 
 信息查看
 -----------
@@ -739,3 +766,39 @@ ssh指定秘钥
 ~~~~~~~~~~~
 1. `ssh -i /path/private_key user@hostname -p port` 
 2. 一般客户端可指定秘钥路径
+
+
+
+常见问题
+-----------
+https
+~~~~~~~~~~
+
+::
+
+   gnutls_handshake() failed: The TLS connection was non-properly terminated.
+
+和代理有关。
+
+
+
+1. 虚拟机中出现此问题，关闭宿主机中的clash即可；
+2. 实机出现此问题则需要配置proxy环境变量。（由于代理设置有错，为 http 错误配置了 https 的代理）
+
+`github报错 gnutls_handshake() failed <https://blog.csdn.net/songtianlun/article/details/115611734>`__
+
+::
+
+   env|grep -i proxy
+
+   git config --global --unset http.proxy
+   git config --global --unset https.proxy
+
+   git config --global http.https://github.com.proxy http://127.0.0.1:7890
+   git config --global https.https://github.com.proxy https://127.0.0.1:7890
+
+   # 仅代理 GitHub
+   git config --global http.https://github.com.proxy socks5://127.0.0.1:1080
+   #取消代理
+   git config --global --unset http.https://github.com.proxy
+
