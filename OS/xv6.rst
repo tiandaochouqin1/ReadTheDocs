@@ -183,6 +183,9 @@ Part 1: PC Bootstrap
    调试
    make qemu-nox-gdb/qemu-gdb  //使用obj/kern/kernel.img启动
    make gdb  //同一目录启动gdb
+   b *0x7c00
+   c
+   
 
 
 
@@ -446,4 +449,18 @@ sh.c源码分析
                |- pipecmd 将当前已解析的命令cmd和下一个命令组成pcmd，注意此处递归调用parsepipe，最终得到一棵右倾斜树
    |- peek 解析完成后，判断本行后面是否还有多余字符，若有则报错
 
+
+Part 1:Physical Page Management
+-----------------------------------
+
+
+
+
+Part 2: Virtual Memory
+-------------------------------------
+
+
+
+Part 3: Kernel Address Space
+---------------------------------
 
