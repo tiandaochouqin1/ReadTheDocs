@@ -266,7 +266,7 @@ Part 3: The Kernel
 参考
 
 1. `stabs调试信息 <https://sourceware.org/gdb/onlinedocs/stabs.html#Overview>`__
-2. `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__
+2. `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__ ; `Part2 <https://manybutfinite.com/post/epilogues-canaries-buffer-overflows/>`__
 3. `exercise12_print_more_info <https://www.cnblogs.com/wuhualong/p/lab01_exercise12_print_more_info.html>`__
 4. `glibc的backtrace实现 <https://elixir.bootlin.com/glibc/glibc-2.24/source/debug/backtrace.c#L89>`__
 
@@ -324,7 +324,7 @@ cprintf -> vcprintf -> putch + vprintfmt
 
 
 basic backtrace
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 ::
 
@@ -377,9 +377,10 @@ stabstr符号表内容如下：
 1. Symnum是符号索引，即整个符号表看作一个数组，Symnum是当前符号在数组中的下标
 2. n_type是符号类型，FUN指函数名，SLINE指在text段中的行号
 3. n_othr目前没被使用，其值固定为0
-3. n_desc表示在文件中的行号
-4. n_value表示地址。只有FUN类型的符号的地址是绝对地址，SLINE符号的地址是偏移量，其实际地址为函数入口地址加上偏移量。
+4. n_desc表示在文件中的行号
+5. n_value表示地址。只有FUN类型的符号的地址是绝对地址，SLINE符号的地址是偏移量，其实际地址为函数入口地址加上偏移量。
    比如第3行的含义是地址f01000b8(=0xf01000a6+0x00000012)对应文件第34行。
+
 
 ::
 
