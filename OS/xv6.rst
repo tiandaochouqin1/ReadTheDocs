@@ -454,7 +454,30 @@ sh.c源码分析
 Part 1:Physical Page Management
 -----------------------------------
 
+内存布局：
 
+::
+
+   /*
+   *                     .                              .
+   *                     .       Managable Space        .
+   *                     .                              .
+   pages ends 0x158000 -->+------------------------------+
+   *                     |                              |
+   *                     .                              .
+   *                     .   pages management array     .
+   *                     .                              .
+   *                     |                              |
+   *  pages 0x118000 ->  +------------------------------+
+   *                     |        Kernel is here        |
+   *    EXT 0x100000 ->  +------------------------------+
+   *                     |                              |
+   *                     |          IO Hole             |
+   *                     |                              |
+   * BASEMEM 0xa0000 ->  +------------------------------+
+   *                     |    Basic Managable Space     |
+   *    KERNBASE ----->  +------------------------------+
+   */
 
 
 Part 2: Virtual Memory

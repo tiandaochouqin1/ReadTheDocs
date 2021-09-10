@@ -96,7 +96,10 @@ https://lrita.github.io/wiki/books/
 导论
 ---------
 
-`自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：列出了9门科目并分析了一些学习方法，其中\ ``CSAPP和DDIA``\ 回报率最高。
+`自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：
+列出了9门科目并分析了一些学习方法，其中 `CSAPP和DDIA` 回报率最高。
+
+`CSAPP重点解读 <https://fengmuzi2003.gitbook.io/csapp3e/>`__
 
 +---------+-------------------+--------------------------------+-------+
 | 科目    | 为何要学？        | 最佳书籍                       | 最佳  |

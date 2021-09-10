@@ -32,6 +32,8 @@ Tutor&CheetSheet
 
 定位与编辑
 ==========
+https://yianwillis.github.io/vimcdoc/doc/change.html
+
 
 行定位
 ------------
@@ -69,6 +71,8 @@ Tutor&CheetSheet
 
 行内定位
 ----------
+[motion]
+
 ``w/b/e``
 
 ``^/$/0``
@@ -76,6 +80,10 @@ Tutor&CheetSheet
 ``f/F + char``：移动到下/上一个char的位置。
 
 ``t/T + char``：移动到下/上一个char的前一个位置。
+
+``s``: 删除字符并插入
+``c{motion}`` : 将 {motion} 跨过的文本删除，并插入
+
 
 搜索与替换
 -----------

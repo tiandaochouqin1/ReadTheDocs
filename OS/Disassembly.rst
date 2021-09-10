@@ -263,11 +263,11 @@ struct返回值
 
 ::
 
-      ~/Desktop$ gcc exit_status.c -o exit_status
-      ~/Desktop$ ./exit_status
-      ~/Desktop$ echo $?
+      $ gcc exit_status.c -o exit_status
+      $ ./exit_status
+      $ echo $?
       8
-      ~/Desktop$ cat exit_status.c
+      $ cat exit_status.c
       #include <stdio.h>
       struct st{
 
@@ -287,12 +287,12 @@ struct返回值
 ~~~~~~~~~~~~~~~~~~
 ::
 
-      :~/Desktop$ gcc add.c -o add
-      :~/Desktop$ ./add
+      $ gcc add.c -o add
+      $ ./add
       7
       666
 
-      :~/Desktop$ cat add.c
+      $ cat add.c
       #include <stdio.h>
 
       int add(int a, int b)
