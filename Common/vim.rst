@@ -12,10 +12,10 @@ Doc
 
 
 1. `VimDoc <https://yianwillis.github.io/vimcdoc/doc/help.html>`__
-2. 《Vim - Vi Improved - by Steve Oualline
+2. 《Vim - Vi Improved》 - by Steve Oualline
 3. 《VIM实用技巧第2版》
-4. help usr_03.txt
-5. help usr_29.txt
+4. help usr_03.txt ：help usr_03.txt
+
 
 
 Tutor&CheetSheet
