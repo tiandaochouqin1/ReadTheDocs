@@ -195,8 +195,9 @@ log与查找
 
 ::
 
-      git log file // 查看文件历史，-p查看详细diff
-      git blame file //
+      git log file // 查看文件所有历史，-p以patch形式输出diff。
+      git log line_start,line_end:file / :function:file // 指定行或函数
+      git blame file //查看每一行最近一次commit信息
       git show commit_id file //
       git log [branch_name]
          -n 最近n次提交

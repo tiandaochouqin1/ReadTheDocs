@@ -687,3 +687,18 @@ C语言内联汇编
 
 1. 在asm语句中对寄存器的引用必须用“%%”作为寄存器名称的前缀。原因是“%”在asm
    内嵌汇编语句中的作用与“”在C语言中的作用相同，因此“%%”转换后代表“%”。
+
+
+arm dsb
+-------------
+https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
+
+
+1. DMB:Data Memory Barrier,只作用于显式内存访问指令，保证dmb前的指令先执行完。
+   all explicit memory accesses that appear in program order before the DMB instruction are observed before any explicit memory accesses that appear in program order after the DMB instruction. 
+
+2. DSB:Data Synchronization Barrier，一种特殊的dmb，作用于所有指令，保证dsb之前的指令执行完之后才执行dsb之后的指令。
+   No instruction in program order after this instruction executes until this instruction completes.
+   dsb指令完成的条件包括：All Cache, Branch predictor and TLB maintenance operations before this instruction complete.
+3. ISB:Instruction Synchronization Barrier,清空cpu流水线。
+   flushes the pipeline in the processor, so that all instructions following the ISB are fetched from cache or memory, after the instruction has been completed
