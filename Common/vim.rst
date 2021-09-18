@@ -56,9 +56,12 @@ https://yianwillis.github.io/vimcdoc/doc/change.html
     { or }  ：移动到段首/段尾 （段落以空行区分）
 
 
-    zz/zt/zb or M/H/L：移动到屏幕中间/顶部/底部
-    nzz      ：第n行移动到中间
+
+    zz/zt/zb ：当前行移动到屏幕中间/顶部/底部
     .zz      ：当前行移动到中间
+    nzz      ：第n行移动到中间
+
+    M/H/L    ：光标移动到屏幕中间/顶部/底部
 
     Ctrl + e/y  ：向下/向上移动一行屏幕
 

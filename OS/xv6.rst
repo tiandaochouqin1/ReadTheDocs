@@ -38,7 +38,8 @@ GDB
 ============
 1. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
 2. https://sourceware.org/gdb/onlinedocs/gdb/ 
-3. :download:`gdb_slides <../files/gdb_slides.pdf>`
+3. `GDB调试入门指南 <https://zhuanlan.zhihu.com/p/74897601>`__`
+4. :download:`gdb_slides <../files/gdb_slides.pdf>`
 
 
 
@@ -48,13 +49,13 @@ GDB
 
 2. 单行调试： step(step into called func)和next(step over);
 
-3. 单指令调试：stepi和nexti;
+3. 单指令调试：stepi/si和nexti/ni;
 
 4. 运行：continue(运行到断点或Ctrl+C)、finish(运行到当前函数返回)、advance <location>(运行到指定地址);
 
 5. 断点：break <location>(地址、函数名、文件行号)，delete, disable, enable;
 
-6. 条件断点：break <location> if <condition>、cond <number> <condition>;
+6. 条件断点：break <location> if <condition>、cond <number> <condition> ,如 b func if var == 1;
 
 7. 数据断点(watchpoints)：watch <expression>和watch -l <address> (value was changed)、rwatch [-l] <expression>( value was read);
 
@@ -66,8 +67,10 @@ GDB
 
 11. layout：显示调试窗口
 
-gdb调试的layout使用：
-
+可视化
+----------
+layout使用
+~~~~~~~~~~~~
 ::
 
    layout：用于分割窗口，可以一边查看代码，一边测试。主要有以下几种用法：
@@ -83,11 +86,22 @@ gdb调试的layout使用：
 
    Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。
 
+tui
+~~~~~~~
+
+栈帧
+------
+
+1. bt/backtrace -full n:显示n层调用链并打印局部变量
+2. info frame/f n :当前栈编号为0
+3. up/down : 向上向下 切换栈
+4. info args/locals :当前栈帧
+5. info variables/functions : 当前程序
 
 GDB原理
 -----------
 1. `GDB底层实现原理 <https://mp.weixin.qq.com/s/y3c07Hk7g3P-rd0oDzszlA>`__
-2. `一文带你看透 GDB 的 实现原理 -- ptrace真香 <https://blog.csdn.net/Z_Stand/article/details/108395906>`__
+2. `一文带你看透 GDB 的 实现原理  <https://blog.csdn.net/Z_Stand/article/details/108395906>`__
 3. `一窥GDB原理 <https://bbs.pediy.com/thread-265599.htm>`__
 
 
@@ -266,7 +280,8 @@ Part 3: The Kernel
 参考
 
 1. `stabs调试信息 <https://sourceware.org/gdb/onlinedocs/stabs.html#Overview>`__
-2. 函数调用栈`journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__ ; `Part2 <https://manybutfinite.com/post/epilogues-canaries-buffer-overflows/>`__
+2. 函数调用栈帧`journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__ ; 
+函数调用返回与缓冲区溢出 `Epilogues, Canaries, and Buffer Overflows  <https://manybutfinite.com/post/epilogues-canaries-buffer-overflows/>`__
 3. `exercise12_print_more_info <https://www.cnblogs.com/wuhualong/p/lab01_exercise12_print_more_info.html>`__
 4. `glibc的backtrace实现 <https://elixir.bootlin.com/glibc/glibc-2.24/source/debug/backtrace.c#L89>`__
 

@@ -13,7 +13,7 @@ ELF结构
 - 文件头：readelf -h 
 - 节区表section：readelf -S 、 objdump -h(只显示关键段)。
 
-1. objdump -s -d -x:
+1. objdump -x -d:
 
 ::
 
@@ -22,7 +22,7 @@ ELF结构
    文件头内容（-h）
    文件头、动态库、符号表 (-x)
    符号表   (-t)
-   指定段 (-j .text / .data)
+   指定段 (-j .text / .data) 需要配合-d使用
           
 
 2. size SimpleSection: 查看text、data、bss的长度。
@@ -247,6 +247,107 @@ execve:按照elf文件程序头表装载elf，并转交控制权给elf入口地�
 - ld：-s消除所有符号信息；-S消除调试符号信息。
 
 
+main之前
+==========
+1. `Linux X86 程序启动 – main函数是如何被执行的？ <https://luomuxiaoxiao.com/?p=516>`__
+2. 英文版 `Linux x86 Program Start Up <http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html>`__
+3. https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129
+
+问题
+------
+1. 构造函数做了什么？ 那些是从elf直接加载的，哪些需要构造？
+
+
+运行过程
+-----------
+execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init 
+-> main -> exit -> 
+
+
+.. figure:: ../images/main_call_graph.png
+   :alt: main_call_graph
+
+   main_call_graph
+
+
+
+1. execvp: 设置栈，压入argc、argv、envp，设置文件描述符（0、1、2），预初始化函数（.preinit）;
+2. _start:置零ebp标记最外层栈，压入__libc_start_main的参数；位于glibc/csu/libc-start.c
+3. __libc_start_main:完成主要工作。setuid/setgid；将fini和rtld_fini传递给at_exit;调用init参数；
+在argv末尾紧接着的位置取envp并调用main（原型如下）；调用exit。
+
+::
+      
+      int __libc_start_main(  int (*main) (int, char * *, char * *),
+                int argc, char * * ubp_av,
+                void (*init) (void),
+                void (*fini) (void),
+                void (*rtld_fini) (void),
+                void (* stack_end));
+
+
+      int main(int argc, char** argv, char** envp)
+
+4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
+5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
+
+完整示例
+------------
+源码
+
+::
+
+      #include <stdio.h>
+
+      void preinit(int argc, char **argv, char **envp) {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      void init(int argc, char **argv, char **envp) {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      void fini() {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      __attribute__((section(".init_array"))) typeof(init) *__init = init;
+      __attribute__((section(".preinit_array"))) typeof(preinit) *__preinit = preinit;
+      __attribute__((section(".fini_array"))) typeof(fini) *__fini = fini;
+
+      void  __attribute__ ((constructor)) constructor() {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      void __attribute__ ((destructor)) destructor() {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      void my_atexit() {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      void my_atexit2() {
+      printf("%s\n", __FUNCTION__);
+      }
+
+      int main() {
+      atexit(my_atexit);
+      atexit(my_atexit2);
+      }
+
+输出：
+
+::
+
+      $ ./hooks
+      preinit
+      constructor
+      init
+      my_atexit2
+      my_atexit
+      fini
+      destructor
 C语言汇编实例
 ==============
 

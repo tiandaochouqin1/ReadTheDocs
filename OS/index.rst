@@ -7,7 +7,7 @@ Linux内核、操作系统、编译等相关知识。
    :numbered: 4
    
    xv6.rst
-   Disassembly.rst
+   Elf&Asm.rst
    KernelDebug.rst
    LinuxKernel.rst
    KernelCompile.rst

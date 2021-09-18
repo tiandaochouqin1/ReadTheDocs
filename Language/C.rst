@@ -27,3 +27,7 @@ ahttpd
 https://sqlite.org/althttpd/doc/trunk/althttpd.md
 
 
+gcov
+-----
+1. `GCC Coverage代码分析 <https://blog.csdn.net/livelylittlefish/category_826830.html>`__
+2. `gcov代码覆盖率测试-原理和实践总结 <https://blog.csdn.net/yanxiangyfg/article/details/80989680>`__
