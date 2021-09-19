@@ -1,5 +1,5 @@
 ==================
-Disassembly & ELF
+ELF & Asm
 ==================
 
 :Date:   2020-07-15 22:45:43
@@ -172,12 +172,19 @@ gcc -shared a.c -o a.so
 1. 程序模块化，便于升级、扩展。
 2. 多程序共享，节省内存，减少换页，增加缓存命中。
 
-静态库：链接时重定位；
-动态库：装载时重定位。
+- 静态库：链接时重定位；
+- 动态库：装载时重定位。
 
+PIC与PLT
+~~~~~~~~~~~
+地址无关代码PIC：程序中的共享指令地址不因装载地址而改变，不受其被加载到的绝对地址的影响，便于多进程共享。
 
-地址无关代码PIC：程序中的共享指令地址不因装载地址而改变，便于多进程共享。
-模块间的数据访问和函数调用通过全局偏移表GOT实现PIC。
+模块间的数据访问和函数调用通过全局偏移表GOT和PLT实现PIC。GOT(Global Offset Table)和PLT(Procedure Linkage Table)
+
+链接时，会将符号定义存入GOT和PLT。
+
+因为无论内存在何处加载目标模块so，数据段和代码段的距离总是保持不变的(so不会被拆分为段，不与原程序合并到仪器)
+
 
 延迟绑定PLT：函数在第一次被用到时才进行绑定。
 
@@ -203,14 +210,13 @@ PLT的基本结构代码：
 
 动态链接器
 ~~~~~~~~~~~~~~
-1. 动态链接器自举：/lib/ld-linux.so.2，glibc - > elf/rtld.c -> _dl_start()
-2. 装载所有so：
+1. 动态链接器自举：/lib/ld-linux.so.2，glibc - > elf/rtld.c -> _dl_start() ;
+2. 装载所有.so;
 3. 重定位和初始化
 
-execve:按照elf文件程序头表装载elf，并转交控制权给elf入口地址（有.interp则是动态链接器的e_entry;无则是elf文件的e_entry）.
-不关心elf是否可执行，故/lib/ld-linux.so.2可执行。
+**execve** :按照elf文件程序头表装载elf，并转交控制权给elf入口地址（有.interp则是动态链接器的e_entry;无则是elf文件的e_entry）.
 
-/lib/ld-linux.so.2本身是静态链接的，不能依赖其它共享对象。
+execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linux.so.2本身是静态链接的，不能依赖其它共享对象。
 
 
 动态链接路径
@@ -249,19 +255,20 @@ execve:按照elf文件程序头表装载elf，并转交控制权给elf入口地�
 
 main之前
 ==========
-1. `Linux X86 程序启动 – main函数是如何被执行的？ <https://luomuxiaoxiao.com/?p=516>`__
-2. 英文版 `Linux x86 Program Start Up <http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html>`__
-3. https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129
+1. 英文版 `Linux x86 Program Start Up <http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html>`__ ;
+   翻译不怎么样 `Linux X86 程序启动 <https://luomuxiaoxiao.com/?p=516>`__
+2. glibc源码位置: https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129
+3. https://www.gnu.org/software/hurd/glibc/startup.html GNU Hurd系统的参考过程
 
 问题
 ------
-1. 构造函数做了什么？ 那些是从elf直接加载的，哪些需要构造？
+1. 构造函数做了什么？ 哪些需要构造？
 
 
 运行过程
 -----------
 execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init 
--> main -> exit -> 
+-> main -> exit -> atexit/fini/destructor
 
 
 .. figure:: ../images/main_call_graph.png
@@ -271,10 +278,20 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
 
 
 
-1. execvp: 设置栈，压入argc、argv、envp，设置文件描述符（0、1、2），预初始化函数（.preinit）;
-2. _start:置零ebp标记最外层栈，压入__libc_start_main的参数；位于glibc/csu/libc-start.c
+1. execvp: 设置栈，压入argc、argv、envp的值，设置文件描述符（0、1、2），预初始化函数（.preinit）;
+2. _start:置零ebp标记最外层栈，esp对齐16B，压入__libc_start_main的参数（通过esp/esi取到的argc/argv的偏移）；位于glibc/csu/libc-start.c
 3. __libc_start_main:完成主要工作。setuid/setgid；将fini和rtld_fini传递给at_exit;调用init参数；
-在argv末尾紧接着的位置取envp并调用main（原型如下）；调用exit。
+并调用main（原型如下）；调用exit。
+
+4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
+5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
+
+_start和__libc_start_main
+----------------------------
+glibc/csu/elf-init.c
+
+函数原型
+~~~~~~~~~
 
 ::
       
@@ -288,8 +305,139 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
 
       int main(int argc, char** argv, char** envp)
 
-4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
-5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
+
+_start压入参数
+~~~~~~~~~~~~~~~~
+
+::
+
+      080482e0 <_start>:
+      80482e0:       31 ed                   xor    %ebp,%ebp     # 置零0，标记为初始栈帧
+      80482e2:       5e                      pop    %esi          # 弹出argc的偏移，后面再压入。然后esp指向了argv
+      80482e3:       89 e1                   mov    %esp,%ecx     # 弹出argv偏移
+      80482e5:       83 e4 f0                and    $0xfffffff0,%esp  # esp对齐16B，栈向下生长
+      80482e8:       50                      push   %eax          # 这里没有用，为了对齐
+      80482e9:       54                      push   %esp          # stack_end，栈底
+      80482ea:       52                      push   %edx          # rtld_fini，Destructor of dynamic linker from loader passed in %edx.
+      80482eb:       68 00 84 04 08          push   $0x8048400    # fini，__libc_csu_fini - Destructor of this program.
+      80482f0:       68 a0 83 04 08          push   $0x80483a0    # init，__libc_csu_init, Constructor of this program.
+      80482f5:       51                      push   %ecx          # 压入argv的偏移
+      80482f6:       56                      push   %esi          # 压入argc的偏移
+      80482f7:       68 94 83 04 08          push   $0x8048394    # main函数
+      80482fc:       e8 c3 ff ff ff          call   80482c4 <__libc_start_main@plt>
+      8048301:       f4
+
+
+没有显式传入envp
+~~~~~~~~~~~~~~~~~~~~~
+在argv末尾紧接着的位置取envp，**envp = &argv[argc + 1] 。
+
+__libc_csu_init 
+-------------------
+在自己的x86环境上gdb跟踪，发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程。
+与这篇文章的反汇编相同 `who call main <http://wen00072.github.io/blog/2015/02/14/main-linux-whos-going-to-call-in-c-language/>`__`
+
+::
+
+      (gdb) bt
+      #0  0x00007ffff7a62bf8 in _IO_puts (str=0x555555400718 <__FUNCTION__.2249> "a_constructor") at ioputs.c:46
+      #1  0x000055555540066a in a_constructor () at constructor.c:4
+      #2  0x00005555554006dd in __libc_csu_init ()
+      #3  0x00007ffff7a03b88 in __libc_start_main (main=0x55555540066d <main>, argc=1, argv=0x7fffffffe388,
+      #4  0x000055555540057a in _start ()
+
+
+反汇编没有__do_global_ctors_aux ，只有__do_global_dtors_aux:
+
+::
+
+      (gdb) bt
+      #0  0x0000555555400610 in __do_global_dtors_aux ()
+      #1  0x00007ffff7de3d13 in _dl_fini () at dl-fini.c:138
+      #2  0x00007ffff7a25161 in __run_exit_handlers (status=0, listp=0x7ffff7dcd718 <__exit_funcs>,
+      run_list_atexit=run_list_atexit@entry=true, run_dtors=run_dtors@entry=true) at exit.c:108
+      #3  0x00007ffff7a2525a in __GI_exit (status=<optimized out>) at exit.c:139
+      #4  0x00007ffff7a03bfe in __libc_start_main (main=0x55555540066d <main>, argc=1, argv=0x7fffffffe388,
+      init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7fffffffe378)
+      at ../csu/libc-start.c:344
+      #5  0x000055555540057a in _start ()
+
+
+**以下为參考文章的内容：**
+
+get_pc_truck
+~~~~~~~~~~~~~~~~~
+
+让位置无关码正常工作。将当前地址与GOT之间的偏移值存入基址寄存器（%ebp）。
+
+
+_init
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. gmon_start : 生成gmon.out，来源于程序分析工具gprof。
+2. frame_dummy: initialize exception handling frame。
+3. _do_global_ctors_aux: 构造函数
+
+_do_global_ctors_aux
+~~~~~~~~~~~~~~~~~~~~~~~
+https://code.woboq.org/gcc/libgcc/crtstuff.c.html#666
+
+::
+
+      #ifdef OBJECT_FORMAT_ELF
+      static void __attribute__((used))
+      __do_global_ctors_aux (void)
+      {
+      func_ptr *p;
+      for (p = __CTOR_END__ - 1; *p != (func_ptr) -1; p--)
+      (*p) ();
+      }
+
+再循环里面调用了用户定义的constructor。
+
+
+查看环境变量
+---------------
+设置环境变量LD_SHOW_AUXV=1 ，运行程序即可打印环境变量。
+
+::
+
+      $ LD_SHOW_AUXV=1 ./strcat
+      AT_SYSINFO_EHDR: 0x7ffd0712f000
+      AT_HWCAP:        f8bfbff
+      AT_PAGESZ:       4096
+      AT_CLKTCK:       100
+      AT_PHDR:         0x56004e000040
+      AT_PHENT:        56
+      AT_PHNUM:        9
+      AT_BASE:         0x7efd65cdc000
+      AT_FLAGS:        0x0
+      AT_ENTRY:        0x56004e0005f0
+      AT_UID:          1000
+      AT_EUID:         1000
+      AT_GID:          1000
+      AT_EGID:         1000
+      AT_SECURE:       0
+      AT_RANDOM:       0x7ffd070a3a59
+      AT_HWCAP2:       0x2
+      AT_EXECFN:       ./strcat
+      AT_PLATFORM:     x86_64
+      abcd!
+      16
+      
+      $ cat strcat.c
+      #include <stdio.h>
+      #include <string.h>
+
+      int main(){
+
+      char str1[20] = "abcd";
+      strcat(str1,"!");
+      printf("%s\n",str1);
+
+      printf("%d\n",0x1<<1+3);
+      return 0;
+      }
+
 
 完整示例
 ------------
@@ -348,6 +496,8 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
       my_atexit
       fini
       destructor
+
+
 C语言汇编实例
 ==============
 
@@ -480,3 +630,9 @@ rdi为0表示标准输出
 rsi表示字符串地址
 
 rdx表示字符串长度   
+
+
+arm汇编入门
+===============
+注：本章以上内容均为x86。
+

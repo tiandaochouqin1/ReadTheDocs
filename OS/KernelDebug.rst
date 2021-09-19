@@ -67,14 +67,14 @@ Developers can put any information they want there.
 ftrace
 ============
 
-1. https://www.kernel.org/doc/html/latest/trace/ftrace.html
+1. https://www.kernel.org/doc/html/latest/trace/ftrace.html 官方示例。
 
 2. `Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
 
 3. `ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
 
 4. Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
-`Part2 <https://lwn.net/Articles/366796/>`__
+`Part2 <https://lwn.net/Articles/366796/>`__ lwn的教程。
 
 used for debugging or analyzing latencies and performance issues that take place outside of user-space.
 
@@ -86,6 +86,8 @@ as well as for preemption and from a time a task is woken to the task is actuall
 ---------------
 依赖debugfs.
 
+挂载Debugfs
+
 ::
 
    CONFIG_IRQSOFF_TRACER=y
@@ -93,12 +95,15 @@ as well as for preemption and from a time a task is woken to the task is actuall
    mount -t tracefs nodev /sys/kernel/tracing
 
    the tracefs file system will be automatically mounted at:
-   /sys/kernel/debug/tracing
+   /sys/kernel/debug/tracing # 默认位置
 
    ln -s /sys/kernel/tracing /tracing
 
 
-后续操作均在文件夹  `/sys/kernel/tracing` 中。
+
+不同linux版本路径可能不同。
+
+后续操作均在文件夹  `/sys/kernel/debug/tracing` 中。
 
 per cpu
 ~~~~~~~~~~~~~~~
@@ -157,10 +162,11 @@ stack trace
 
 “function”:Function call tracer to trace all kernel functions.
 
+stack tracer有点特殊，需要在/proc 开启关闭：
 
 ::
 
-   stack tracer有点特殊，需要在/proc 操作
+
    echo 1  >  /proc/sys/kernel/stack_tracer_enabled
    echo 0 >  /proc/sys/kernel/stack_tracer_enabled
 

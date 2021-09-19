@@ -49,7 +49,7 @@ GDB
 
 2. 单行调试： step(step into called func)和next(step over);
 
-3. 单指令调试：stepi/si和nexti/ni;
+3. 单指令调试：stepi/si和nexti/ni; finish执行完当前函数并返回上一级，return跳过当前函数后续命令并返回上一级；
 
 4. 运行：continue(运行到断点或Ctrl+C)、finish(运行到当前函数返回)、advance <location>(运行到指定地址);
 
@@ -66,6 +66,8 @@ GDB
 10. 符号文件更换：symbol-file obj/kern/kernel
 
 11. layout：显示调试窗口
+
+12. 一直显示下一行源码对应的汇编: set disassemble-next-line on
 
 可视化
 ----------
