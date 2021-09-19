@@ -259,10 +259,11 @@ main之前
    翻译不怎么样 `Linux X86 程序启动 <https://luomuxiaoxiao.com/?p=516>`__
 2. glibc源码位置: https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129
 3. https://www.gnu.org/software/hurd/glibc/startup.html GNU Hurd系统的参考过程
+4. https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
 
 问题
 ------
-1. 构造函数做了什么？ 哪些需要构造？
+1. 构造函数(__libc_csu_init)做了什么？ 哪些需要构造？C是否就不需要构造函数？
 
 
 运行过程
@@ -334,8 +335,55 @@ _start压入参数
 
 __libc_csu_init 
 -------------------
-在自己的x86环境上gdb跟踪，发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程。
+在自己的x86环境上gdb跟踪（C语言），发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程（C++和C一样，centos和ubuntu一样，arm和x86也类似，可能是gcc/g++版本的原因？）：
+
 与这篇文章的反汇编相同 `who call main <http://wen00072.github.io/blog/2015/02/14/main-linux-whos-going-to-call-in-c-language/>`__`
+
+1. _init中只调用了__gmon_start,没有调用frame_dummy（有此符号）和__do_global_ctors_aux（无此符号）
+2. constructor和gmon_start由init直接调用
+3. 没有段.ctor
+
+
+- .ctor和.dtor段只在可自定义section名的目标文件中被支持（coff/elf都支持），从而使用__do_global_ctors_aux
+
+https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
+
+The best way to handle static constructors works only for object file formats which provide arbitrarily-named sections.
+ A section is set aside for a list of constructors, and another for a list of destructors. 
+ Traditionally these are called ‘.ctors’ and ‘.dtors’. 
+ Each object file that defines an initialization function also puts a word in the constructor section to point to that function. 
+ The linker accumulates all these words into one contiguous ‘.ctors’ section. Termination functions are handled similarly.
+
+
+
+- 查看源码得知，程序定义了  USE_EH_FRAME_REGISTRY || USE_TM_CLONE_REGISTRY  ，对应register_tm_clones和.eh_frame。
+该分支不定义__do_global_ctors_aux 。
+
+https://github.com/gcc-mirror/gcc/blob/master/libgcc/crtstuff.c#L511
+
+https://code.woboq.org/gcc/libgcc/crtstuff.c.html#448
+
+
+::
+
+
+      #ifdef OBJECT_FORMAT_ELF
+
+      #if defined(USE_EH_FRAME_REGISTRY) \
+      || defined(USE_TM_CLONE_REGISTRY)
+      # 中间定义了frame_dummy
+
+            #ifdef __LIBGCC_INIT_SECTION_ASM_OP__
+                  CRT_CALL_STATIC_FUNCTION (__LIBGCC_INIT_SECTION_ASM_OP__, frame_dummy)
+            #else /* defined(__LIBGCC_INIT_SECTION_ASM_OP__) */
+                  static func_ptr __frame_dummy_init_array_entry[]
+                  __attribute__ ((__used__, section(".init_array"), aligned(sizeof(func_ptr))))
+                  = { frame_dummy };
+            #endif /* !defined(__LIBGCC_INIT_SECTION_ASM_OP__) */
+
+      #endif /* USE_EH_FRAME_REGISTRY || USE_TM_CLONE_REGISTRY */
+
+      #else  /* OBJECT_FORMAT_ELF */ # 这个后面就是定义__do_global_ctors_aux的内容了
 
 ::
 
@@ -363,6 +411,21 @@ __libc_csu_init
       #5  0x000055555540057a in _start ()
 
 
+::
+
+      #include <stdio.h>
+      void __attribute__ ((constructor)) constructor(void) {
+            printf("%s\n", __FUNCTION__);
+      }
+
+      int main()
+      {
+            printf("%s\n",__FUNCTION__);
+            return 0;
+      }
+
+
+
 **以下为參考文章的内容：**
 
 get_pc_truck
@@ -379,7 +442,9 @@ _init
 
 _do_global_ctors_aux
 ~~~~~~~~~~~~~~~~~~~~~~~
-https://code.woboq.org/gcc/libgcc/crtstuff.c.html#666
+**__do_global_ctors_aux** function simply performs a walk on the .CTORS section, 
+while the __do_global_dtors_aux does the same job only for the .DTORS section which contains the program specified destructors functions.
+
 
 ::
 
@@ -387,12 +452,12 @@ https://code.woboq.org/gcc/libgcc/crtstuff.c.html#666
       static void __attribute__((used))
       __do_global_ctors_aux (void)
       {
-      func_ptr *p;
-      for (p = __CTOR_END__ - 1; *p != (func_ptr) -1; p--)
-      (*p) ();
+            func_ptr *p;
+            for (p = __CTOR_END__ - 1; *p != (func_ptr) -1; p--)
+            (*p) ();
       }
 
-再循环里面调用了用户定义的constructor。
+在循环里面调用了用户定义的constructor。
 
 
 查看环境变量
