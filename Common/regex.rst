@@ -252,8 +252,63 @@ RegexBuddy分析与调试
 -  library:
    正则库内置了很多常用正则，日常编码过程中需要的很多正则表达式都能在该正则库中找到。
 
+
+其它 
+=======
+正则风格
+--------
+1. `正则表达式“派别”简述 <https://liujiacai.net/blog/2014/12/07/regexp-favors/#pcre%E6%A0%87%E5%87%86>`__
+
+::
+
+   grep 'ftp\|http\|https\|' b.txt #POSIX-BRE标准
+   grep -E 'ftp|http|https' b.txt #POSIX-ERE标准
+   egrep 'ftp|http|https' b.txt #POSIX-ERE标准
+   grep -P 'ftp|http|https' b.txt #PCRE
+
+POSIX
+~~~~~~~~~~
+POSIX把正则表达式分为两种（favor）：
+
+BRE（Basic Regular Expressions）与ERE（Extended Regular Expressions ）
+
+GNU中的ERE与BRE的功能相同，只是语法不同（ `BRE需要用\进行转义，才能表示特殊含义`）
+
+- 使用BRE语法的命令有：grep、ed、sed、vim 
+- 使用ERE语法的命令有：egrep、awk、emacs 。支持非贪婪和断言，但语法和pcre不同。
+
+当然，这也不是绝对的，比如 sed 通过-r选项就可以使用ERE了，大家到时自己man一下就可以了。
+
+POSIX还定义了一些shorthand，具体如下：
+
+::
+
+   [:alnum:]
+   [:alpha:]
+   [:cntrl:]
+   [:digit:]
+   [:graph:]
+   [:lower:]
+   [:print:]
+   [:punct:]
+   [:space:]
+   [:upper:]
+   [:xdigit:]
+   必须在[]中使用，也就是说如果像匹配0-9的数字，需要这么写[[:alnum:]]，取反就是[^[:alnum:]]。
+   shorhand 在BRE与EBE中的用法相同。
+
+
+PCRE
+~~~~~~~~~
+Perl Compatible Regular Expressions
+
+现在的编程语言中的正则表达式，大部分都属于PCRE这个分支。
+
+支持非贪婪和断言。
+
+
 Python中的使用
-==============
+----------------
 
 参考\ `PythonCookBook <https://python3-cookbook.readthedocs.io/zh_CN/latest/>`__
 或 Python核心编程。
@@ -291,9 +346,10 @@ Python中的使用
 
 ::
 
-
        import re
        text = 'Today is 11/27/2012. PyCon starts 3/13/2013.'
        datepat = re.compile(r'(\d+)/(\d+)/(\d+)')
        m = datepat.findall(text) //匹配所有输出为数组
        s = match.findall(text) //匹配第一个
+
+       s2 = datepat.sub("ddd", text)

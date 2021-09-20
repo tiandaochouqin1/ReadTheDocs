@@ -698,23 +698,71 @@ C语言内联汇编
 
 arm汇编入门
 ===============
-1. https://cheatography.com/syshella/cheat-sheets/arm-assembly/
+1. `arm asm cheat-sheets <https://cheatography.com/syshella/cheat-sheets/arm-assembly/>`__
 2. https://azeria-labs.com/writing-arm-assembly-part-1/
-3. https://zhuanlan.zhihu.com/p/82490125
+3. `ARM汇编语言 - 简介 <https://zhuanlan.zhihu.com/p/82490125>`__
 
 
 .. figure:: ../images/arm_asm.png
       :alt: asm cheetsheet
 
 
+
+指令
+----------
+
+指令长度
+~~~~~~~~~~~
+32位，64位指令集指的是操作数据宽度，即内存操作的数据宽度，不是指指令只有32位，64位。
+
 Aarch64使用A64指令集，指令长度是32位！
 
 .. figure:: ../images/A64.jpg
       :alt: aarch
 
-RM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在取指”的指令（即下下个执行的指令），而不是指向“正在执行”的指令或者正在“译码”的指令。
+ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在取指”的指令（即下下个执行的指令），而不是指向“正在执行”的指令或者正在“译码”的指令。
+
+格式
+~~~~~~~~
+
+指令为定长（x86不定长）。
+
+<opcode>{<cond>}{S} <Rd>,<Rn>{,<shifter_operand>}
 
 
+其中，<>内的项是必须的，{}内的项是可选的，如<opcode>是指令助记符，是必须的，而{<cond>}为指令执行条件，是可选的，如果不写则使用默认条件AL(无条件执行)。
+
+::
+
+   （1）Opcode   指令助记符，如LDR，STR 等
+   （2）Cond       执行条件，如EQ，NE 等
+   （3）S           是否影响CPSR 寄存器的值，书写时影响CPSR，否则不影响
+   （4）Rd          目标寄存器
+   （5）Rn          第一个操作数的寄存器
+   （6）shifter_operand      第二个操作数
+
+
+
+
+.. figure:: ../images/arm_op.png
+   :alt: arm指令类型
+
+
+立即数
+~~~~~~~~
+1. `ARM 立即寻址之立即数的形成 —— 如何判断有效立即数 <https://blog.csdn.net/sinat_41104353/article/details/83097466>`__
+
+
+::
+
+   31 28 | 27 26 | 25 | 24 23 22 21 20 | 19   16 | 15    12 | 11        0      |
+   cond  | 0  0  | I  | 1  1  0  1  S  | SBZ     | Rd       | shifter operand  |
+
+   (see"ARM Architecture Reference Manual, 4.1.29"MOV")
+
+shifter operand bit[0:11] 即立即数。[0:7]为数值部分，[8:11]为移位量。
+
+立即数 = immed_8 循环右移 (2 * Rotate_imm)
 
 寄存器
 ---------
