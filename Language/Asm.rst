@@ -9,18 +9,22 @@ Assembly x86
 参考链接
 ========
 
-1. `Brennan's Guide to Inline Assembly <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>`__
-2. `GNU Assembler Examples <https://cs.lmu.edu/~ray/notes/gasexamples/>`__
-3. `x86 Assembly  Guide <https://www.cs.virginia.edu/~evans/cs216/guides/x86.html>`__
-4. http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html
-5. https://web.stanford.edu/class/archive/cs/cs107/cs107.1194/guide/x86-64.html
-6. `汇编语言入门 <https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html>`__
-7. `Intel格式和AT&T格式汇编区别 <https://www.cnblogs.com/hdk1993/p/4820353.html>`__
+
+
+1. https://web.stanford.edu/class/archive/cs/cs107/cs107.1194/guide/x86-64.html
+2. `x86 Assembly  Guide <https://www.cs.virginia.edu/~evans/cs216/guides/x86.html>`__
+3. http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html
+
+
+4. `汇编语言入门 <https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html>`__
+5. `GNU Assembler Examples <https://cs.lmu.edu/~ray/notes/gasexamples/>`__
+6. `Intel格式和AT&T格式汇编区别 <https://www.cnblogs.com/hdk1993/p/4820353.html>`__
+
 
 .. figure:: ../images/x86-registers.png
    :alt: Registers
 
-   Registers
+
 
 调用规则
 ========
@@ -57,8 +61,8 @@ SIMD并行
 -  addss — do just one single-precision addition, using the low 32-bits
    of the register
 
-简介
-====
+x86简介
+==========
 
 -  编译器：将高级语言翻译成操作码（opcode，二进制形式不可读）。
 -  汇编语言：二进制指令的文本形式，与指令是一一对应的关系。还原成二进制即可被CPU执行。
@@ -69,6 +73,7 @@ SIMD并行
 ``CPU寄存器->　缓存（多级）->　RAM　->　HardDisk``
 
 早期x86
+
 CPU只有8个寄存器，每个都有不同的用途，现在已经有100多个了，且都是通用寄存器，不特别指定用途。
 
 通用寄存器可用于传送和暂存数据，也可参与算术逻辑运算，并保存运算结果。
@@ -526,8 +531,6 @@ decimal）数是指2进制编码的10进制数，压缩的BCD占据一个字节�
 
 ::
 
-
-
    AAA（ASCII adjust after addition）指令，是BCD指令集中的一个指令，用于在两个未打包的BCD值相加后，调整al和ah寄存器的内容。AAA指令做两件事情：
    - 如果al的低4位是在0到9之间，保留低4位，清除高4位，如果al的低4位在10到15之间，则通过加6，来使得低4位在0到9之间，然后再对高4位清零。
    - 如果al的低4位是在0到9之间，ah值不变，CF和AF标志清零，否则，ah=ah+1，并设置CF和AF标志。
@@ -539,6 +542,7 @@ decimal）数是指2进制编码的10进制数，压缩的BCD占据一个字节�
 
    DAA（加法后的十进制调整）指令将和数转换为压缩十进制格式。
    DAS（减法后的十进制调整）指令将减法运算结果转换为压缩十进制格式。
+
 
 二进制长除法
 ------------
@@ -605,6 +609,8 @@ C语言内联汇编
 1. https://www.codenong.com/cs105192200/
 2. https://mp.weixin.qq.com/s/2k8nYX4-z662oXqUx4BbqA
 3. https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Clobbers-and-Scratch-Registers
+4. `Guide to Inline Assembly <http://www.delorie.com/djgpp/doc/brennan/brennan_att_inline_djgpp.html>`__
+
 
 概述
 ----
@@ -689,6 +695,93 @@ C语言内联汇编
    内嵌汇编语句中的作用与“”在C语言中的作用相同，因此“%%”转换后代表“%”。
 
 
+
+arm汇编入门
+===============
+1. https://cheatography.com/syshella/cheat-sheets/arm-assembly/
+2. https://azeria-labs.com/writing-arm-assembly-part-1/
+3. https://zhuanlan.zhihu.com/p/82490125
+
+
+.. figure:: ../images/arm_asm.png
+      :alt: asm cheetsheet
+
+
+Aarch64使用A64指令集，指令长度是32位！
+
+.. figure:: ../images/A64.jpg
+      :alt: aarch
+
+RM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在取指”的指令（即下下个执行的指令），而不是指向“正在执行”的指令或者正在“译码”的指令。
+
+
+
+寄存器
+---------
+
+accessible in any privilege mode: r0-15.
+
++----------+----------------------------+-------------------------+
+| ARM      | Description                | x86                     |
++==========+============================+=========================+
+| R0       | General Purpose            | EAX                     |
++----------+----------------------------+-------------------------+
+| R1-R5    | General Purpose            | EBX, ECX, EDX, ESI, EDI |
++----------+----------------------------+-------------------------+
+| R6-R10   | General Purpose            | –                       |
++----------+----------------------------+-------------------------+
+| R11 (FP) | Frame Pointer              | EBP                     |
++----------+----------------------------+-------------------------+
+| R12      | Intra Procedural Call      | –                       |
++----------+----------------------------+-------------------------+
+| R13 (SP) | Stack Pointer              | ESP                     |
++----------+----------------------------+-------------------------+
+| R14 (LR) | Link Register              | –                       |
++----------+----------------------------+-------------------------+
+| R15 (PC) | <- Program Counter /       | EIP                     |
+|          | Instruction Pointer ->     |                         |
++----------+----------------------------+-------------------------+
+| CPSR     | Current Program State      | EFLAGS                  |
+|          | Register/Flags             |                         |
++----------+----------------------------+-------------------------+
+
+
+CPSR
+~~~~~~~~~
+
+寻址模式
+---------
+LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 中有三种偏移形式：
+
+::
+            
+      立即数作为偏移量：ldr r3, [r1, #4]
+      寄存器作为偏移量：ldr r3, [r1, r2]
+      带有位移操作的寄存器作为偏移量：ldr r3, [r1, r2, LSL#2]
+
+
+      如果带有!，就是前变址寻址
+      ldr r3, [r1, #4]!
+      ldr r3, [r1, r2]!
+      ldr r3, [r1, r2, LSL#2]!
+
+      如果基地值寄存器（R1）带中括号，就是后变址寻址
+      ldr r3, [r1], #4
+      ldr r3, [r1], r2
+      ldr r3, [r1], r2, LSL#2
+
+      其他的都是带偏移量的寄存器间接寻址
+      ldr r3, [r1, #4]
+      ldr r3, [r1, r2]
+      ldr r3, [r1, r2, LSL#2]
+
+
+
+LDM和STM指令，"M"在这里代表Multiple。
+
+1. STM是把多个寄存器的值传送到内存相邻的位置。
+2. LDM多个寄存器在ARM汇编语言中用"{}"圈起来，表示待传送的寄存器列表。
+
 arm dsb
 -------------
 https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
@@ -702,3 +795,4 @@ https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
    dsb指令完成的条件包括：All Cache, Branch predictor and TLB maintenance operations before this instruction complete.
 3. ISB:Instruction Synchronization Barrier,清空cpu流水线。
    flushes the pipeline in the processor, so that all instructions following the ISB are fetched from cache or memory, after the instruction has been completed
+   

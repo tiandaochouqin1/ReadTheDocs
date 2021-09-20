@@ -263,7 +263,7 @@ main之前
 
 问题
 ------
-1. 构造函数(__libc_csu_init)做了什么？ 哪些需要构造？C是否就不需要构造函数？
+1. 构造函数(__libc_csu_init)做了什么？ 哪些需要构造？C是否就不需要构造函数？ : 详细走一遍gdb
 
 
 运行过程
@@ -282,7 +282,7 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
 1. execvp: 设置栈，压入argc、argv、envp的值，设置文件描述符（0、1、2），预初始化函数（.preinit）;
 2. _start:置零ebp标记最外层栈，esp对齐16B，压入__libc_start_main的参数（通过esp/esi取到的argc/argv的偏移）；位于glibc/csu/libc-start.c
 3. __libc_start_main:完成主要工作。setuid/setgid；将fini和rtld_fini传递给at_exit;调用init参数；
-并调用main（原型如下）；调用exit。
+   并调用main（原型如下）；调用exit。
 
 4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
 5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
@@ -331,13 +331,13 @@ _start压入参数
 
 没有显式传入envp
 ~~~~~~~~~~~~~~~~~~~~~
-在argv末尾紧接着的位置取envp，**envp = &argv[argc + 1] 。
+在argv末尾紧接着的位置取envp， ** envp = &argv[argc + 1] 
 
 __libc_csu_init 
 -------------------
 在自己的x86环境上gdb跟踪（C语言），发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程（C++和C一样，centos和ubuntu一样，arm和x86也类似，可能是gcc/g++版本的原因？）：
 
-与这篇文章的反汇编相同 `who call main <http://wen00072.github.io/blog/2015/02/14/main-linux-whos-going-to-call-in-c-language/>`__`
+与这篇文章的反汇编相同 `who call main <http://wen00072.github.io/blog/2015/02/14/main-linux-whos-going-to-call-in-c-language/>`__
 
 1. _init中只调用了__gmon_start,没有调用frame_dummy（有此符号）和__do_global_ctors_aux（无此符号）
 2. constructor和gmon_start由init直接调用
@@ -345,6 +345,8 @@ __libc_csu_init
 
 
 - .ctor和.dtor段只在可自定义section名的目标文件中被支持（coff/elf都支持），从而使用__do_global_ctors_aux
+
+`section自定义段 <https://sourceware.org/binutils/docs/as/Section.html>`__
 
 https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
 
@@ -357,7 +359,7 @@ The best way to handle static constructors works only for object file formats wh
 
 
 - 查看源码得知，程序定义了  USE_EH_FRAME_REGISTRY || USE_TM_CLONE_REGISTRY  ，对应register_tm_clones和.eh_frame。
-该分支不定义__do_global_ctors_aux 。
+  该分支不定义__do_global_ctors_aux 。
 
 https://github.com/gcc-mirror/gcc/blob/master/libgcc/crtstuff.c#L511
 
@@ -697,7 +699,4 @@ rsi表示字符串地址
 rdx表示字符串长度   
 
 
-arm汇编入门
-===============
 注：本章以上内容均为x86。
-
