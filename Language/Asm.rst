@@ -796,10 +796,34 @@ accessible in any privilege mode: r0-15.
 
 CPSR
 ~~~~~~~~~
+对应x86的EFLAGS
 
-寻址模式
----------
-LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 中有三种偏移形式：
+寻址模式和偏移模式
+--------------------
+三种 **寻址模式**：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。
+
+::
+      
+   偏移寻址
+
+   [Rn, offset]
+   最终访问内存的地址 = Rn+offset
+   这种操作后Rn的值不会改变
+
+   前变址寻址
+
+   [Rn, offset]!
+   最终访问内存的地址 = Rn+offset
+   这种操作后Rn的值 = Rn+offset
+
+   后变址寻址
+
+   [Rn], offset
+   最终访问内存的地址 = Rn
+   这种操作后Rn的值 = Rn+offset
+
+
+LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 中有三种 **偏移形式**：
 
 ::
             
@@ -810,18 +834,12 @@ LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的�
 
       如果带有!，就是前变址寻址
       ldr r3, [r1, #4]!
-      ldr r3, [r1, r2]!
-      ldr r3, [r1, r2, LSL#2]!
 
       如果基地值寄存器（R1）带中括号，就是后变址寻址
       ldr r3, [r1], #4
-      ldr r3, [r1], r2
-      ldr r3, [r1], r2, LSL#2
 
       其他的都是带偏移量的寄存器间接寻址
       ldr r3, [r1, #4]
-      ldr r3, [r1, r2]
-      ldr r3, [r1, r2, LSL#2]
 
 
 
