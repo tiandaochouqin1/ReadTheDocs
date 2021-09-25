@@ -108,6 +108,8 @@ git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
    git branch -vv
    git branch new commitid//创建
    git checkout -b new branch/commitid  remote_branch //创建分支并跟踪远程
+      git branch -u remote_branch/git branch --set-upstream-to  //跟踪远程
+
    git checkout master //切换
    git branch -d/D (branchname)//删除
 
@@ -201,12 +203,12 @@ log与查找
       git show commit_id file //
       git log [branch_name]
          -n 最近n次提交
-         --since/after 指定时间之后
+         --since/after 指定时间之后 （git log --after="2020-15-05" --before="2020-25-05"）
          --until/before  指定时间之前
          --author   指定作者
          --commiter  指定提交者
-         --grep  指定提交说明
-         -S  匹配添加/删除的内容
+         --grep  搜索commit内容（ -i 区分大小写）
+         -S  搜索添加/删除的内容
 
       git log --graph --decorate --oneline --simplify-by-deocration --all
          --decorate 显示commit的引用
@@ -214,7 +216,11 @@ log与查找
          --simplify-by-decoration 只显示被引用的commit
          --all  指定要显示的branch
 
-         git branch --contains $COMMIT_ID --all //查找commit
+      git log --pretty=format:"%Cred%an - %ar%n %Cblue %h -%Cgreen %s %n"
+
+      git branch --contains $COMMIT_ID --all //查找commit
+
+      git log master..develop # 显示分支的commit差异
 
 
 

@@ -464,8 +464,46 @@ wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此
 抢占和上下文切换
 ------------------
 
-上下文切换：即从一个可执行程序切换到另一个可执行程序。context_switch()完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
+上下文切换：即从一个可执行程序切换到另一个可执行程序。
 
+context_switch()：完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
+
+TSS
+~~~~~~~
+
+x86 提供了一种以硬件的方式进行进程切换的模式，对于每个进程，x86 希望在内存里面维护一个 TSS（Task State Segment，任务状态段）结构。这里面有所有的寄存器。
+
+为了避免全量切换，Linux在 cpu_init 中给每一个 CPU 关联一个 TSS，然后将 TR 指向这个 TSS，然后在操作系统的运行过程中，TR 就不切换了，永远指向这个 TSS。
+
+真的参与进程切换的寄存器很少，主要的就是栈顶寄存器。	
+
+task_struct的最后一个成员变量thread保存了需要切换的寄存器：
+
+::
+
+   /* CPU-specific state of this task: */
+   struct thread_struct		thread; //这个结构的内容与体系相关!! ia64和x86都不一样
+
+
+pt_regs和cpu_context
+~~~~~~~~~~~~~~~~~~~~~
+成员stack的pt_regs中也保存了regs重复了？ 
+
+arm：
+
+1. pt_regs和cpu_context都是处理器架构相关的结构。
+
+2. pt_regs是发生异常时（当然包括中断）保存的处理器现场，用于异常处理完后来恢复现场，就好像没有发生异常一样，它保存在进程内核栈中。
+
+3. cpu_context是发生进程切换时，保存当前进程的上下文，保存在当前进程的进程描述符中。
+
+4. pt_regs表征发生异常时处理器现场，cpu_context发生调度时当前进程的处理器现场。
+
+参考
+
+1. `Arm64 Linux 5.0 - 深入理解Linux内核进程上下文切换 <https://cloud.tencent.com/developer/article/1710837>`__
+2. `x86 Linux 4.6 - Linux进程上下文切换过程context_switch详解 <https://blog.csdn.net/gatieme/article/details/51872659>`__
+3. `fork背后隐藏的技术细节 <https://zhuanlan.zhihu.com/p/373958196>`__
 
 
 need_resched
@@ -535,12 +573,13 @@ top_prio = -1 -sched_priority
 
 系统调用
 =============
-`the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
+1. `the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
 `系统调用权威指南 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
 系统学习，有源码分析
 
-`深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
+2. `深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
 
+3. `调用门 - 硬件原理 <https://mp.weixin.qq.com/s/8BtdBNTW36BUxb5Ee-jKSw>`__
 
 概念
 ------
