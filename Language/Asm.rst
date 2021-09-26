@@ -817,6 +817,12 @@ a64 mov使用 imm16，有6种变体，常用有两个版本: 普通mov和取反m
    arm_mov_opcode
 
 
+64-bits variant代表使用64-bit寄存器，如x0；32-bit则为w0。
+
+大部分data processing instructions同时支持32和64bit操作。编译器基于data types选择variant。
+
+
+
 三种变体：
 
 1. movn: Move wide with NOT, moves the inverse of an optionally-shifted 16-bit immediate value to a register. mov+移位+非
@@ -840,17 +846,29 @@ unchanged. mov+移位+与 。C6.2.191 。
 
 ::
 
-   f1:
+   arm64 gcc 8.2
+
+
+   f1: int
    0x12800000
    mov	w0, #0xffffffff            	// #-1
 
-   f2:
+   f2: int
    0x12a1fe00 : ~(0xff0 << (hw * 16)) = 0xf00fffff ,变体movn 。这里是32bit变体，hw代表左移位数。
    mov	w0, #0xf00fffff            	// #-267386881
 
    f3:
    0x52bffe00 : 0xfff0<<(hw * 16) = 0xfff00000 , 变体movz 带移位的mov
    mov	w0, #0xfff00000            	// #-1048576
+
+   f4: long (64bits),sf = 1
+   0xd2bffe00
+   mov	x0, #0xfff00000       
+
+
+
+GCC、Clang 等实现中，64位代码的long类型为64位，而MSVC中则维持32位
+
 
 寄存器
 ---------
