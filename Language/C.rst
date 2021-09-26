@@ -7,6 +7,10 @@ C
 1. `用C语言实现面向对象编程OOP <https://mp.weixin.qq.com/s/Vj31M2q0H5eeJwMhvDyt6A>`__
 2. `C语言实现面向对象的原理 <https://mp.weixin.qq.com/s/b9IXQ8Hbh-8ejmU010sWiA>`__
 
+参考链接
+==========
+1. 在线gdb：https://www.onlinegdb.com/myfiles
+2. 在线汇编：https://godbolt.org/
 
 优秀项目学习
 =================

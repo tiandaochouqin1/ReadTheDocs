@@ -706,6 +706,44 @@ arm汇编入门
 .. figure:: ../images/arm_asm.png
       :alt: asm cheetsheet
 
+参考文档
+------------
+1. 指令简介（无机器码） `ARM Compiler armasm User Guide Version 6.6 <https://developer.arm.com/documentation/dui0801/g/A64-General-Instructions/MOV--inverted-wide-immediate->`__
+
+2. 手册 `Arm Architecture Reference Manual  <https://developer.arm.com/architectures/cpu-architecture/a-profile/docs>`__
+:download:`armv8-a <../files/DDI0487G_b_armv8_arm.pdf>` ;armv8-a机器码位于C4.1。
+
+3. arm指令集开发者指南（较简介） :download:`Armv8-A Instruction Set Architecture <../files/Armv8-A Instruction Set Architecture.pdf>`
+
+4. `AArch64 Instructions, Opcodes and Binary Encoding <https://github.com/CAS-Atlantic/AArch64-Encoding>`__
+:download:`armv8-a <../files/AArch64_ops.pdf>`
+
+
+arm版本
+----------
+Armv9 延续了 AArch64 作为基准指令集的使用，然而在功能上增加了一些非常重要的扩展：安全、AI 以及改进矢量和 DSP 能力。
+
+
+AArch64是 **Armv8-A** 架构（https://en.wikipedia.org/wiki/ARM_architecture#ARMv8-A）中引入的64位状态。
+完全使用全新的 A64 指令。
+
+Linux内核社区称体系结构为arm64。即arm64=aarch64。
+
+ARMv8-A 将 64 位架构支持引入 ARM 架构中，其中包括：
+
+* 64 位通用寄存器、SP（堆栈指针）和 PC（程序计数器）
+
+* 64 位数据处理和扩展的虚拟寻址
+
+执行状态和指令集：
+
+1. AArch64   AArch64 状态只支持一套指令集,叫做A64. 
+          A64为定长32位的指令集，即每个指令的大小为32bit.
+指令集手册：https://developer.arm.com/documentation/dui0801/k/A64-Data-Transfer-Instructions/LDR--register-          
+2. AArch32   AArch32 状态支持两套指令集:
+          A32     也是32位定长指令集
+          T32     可变长指令集，其中支持两种不同长度的指令一种长度16位一种长度32位，其中16位的指令也称为thumb code
+指令集手册：https://developer.arm.com/documentation/dui0473/m/arm-and-thumb-instructions/ldr--register-offset-
 
 
 指令
@@ -722,7 +760,7 @@ Aarch64使用A64指令集，指令长度是32位！
 
 ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在取指”的指令（即下下个执行的指令），而不是指向“正在执行”的指令或者正在“译码”的指令。
 
-格式
+32位格式
 ~~~~~~~~
 
 指令为定长（x86不定长）。
@@ -748,8 +786,8 @@ ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在�
    :alt: arm指令类型
 
 
-立即数
-~~~~~~~~
+ldr/str立即数
+~~~~~~~~~~~~~~~~~~
 1. `ARM 立即寻址之立即数的形成 —— 如何判断有效立即数 <https://blog.csdn.net/sinat_41104353/article/details/83097466>`__
 
 
@@ -763,6 +801,56 @@ ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在�
 shifter operand bit[0:11] 即立即数。[0:7]为数值部分，[8:11]为移位量。
 
 立即数 = immed_8 循环右移 (2 * Rotate_imm)
+
+mov立即数
+~~~~~~~~~~
+arm各种版本的机器码不相同，某些版本（如嵌入式）指令会有特殊的优化！！
+
+
+1. `A64 mov <https://developer.arm.com/documentation/dui0801/g/A64-General-Instructions/MOV--inverted-wide-immediate->`__
+
+
+a64 mov使用 imm16，有6种变体，常用有两个版本: 普通mov和取反movn。
+
+.. figure:: ../images/arm_mov_opcode.png
+
+   arm_mov_opcode
+
+
+三种变体：
+
+1. movn: Move wide with NOT, moves the inverse of an optionally-shifted 16-bit immediate value to a register. mov+移位+非
+2. movz: Move wide with zero, moves an optionally-shifted 16-bit immediate value to a register. mov+移位
+3. movk: Move wide with keep moves an optionally-shifted 16-bit immediate value into a register, keeping other bits
+unchanged. mov+移位+与 。C6.2.191 。
+
+::
+   MOVK <Wd>, #<imm>{, LSL #<shift>}
+
+   MOVN <Wd>, #<imm>{, LSL #<shift>}
+
+   <Wd> Is the 32-bit name of the general-purpose destination register, encoded in the "Rd" field.
+   <Xd> Is the 64-bit name of the general-purpose destination register, encoded in the "Rd" field.
+   <imm> Is the 16-bit unsigned immediate, in the range 0 to 65535, encoded in the "imm16" field.
+
+   <shift> For the 32-bit variant: is the amount by which to shift the immediate left, either 0 (the default) or
+   16, encoded in the "hw" field as <shift>/16.
+
+实例：
+
+::
+
+   f1:
+   0x12800000
+   mov	w0, #0xffffffff            	// #-1
+
+   f2:
+   0x12a1fe00 : ~(0xff0 << (hw * 16)) = 0xf00fffff ,变体movn 。这里是32bit变体，hw代表左移位数。
+   mov	w0, #0xf00fffff            	// #-267386881
+
+   f3:
+   0x52bffe00 : 0xfff0<<(hw * 16) = 0xfff00000 , 变体movz 带移位的mov
+   mov	w0, #0xfff00000            	// #-1048576
 
 寄存器
 ---------

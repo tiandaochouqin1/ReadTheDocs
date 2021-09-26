@@ -64,6 +64,9 @@ https://lrita.github.io/wiki/books/
 
 1. `嵌入式学习的几种线路 <http://www.embeddedlinux.org.cn/emb-linux/entry-level/201701/02-6070.html>`__
 
+arm
+~~~~~~~
+1. Armv8-A Instruction Set Architecture.pdf
 
 
 资源集合
