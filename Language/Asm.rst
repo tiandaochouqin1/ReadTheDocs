@@ -904,6 +904,40 @@ CPSR
 ~~~~~~~~~
 对应x86的EFLAGS
 
+x86与arm函数调用规约
+-----------------------
+1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
+2. `GCC的调用约定 <https://blog.csdn.net/weixin_44395686/article/details/105036297>`__
+3. `system V ABI <https://blog.csdn.net/weixin_44395686/article/details/105022059>`__
+
+
+1. X86 函数调用约定
+X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
+
+cdecl 函数调用约定
+
+参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
+GCC的默认调用约定为cdecl
+
+stdcall 函数调用约定
+
+参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+
+fastcall 函数调用约定
+
+参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+
+X86-64
+
+x64的调用约定只有一种，遵守system v ABI的规范。
+但是Linux和windows却有一些差别。在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
+在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
+其余的参数按照从右向左的顺序压栈。
+
+2. ARM和ARM64使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
+ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
+ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
+
 寻址模式和偏移模式
 --------------------
 三种 **寻址模式**：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。

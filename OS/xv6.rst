@@ -282,7 +282,7 @@ Part 3: The Kernel
 参考
 
 1. `stabs调试信息 <https://sourceware.org/gdb/onlinedocs/stabs.html#Overview>`__
-2. 函数调用栈帧`journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__ ; 
+2. 函数调用栈帧 `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__ ; 
 函数调用返回与缓冲区溢出 `Epilogues, Canaries, and Buffer Overflows  <https://manybutfinite.com/post/epilogues-canaries-buffer-overflows/>`__
 3. `exercise12_print_more_info <https://www.cnblogs.com/wuhualong/p/lab01_exercise12_print_more_info.html>`__
 4. `glibc的backtrace实现 <https://elixir.bootlin.com/glibc/glibc-2.24/source/debug/backtrace.c#L89>`__
