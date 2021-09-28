@@ -66,7 +66,17 @@ https://lrita.github.io/wiki/books/
 
 arm
 ~~~~~~~
-1. Armv8-A Instruction Set Architecture.pdf
+
+
+1. Armv8-A Instruction Set Architecture.pdf 学习CPU架构、内存及系统架构的不二之选。
+2. TRM 文档、软件优化指南，可以从 https://developer.arm.com/ip-products/processors/cortex-a 页面点击 “Read more” 入口，包括：
+Technical Reference Manual和 Software Optimization Guide
+
+3. 开发者指南(Armv8-A): Cortex-A Series Programmer’s Guide for Armv8-A，强烈推荐，每个章节都值得细读，适合入门者。
+4. 其它参考：
+   Arm C/C++ Compiler reference guide 和
+   Arm Compiler armlink User Guide(v6.12) 和
+   Arm Compiler armasm User Guide(v6.12)
 
 
 资源集合

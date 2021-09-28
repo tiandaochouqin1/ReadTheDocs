@@ -708,15 +708,22 @@ arm汇编入门
 
 参考文档
 ------------
+
 1. 指令简介（无机器码） `ARM Compiler armasm User Guide Version 6.6 <https://developer.arm.com/documentation/dui0801/g/A64-General-Instructions/MOV--inverted-wide-immediate->`__
 
-2. 手册 `Arm Architecture Reference Manual  <https://developer.arm.com/architectures/cpu-architecture/a-profile/docs>`__
-:download:`armv8-a <../files/DDI0487G_b_armv8_arm.pdf>` ;armv8-a机器码位于C4.1。
+2. arm手册 `Arm Architecture Reference Manual  <https://developer.arm.com/architectures/cpu-architecture/a-profile/docs>`__
+   
+   :download:`DDI0487G_b_armv8_arm <../files/DDI0487G_b_armv8_arm.pdf>` ; armv8-a机器码位于C4.1。
 
-3. arm指令集开发者指南（较简介） :download:`Armv8-A Instruction Set Architecture <../files/Armv8-A Instruction Set Architecture.pdf>`
+3. arm指令集架构（较简洁） :download:`Armv8-A Instruction Set Architecture <../files/Armv8-A Instruction Set Architecture.pdf>`
 
 4. `AArch64 Instructions, Opcodes and Binary Encoding <https://github.com/CAS-Atlantic/AArch64-Encoding>`__
-:download:`armv8-a <../files/AArch64_ops.pdf>`
+   
+   :download:`AArch64_ops <../files/AArch64_ops.pdf>`
+
+5. 开发者指南ARM `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
+
+   :download:`ARMv8-A-Programmer-Guide <../files/ARMv8-A-Programmer-Guide.pdf>`
 
 
 arm版本
@@ -786,6 +793,8 @@ ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在�
    :alt: arm指令类型
 
 
+arm立即数
+----------
 ldr/str立即数
 ~~~~~~~~~~~~~~~~~~
 1. `ARM 立即寻址之立即数的形成 —— 如何判断有效立即数 <https://blog.csdn.net/sinat_41104353/article/details/83097466>`__
@@ -802,8 +811,8 @@ shifter operand bit[0:11] 即立即数。[0:7]为数值部分，[8:11]为移位�
 
 立即数 = immed_8 循环右移 (2 * Rotate_imm)
 
-mov立即数
-~~~~~~~~~~
+MOV (wide immediate)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 arm各种版本的机器码不相同，某些版本（如嵌入式）指令会有特殊的优化！！
 
 
@@ -831,6 +840,7 @@ a64 mov使用 imm16，有6种变体，常用有两个版本: 普通mov和取反m
 unchanged. mov+移位+与 。C6.2.191 。
 
 ::
+
    MOVK <Wd>, #<imm>{, LSL #<shift>}
 
    MOVN <Wd>, #<imm>{, LSL #<shift>}
@@ -869,6 +879,66 @@ unchanged. mov+移位+与 。C6.2.191 。
 
 GCC、Clang 等实现中，64位代码的long类型为64位，而MSVC中则维持32位
 
+MOV (bitmask immediate)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. https://developer.arm.com/documentation/dui0802/a/A64-General-Instructions/ORR--immediate-
+2. https://stackoverflow.com/questions/30904718/range-of-immediate-values-in-armv8-a64-assembly
+3. https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/
+4. 64bits立即数合法判断 `binutills <https://github.com/bminor/binutils-gdb/blob/c40d7e49cf0a6842a5cf072772a48d1f6e6eeb11/opcodes/aarch64-opc.c#L1195>`__
+
+
+
+.. figure:: ../images/ORR_immediate.png
+
+   ORR_immediate
+
+
+
+
+1. element的格式用正则表达为: `0+1+`
+
+2. imms:第一个0开始后的bits有n位，值为k，2^n为element的长度，e=k+1为element中1的数量。
+
+3. immr:值表示循环左移的位数，值不超过e。
+
+
+遍历所有bitmask immediate的程序：
+
+::
+
+   #include <stdio.h>
+   #include <stdint.h>
+
+   // Dumps all legal bitmask immediates for ARM64
+   // Total number of unique 64-bit patterns: 
+   //   1*2 + 3*4 + 7*8 + 15*16 + 31*32 + 63*64 = 5334
+
+   const char *uint64_to_binary(uint64_t x) {
+   static char b[65];
+   unsigned i;
+   for (i = 0; i < 64; i++, x <<= 1)
+      b[i] = (0x8000000000000000ULL & x)? '1' : '0';
+   b[64] = '\0';
+   return b;
+   }
+
+   int main() {
+   uint64_t result;
+   unsigned size, length, rotation, e;
+   for (size = 2; size <= 64; size *= 2)
+      for (length = 1; length < size; ++length) {
+         result = 0xffffffffffffffffULL >> (64 - length);
+         for (e = size; e < 64; e *= 2)
+         result |= result << e;
+         for (rotation = 0; rotation < size; ++rotation) {
+         printf("0x%016llx %s (size=%u, length=%u, rotation=%u)\n",
+               (unsigned long long)result, uint64_to_binary(result),
+               size, length, rotation);
+         result = (result >> 63) | (result << 1);
+         }
+      }
+   return 0;
+   }
 
 寄存器
 ---------
