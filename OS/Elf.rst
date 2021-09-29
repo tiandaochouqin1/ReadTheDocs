@@ -166,7 +166,7 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 
 
 动态链接
---------------
+==========
 > 再看csapp !
 
 1. `动态库和位置无关代码 - arm <http://www.wowotech.net/basic_subject/pic.html>`__
@@ -180,7 +180,7 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 - 动态库：装载时重定位。
 
 PIC与PLT
-~~~~~~~~~~~
+-------------
 地址无关代码PIC：程序中的共享指令地址不因装载地址而改变，不受其被加载到的绝对地址的影响，便于多进程共享代码。
 
 
@@ -222,7 +222,7 @@ PLT的基本流程：
 符号哈希表.hash：加快符号查找。
 
 动态链接器
-~~~~~~~~~~~~~~
+---------------
 1. 动态链接器自举：/lib/ld-linux.so.2，glibc - > elf/rtld.c -> _dl_start() ;
 2. 装载所有.so;
 3. 重定位和初始化
@@ -233,7 +233,7 @@ execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linu
 
 
 动态链接路径
-~~~~~~~~~~~~~~~~~
+----------------
 按以下顺序查找：
 
 1. 环境变量LD_LIBRARY_PATH，或ld -library-path参数指定的路径；
@@ -264,6 +264,27 @@ execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linu
 
 - strip ：清除符号和调试信息。
 - ld：-s消除所有符号信息；-S消除调试符号信息。
+
+动态链接和热更新
+-----------------
+1. `linux的so注入与热更新原理 <https://cloud.tencent.com/developer/article/1759520>`__
+2. `一种基于so的C/C++服务热更新方案 <https://www.jianshu.com/p/b7c7102119fa>`__
+3. `Linux 下 C++so 热更新 <https://zhuanlan.zhihu.com/p/162366167>`__
+4. https://www.v2ex.com/t/272189
+5. 全局符号覆盖的问题 https://www.jianshu.com/p/383f9cd4c67e
+
+
+两种动态链接方式：
+
+1. 隐式链接：编译时使用-l链接so，程序开始运行时即加载so映射到内存空间；
+2. 显示链接：用 libdl.so 库的 API 接口在运行中加载和卸载动态库，主要包括 dlopen、dlclose、dlsym。
+
+热更新方式：
+
+1. textcode jmp。需要attach进程，有性能损失，适用范围广。
+2. 修改got。
+
+so热更新需要保存并恢复状态，包括全局变量、静态变量、寄存器等。热更新一般常用于无状态的纯函数。动态链接库中应当实现的是纯函数，只依赖于输入状态计算出输出状态。
 
 
 main之前

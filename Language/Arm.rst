@@ -1,3 +1,4 @@
+
 ============
 Arm
 ============
@@ -21,7 +22,7 @@ arm简介
    :download:`DDI0487G_b_armv8_arm <../files/arm/DDI0487G_b_armv8_arm.pdf>` ; 机器码位于C4.1。
 
 
-3. arm-N1: trm  `Technical Reference Manual <https://developer.arm.com/tools-and-software/development-boards/neoverse-reference-design>`__
+3. arm-N1: trm  `Neoverse-reference-design <https://developer.arm.com/tools-and-software/development-boards/neoverse-reference-design>`__
 
    :download:`Technical Reference Manual <../files/arm/arm_neoverse_n1_trm.pdf>`
 
@@ -56,16 +57,15 @@ Linux内核社区称体系结构为arm64。即arm64=aarch64。
 ARMv8-A 将 64 位架构支持引入 ARM 架构中，其中包括：
 
 * 64 位通用寄存器、SP（堆栈指针）和 PC（程序计数器）
-
 * 64 位数据处理和扩展的虚拟寻址
 
 执行状态和指令集：
 
 1. AArch64 状态只支持一套指令集,叫做A64。A64为定长32位的指令集，即每个指令的大小为32bit.
-   armasm User Guid：https://developer.arm.com/documentation/dui0801/k/A64-Data-Transfer-Instructions/LDR--register-   
+   armasm User Guide：https://developer.arm.com/documentation/dui0801/k/A64-Data-Transfer-Instructions/LDR--register-   
 
 2. AArch32 状态支持两套指令集:  A32——32位定长指令集； T32 ——可变长指令集，其中支持两种不同长度的指令一种长度16位一种长度32位，其中16位的指令也称为thumb code。
-   armasm User Guid：https://developer.arm.com/documentation/dui0473/m/arm-and-thumb-instructions/ldr--register-offset-
+   armasm User Guide：https://developer.arm.com/documentation/dui0473/m/arm-and-thumb-instructions/ldr--register-offset-
 
 
 指令
@@ -120,9 +120,10 @@ aarch32位指令格式
 arm立即数
 ==============
 
+
 ldr/str立即数
 ----------------
-1. `ARM 立即寻址之立即数的形成 —— 如何判断有效立即数 <https://blog.csdn.net/sinat_41104353/article/details/83097466>`__
+1. `如何判断有效立即数 <https://blog.csdn.net/sinat_41104353/article/details/83097466>`__
 
 
 ::
@@ -140,9 +141,6 @@ shifter operand bit[0:11] 即立即数。[0:7]为数值部分，[8:11]为移位�
 MOV (wide immediate)
 ---------------------------
 arm各种版本的机器码不相同，某些版本（如嵌入式）指令会有特殊的优化！！
-
-
-1. `A64 mov <https://developer.arm.com/documentation/dui0801/g/A64-General-Instructions/MOV--inverted-wide-immediate->`__
 
 
 a64 mov使用 imm16 ，"hw" field as <shift>/16。
@@ -215,12 +213,12 @@ GCC、Clang 等实现中，64位代码的long类型为64位，而MSVC中则维�
 
 MOV (bitmask immediate)
 --------------------------------
-armasm 5.87
 
-1. `RM Compiler armasm Reference Guide <https://developer.arm.com/documentation/dui0802/a/A64-General-Instructions/ORR--immediate->`__
-2. https://stackoverflow.com/questions/30904718/range-of-immediate-values-in-armv8-a64-assembly
-3. https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/
-4. 64bits立即数合法判断 `binutills <https://github.com/bminor/binutils-gdb/blob/c40d7e49cf0a6842a5cf072772a48d1f6e6eeb11/opcodes/aarch64-opc.c#L1195>`__
+
+1. armasm 5.87 `RM Compiler armasm Reference Guide <https://developer.arm.com/documentation/dui0802/a/A64-General-Instructions/ORR--immediate->`__
+2. `encoding-of-immediate-values-on-aarch64 <https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/>`__ 
+3. https://stackoverflow.com/questions/30904718/range-of-immediate-values-in-armv8-a64-assembly
+4. 64bits逻辑立即数合法判断 `gdb——a valid logical immediate, i.e. bitmask <https://github.com/bminor/binutils-gdb/blob/c40d7e49cf0a6842a5cf072772a48d1f6e6eeb11/opcodes/aarch64-opc.c#L1195>`__
 
 
 
@@ -237,10 +235,11 @@ armasm 5.87
 
 3. immr:值表示循环左移的位数，值不超过e。
 
+实例： https://godbolt.org/z/T3Wo4K98Y
+
 
 遍历所有bitmask immediate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 ::
 
@@ -291,6 +290,7 @@ arm汇编
 .. figure:: ../images/arm_asm.png
       :alt: asm cheetsheet
 
+
 寄存器
 ---------
 
@@ -325,6 +325,7 @@ CPSR
 ~~~~~~~~~
 对应x86的EFLAGS
 
+
 x86与arm函数调用规约
 -----------------------
 1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
@@ -333,27 +334,28 @@ x86与arm函数调用规约
 
 
 1. X86 函数调用约定
-X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
 
-cdecl 函数调用约定
+    1. X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
 
-参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
-GCC的默认调用约定为cdecl
+    cdecl 函数调用约定
 
-stdcall 函数调用约定
+    参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
+    GCC的默认调用约定为cdecl
 
-参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+    stdcall 函数调用约定
 
-fastcall 函数调用约定
+    参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
 
-参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+    fastcall 函数调用约定
 
-X86-64
+    参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
 
-x64的调用约定只有一种，遵守system v ABI的规范。
-但是Linux和windows却有一些差别。在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
-在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
-其余的参数按照从右向左的顺序压栈。
+    2. X86-64
+
+    x64的调用约定只有一种，遵守system v ABI的规范。
+    但是Linux和windows却有一些差别。在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
+    在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
+    其余的参数按照从右向左的顺序压栈。
 
 2. ARM和ARM64使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
 ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
@@ -411,6 +413,8 @@ LDM和STM指令，"M"在这里代表Multiple。
 
 arm dsb
 -------------
+arm-asm 3.37
+
 https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
 
 

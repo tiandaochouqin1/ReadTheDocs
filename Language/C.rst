@@ -41,6 +41,16 @@ gcov
 3. https://github.com/yanxiangyfg/gcov 与上个文章中汇编不一样，因为是32位系统？
 
 
+
+
+
+汇编伪指令
+~~~~~~~~~~~~~~~~
+gcc生成的汇编文件中，供编译器使用。不出现在在最终可执行程序。
+
+1. https://sourceware.org/binutils/docs/as/Pseudo-Ops.html 或https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_7.html
+
+
 开启gcov
 ~~~~~~~~~~~
 在源码编译参数中加入-fprofile-arcs -ftest-coverage
