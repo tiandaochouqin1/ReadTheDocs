@@ -219,6 +219,7 @@ MOV (bitmask immediate)
 2. `encoding-of-immediate-values-on-aarch64 <https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/>`__ 
 3. https://stackoverflow.com/questions/30904718/range-of-immediate-values-in-armv8-a64-assembly
 4. 64bits逻辑立即数合法判断 `gdb——a valid logical immediate, i.e. bitmask <https://github.com/bminor/binutils-gdb/blob/c40d7e49cf0a6842a5cf072772a48d1f6e6eeb11/opcodes/aarch64-opc.c#L1195>`__
+   遍历并保存+二分搜索。
 
 
 
@@ -236,6 +237,17 @@ MOV (bitmask immediate)
 3. immr:值表示循环左移的位数，值不超过e。
 
 实例： https://godbolt.org/z/T3Wo4K98Y
+
+ORR (immediate)
+
+::
+
+   Bitwise inclusive OR (immediate).
+
+   This instruction is used by the alias MOV (bitmask immediate).
+
+
+   ORR  Wd|WSP, Wn, #imm    ; 32-bit general registers
 
 
 遍历所有bitmask immediate
@@ -278,13 +290,46 @@ MOV (bitmask immediate)
    }
 
 
+确定立即数的编码
+-------------------
+cmockery对函数返回值打桩，以确定将立即数保存到w0需要几条mov指令。
+
+识别出只需要一条指令的情况，剩余的则使用mov+movk两条指令实现。
+
+wide immediate的mov、movn容易确定。
+
+难点在与bitmask immediatede 的 mov指令。
+
+
 
 
 arm汇编
 =============
+
+arm 64位
+------------
+1. `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
+2. `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
+
+
+常用寄存器：
+
+1. x0–x7: function arguments, scratch (x0 is also function return value)
+2. x8–x18: scratch (x8 is syscall number, x16–x18 sometimes reserved)
+3. x19–x28: callee-saved registers (save to stack at beginning of function, restore from stack before returning)
+4. x29: frame pointer
+5. x30: link register (save to stack for non-leaf functions)
+6. sp: stack pointer
+7. pc: The Program Counter (PC) is not a general-purpose register in A64, and it cannot be used with data processing instructions.
+
+
+
+arm 32位
+-----------
 1. `arm asm cheat-sheets <https://cheatography.com/syshella/cheat-sheets/arm-assembly/>`__
 2. https://azeria-labs.com/writing-arm-assembly-part-1/
 3. `ARM汇编语言 - 简介 <https://zhuanlan.zhihu.com/p/82490125>`__
+
 
 
 .. figure:: ../images/arm_asm.png
@@ -292,7 +337,7 @@ arm汇编
 
 
 寄存器
----------
+~~~~~~~~~~~~~
 
 accessible in any privilege mode: r0-15.
 
@@ -321,9 +366,7 @@ accessible in any privilege mode: r0-15.
 +----------+----------------------------+-------------------------+
 
 
-CPSR
-~~~~~~~~~
-对应x86的EFLAGS
+CPSR: 对应x86的EFLAGS
 
 
 x86与arm函数调用规约
