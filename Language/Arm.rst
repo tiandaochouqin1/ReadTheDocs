@@ -290,17 +290,27 @@ ORR (immediate)
    }
 
 
-确定立即数的编码
+确定mov立即数的编码
 -------------------
 cmockery对函数返回值打桩，以确定将立即数保存到w0需要几条mov指令。
 
 识别出只需要一条指令的情况，剩余的则使用mov+movk两条指令实现。
 
-wide immediate的mov、movn容易确定。
+1. wide immediate的mov、movn容易确定。
+2. 难点在与bitmask immediatede 的 mov指令。参考gdb的判断方法
 
-难点在与bitmask immediatede 的 mov指令。
 
+ADD/SUB immediate
+-------------------
+1. arm-arm C4.1.2
+2. arm-asm 5.9
 
+``12bits imm + 12bits shift``
+
+All instructions of the add/sub immediate instruction class allow a 12-bit unsigned immediate 
+that can optionally be shifted by 12 bits (1 bit for the shift). 
+
+另外还有使用address tag的变体addg。
 
 
 arm汇编
@@ -310,6 +320,15 @@ arm 64位
 ------------
 1. `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
 2. `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
+3. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
+
+In AArch64 state, the following registers are available:
+
+1. 31 64-bit general-purpose registers X0-X30, the bottom halves of which are accessible as W0-W30.
+2. 4 stack pointer registers SP_EL0, SP_EL1, SP_EL2, SP_EL3.
+3. 3 exception link registers ELR_EL1, ELR_EL2, ELR_EL3.
+4. 3 saved program status registers SPSR_EL1, SPSR_EL2, SPSR_EL3.
+5. 1 program counter.
 
 
 常用寄存器：
@@ -321,6 +340,9 @@ arm 64位
 5. x30: link register (save to stack for non-leaf functions)
 6. sp: stack pointer
 7. pc: The Program Counter (PC) is not a general-purpose register in A64, and it cannot be used with data processing instructions.
+8. There is no register named W31 or X31. Depending on the instruction, 
+   register 31 is either the stack pointer or the zero register. When used as the stack pointer, you refer to it as SP. 
+   W   hen used as the zero register, you refer to it as WZR in a 32-bit context or XZR in a 64-bit context.
 
 
 

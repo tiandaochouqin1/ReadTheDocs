@@ -205,6 +205,7 @@ arm
 
 1. Mastering Algorithms with C
 2. 数据结构与算法——极客时间 :TODO
+3. `算法小抄 <https://labuladong.gitbook.io/algo/>`__
 
 软件工程
 ---------------------
@@ -263,7 +264,7 @@ lessons&labs
 编程语言
 ========
 
-1. 持续保持一年学习一门语言；不同风格的语言学习：go,erlang,python。
+1. 持续保持一年学习一门语言；不同风格的语言学习：python -> go -> erlang。
 2. 语言只是用于实现需求的可选工具；
 3. 关注语言的峰会
 
