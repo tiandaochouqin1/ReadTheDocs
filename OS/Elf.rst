@@ -10,28 +10,30 @@ ELF与链接
 
 ELF结构
 --------------
-- 文件头：readelf -h 
-- 节区表section：readelf -S 、 objdump -h(只显示关键段)。
+- Elf文件头：readelf -h 
+- 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
 
 1. objdump -x -d:
 
 ::
 
-   二进制形式打印所有段内容（-s）
-   代码的反汇编（-d/S）
-   文件头内容（-h）
-   文件头、动态库、符号表 (-x)
-   符号表   (-t)
-   指定段 (-j .text / .data) 需要配合-d使用
+   -s:    二进制形式打印所有段内容
+   -d/S:  代码的反汇编
+   -x:    文件头、动态库、符号表
+   -t:    符号表 = nm
+   -j .text/.data: 指定段,需要配合-d使用
           
 
-2. size SimpleSection: 查看text、data、bss的长度。
+1. size exe: 查看text、data、bss的长度。
 
-3. readelf -r .so ：查看重定位表。
-4. readelf -s : 符号表（nm、objdump -t）
-5. readelf -l : 程序头中的段表segment
-6. readelf -a : 所有
-7. readelf -d :查看so的.dynamic段。
+2. readelf -r .so ：查看重定位表。
+3. readelf -s : 符号表（nm、objdump -t）
+4. readelf -l : 程序头中的段表——Program Headers,以及与Section的对应关系
+5. readelf -a : 所有
+6. readelf -d : 查看so的.dynamic段。
+7. ldd exe： 查看so依赖
+8. ar:  静态库打包、解压等
+9. srings: 可打印字符串
 
 .. figure:: ../images/Elf-layout.png
 
@@ -267,7 +269,7 @@ execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linu
 
 动态链接和热更新
 -----------------
-1. `linux的so注入与热更新原理 <https://cloud.tencent.com/developer/article/1759520>`__
+1. `Linux C/C++ 实现热更新 <https://howardlau.me/programming/c-cpp-hot-reload.html>`__
 2. `一种基于so的C/C++服务热更新方案 <https://www.jianshu.com/p/b7c7102119fa>`__
 3. `Linux 下 C++so 热更新 <https://zhuanlan.zhihu.com/p/162366167>`__
 4. https://www.v2ex.com/t/272189
@@ -277,15 +279,18 @@ execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linu
 两种动态链接方式：
 
 1. 隐式链接：编译时使用-l链接so，程序开始运行时即加载so映射到内存空间；
-2. 显示链接：用 libdl.so 库的 API 接口在运行中加载和卸载动态库，主要包括 dlopen、dlclose、dlsym。
+2. 显式链接：用 libdl.so 库的 API 接口在运行中加载和卸载动态库，主要包括 dlopen、dlclose、dlsym。
 
 热更新方式：
 
 1. textcode jmp。需要attach进程，有性能损失，适用范围广。
 2. 修改got。
+3. dlopen/dlsym运行时加载so。
 
 so热更新需要保存并恢复状态，包括全局变量、静态变量、寄存器等。热更新一般常用于无状态的纯函数。动态链接库中应当实现的是纯函数，只依赖于输入状态计算出输出状态。
 
+1. 全局变量等
+2. 堆内存
 
 main之前
 ==========
