@@ -695,3 +695,38 @@ C语言内联汇编
    内嵌汇编语句中的作用与“”在C语言中的作用相同，因此“%%”转换后代表“%”。
 
 
+IA
+=====
+1. Intel® 64 and IA-32 Architectures Software Developer’s Manual Volume 2 
+   
+   :download:`IA_Volume2_Instruction <../files/IA_Volume2_Instruction.pdf>` 
+
+指令编码
+----------
+opcode
+~~~~~~~~~~~
+V2 2.1
+
+.. figure:: ../images/opcode_x86.png
+
+
+ModR/M & SIB
+~~~~~~~~~~~~~~~~~~~
+V2 2.1.3
+
+寻址模式标识字节。
+
+1. mod(模式)域:连同r/m(寄存器/内存)域共同构成了32个可能的值:8个寄存器和24个寻址模式。
+2. reg/opcode(寄存器/操作数)域:指定了8个寄存器或者额外的3个字节的opcode。究竟这三个字节用来做什么由主opcode指定。
+3. r/m(寄存器/内存)域:可以指定一个寄存器作为操作数,或者可以和mod域联合用来指定寻址模式。有时候,它和mod域一起用来为某些指令指定额外的信息
+
+
+SIB字节。对ModR/M寻址的补充。32位指令的基地址+偏移量,以及 比例*偏移量 的形式的寻址方式需要SIB字节。
+
+1. scale(比例)域指定了放大的比例。
+2. index(偏移)域指定了用来存放偏移量 的寄存器。
+3. base (基地址)域用来标识存放基地址的寄存器。
+
+
+
+

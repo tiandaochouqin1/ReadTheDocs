@@ -7,12 +7,52 @@ ELF、Compile & Main
 
 ELF与链接
 ==============
+1. https://man7.org/linux/man-pages/man5/elf.5.html
 
 ELF结构
 --------------
 - Elf文件头：readelf -h 
 - 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
 
+
+1. elf文件和平添信息;
+2. Program Header Table 和 Section Header Table 的 offset/size/number
+
+::
+
+   include/uapi/linux/elf.h
+
+  #define EI_NIDENT 16
+
+  typedef struct
+  {
+       unsigned char	e_ident[EI_NIDENT];	/* Magic number and other info */
+       Elf64_Half	e_type;			/* Object file type */
+       Elf64_Half	e_machine;		/* Architecture */
+       Elf64_Word	e_version;		/* Object file version */
+       Elf64_Addr	e_entry;		/* Entry point virtual address */
+       Elf64_Off	e_phoff;		/* Program header table file offset */
+       Elf64_Off	e_shoff;		/* Section header table file offset */
+       Elf64_Word	e_flags;		/* Processor-specific flags */
+       Elf64_Half	e_ehsize;		/* ELF header size in bytes */
+       Elf64_Half	e_phentsize;		/* Program header table entry size */
+       Elf64_Half	e_phnum;		/* Program header table entry count */
+       Elf64_Half	e_shentsize;		/* Section header table entry size */
+       Elf64_Half	e_shnum;		/* Section header table entry count */
+       Elf64_Half	e_shstrndx;		/* Section header string table index */
+  } Elf64_Ehdr;
+
+  52 or 64 bytes long for 32-bit and 64-bit binaries respectively.
+
+
+.. figure:: ../images/elf_header.png
+
+      开头的16B Magic number
+
+
+
+常用命令
+----------
 1. objdump -x -d:
 
 ::
