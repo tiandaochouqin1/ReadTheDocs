@@ -701,11 +701,18 @@ IA
    
    :download:`IA_Volume2_Instruction <../files/IA_Volume2_Instruction.pdf>` 
 
+2. `IA64 opcode速查 <http://ref.x86asm.net/coder64.html>`__
+
+
 指令编码
 ----------
+反汇编机器码：https://onlinedisassembler.com/odaweb/ 
+https://defuse.ca/online-x86-assembler.htm#disassembly2
+
 opcode
 ~~~~~~~~~~~
-V2 2.1
+1. 格式： V2 2.1
+2. 汇编指令形式： V2 3.1.1.1 ，比如opcode尾部是否包含3bits reg 等。
 
 .. figure:: ../images/opcode_x86.png
 
@@ -729,4 +736,15 @@ SIB字节。对ModR/M寻址的补充。32位指令的基地址+偏移量,以及 
 
 
 
+printf 汇编
+------------
+
+::
+
+   mov    0x200aab(%rip),%edx    参数2    # 601040 <__TMC_END__>
+   mov    -0x3a(%rip),%rax       参数1    # 400562 <main>
+   mov    %rax,%rsi              参数起始地址（从该地址连续取参数）
+   mov    $0x400657,%edi         格式化字符串地址
+   mov    $0x0,%eax              number of vector registers used
+   callq  400460 <printf@plt>
 

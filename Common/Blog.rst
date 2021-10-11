@@ -141,11 +141,10 @@ HUGO
 ``Hexo 是一个博客框架，Hugo 是一个网站框架。``
 `Hugo中文文档 <https://www.gohugo.org/doc/tutorials/github-pages-blog/>`__
 
-Hugo 是一个基于 Go 语言开发的静态网站生成器。与目前国内流行的 Hexo
-相比，Hugo
-的速度可称为飞速🚀——在安装和使用上都是如此。目前有很多知名网站都在使用
-Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean
-Docs、1Password 等等。
+Hugo 是一个基于 Go 语言开发的静态网站生成器。
+与目前国内流行的 Hexo相比，Hugo的速度可称为飞速🚀——在安装和使用上都是如此。
+目前有很多知名网站都在使用Hugo：
+Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。
 
 -  毫秒级的页面生成。
 -  主题多，集成度高（集成了阅读时间，字数统计，图片预览）,文件的统一管理。
@@ -154,8 +153,7 @@ Docs、1Password 等等。
 
 1. Hugo 在传播度上不及 Hexo，相应的搭建教程及 bug 修复上也没有 Hexo
    来的齐全，因此会要求用户有一定的代码能力和 debug 能力。
-2. 从 Hexo 迁移到 Hugo 会存在一定的时间成本，因为两者的 markdown
-   文件中对于 Front Matter
+2. 从 Hexo 迁移到 Hugo 会存在一定的时间成本，因为两者的 markdown 文件中对于 Front Matter
    的格式定义不同，因此需要修改每篇博文的该部分（当然用脚本去修改是最好的）。
 3. Hugo 上面还没有像 Next
    一样完善成熟的主题，但选择也非常多，官网提供了将近 300 个主题。
@@ -394,3 +392,11 @@ Google\ **无法获取站点地图**\ ：
        at Module.load (internal/modules/cjs/loader.js:812:32)
        at Function.Module._load (internal/modules/cjs/loader.js:724:14)
        at Module.require (internal/modules/cjs/loader.js:849:19)
+
+绘图
+=========
+绘制ASCII流程图
+------------------
+
+1. 在线 http://asciiflow.com/
+2. 本地软件 Graph Easy

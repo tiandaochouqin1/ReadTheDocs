@@ -7,7 +7,8 @@ ELF、Compile & Main
 
 ELF与链接
 ==============
-1. https://man7.org/linux/man-pages/man5/elf.5.html
+1. 很详细： https://man7.org/linux/man-pages/man5/elf.5.html
+2. `Dynamic Linking —— Oracle Solaris 11  <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-83432.html>`__
 
 ELF结构
 --------------
@@ -15,8 +16,11 @@ ELF结构
 - 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
 
 
-1. elf文件和平添信息;
+1. elf文件和平台信息;
 2. Program Header Table 和 Section Header Table 的 offset/size/number
+
+Section Header
+~~~~~~~~~~~~~~~~
 
 ::
 
@@ -50,6 +54,43 @@ ELF结构
       开头的16B Magic number
 
 
+Program header (Phdr)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   typedef struct {
+        Elf64_Word      p_type;
+        Elf64_Word      p_flags;
+        Elf64_Off       p_offset;
+        Elf64_Addr      p_vaddr;
+        Elf64_Addr      p_paddr;
+        Elf64_Xword     p_filesz;
+        Elf64_Xword     p_memsz;
+        Elf64_Xword     p_align;
+   } Elf64_Phdr;
+
+   
+
+p_paddr：
+
+::
+
+   man5/elf.5.html
+   On systems for which physical addressing is relevant, this
+   member is reserved for the segment's physical address.
+   Under BSD this member is not used and must be zero.
+
+
+   Oracle Solaris 11 
+   The segment's physical address for systems in which physical addressing is relevant.
+   Because the system ignores physical addressing for application programs, 
+   this member has unspecified contents for executable files and shared objects.
+
+   该字段在所有系统中都没有意义?
+
+
+
 
 常用命令
 ----------
@@ -73,7 +114,7 @@ ELF结构
 6. readelf -d : 查看so的.dynamic段。
 7. ldd exe： 查看so依赖
 8. ar:  静态库打包、解压等
-9. srings: 可打印字符串
+9. strings: 可打印字符串
 
 .. figure:: ../images/Elf-layout.png
 
