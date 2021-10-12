@@ -697,11 +697,14 @@ C语言内联汇编
 
 IA
 =====
-1. Intel® 64 and IA-32 Architectures Software Developer’s Manual Volume 2 
+1. Intel® 64 and IA-32 Architectures Software Developer’s Manual 
    
-   :download:`IA_Volume2_Instruction <../files/IA_Volume2_Instruction.pdf>` 
+   :download:`SDM Volume2_Instruction <../files/SDM_Vol2_Instruction.pdf>` 
 
-2. `IA64 opcode速查 <http://ref.x86asm.net/coder64.html>`__
+   :download:`Sdm Volume3a system program guide part1 <../files/SDM_Vol3a_SPG_p1.pdf>` 
+
+2. :download:`SDM all in one <../files/SDM_Combined.pdf>` 
+3. `IA64 opcode速查 <http://ref.x86asm.net/coder64.html>`__
 
 
 指令编码

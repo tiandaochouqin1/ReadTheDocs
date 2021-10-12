@@ -836,14 +836,11 @@ C语言不方便泛型编程，同时最有效的搜索和插入方法应该由�
 中断与异常
 ------------
 
-中断：由设备使用的硬件资源向处理器发送的电信号，
-    打断操作系统的执行（甚至是其它中断线上的处理函数），可随时产生。
 
-异常：又称为同步中断，当指令执行时由CPU控制单元产生的，产生时必须考虑处理器时钟同步。
+1. 中断：异步，由设备使用的硬件资源向处理器发送的电信号，
+      打断操作系统的执行（甚至是其它中断线上的处理函数），可随时产生。
 
-
-每个中断和异常是由0～255之间的一个数来标识的，Intel把这个8位无符号整数叫做一个向量（vector）。
-非屏蔽中断的向量和异常的向量是固定的，而可屏蔽中断的向量是可以通过对中断控制器的编程来改变。
+2. 异常：又称为同步中断，当指令执行时由CPU控制单元产生的，产生时必须考虑处理器时钟同步。
 
 
 Intel文档把中断和异常分为以下几类：
@@ -859,6 +856,81 @@ Intel文档把中断和异常分为以下几类：
 3. 异常中止（abort），发生一个严重的错误，控制单元出了问题，
    不能在eip寄存器中保存引起异常的指令所在的确切位置。异常中止用于报告严重的错误，例如硬件故障或系统表中无效的值或者不一致的值。这种异常会强制中止进程。
 4. 编程异常（programmed exception），在编程者发出的请求时发送，是由int或int3指令触发的。
+
+
+
+IDT表
+------
+
+
+IDT表有256成员向量(NR_VECTORS)。总中断数量还需考虑IO_APIC和PCI_MSI。
+
+非屏蔽中断的向量和异常的向量是固定的，而可屏蔽中断的向量是可以通过对中断控制器的编程来改变。
+
+
+
+
+arch/x86/include/asm/irq_vectors.h：
+
+::
+
+   * Linux IRQ vector layout.
+   *
+   * There are 256 IDT entries (per CPU - each entry is 8 bytes) which can
+   * be defined by Linux. They are used as a jump table by the CPU when a
+   * given vector is triggered - by a CPU-external, CPU-internal or
+   * software-triggered event.
+   *
+   * Linux sets the kernel code address each entry jumps to early during
+   * bootup, and never changes them. This is the general layout of the
+   * IDT entries:
+   *
+   *  Vectors   0 ...  31 : system traps and exceptions - hardcoded events
+   *  Vectors  32 ... 127 : device interrupts
+   *  Vector  128         : legacy int80 syscall interface
+   *  Vectors 129 ... LOCAL_TIMER_VECTOR-1
+   *  Vectors LOCAL_TIMER_VECTOR ... 255 : special interrupts
+   *
+   * 64-bit x86 has per CPU IDT tables, 32-bit has one shared IDT table.
+
+
+
+0-31号：arch/x86/include/asm/trapnr.h 与 SDM Volume 3中Table 6-1 Protected-Mode Exceptions and Interrupts一一对应。
+
+中断/异常0-31：
+
+::
+
+   /* Interrupts/Exceptions */
+
+   #define X86_TRAP_DE		 0	/* Divide-by-zero */
+   #define X86_TRAP_DB		 1	/* Debug */
+   #define X86_TRAP_NMI		 2	/* Non-maskable Interrupt */
+   #define X86_TRAP_BP		 3	/* Breakpoint */
+   #define X86_TRAP_OF		 4	/* Overflow */
+   #define X86_TRAP_BR		 5	/* Bound Range Exceeded */
+   #define X86_TRAP_UD		 6	/* Invalid Opcode */
+   #define X86_TRAP_NM		 7	/* Device Not Available */
+   #define X86_TRAP_DF		 8	/* Double Fault */
+   #define X86_TRAP_OLD_MF		 9	/* Coprocessor Segment Overrun */
+   #define X86_TRAP_TS		10	/* Invalid TSS */
+   #define X86_TRAP_NP		11	/* Segment Not Present */
+   #define X86_TRAP_SS		12	/* Stack Segment Fault */
+   #define X86_TRAP_GP		13	/* General Protection Fault */
+   #define X86_TRAP_PF		14	/* Page Fault */
+   #define X86_TRAP_SPURIOUS	15	/* Spurious Interrupt */
+   #define X86_TRAP_MF		16	/* x87 Floating-Point Exception */
+   #define X86_TRAP_AC		17	/* Alignment Check */
+   #define X86_TRAP_MC		18	/* Machine Check */
+   #define X86_TRAP_XF		19	/* SIMD Floating-Point Exception */
+   #define X86_TRAP_VE		20	/* Virtualization Exception */
+   #define X86_TRAP_CP		21	/* Control Protection Exception */
+   #define X86_TRAP_VC		29	/* VMM Communication Exception */
+   #define X86_TRAP_IRET		32	/* IRET Exception */
+
+
+
+
 
 
 上半部

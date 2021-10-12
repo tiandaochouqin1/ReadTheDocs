@@ -778,7 +778,7 @@ printf参数寄存器
 
 32位linux内核调用0x80软中断来实现系统调用,
 
-中断号4表示系统调用write,用eax寄存器传递，
+系统调用号4表示系统调用write,用eax寄存器传递，
 
 write有三个参数，用ebx,ecx,edx传递，
 

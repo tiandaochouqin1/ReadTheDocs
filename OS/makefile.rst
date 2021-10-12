@@ -17,7 +17,9 @@ makefile
 GCC编译过程
 ===========
 
-`gcc onlinedocs <https://gcc.gnu.org/onlinedocs/gcc/>`__
+1. `gcc onlinedocs <https://gcc.gnu.org/onlinedocs/gcc/>`__
+2. https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
+3. https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
 
 -  ``-I``\ ：头文件目录。
 -  ``-B``\ ：可执行文件目录。
