@@ -407,6 +407,10 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
 4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
 5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
 
+.. figure:: ../images/stack_main_start.png
+
+   stack_main_start
+
 _start和__libc_start_main
 ----------------------------
 glibc/csu/elf-init.c
@@ -452,6 +456,11 @@ _start压入参数
 没有显式传入envp
 ~~~~~~~~~~~~~~~~~~~~~
 在argv末尾紧接着的位置取envp， ** envp = &argv[argc + 1] 
+
+> 为什么需要argc?根据null结束符即可判断argv数量（envp也没有显式的成员数量）
+
+
+
 
 __libc_csu_init 
 -------------------

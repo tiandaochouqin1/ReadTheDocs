@@ -703,7 +703,7 @@ IA
 
    :download:`Sdm Volume3a system program guide part1 <../files/SDM_Vol3a_SPG_p1.pdf>` 
 
-2. :download:`SDM all in one <../files/SDM_Combined.pdf>` 
+2. :download:`SDM all in one <../files/SDM_Combined.pdf>` ; `intel sdm <https://software.intel.com/content/www/cn/zh/develop/articles/intel-sdm.html>`__
 3. `IA64 opcode速查 <http://ref.x86asm.net/coder64.html>`__
 
 
