@@ -59,9 +59,10 @@ GDB
 
 7. 数据断点(watchpoints)：watch <expression>和watch -l <address> (value was changed)、rwatch [-l] <expression>( value was read);
 
-8. 打印：x(格式化打印，如x/10xw、x/10i)、p(以c语句形式打印)、list <location>(打印func源码);
+8. 打印：x(格式化打印，x/10xw——十六进制内容、x/10i——指令)、p(以c语句形式打印)、list <location>(打印func源码);
 
-9. info打印： info registers/frame/break;
+9. info打印： info registers/frame/break/sharedlibrary —— 寄存器、栈帧、断电、共享库
+    
 
 10. 符号文件更换：symbol-file obj/kern/kernel
 

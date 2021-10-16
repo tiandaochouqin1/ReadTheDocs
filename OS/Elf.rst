@@ -250,7 +250,7 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 
 动态链接
 ==========
-> 再看csapp !
+>动态库的符号重复问题
 
 1. `动态库和位置无关代码 - arm <http://www.wowotech.net/basic_subject/pic.html>`__
 
@@ -372,6 +372,126 @@ so热更新需要保存并恢复状态，包括全局变量、静态变量、寄
 
 1. 全局变量等
 2. 堆内存
+
+动态库和静态库符号冲突
+------------------------
+>查看ld原理、源码？
+
+1. `linux下动态库的符号冲突、隐藏和强制优先使用库内符号 <https://blog.csdn.net/wwyyxx26/article/details/48289659>`__ 无效
+2. https://linux.die.net/man/1/ld
+
+ld搜索路径添加：
+
+1. 在 /etc/ld.so.conf 文件中添加库的搜索路径。(或者在/etc/ld.so.conf.d 下新建一个.conf文件
+2. export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)
+
+.a+.so 或.so+.so：均取先链接的库的符号。与参考链接一致 `Symbol <https://community.intel.com/t5/Intel-C-Compiler/Strong-symbol-in-shared-library-overridden-by-weak-symbol-in/m-p/923639>`__
+
+https://man7.org/linux/man-pages/man8/ld.so.8.html
+
+::
+
+    LD_DYNAMIC_WEAK (since glibc 2.1.91)
+     By default, when searching shared libraries to resolve a
+     symbol reference, the dynamic linker will resolve to the
+     first definition it finds.
+
+     Standard  practice is that the distinction between weak and strong
+     symbols should have effect only at static link time
+
+
+-Bsymbolic、-Bsymbolic-functions：so在
+
+`gcc -shared -fpic -Wl,-Bsymbolic,-Bsymbolic-functions add_so.c -o libadd_so.so`
+
+-Bdynamic/-Bstatic 实际加不加一样：
+
+::
+
+   设备1：
+   Linux . 3.10.0-1062.12.1.el7.x86_64 #1 SMP Tue Feb 4 23:02:59 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+   GNU ld version 2.27-41.base.el7_7.2
+
+   设备2：
+   Linux . 5.4.44-OPENFANS+20200609-v8 #1 SMP PREEMPT Tue Jun 9 22:15:08 CST 2020 aarch64 GNU/Linux
+   GNU ld (GNU Binutils for Debian) 2.31.1
+
+   设备3：
+   Linux . 5.12.14-051214-generic #202106301439 SMP Wed Jun 30 14:47:50 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+   GNU ld (GNU Binutils for Ubuntu) 2.30
+
+
+   gcc -o proc_Ba_Bso main.c   -L. -Wl,-Bstatic  -ladd  -Wl,-Bdynamic  -ladd_so  -Wl,-Bdynamic -g
+   gcc -o proc_a_Bso main.c   -L.  -ladd  -Wl,-Bdynamic  -ladd_so  -Wl,-Bdynamic -g
+
+   gcc -o proc_a_so main.c   -L.  -ladd  -ladd_so  -Wl,-Bdynamic -g
+
+   gcc -o proc_Bso_Ba main.c   -L. -Wl,-Bdynamic  -ladd_so -Wl,-Bstatic  -ladd   -Wl,-Bdynamic -g
+   gcc -o proc_so_Ba main.c   -L. -ladd_so -Wl,-Bstatic  -ladd   -Wl,-Bdynamic -g
+   gcc -o proc_so_a main.c   -L. -ladd_so  -ladd   -Wl,-Bdynamic -g
+
+   proc_Ba_so：ld失败
+
+
+    以下三个,因为完全没有引用so符号，ldd查看没有add_so.so：
+   ./proc_a_Bso
+   a 3
+   ./proc_a_so
+   a 3
+   ./proc_Ba_Bso
+   a 3
+
+
+   ./proc_Bso_Ba
+   so: 3
+   ./proc_so_a
+   so: 3
+   ./proc_so_Ba
+   so: 3
+
+
+解决方法
+~~~~~~~~~~~
+https://stackoverflow.com/questions/6538501/linking-two-shared-libraries-with-some-of-the-same-symbols
+
+
+
+1. Pass -Bsymbolic or -Bsymbolic-functions to the linker. 
+   This has a global effect: every reference to a global symbol 
+   (of function type for -Bsymbolic-functions) that can be resolved to a symbol 
+   in the library is resolved to that symbol. With this you lose the ability
+    to interpose internal library calls to those symbols using LD_PRELOAD. 
+    The symbols are still exported, so they can be referenced from outside the library.
+
+2. Use a version script to mark symbols as local to the library, e.g.
+   use something like: {local: bar;}; and pass --version-script=versionfile to the linker. 
+   The symbols are not exported.
+
+3. Mark symbols with an approppiate visibility (GCC info page for visibility),
+   which will be either hidden, internal, or protected. protected visibility symbols are exported
+    as .protected, hidden symbols are not exported, 
+    and internal symbols are not exported and you compromise not to 
+    call them from outside the library, even indirectly through function pointers.
+
+You can check which symbols are exported with objdump -T.
+
+强弱符号
+-----------
+1. -fno-common：specifies that the compiler places uninitialized global variables in the BSS section of the object file.
+   一个符号只能分配一个空间，所以重复符号放到bss段后会报错。
+2. The -fcommon places uninitialized global variables in a common block. 
+
+COMMOM段：未被分配位置的未初始化数据，将弱全局符号的决定权留给链接器。gcc中弱符号，common存放未被初始化的全局变量，bss存放未被初始化的静态变量和初始化为0的全局、静态变量。
+
+
+> commom如何决议多个weak symbols?
+
+按照链接器在处理 COMMON 块中符号的规则：同名的 COMMON 段符号会选取符号表中 Size（st_size 字段）较大的那一个。
+https://www.yhspy.com/2020/06/19/GCC-%E4%B8%8B%E7%9A%84-COMMON-%E5%9D%97%E6%8E%A7%E5%88%B6/
+
+https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter2-90421.html
+
+https://tech.meituan.com/2015/01/22/linker.html
 
 main之前
 ==========
