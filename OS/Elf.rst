@@ -292,7 +292,13 @@ PIC与PLT
 5. 全局变量在动态加载时一次性重定位，函数则采用PLT。
 
 
-> symtab和got、plt、got.plt的index如何对应？ so运行时地址？
+运行时地址
+-----------
+> symtab、strtab和got、plt、got.plt的index如何对应？ so运行时地址？
+
+1. https://maskray.me/blog/2021-09-19-all-about-procedure-linkage-table
+2. https://maskray.me/blog/2021-08-29-all-about-global-offset-table
+
 
 1. symtab中的st_name指向字符串表的索引。
 
@@ -315,6 +321,17 @@ In relocatable files, st_value holds a section offset for a defined symbol. st_v
 
 In executable and shared object files, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
 
+
+1. `_GLOBAL_OFFSET_TABLE_`宏: https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-74186/index.html
+
+GNU ld defines the symbol relative to the Global Offset Table.
+
+The aarch64, arm, mips, ppc, and riscv ports define the symbol at the start of .got.
+The x86 port defines the symbol at the start of .got.plt.
+
+2.  get_pc_thunk：获取当前指令地址。怎么用？
+   此调用在x86上与位置无关的代码中使用。它将代码的位置加载到%ebx寄存器中，
+   从而允许全局对象（与代码有固定的偏移量）作为该寄存器的偏移量来访问。
 
 延迟绑定PLT
 ~~~~~~~~~~~~~~~~
@@ -344,6 +361,20 @@ PLT的基本流程：
 
 
 符号哈希表.hash：加快符号查找。
+
+
+LD_BIND_NOW
+~~~~~~~~~~~~~~
+
+::
+
+       LD_BIND_NOW (since glibc 2.1.1)
+              If set to a nonempty string, causes the dynamic linker to
+              resolve all symbols at program startup instead of
+              deferring function call resolution to the point when they
+              are first referenced.  This is useful when using a
+              debugger.
+
 
 动态链接器
 ---------------

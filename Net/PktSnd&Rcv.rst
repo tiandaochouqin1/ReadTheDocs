@@ -44,7 +44,10 @@ socket
 
 netif_rx
 --------------
-
+1. https://segmentfault.com/a/1190000008836467
+2. https://blog.csdn.net/yldfree/article/details/84969862
+3. https://blog.csdn.net/zhangskd/article/details/22211295
+4. https://www.cnblogs.com/hustcat/archive/2009/09/26/1574371.html
 
 
 Linux网络IO模式
