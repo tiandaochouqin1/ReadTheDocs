@@ -113,6 +113,9 @@ arm
 `自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：
 列出了9门科目并分析了一些学习方法，其中 `CSAPP和DDIA` 回报率最高。
 
+   :download:`csapp 英文版 <../books/Computer-Systems-A-Programmers-Perspective-3rd.pdf>` 
+
+
 `CSAPP重点解读 <https://fengmuzi2003.gitbook.io/csapp3e/>`__
 
 +---------+-------------------+--------------------------------+-------+
