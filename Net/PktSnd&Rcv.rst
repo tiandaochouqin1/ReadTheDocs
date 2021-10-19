@@ -15,6 +15,7 @@ Packet Send & Recieve
 
 2. `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
+   `英文版配图 <https://blog.packagecloud.io/eng/2016/10/11/monitoring-tuning-linux-networking-stack-receiving-data-illustrated/>`__
 
 3. `图解Linux网络包接收过程 <https://mp.weixin.qq.com/s/GoYDsfy9m0wRoXi_NCfCmg>`__
 
@@ -39,15 +40,51 @@ socket
 
 
 
-内核协议栈
-=============
+网络收包上半部
+==============
+> ULNI：chapter9/10
+
+NAPI
+-------
+轮询+中断，比netif_rx性能好。
+
+1. 减少中断。
+2. 多设备公平。
 
 netif_rx
 --------------
-1. https://segmentfault.com/a/1190000008836467
-2. https://blog.csdn.net/yldfree/article/details/84969862
-3. https://blog.csdn.net/zhangskd/article/details/22211295
-4. https://www.cnblogs.com/hustcat/archive/2009/09/26/1574371.html
+
+1. https://www.cnblogs.com/hustcat/archive/2009/09/26/1574371.html
+
+.. figure:: ../images/netif_rx.png
+
+
+https://code.woboq.org/linux/linux/net/core/dev.c.html#netif_rx
+
+
+::
+
+    /**
+    *	netif_rx	-	post buffer to the network code
+    *	@skb: buffer to post
+    *
+    *	This function receives a packet from a device driver and queues it for
+    *	the upper (protocol) levels to process.  It always succeeds. The buffer
+    *	may be dropped during processing for congestion control or by the
+    *	protocol layers.
+    *
+    *	return values:
+    *	NET_RX_SUCCESS	(no congestion)
+    *	NET_RX_DROP     (packet was dropped)
+    *
+    */
+
+
+    /*
+    * enqueue_to_backlog is called to queue an skb to a per CPU backlog
+    * queue (may be a remote CPU queue).
+    */
+
 
 
 Linux网络IO模式

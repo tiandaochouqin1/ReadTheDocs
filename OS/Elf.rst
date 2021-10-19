@@ -292,12 +292,27 @@ PIC与PLT
 5. 全局变量在动态加载时一次性重定位，函数则采用PLT。
 
 
-运行时地址
+符号地址
 -----------
 > symtab、strtab和got、plt、got.plt的index如何对应？ so运行时地址？
 
 1. https://maskray.me/blog/2021-09-19-all-about-procedure-linkage-table
 2. https://maskray.me/blog/2021-08-29-all-about-global-offset-table
+
+符号表
+~~~~~~~~~
+
+::
+
+   typedef struct {
+        Elf64_Word      st_name;
+        unsigned char   st_info;
+        unsigned char   st_other;
+        Elf64_Half      st_shndx;
+        Elf64_Addr      st_value;
+        Elf64_Xword     st_size;
+   } Elf64_Sym;
+
 
 
 1. symtab中的st_name指向字符串表的索引。
@@ -315,12 +330,15 @@ An index into the object file's symbol string table, which holds the character r
 
 Symbol table entries for different object file types have slightly different interpretations for the st_value member.
 
-In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
+1. In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
 
-In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
+2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
 
-In executable and shared object files, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
+3. In executable and shared object files, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
+即指向了符号的虚拟地址。
 
+got运行时地址
+~~~~~~~~~~~~~
 
 1. `_GLOBAL_OFFSET_TABLE_`宏: https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-74186/index.html
 
@@ -332,6 +350,7 @@ The x86 port defines the symbol at the start of .got.plt.
 2.  get_pc_thunk：获取当前指令地址。怎么用？
    此调用在x86上与位置无关的代码中使用。它将代码的位置加载到%ebx寄存器中，
    从而允许全局对象（与代码有固定的偏移量）作为该寄存器的偏移量来访问。
+
 
 延迟绑定PLT
 ~~~~~~~~~~~~~~~~
@@ -361,6 +380,10 @@ PLT的基本流程：
 
 
 符号哈希表.hash：加快符号查找。
+
+_dl_runtime_resolve
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
 LD_BIND_NOW
