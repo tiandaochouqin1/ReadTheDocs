@@ -57,6 +57,10 @@ linux、glibc、gcc等。
 1. Linux Kernel Development， V2.6.34
 2. Linux Devices Driver， V2.6.10
 3. Proffesional Linux Kernel Architecture， V2.6.24 
+   :download:`深入Linux内核架构 <../books/深入Linux内核架构.pdf>` 
+
+   :download:`PLKA <../books/Professional_Linux_Kernel_Architecture.pdf>` 
+
 4. Understanding The Linux Kernel，  V2.6.11
 5. 奔跑吧Linux内核：几个重点模块讲解较仔细。
 
@@ -459,6 +463,29 @@ wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此
 3. 若被唤醒的进程优先级比正在运行的进程优先级高，则设置need_resched标志。
 
 
+
+内核栈
+----------
+
+当系统因为系统调用（软中断）或硬件中断，CPU切换到特权工作模式，进程陷入内核态，进程使用的栈也要从用户栈转向系统栈。
+
+从用户态到内核态要两步骤，首先是将用户堆栈地址保存到内核堆栈中，然后将CPU堆栈指针寄存器指向内核堆栈。
+
+当由内核态转向用户态，步骤首先是将内核堆栈中得用户堆栈地址恢复到CPU堆栈指针寄存器中。
+
+
+
+
+- 用户空间的堆栈，task_struct->mm->vm_area，属于进程虚拟地址空间。
+
+- 内核态的栈，tsak_struct->stack(其底部是thread_info对象，thread_info可以用来快速获取task_struct对象)。
+  整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
+
+
+为什么需要内核栈？
+
+1. 内核的代码和数据是为所有的进程共享的
+2. 安全
 
 
 抢占和上下文切换
