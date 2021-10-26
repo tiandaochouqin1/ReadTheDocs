@@ -14,7 +14,7 @@ ELF与链接
    :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
 
 2. 很详细： https://man7.org/linux/man-pages/man5/elf.5.html
-3. `Dynamic Linking —— Oracle Solaris 11  <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-83432.html>`__
+3. :download:`gcc 9.2 manual <../files/gcc_9.2_manual.pdf>`
 
 ELF结构
 --------------

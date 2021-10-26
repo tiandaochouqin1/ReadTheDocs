@@ -11,6 +11,7 @@ Dynamic Linkage
 
 1. `动态库和位置无关代码 - arm <http://www.wowotech.net/basic_subject/pic.html>`__
 2. `高级语言的编译：链接及装载过程介绍 <https://tech.meituan.com/2015/01/22/linker.html>`__
+3. `Dynamic Linking —— Oracle Solaris 11  <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-83432.html>`__
 
 
 
@@ -144,8 +145,14 @@ Symbol table entries for different object file types have slightly different int
 3. In executable and shared object files, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
 即指向了 **符号的虚拟地址**。
 
-got运行时地址
+运行时地址
 -------------
+so加载地址
+~~~~~~~~~~~~
+/proc/pid/maps
+
+got运行时地址
+~~~~~~~~~~~~~~~~~~~
 
 1. `_GLOBAL_OFFSET_TABLE_` 宏:  https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-74186/index.html 
 
