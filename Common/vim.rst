@@ -789,6 +789,18 @@ shell脚本，生成一个文件名tag文件。(ctags文件搜索太慢)
     :let g:LookupFile_TagExpr = '"./filenametags"'  
 
 
+nnn
+-------
+终端文件管理器。vim插件or程序。
+
+https://github.com/jarun/nnn
+
+
+1. Configure cd on quit
+2. alias ls='nnn -de'
+3. ? : 查看help
+
+
 问题
 =========
 E212
