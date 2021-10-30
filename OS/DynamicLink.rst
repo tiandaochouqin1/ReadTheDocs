@@ -10,8 +10,11 @@ Dynamic Linkage
 
 
 1. `动态库和位置无关代码 - arm <http://www.wowotech.net/basic_subject/pic.html>`__
-2. `高级语言的编译：链接及装载过程介绍 <https://tech.meituan.com/2015/01/22/linker.html>`__
-3. `Dynamic Linking —— Oracle Solaris 11  <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-83432.html>`__
+2.  该博客有许多链接的好文章： https://maskray.me/blog/archives 
+3. `高级语言的编译：链接及装载过程介绍 <https://tech.meituan.com/2015/01/22/linker.html>`__
+4. `Dynamic Linking —— Oracle Solaris 11  <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-83432.html>`__
+5. https://tldp.org/HOWTO/Program-Library-HOWTO/dl-libraries.html
+6. https://linux.die.net/man/1/ld
 
 
 
@@ -103,13 +106,23 @@ PIC与PLT
 
 符号地址
 -----------
-> symtab、strtab和got、plt、got.plt的index如何对应？ so运行时地址？
+>> symtab、strtab和got、plt、got.plt的index如何对应？ 
 
 1. https://maskray.me/blog/2021-09-19-all-about-procedure-linkage-table
 2. https://maskray.me/blog/2021-08-29-all-about-global-offset-table
 
+
+三种符号地址：
+
+1. 链接时常量：可为绝对地址或pc相对地址，静态链接（也即模块内）。
+2. 链接时常量+load基址：pic，exe或so的模块内部引用。所有引用都使用got。其链接时常量即相对地址，由PC-relative addressing使用。
+3. ld.so运行时决定：主程序中未定义的符号，引用动态库（fpic）。
+
+
 符号表.symtab
 --------------
+.dynsym是.symtab的子集
+
 
 ::
 
@@ -142,14 +155,18 @@ Symbol table entries for different object file types have slightly different int
 
 2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
 
-3. In executable and shared object files, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
+3. In **executable and shared object files**, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
 即指向了 **符号的虚拟地址**。
 
 运行时地址
 -------------
 so加载地址
 ~~~~~~~~~~~~
-/proc/pid/maps
+> /proc/pid/maps 得到so load基址 + so symtab/.dynsym 地址 .  那么so引用另一个so的符号的地址如何获取？
+
+a.so引用另一个b.so的符号时，该符号只存在a.so的got/plt/symtab/dynsymtab，不会被主程序包含。即每个可执行单元独立。
+
+
 
 got运行时地址
 ~~~~~~~~~~~~~~~~~~~
@@ -165,15 +182,30 @@ The aarch64, arm, mips, ppc, and riscv ports define the symbol at the start of .
 The x86 port defines the symbol at the start of .got.plt.
 
 
-1. get_pc_thunk：获取当前指令地址。怎么用？
+2. get_pc_thunk：获取当前指令地址。 
+   > 怎么用？
    此调用在x86上与位置无关的代码中使用。它将代码的位置加载到%ebx寄存器中，
    从而允许全局对象（与代码有固定的偏移量）作为该寄存器的偏移量来访问。
 
 
-PLT过程
+
+PLT
 ---------------
 函数在第一次被用到时才进行绑定。
 
+
+isn some architectures (x86-32, x86-64) 
+
+1. .got.plt[0] is the link time address of _DYNAMIC. 
+2. .got.plt[1] and .got.plt[2] are reserved by ld.so. 
+3. .got.plt[1] is a descriptor of the current component while .got.plt[2] is the address of the PLT resolver.
+
+
+- eager binding:ld -z now、LD_BIND_NOW=1。更安全。实际大部分符号不会被使用。
+- lazy binding:慢，每次resolve都需要按序扫描so，并遍历所有符号以查找。
+
+plt过程
+~~~~~~~~~~~~~~
 PLT的基本流程：
 
 ::
@@ -200,19 +232,29 @@ PLT的基本流程：
 符号哈希表.hash：加快符号查找。
 
 
+fno-plt
+~~~~~~~~~~~~~
+1. https://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html
 
+Do not use the PLT for external function calls in position-independent code. Instead, load the callee address at call sites from the GOT and branch to it. This leads to more efficient code by eliminating PLT stubs and exposing GOT loads to optimizations.
+
+Lazy binding requires use of the PLT; with -fno-plt **all external symbols are resolved at load time.**
+
+Alternatively, the function attribute noplt can be used to avoid calls through the PLT for specific external functions
+
+__attribute__((noplt))
 
 LD_BIND_NOW
 ~~~~~~~~~~~~~~~~
 
 ::
 
-       LD_BIND_NOW (since glibc 2.1.1)
-              If set to a nonempty string, causes the dynamic linker to
-              resolve all symbols at program startup instead of
-              deferring function call resolution to the point when they
-              are first referenced.  This is useful when using a
-              debugger.
+   LD_BIND_NOW (since glibc 2.1.1)
+        If set to a nonempty string, causes the dynamic linker to
+        resolve all symbols at program startup instead of
+        deferring function call resolution to the point when they
+        are first referenced.  This is useful when using a
+        debugger.
 
 
 
@@ -367,16 +409,6 @@ visibility
    any symbols marked local in the version script will not be exported.
 
 
-fno-plt
-------------
-1. https://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html
-
-Do not use the PLT for external function calls in position-independent code. Instead, load the callee address at call sites from the GOT and branch to it. This leads to more efficient code by eliminating PLT stubs and exposing GOT loads to optimizations.
-
-Lazy binding requires use of the PLT; with -fno-plt **all external symbols are resolved at load time.**
-
-Alternatively, the function attribute noplt can be used to avoid calls through the PLT for specific external functions
-
 
 
 弱符号与COMMON
@@ -420,11 +452,11 @@ COMMOM段：未被分配位置的未初始化数据，将弱全局符号的决�
 2. The -fcommon places uninitialized global variables in a common block. 
 
 
-> commom如何决议多个weak symbols?
+> commom如何决议多个weak symbols？
 
 强弱符号：在.o中的概念。
 
-按照链接器在处理 COMMON 块中符号的规则：同名的 COMMON 段符号会选取符号表中 Size（st_size 字段）较大的那一个？
+> 按照链接器在处理 COMMON 块中符号的规则：同名的 COMMON 段符号会选取符号表中 Size（st_size 字段）较大的那一个？
 
 
 
