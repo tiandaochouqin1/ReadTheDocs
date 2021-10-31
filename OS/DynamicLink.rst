@@ -85,6 +85,7 @@ execv不关心elf是否可执行，故/lib/ld-linux.so.2可执行。/lib/ld-linu
 
 PIC与PLT
 ============
+
 地址无关代码PIC：程序中的共享指令地址不因装载地址而改变，不受其被加载到的绝对地址的影响，便于多进程共享代码。
 
 
@@ -120,7 +121,7 @@ PIC与PLT
 
 
 符号表.symtab
---------------
+~~~~~~~~~~~~~~~~~~~~~
 .dynsym是.symtab的子集
 
 
@@ -151,17 +152,21 @@ An index into the object file's symbol string table, which holds the character r
 
 Symbol table entries for different object file types have slightly different interpretations for the st_value member.
 
-1. In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
+   1. In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
 
-2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
+   2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
 
-3. In **executable and shared object files**, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
-即指向了 **符号的虚拟地址**。
+   3. In **executable and shared object files**, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
+   即指向了 **符号的虚拟地址**。
+
+
 
 运行时地址
 -------------
+
 so加载地址
 ~~~~~~~~~~~~
+
 > /proc/pid/maps 得到so load基址 + so symtab/.dynsym 地址 .  那么so引用另一个so的符号的地址如何获取？
 
 a.so引用另一个b.so的符号时，该符号只存在a.so的got/plt/symtab/dynsymtab，不会被主程序包含。即每个可执行单元独立。
@@ -174,12 +179,11 @@ got运行时地址
 1. `_GLOBAL_OFFSET_TABLE_` 宏:  https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-74186/index.html 
 
 
-
 GNU ld defines the symbol relative to the Global Offset Table.
 
-The aarch64, arm, mips, ppc, and riscv ports define the symbol at the start of .got.
+   - The aarch64, arm, mips, ppc, and riscv ports define the symbol at the start of .got.
 
-The x86 port defines the symbol at the start of .got.plt.
+   - The x86 port defines the symbol at the start of .got.plt.
 
 
 2. get_pc_thunk：获取当前指令地址。 
@@ -259,7 +263,108 @@ LD_BIND_NOW
 
 
 _dl_runtime_resolve
-------------------------
+=======================
+
+1. CTF-WIKI有很多资料： `Symbol Reslove <https://ctf-wiki.org/executable/elf/linking/symbol-resolve/>`__
+2. `dl_runtime_resolve结合源码分析及常见的几种攻击手法 <https://bbs.pediy.com/thread-253833.htm>`__
+3. `详细解析ret2_dl_runtime_resolve <https://blog.csdn.net/qq_36495104/article/details/106061223>`__
+4. `_dl_runtime_resolve源码分析 <https://blog.csdn.net/conansonic/article/details/54634142>`__
+5. `深入了解GOT,PLT和动态链接 <https://evilpan.com/2018/04/09/about-got-plt/#return-to-dlresolve>`__
+
+
+.. figure:: ../images/dl_runtime_resolve.png
+   .rel.plt->.dynsym/.syntab->.dynstr
+
+
+
+dl_runtime_resolve执行过程：
+
+1. 通过link_map_obj访问.dynamic section，分别取出.dynstr, .dynsym,.rel.plt的地址
+2. .rel.plt+ reloc_index 求出当前函数重定位表项 Elf32_Rel的指针，记为rel
+3. rel->r_info的高24位作为.dynsym的下标，求出Elf32_Sym的指针，记作sym
+4. .dynstr + sym->st_name得到符号名字符串
+5. 在动态链接库查找这个函数的地址，并且把找到的地址赋值给rel->r_offset,即.got.plt
+6. 最后调用这个函数
+
+
+_dl_runtime_resolve->_dl_fixup->_dl_lookup_symbol_x->do_lookup_x->check_match
+
+_dl_fixup: https://code.woboq.org/userspace/glibc/elf/dl-runtime.c.html#59
+
+
+gdb查看plt过程
+---------------
+1. `通过 GDB 调试理解 GOT/PLT <http://rickgray.me/2015/08/07/use-gdb-to-study-got-and-plt/>`__
+
+gdb直接跳过了resolve过程，.got.plt内直接就是函数地址了(因为参考文章是32位？).....(GNU gdb (Ubuntu 8.1.1-0ubuntu1) 8.1.1)
+
+2. gdb辅助插件：pwndbg、peda
+
+https://github.com/pwndbg/pwndbg
+
+https://github.com/longld/peda
+
+
+::
+
+   git clone https://github.com/longld/peda.git ~/peda
+   echo "source ~/peda/peda.py" >> ~/.gdbinit
+
+
+
+ret2dlresolve攻击
+-----------------
+
+xHook
+-------
+hook动态库中的函数以实现自己的功能。系统库、闭源库等无法替换的库。
+
+https://github.com/iqiyi/xHook/blob/master/docs/overview/android_plt_hook_overview.zh-CN.md
+
+
+1. /proc/self/maps或dl_iterate_phdr()获取so加载地址；
+2. 计算符号在.got.plt(so)中的位置；（读内存的方式）
+3. mprotect修改内存访问权限；
+4. __builtin___clear_cache 清除指令缓存；
+5. hook 其他进程需要 root 权限
+
+
+::
+
+   void hook()
+   {
+       char       line[512];
+       FILE      *fp;
+       uintptr_t  base_addr = 0;
+       uintptr_t  addr;
+
+       //find base address of libtest.so
+       if(NULL == (fp = fopen("/proc/self/maps", "r"))) return;
+       while(fgets(line, sizeof(line), fp))
+       {
+           if(NULL != strstr(line, "libtest.so") &&
+              sscanf(line, "%"PRIxPTR"-%*lx %*4s 00000000", &base_addr) == 1)
+               break;
+       }
+       fclose(fp);
+       if(0 == base_addr) return;
+
+       //the absolute address
+       addr = base_addr + 0x3f90;
+       
+       //add write permission
+       mprotect((void *)PAGE_START(addr), PAGE_SIZE, PROT_READ | PROT_WRITE);
+
+       //replace the function address
+       *(void **)addr = my_malloc;
+
+       //clear instruction cache
+       __builtin___clear_cache((void *)PAGE_START(addr), (void *)PAGE_END(addr));
+   }
+
+从elf文件读取符号地址
+~~~~~~~~~~~~~~~~~~~~~~~~
+读文件有性能损耗。
 
 
 动态库热更新
