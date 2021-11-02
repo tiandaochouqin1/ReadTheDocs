@@ -122,3 +122,13 @@ jiffies
 
    sudo cat /proc/timer_list |grep jiffies: ;sleep 1;sudo cat /proc/timer_list |grep jiffies:
 
+
+
+BPF原理
+===========
+1. `Dive into BPF: a list of reading material <https://qmonnet.github.io/whirl-offload/2016/09/01/dive-into-bpf/>`__
+中文翻译 `深入理解 BPF：一个阅读清单 <https://linux.cn/article-9507-1.html>`__
+
+bpf与tcpdump
+--------------
+1. https://mp.weixin.qq.com/s/cUodZmJZ5sJTcULTvWSLkg 系列三篇文章

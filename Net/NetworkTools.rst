@@ -605,25 +605,10 @@ wget是linux下的下载工具，需要先安装. 用法: ``wget ip:port``
        Connecting to ...:... connected.
        HTTP request sent, awaiting response...
 
-专用工具tcping
---------------
-
-`tcping <https://elifulkerson.com/projects/tcping.php>`__
 
 
-netstat扫描监听端口
--------------------
-tcp/udp
 
-netstat参数解释：
 
-::
-
-       -l  (listen) 仅列出 Listen (监听) 的服务
-       -t  (tcp) 仅显示tcp相关内容
-       -n (numeric) 直接显示ip地址以及端口，不解析为服务名或者主机名
-       -p (pid) 显示出socket所属的进程PID 以及进程名字
-       --inet 显示ipv4相关协议的监听
 
 Nmap网络扫描和嗅探
 ------------------
@@ -766,3 +751,45 @@ psping
    -w  Warmup with the specified number of iterations (default is 1).
    -4  Force using IPv4.
    -6  Force using IPv6.
+
+
+专用工具tcping
+--------------
+
+`tcping <https://elifulkerson.com/projects/tcping.php>`__
+
+
+其他工具
+=========
+tcpdump
+--------
+1. `基于tcpdump原理手写抓包程序 <https://mp.weixin.qq.com/s/cUodZmJZ5sJTcULTvWSLkg>`__
+2. https://colobu.com/2019/07/16/a-tcpdump-tutorial-with-examples/
+3. https://www.cnblogs.com/wongbingming/p/13212306.html
+
+BPF
+-------
+
+
+netstat扫描监听端口
+-------------------
+tcp/udp
+
+netstat参数解释：
+
+::
+
+       -l  (listen) 仅列出 Listen (监听) 的服务
+       -t  (tcp) 仅显示tcp相关内容
+       -n (numeric) 直接显示ip地址以及端口，不解析为服务名或者主机名
+       -p (pid) 显示出socket所属的进程PID 以及进程名字
+       --inet 显示ipv4相关协议的监听
+
+netcat
+---------
+
+netcat可发包
+
+ss
+-----
+

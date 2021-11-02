@@ -350,8 +350,13 @@ https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
 
 
 
+crash
+========
+内核coredump分析。
+
 perf
 =============
+用户态工具。
 
 https://www.cnblogs.com/arnoldlu/p/6241297.html
 

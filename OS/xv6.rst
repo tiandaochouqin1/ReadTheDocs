@@ -45,7 +45,7 @@ GDB
 
 基本使用
 ---------------
-1. .gdbinit：`GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__，如指定符号文件;
+1. .gdbinit：`GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__，如指定符号文件、加载peda/pwndgb插件;
 
 2. 单行调试： step(step into called func)和next(step over);
 
