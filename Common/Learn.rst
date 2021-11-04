@@ -42,16 +42,16 @@ Learn
 3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
    `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
 
-
 `作者主页 <http://www.brendangregg.com/linuxperf.html>`__
 
-https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55
+4. https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55
 
-https://lrita.github.io/wiki/books/
+5. https://lrita.github.io/wiki/books/
 
 .. figure:: ../images/linux_observability_tools.png
 
    linux_observability_tools
+
 
 嵌入式
 ------

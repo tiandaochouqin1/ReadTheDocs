@@ -356,15 +356,23 @@ crash
 
 perf
 =============
-用户态工具。
+主要为用户态，也有内核。
 
-https://www.cnblogs.com/arnoldlu/p/6241297.html
+1. !! https://www.brendangregg.com/perf.html
+2. https://www.brendangregg.com/flamegraphs.html
+3. https://perf.wiki.kernel.org/index.php/Tutorial
+4. https://www.cnblogs.com/arnoldlu/p/6241297.html
 
-最好sudo执行。-p pid
+sudo执行。-p pid
 
-- perf top：显示性能事件
+- perf top：实时性能
 - perf stat：统计信息
 - perf record + report：精确分析，函数级别
-- perf sched：跟踪/测量调
+- perf annotate: 源码级别
+- perf bench: 性能bennchmark
+- 
+
    
-   
+::
+
+   perf record -e sched:sched_stat_sleep -e sched:sched_switch -e sched:sched_process_exit -gP

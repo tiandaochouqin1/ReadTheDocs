@@ -809,3 +809,9 @@ E212：无法打开并写入文件 的错误提示。
 
 1. 保存到临时文件 ``:wq ! ~/tmp`` ，更改属主后覆盖原文件。
 2. sudo保存 ``: w ! sudo tee %``。
+
+Shell Pattern Matching
+===========================
+find、locate
+
+https://www.gnu.org/software/findutils/manual/html_node/find_html/Shell-Pattern-Matching.html
