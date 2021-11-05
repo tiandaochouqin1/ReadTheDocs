@@ -410,11 +410,10 @@ Vim基本配置
 `vim8原生内置(naive)插件安装 <https://blog.csdn.net/qq_27825451/article/details/100557133>`__
 
 
-Vim8 会自动加载 ~/.vim/pack/*/start/
+Vim8 会自动加载 `~/.vim/pack/*/start/`.
 
-不想自动加载的插件可以放到 opt 目录下 ~/.vim/pack/*/opt
-随后在 ~/.vimrc 中使用 packadd 来手动加载插件，有应用场景如下
-可以根据某个编译版本来选择使用插件的版本。
+不想自动加载的插件可以放到 opt 目录下 `~/.vim/pack/*/opt`;
+随后在 ~/.vimrc 中使用 packadd 来手动加载插件，可以根据某个编译版本来选择使用插件的版本。
 
 ::
 

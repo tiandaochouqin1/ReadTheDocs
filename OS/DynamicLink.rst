@@ -273,6 +273,7 @@ _dl_runtime_resolve
 
 
 .. figure:: ../images/dl_runtime_resolve.png
+   
    .rel.plt->.dynsym/.syntab->.dynstr
 
 
