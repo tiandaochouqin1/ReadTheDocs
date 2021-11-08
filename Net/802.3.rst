@@ -1,0 +1,47 @@
+================
+802.3
+================
+
+
+参考文档
+===========
+1. 标准 https://pan.838281.xyz/61365/Code/IEEE802.3-2018.rar?download
+2. xlinx的手册
+
+标准介绍
+=============
+IEEE 802.3 is a working group and 
+a collection of IEEE standards produced by the working group 
+defining the physical layer and data link layer's media access control (MAC) of wired Ethernet
+
+
+
+最新版为2018版，共有8个section，126个clause，120个annex，共5600页，总大小47.3M。
+
+Section One includes the specifications for 10 Mb/s operation and the MAC, frame formats and service
+interfaces used for all speeds of operation
+
+10M以太网：8-20章
+
+100M以太网：21-33章
+
+1000M以太网：34-43章
+
+10G以太网：44-77章
+
+节能以太网：78-79章
+
+40G/100G以太网：80-95章
+
+200G/400G以太网：116-124章
+
+2.5G/5G以太网：125-126章
+
+Clause 37: base1000-x an
+============================
+1. https://github.com/awokezhou/Communication/wiki/Auto-Negotiation
+2. `以太网遵循的IEEE 802.3 标准  <https://zhuanlan.zhihu.com/p/139515133>`__ 
+3. `SGMII自协商 《https://blog.csdn.net/weixin_39673080/article/details/87887269`__
+4. http://xilinx.eetrend.com/content/2020/100049032.html
+5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
+

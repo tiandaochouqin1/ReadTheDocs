@@ -358,7 +358,7 @@ perf
 =============
 主要为用户态，也有内核。
 
-1. !! https://www.brendangregg.com/perf.html
+1. !! https://www.brendangregg.com/perf.html :perf examples，详细介绍了events
 2. https://www.brendangregg.com/flamegraphs.html
 3. https://perf.wiki.kernel.org/index.php/Tutorial
 4. https://www.cnblogs.com/arnoldlu/p/6241297.html
