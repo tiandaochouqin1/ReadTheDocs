@@ -41,7 +41,9 @@ Clause 37: base1000-x an
 ============================
 1. https://github.com/awokezhou/Communication/wiki/Auto-Negotiation
 2. `以太网遵循的IEEE 802.3 标准  <https://zhuanlan.zhihu.com/p/139515133>`__ 
-3. `SGMII自协商 《https://blog.csdn.net/weixin_39673080/article/details/87887269`__
+3. `SGMII自协商 <https://blog.csdn.net/weixin_39673080/article/details/87887269>`__
 4. http://xilinx.eetrend.com/content/2020/100049032.html
 5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
+6. `Clause_37_Auto-Negotiation <https://www.iol.unh.edu/sites/default/files/knowledgebase/ge/Clause_37_Auto-Negotiation.pdf>`__
+   :download:`Clause_37_Auto-Negotiation.pdf <../files/Clause_37_Auto-Negotiation.pdf>`
 

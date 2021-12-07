@@ -257,7 +257,12 @@ RegexBuddy分析与调试
 =======
 正则风格
 --------
-1. `正则表达式“派别”简述 <https://liujiacai.net/blog/2014/12/07/regexp-favors/#pcre%E6%A0%87%E5%87%86>`__
+1. `梳理正则表达式发展史 <https://mp.weixin.qq.com/s/hYYDRHgjBs0TVTQty9pSBw>`__
+2. `正则表达式“派别”简述 <https://liujiacai.net/blog/2014/12/07/regexp-favors/#pcre%E6%A0%87%E5%87%86>`__
+3. `Regex cheatsheet <https://remram44.github.io/regex-cheatsheet/regex.html#syntax-basics>`__
+
+
+
 
 ::
 
@@ -265,6 +270,12 @@ RegexBuddy分析与调试
    grep -E 'ftp|http|https' b.txt #POSIX-ERE标准
    egrep 'ftp|http|https' b.txt #POSIX-ERE标准
    grep -P 'ftp|http|https' b.txt #PCRE
+
+
+.. figure:: ../images/regex_comparation.png
+
+   PCRE、GNU BRE、GNU ERE 对比
+
 
 POSIX
 ~~~~~~~~~~

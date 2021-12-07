@@ -193,3 +193,7 @@ domain。
 
 `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
 `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
+
+
+可重入、异步信号安全、多线程安全
+================================

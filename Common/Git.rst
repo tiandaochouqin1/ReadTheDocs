@@ -13,6 +13,7 @@ Git
 3. `Git-Cheat-Sheet <https://github.com/flyhigher139/Git-Cheat-Sheet>`__
 4. `Git教程 <https://www.liaoxuefeng.com/wiki/896043488029600>`__
 5. `Learn Git Branching <https://pcottle.github.io/learnGitBranching/>`__
+6. `git flight rules <https://github.com/k88hudson/git-flight-rules/>`__
 
 
 基本概念
