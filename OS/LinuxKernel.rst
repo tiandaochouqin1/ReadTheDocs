@@ -482,6 +482,15 @@ wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此
   整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
 
 
+
+https://zhuanlan.zhihu.com/p/296750228
+
+.. figure:: ../images/kernel_stack.png
+
+
+- x86: 上图，采用了每cpu变量current_task来保存当前运行进程的task_struct
+- arm: 使用current宏，arm32使用栈偏移量、arm64使用专门的寄存器 来找到进程描述符。
+
 为什么需要内核栈？
 
 1. 内核的代码和数据是为所有的进程共享的
@@ -607,6 +616,7 @@ top_prio = -1 -sched_priority
 2. `深入理解系统调用 <https://www.cnblogs.com/liujianing0421/p/12971722.html>`__
 
 3. `调用门 - 硬件原理 <https://mp.weixin.qq.com/s/8BtdBNTW36BUxb5Ee-jKSw>`__
+4. `Linux syscall过程 —— 栈切换等 <https://cloud.tencent.com/developer/article/1492374>`__
 
 概念
 ------
