@@ -705,6 +705,8 @@ use syscall from glibc to call exit with exit status of 42:
 然后将这些参数移动到其他寄存器，使得它们在通过 syscall 进入内核之前符合 内核调用约定。
 
 
+syscall 时，跳转到 entry_SYSCALL_64 开始执行，其定义在 arch/x86/entry/entry_64.S
+
 
 系统调用上下文
 ~~~~~~~~~~~~~~

@@ -10,8 +10,7 @@
 
 标准介绍
 =============
-IEEE 802.3 is a working group and 
-a collection of IEEE standards produced by the working group 
+IEEE 802.3 is a working group and a collection of IEEE standards produced by the working group 
 defining the physical layer and data link layer's media access control (MAC) of wired Ethernet
 
 
@@ -21,21 +20,25 @@ defining the physical layer and data link layer's media access control (MAC) of 
 Section One includes the specifications for 10 Mb/s operation and the MAC, frame formats and service
 interfaces used for all speeds of operation
 
-10M以太网：8-20章
+1. 通用标准：1-8章
 
-100M以太网：21-33章
+   10M以太网：8-20章
 
-1000M以太网：34-43章
+2. 100M以太网：21-33章
 
-10G以太网：44-77章
+3. 1000M以太网：34-43章
 
-节能以太网：78-79章
+4. 10G以太网：44-77章
 
-40G/100G以太网：80-95章
+5. 节能以太网：78-79章
 
-200G/400G以太网：116-124章
+6. 40G/100G以太网：80-95章
 
-2.5G/5G以太网：125-126章
+7. 单对双绞线(车载)：96-115章
+
+8. 200G/400G以太网：116-124章
+
+   2.5G/5G以太网：125-126章
 
 Clause 37: base1000-x an
 ============================
@@ -46,4 +49,28 @@ Clause 37: base1000-x an
 5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
 6. `Clause_37_Auto-Negotiation <https://www.iol.unh.edu/sites/default/files/knowledgebase/ge/Clause_37_Auto-Negotiation.pdf>`__
    :download:`Clause_37_Auto-Negotiation.pdf <../files/Clause_37_Auto-Negotiation.pdf>`
+
+MAC的作用： 帧构造、buffer、crc、flow control、通过mii管理phy。
+
+PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。1000base-t在clause40，使用了next page。
+
+
+
+车载以太网
+==============
+1. `车载以太网协议的架构 <https://www.ednchina.com/technews/12381.html>`__
+
+https://www.ednchina.com/technews/12860.html
+
+
+.. figure:: ../images/ethernet_bus.jpg
+
+   车载以太网架构
+
+
+CSMA/CD时延不可靠。
+
+当下主流的车载以太网协议主要为IEEE 100BASE-T1(802.3bw,Clause 96)以及IEEE 1000BASE-T1(802.3bp,Clause 97,支持clause98的自协商)。
+
+100BASE-T1在物理连接上使用了一对双绞线实现全双工的信息传输，而100BASE-TX则使用了两对双绞线实现全双工。
 
