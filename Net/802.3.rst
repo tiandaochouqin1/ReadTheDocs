@@ -5,7 +5,7 @@
 
 参考文档
 ===========
-1. 标准 https://pan.838281.xyz/61365/Code/IEEE802.3-2018.rar?download
+1. :download:`IEEE802.3-2018 <../files/8023/IEEE802.3-2018.rar>`
 2. xlinx的手册
 
 LLC子层的服务与服务在IEEE 802.2 LAN协议中有所定义，MAC层的主要功能作用则在IEEE 802.3中定义，并采用CSMA/CD访问控制方式.
@@ -16,6 +16,8 @@ IEEE 802.3 is a working group and a collection of IEEE standards produced by the
 defining the physical layer and data link layer's media access control (MAC) of wired Ethernet
 
 
+章节介绍
+-----------
 
 最新版为2018版，共有8个section，126个clause，120个annex，共5600页，总大小47.3M。
 
@@ -23,7 +25,6 @@ Section One includes the specifications for 10 Mb/s operation and the MAC, frame
 interfaces used for all speeds of operation
 
 1. MAC相关标准(可阅读)：1-8章
-
    10M以太网：8-20章
 
 2. 100M以太网：21-33章
@@ -39,7 +40,6 @@ interfaces used for all speeds of operation
 7. 单对双绞线(车载)：96-115章
 
 8. 200G/400G以太网：116-124章
-
    2.5G/5G以太网：125-126章
 
 
@@ -51,75 +51,38 @@ interfaces used for all speeds of operation
 
 1. 数据速率 (R)：
 
-- 1000 → 1000 Mbps或1 Gbps；兆位单位从数据速率参考中移除
-- 10G → 10 Gbps
-- 10/1G → Gbps下行，1 Gbps上行
+   - 1000 → 1000 Mbps或1 Gbps；兆位单位从数据速率参考中移除
+   - 10G → 10 Gbps
+   - 10/1G → Gbps下行，1 Gbps上行
 
 2. 调制类型 (mTYPE)：BASE → 基带
 
 3. 介质类型/波长/距离 (L)：
 
-- B → 双向光纤，上行(D) 或上行 (U) 限定符不对称
-- C → 双轴铜缆
-- D → 并行单模 (500 m)
-- E → 超长光波长λ (1510/1550 nm) / 距离 (40 km)
-- F → 光纤 (2 km)
-- K → 背板
-- L → 长光波长λ (~1310 nm) / 距离 (10 km)
-- P → 无源光纤，带有单个或多个下游 (D) 或上游 (U) 不对称限定符，而且带有4B/5B或8B/10B的外部来源编码 (X)
-- RH → 采用PAM16编码的红色LED塑料光纤和不同发射功率的光纤
-- S → 短光波长λ (850 nm) / 距离 (100 m)
-- T → 双绞线
+   - B → 双向光纤，上行(D) 或上行 (U) 限定符不对称
+   - C → 双轴铜缆
+   - D → 并行单模 (500 m)
+   - E → 超长光波长λ (1510/1550 nm) / 距离 (40 km)
+   - F → 光纤 (2 km)
+   - K → 背板
+   - L → 长光波长λ (~1310 nm) / 距离 (10 km)
+   - P → 无源光纤，带有单个或多个下游 (D) 或上游 (U) 不对称限定符，而且带有4B/5B或8B/10B的外部来源编码 (X)
+   - RH → 采用PAM16编码的红色LED塑料光纤和不同发射功率的光纤
+   - S → 短光波长λ (850 nm) / 距离 (100 m)
+   - T → 双绞线
 
 4. PCS编码 (C)：
 
-- R → 扰码 (64B/66B)
-- X → 外部来源编码 (4B/5B, 8B/10B)
+   - R → 扰码 (64B/66B)
+   - X → 外部来源编码 (4B/5B, 8B/10B)
 
 5. 通道数 (n)：
 
-- 空白，无通道数 → 默认为1-通道
-- 4 → 4-通道
+   - 空白，无通道数 → 默认为1-通道
+   - 4 → 4-通道
 
 
 在以太网中，要实现有效的1 Gbps吞吐量，实际线速率是1.25 Gbps，而在万兆以太网吞吐量中，线速率是10.3125 Gbps。 
-
-
-
-Clause 37: base1000-x an
-============================
-1. https://github.com/awokezhou/Communication/wiki/Auto-Negotiation
-2. `以太网遵循的IEEE 802.3 标准  <https://zhuanlan.zhihu.com/p/139515133>`__ 
-3. `SGMII自协商 <https://blog.csdn.net/weixin_39673080/article/details/87887269>`__
-4. http://xilinx.eetrend.com/content/2020/100049032.html
-5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
-6. `Clause_37_Auto-Negotiation <https://www.iol.unh.edu/sites/default/files/knowledgebase/ge/Clause_37_Auto-Negotiation.pdf>`__
-   :download:`Clause_37_Auto-Negotiation.pdf <../files/Clause_37_Auto-Negotiation.pdf>`
-
-
-PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。1000base-t在clause40，使用了next page。
-
-sgmii an
----------------
-
- :download:`Serial-GMII Specification <../files/8023/SGMII.pdf>`
-
-This is achieved by using the Auto-Negotiation
-functionality defined in Clause 37 of the IEEE Specification 802.3z. 
-
-Instead of the ability
-advertisement, the PHY sends the control information via its tx_config_Reg[15:0] as specified
-in Table 1 whenever the control information changes. 
-
-Upon receiving control information, the
-MAC acknowledges the update of the control information by asserting bit 14 of its
-tx_config_reg{15:0] as specified in Table 1.
-
-
-.. figure:: ../images/Sgmii.png
-
-   sgmii接口：PHY和MAC
-
 
 MAC
 =======
@@ -132,29 +95,6 @@ PHY芯片通常会串联网络变压器出来到UTP，主要作用是信号电�
 1. 可以增强信号，使其传输距离更远；
 2. 使芯片端与外部隔离，增强抗干扰能力，增加对芯片的保护作用（如雷击）；
 3. 当接到不同电平的网口时，不会对彼此设备造成影响
-
-车载以太网
-==============
-1. `车载以太网协议的架构 <https://www.ednchina.com/technews/12381.html>`__
-2. `从物理层到应用层，车载以太网协议簇泛读 <https://www.ednchina.com/technews/12860.html>`__
-
-
-.. figure:: ../images/ethernet_bus.jpg
-
-   车载以太网架构
-
-
-CSMA/CD时延不可靠。
-
-当下Automotive ethernet都是单对双绞线，主要物理协议为IEEE 100BASE-T1(802.3bw,Clause 96)、IEEE 1000BASE-T1(802.3bp,Clause 97,支持clause98的自协商)、
-IEEE802.3ch对应的2.5G 5G10G（2020.6.4通过）、以及10M车载以太网还没有开始推进使用对应的物理层协议IEEE 802.3cg。
-
-100BASE-T1在物理连接上使用了一对双绞线实现全双工的信息传输，而100BASE-TX则使用了两对双绞线实现全双工。
-
-
-只采用单对差分电压传输的双绞线，但是100M/s以太网可以通过回音消除技术来实现全双工通信。
-
-目前广泛使用的以太网帧格式主要有2种，分别为Ethernet II帧格式与IEEE802.3帧格式。其中车载以太网主要采用Ethernet II帧格式
 
 
 问题
@@ -245,3 +185,74 @@ rtl8211e(g)-vb(vl)-cg: `千兆PHY详解及调试举例 <https://cloud.tencent.co
 marvel 88e1111:https://blog.csdn.net/qq_39466755/article/details/109050806
 
 
+
+
+Auto-Negotiation
+====================
+
+Clause 22: Physical Layer link signaling for Auto-Negotiation on twisted pair
+-----------------------------------------------------------------------------------
+1000base-t: Clause 40.5.1
+
+
+
+
+
+Clause 37: 1000base-x
+-------------------------------
+1. https://github.com/awokezhou/Communication/wiki/Auto-Negotiation
+2. `以太网遵循的IEEE 802.3 标准  <https://zhuanlan.zhihu.com/p/139515133>`__ 
+3. `SGMII自协商 <https://blog.csdn.net/weixin_39673080/article/details/87887269>`__
+4. http://xilinx.eetrend.com/content/2020/100049032.html
+5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
+6. `Clause_37_Auto-Negotiation <https://www.iol.unh.edu/sites/default/files/knowledgebase/ge/Clause_37_Auto-Negotiation.pdf>`__
+   :download:`Clause_37_Auto-Negotiation.pdf <../files/Clause_37_Auto-Negotiation.pdf>`
+
+
+PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。1000base-t在clause40，使用了next page。
+
+sgmii an
+---------------
+
+1. :download:`Serial-GMII Specification <../files/8023/SGMII.pdf>`
+
+This is achieved by using the Auto-Negotiation
+functionality defined in Clause 37 of the IEEE Specification 802.3z. 
+
+Instead of the ability
+advertisement, the PHY sends the control information via its tx_config_Reg[15:0] as specified
+in Table 1 whenever the control information changes. 
+
+Upon receiving control information, the
+MAC acknowledges the update of the control information by asserting bit 14 of its
+tx_config_reg{15:0] as specified in Table 1.
+
+
+.. figure:: ../images/Sgmii.png
+
+   sgmii接口：PHY和MAC
+
+
+
+车载以太网
+==============
+1. `车载以太网协议的架构 <https://www.ednchina.com/technews/12381.html>`__
+2. `从物理层到应用层，车载以太网协议簇泛读 <https://www.ednchina.com/technews/12860.html>`__
+
+
+.. figure:: ../images/ethernet_bus.jpg
+
+   车载以太网架构
+
+
+CSMA/CD时延不可靠。
+
+当下Automotive ethernet都是单对双绞线，主要物理协议为IEEE 100BASE-T1(802.3bw,Clause 96)、IEEE 1000BASE-T1(802.3bp,Clause 97,支持clause98的自协商)、
+IEEE802.3ch对应的2.5G 5G10G（2020.6.4通过）、以及10M车载以太网还没有开始推进使用对应的物理层协议IEEE 802.3cg。
+
+100BASE-T1在物理连接上使用了一对双绞线实现全双工的信息传输，而100BASE-TX则使用了两对双绞线实现全双工。
+
+
+只采用单对差分电压传输的双绞线，但是100M/s以太网可以通过回音消除技术来实现全双工通信。
+
+目前广泛使用的以太网帧格式主要有2种，分别为Ethernet II帧格式与IEEE802.3帧格式。其中车载以太网主要采用Ethernet II帧格式
