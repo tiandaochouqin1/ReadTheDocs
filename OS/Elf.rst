@@ -9,8 +9,9 @@ ELF与链接
 ==============
 1. :download:`TLPI <../books/The Linux Programming Interface.pdf>` 
    
-   :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
+   :download:`Linux-UNIX系统编程手册（上、下册）.pdf <../books/Linux-UNIX系统编程手册（上、下册）.pdf>` 
 
+   :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
    :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
 
 2. 很详细： https://man7.org/linux/man-pages/man5/elf.5.html

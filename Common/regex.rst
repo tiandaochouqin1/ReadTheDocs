@@ -253,15 +253,15 @@ RegexBuddy分析与调试
    正则库内置了很多常用正则，日常编码过程中需要的很多正则表达式都能在该正则库中找到。
 
 
-其它 
-=======
+
 正则风格
---------
+=========
 1. `梳理正则表达式发展史 <https://mp.weixin.qq.com/s/hYYDRHgjBs0TVTQty9pSBw>`__
 2. `正则表达式“派别”简述 <https://liujiacai.net/blog/2014/12/07/regexp-favors/#pcre%E6%A0%87%E5%87%86>`__
 3. `Regex cheatsheet <https://remram44.github.io/regex-cheatsheet/regex.html#syntax-basics>`__
 
 
+POSIX-BRE 特殊符号需转义
 
 
 ::
@@ -278,7 +278,7 @@ RegexBuddy分析与调试
 
 
 POSIX
-~~~~~~~~~~
+--------
 POSIX把正则表达式分为两种（favor）：
 
 BRE（Basic Regular Expressions）与ERE（Extended Regular Expressions ）
@@ -310,7 +310,7 @@ POSIX还定义了一些shorthand，具体如下：
 
 
 PCRE
-~~~~~~~~~
+---------
 Perl Compatible Regular Expressions
 
 现在的编程语言中的正则表达式，大部分都属于PCRE这个分支。
@@ -318,11 +318,11 @@ Perl Compatible Regular Expressions
 支持非贪婪和断言。
 
 
-Python中的使用
-----------------
+Python中的Regex
+=================
+PCRE风格。
 
-参考\ `PythonCookBook <https://python3-cookbook.readthedocs.io/zh_CN/latest/>`__
-或 Python核心编程。
+参考\ `PythonCookBook <https://python3-cookbook.readthedocs.io/zh_CN/latest/>`__ 或 Python核心编程。
 
 路径：
 
