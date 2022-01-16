@@ -27,7 +27,16 @@ Concurrency
  
 pthread_create分析
 -------------------
+1. https://code.woboq.org/userspace/glibc/nptl/pthread_create.c.html#625
+2. https://www.cnblogs.com/lidabo/p/5514100.html
+3. `pthread_create源码分析 <https://blog.csdn.net/conansonic/article/details/77487925>`_
+4. `GLIBC中NPTL线程实现代码阅读 <https://blog.csdn.net/hnwyllmm/article/details/45749063>`_
 
+
+nptl
+~~~~~~~~~
+ NPTL (Native POSIX Threads Library) is the GNU C library POSIX
+       threads implementation
 
 joinable&detached
 ~~~~~~~~~~~~~~~~~~~
@@ -44,12 +53,16 @@ joinable&detached
 
 pthread_t
 ~~~~~~~~~~~~~~~~~~~
+1. https://stackoverflow.com/questions/33285562/why-and-in-what-sense-is-pthread-t-an-opaque-type
 
-/* Thread identifiers. The structure of the attribute type is not
-   exposed on purpose.  */
-typedef unsigned long int pthread_t;
+::
 
-in pthreadtypes.h
+   /* Thread identifiers. The structure of the attribute type is not
+      exposed on purpose.  */
+   typedef unsigned long int pthread_t;
+
+   in pthreadtypes.h
+
 
 
 
