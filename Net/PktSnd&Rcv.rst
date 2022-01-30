@@ -19,12 +19,10 @@ Packet Send & Recieve
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
    `英文版配图 <https://blog.packagecloud.io/eng/2016/10/11/monitoring-tuning-linux-networking-stack-receiving-data-illustrated/>`__
 
-4. `图解Linux网络包接收过程 <https://mp.weixin.qq.com/s/GoYDsfy9m0wRoXi_NCfCmg>`__
 
-5. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
+4. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
 
-6. 《深入linux内核架构》 ：大体框架了解了，需要细节学习。
-7. `结合中断分析TCP/IP协议栈在LINUX内核中的运行时序 <https://www.cnblogs.com/ypholic/p/14337328.html>`__
+5. 《深入linux内核架构》 ：大体框架了解，需要细节学习。
 
 
 
@@ -42,8 +40,8 @@ socket
 
 
 
-收包上半部与下半部
-==============
+网卡与中断上下文
+================
 > ULNI：chapter9/10
 
 
@@ -51,6 +49,12 @@ socket
 2. `linux 网络收包流程（NAPI） <https://flyingbyte.cc/post/napi-in-linux.cn>`__
 3. `Linux协议栈--NAPI机制 <http://cxd2014.github.io/2017/10/15/linux-napi/>`__
 4. `Linux内核源码分析--详谈NAPI原理机制 <https://zhuanlan.zhihu.com/p/403239331>`__
+5. `内核网络中的GRO、RFS、RPS技术介绍和调优 <http://kerneltravel.net/blog/2020/network_ljr9/>`__
+
+
+6. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__
+7. `结合中断分析TCP/IP协议栈在LINUX内核中的运行时序 <https://www.cnblogs.com/ypholic/p/14337328.html>`__
+
 
 NAPI
 -------
@@ -123,7 +127,15 @@ net_rx_action
 
 net_rx_action -> ntl_poll -> 注册的用户实现的poll/process_backlog 
 
+linux 通过软中断机制调用网络协议栈代码，处理数据。 在 net_dev 模块初始化时，注册网络收发数据的软中断处理函数：
 
+::
+
+   static int __init net_dev_init(void)
+   {
+   	open_softirq(NET_TX_SOFTIRQ, net_tx_action);
+   	open_softirq(NET_RX_SOFTIRQ, net_rx_action);
+   }
 
 netif_rx
 --------------
