@@ -32,6 +32,9 @@ Learn
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 4. https://blog.csdn.net/dog250 ,网络相关。
 5. http://www.wowotech.net/
+6. `What every programmer should know about memory <https://lwn.net/Articles/250967/>`__ ; 
+   `pdf <https://people.freebsd.org/~lstewart/articles/cpumemory.pdf>`__
+
 
 性能分析
 -------------

@@ -42,9 +42,15 @@ socket
 
 
 
-网络收包上半部
+收包上半部与下半部
 ==============
 > ULNI：chapter9/10
+
+
+1. https://code.woboq.org/linux/linux/net/core/dev.c.html#net_rx_action
+2. `linux 网络收包流程（NAPI） <https://flyingbyte.cc/post/napi-in-linux.cn>`__
+3. `Linux协议栈--NAPI机制 <http://cxd2014.github.io/2017/10/15/linux-napi/>`__
+4. `Linux内核源码分析--详谈NAPI原理机制 <https://zhuanlan.zhihu.com/p/403239331>`__
 
 NAPI
 -------
@@ -52,6 +58,72 @@ NAPI
 
 1. 减少中断。
 2. 多设备公平。
+
+
+NAPI的工作机制如下：
+
+1. 第一个分组将导致网络适配器发出IRQ，为防止进一步的分组导致更多的IRQ，驱动程序会关闭该适配器的rx IRQ，并将该适配器放到一个轮询表上。
+    关闭设备中断后，设备收到包后不再产生中断（或者内核不再响应中断），而只是将数据包放到DMA中。
+2. 只要适配器上还有分组需要处理，内核就一直对轮询表上的设备进行轮询，处理剩下的分组。
+
+3. 重新启动rx IRQ。
+
+
+设备满足如下两个条件，才能实现NAPI方法：
+
+1. 设备必须能够保留多个接收的分组，例如保存到DMA环形缓冲区中。
+2. 设备必须能够禁止用于接收分组的IRQ，而且发送分组或其他可能通过IRQ进行的操作，都仍然必须是启用的。
+
+::
+
+   IRQ
+    ->__napi_schedule
+        ->进入软中断
+            ->net_rx_action
+                ->napi_poll
+                    ->驱动注册的poll
+                        ->napi_gro_receive。
+
+
+napi_schedule源码
+~~~~~~~~~~~~~~~~~~~~~
+napi_schedule -> __napi_schedule -> ____napi_schedule -> __raise_softirq_irqoff
+
+::
+
+   
+   /**
+    *	napi_schedule - schedule NAPI poll
+    *	@n: NAPI context
+    *
+    * Schedule NAPI poll routine to be called if it is not already
+    * running.
+    */
+   static inline void napi_schedule(struct napi_struct *n)
+   {
+   	if (napi_schedule_prep(n))
+   		__napi_schedule(n);
+   }
+
+
+   
+   /* Called with irq disabled */
+   static inline void ____napi_schedule(struct softnet_data *sd,
+   				     struct napi_struct *napi)
+   {
+   	list_add_tail(&napi->poll_list, &sd->poll_list);
+   	__raise_softirq_irqoff(NET_RX_SOFTIRQ);
+   }
+
+
+
+net_rx_action
+~~~~~~~~~~~~~~~~~~~~
+很重要的下半部收包函数，NAPI设备和非NAPI设备都可能会使用它来收包。该函数的主要工作就是操作收包队列和执行poll函数。
+
+net_rx_action -> ntl_poll -> 注册的用户实现的poll/process_backlog 
+
+
 
 netif_rx
 --------------
@@ -61,8 +133,19 @@ netif_rx
 .. figure:: ../images/netif_rx.png
 
 
+在传统的收包方式中，数据帧向网络协议栈中传递发生在中断上下文（在接收数据帧时）中调用netif_rx的函数中。
+这个函数还有一个变体netif_rx_ni，被用于中断上下文之外。
+
+
+netif_rx函数在收包过程中用到了napi_strcut结构，因为软中断处理使用了NAPI的框架（软中断流程类似）。也用到了net_rx_action。
+
+
+netif_rx源码
+~~~~~~~~~~~~~
+
 https://code.woboq.org/linux/linux/net/core/dev.c.html#netif_rx
 
+netif_rx -> netif_rx_internal -> enqueue_to_backlog -> __skb_queue_tail
 
 ::
 
@@ -81,6 +164,16 @@ https://code.woboq.org/linux/linux/net/core/dev.c.html#netif_rx
     *
     */
 
+   int netif_rx(struct sk_buff *skb)
+   {
+   	int ret;
+   	trace_netif_rx_entry(skb);
+   	ret = netif_rx_internal(skb);
+   	trace_netif_rx_exit(ret);
+   	return ret;
+   }
+   EXPORT_SYMBOL(netif_rx);
+
 
     /*
     * enqueue_to_backlog is called to queue an skb to a per CPU backlog
@@ -88,6 +181,13 @@ https://code.woboq.org/linux/linux/net/core/dev.c.html#netif_rx
     */
 
 
+在中断期间处理多帧
+~~~~~~~~~~~~~~~~~~
+一些驱动虽然没有使用NAPI收包机制，但在驱动中通过设置类似weight的权值，实现在一个中断到来时尝试处理多个数据包。
+
+有些驱动在中断处理程序中添加了一个quota值限定每次中断可以处理数据包的个数，
+在每次中断到来时关闭设备自身的收包中断，并尝试从DMA中获取不大于quota数量的数据包，
+每次获取到数据包就交给netif_rx处理或直接交给netif_receive_skb()。
 
 Linux网络IO模式
 ================
