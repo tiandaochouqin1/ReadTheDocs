@@ -40,8 +40,8 @@ socket
 
 
 
-网卡与中断上下文
-================
+网卡收包与中断上下文
+==========================
 > ULNI：chapter9/10
 
 
@@ -51,9 +51,26 @@ socket
 4. `Linux内核源码分析--详谈NAPI原理机制 <https://zhuanlan.zhihu.com/p/403239331>`__
 5. `内核网络中的GRO、RFS、RPS技术介绍和调优 <http://kerneltravel.net/blog/2020/network_ljr9/>`__
 
-
-6. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__
+6. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__ ;
+    :download:`网络性能 <../books/理解了实现再谈网络性能.pdf>` 
+   
 7. `结合中断分析TCP/IP协议栈在LINUX内核中的运行时序 <https://www.cnblogs.com/ypholic/p/14337328.html>`__
+
+
+socket收包过程
+----------------
+
+1. 网卡将数据帧DMA到内存的RingBuffer中，然后向CPU发起中断通知
+2. CPU响应中断请求，调用网卡启动时注册的中断处理函数
+3. 中断处理函数几乎没干啥，就发起了软中断请求
+4. 内核线程ksoftirqd线程发现有软中断请求到来，先关闭硬中断
+5. ksoftirqd线程开始调用驱动的poll函数收包
+6. poll函数将收到的包送到协议栈注册的ip_rcv函数中
+7. ip_rcv函数再讲包送到udp_rcv函数中（对于tcp包就送到tcp_rcv）
+
+.. figure:: ../images/pkt_rcv.png
+
+   收包过程
 
 
 NAPI
@@ -137,6 +154,32 @@ linux 通过软中断机制调用网络协议栈代码，处理数据。 在 net
    	open_softirq(NET_RX_SOFTIRQ, net_rx_action);
    }
 
+
+kernel 为每个 cpu 创建一个本地的数据结构： softnet_data，在代码中简写为 sd。
+
+::
+      
+   DEFINE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
+   EXPORT_PER_CPU_SYMBOL(softnet_data);
+
+   struct softnet_data {
+   	// 当前 CPU 需要被处理的 napi 链表
+   	struct list_head	poll_list;
+
+
+   	struct sk_buff_head	process_queue;
+
+   	/* Non-NAPI
+   	   软中断 NET_RX_SOFTIRQ 处理这个队列中的数据
+        This queue, initialized in net_dev_init, is where incoming frames are stored before being processed by the driver. 
+        It is used by non-NAPI drivers; those that have been upgraded to NAPI use their own private queues.
+   	*/
+      struct sk_buff_head	input_pkt_queue;
+
+   	struct napi_struct	backlog;
+   };
+
+
 netif_rx
 --------------
 
@@ -146,11 +189,12 @@ netif_rx
 
 
 在传统的收包方式中，数据帧向网络协议栈中传递发生在中断上下文（在接收数据帧时）中调用netif_rx的函数中。
-这个函数还有一个变体netif_rx_ni，被用于中断上下文之外。
+变体netif_rx_ni被用于中断上下文之外。
 
 
 netif_rx函数在收包过程中用到了napi_strcut结构，因为软中断处理使用了NAPI的框架（软中断流程类似）。也用到了net_rx_action。
 
+kernel 在 sd 中实现了一个缺省的 napi_struct : backlog，以兼容不支持 NAPI 机制的网卡驱动。
 
 netif_rx源码
 ~~~~~~~~~~~~~
