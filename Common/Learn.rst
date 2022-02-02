@@ -21,6 +21,7 @@ Learn
 
 
 4. `科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
+5. https://developer.aliyun.com/ebook/
 
 
 博客专栏

@@ -256,10 +256,19 @@ dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
 交叉编译
 ==============
 
-`全网可用交叉编译工具链大全 <https://zhuanlan.zhihu.com/p/79043170>`__
+1. `ARM工具链选择参考 <https://www.cnblogs.com/arnoldlu/p/14243491.html>`__
+2. `Cortex-A toolchain <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads>`__
 
 
+交叉编译工具链的命名规则
+------------------------
+``arch [-vendor] [-os] [-(gnu)eabi]``
 
+1. arch - 体系架构。arm(armv7)、aarch64(armv8)。be为大端。
+2. vendor - 工具链提供商。none。
+3. os - 目标操作系统。linux(适用于Linux OS)。elf(bare-metal,裸机，无操作系统的硬件。
+4. eabi - 嵌入式应用二进制接口（Embedded Application Binary Interface）。
+   gnu(使用glibc)。hf( hard float,fpu计算并传参，性能好，中断负荷高)
 
 
 配置工具链目录：
