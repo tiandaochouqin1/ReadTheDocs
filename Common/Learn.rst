@@ -28,7 +28,8 @@ Learn
 ----------------
  
 1. `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 
-2. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ 
+2. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__;
+   :download:`网络基本功 <../files/NetworkBasics.pdf>`
 3. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 4. https://blog.csdn.net/dog250 ,网络相关。

@@ -10,9 +10,7 @@ Linux Route
 ==============
 
 1. https://man7.org/linux/man-pages/man8/ip.8.html
-2. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ or 
-   `网络基本功 <https://wizardforcel.gitbooks.io/network-basic/content/index.html>`__
-   :download:`NetworkBasics.pdf <../files/NetworkBasics.pdf>`
+
 
 
 ip命令

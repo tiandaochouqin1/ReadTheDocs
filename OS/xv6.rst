@@ -498,6 +498,17 @@ Part 1:Physical Page Management
    */
 
 
+
+Todo-20220202
+-----------------
+基础不够，学起来吃力。
+
+1. https://pdos.csail.mit.edu/6.828/2018/readings/i386/s05_01.htm
+2. https://pdos.csail.mit.edu/6.828/2018/labs/lab2/
+3. https://zhuanlan.zhihu.com/p/183974374
+4. https://www.cnblogs.com/fatsheep9146/p/5124921.html
+5. https://pdos.csail.mit.edu/6.828/2018/schedule.html
+
 Part 2: Virtual Memory
 -------------------------------------
 
