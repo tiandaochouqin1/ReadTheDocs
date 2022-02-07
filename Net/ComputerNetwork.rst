@@ -449,9 +449,9 @@ Size。1460字节。
 
 1. 慢启动：每个RTT cwnd × 2，即每收到一个ACK报文则 cwnd + MSS 。 超时丢包时设置ssthresh=cwnd/2,cwnd=1，重新开始慢启动。当cwnd=ssthresh时，进入拥塞避免。冗余ack丢包时，进入快速恢复。
 
-2. 拥塞避免：每个RTT cwnd+1，即每收到一个ACK报文则 cwnd + MSS/pkt_num(1 RTT内发送的报文数量)。 超时丢包时设置ssthresh=cwnd/2,cwnd=1。冗余ack丢包时，ssthresh=cwnd，进入快速恢复。
+2. 拥塞避免：每个RTT cwnd+1，即每收到一个ACK报文则 cwnd + MSS/pkt_num(1 RTT内发送的报文数量)。 超时丢包时即拥塞发生，设置ssthresh=cwnd/2,cwnd=1，进入慢启动。冗余ack丢包时，ssthresh=cwnd，进入快速恢复。
 
-3. 快速恢复：对于引起TCP进入快速恢复状态的缺失报文段，每收到一个冗余ACK则cwnd+1，当丢失报文的最后一个ack到达时降低cwnd并进入拥塞避免。丢包时设置ssthresh=cwnd/2,cwnd=1 MSS；超时时进入到慢启动。
+3. 快速恢复：对于引起TCP进入快速恢复状态的缺失报文段，每收到一个冗余ACK则cwnd+1，当丢失报文的最后一个ack到达时降低cwnd并进入拥塞避免。
 
 **公平性**
 TCP趋于在竞争的多条TCP连接之间提供对一段瓶颈链路带宽的平等分享。
@@ -462,15 +462,27 @@ TCP趋于在竞争的多条TCP连接之间提供对一段瓶颈链路带宽的�
 
 3. UDP源可能压制TCP流量。
 
+
+RTT计算
+~~~~~~~~~~~~
+1. tcp_rtt_estimator: https://elixir.bootlin.com/linux/latest/source/net/ipv4/tcp_input.c#L828
+
+SRTT = SRTT + α (RTT – SRTT)  —— 计算平滑RTT
+
+DevRTT = (1-β) * DevRTT + β * ( | RTT-SRTT | ) ——计算平滑RTT和真实的差距（加权移动平均）
+
+RTO= µ * SRTT + ∂ * DevRTT —— 神一样的公式
+
 为什么需要三次握手
 ------------------
 
-https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw
+1. https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw
+2. https://mp.weixin.qq.com/s/Tc09ovdNacOtnMOMeRc_uA
 
-1. 阻止历史重复连接的初始化（主要原因）；
-2. 同步双方的初始序列号；
-3. 避免建立多个无效连接，造成资源浪费。
-4. 四次握手其实也能够可靠的同步双方的初始化序号，但由于第二步和第三步可以优化成一步，所以就成了「三次握手」。
+3. 阻止历史重复连接的初始化（主要原因）；
+4. 同步双方的初始序列号；
+5. 避免建立多个无效连接，造成资源浪费。
+6. 四次握手其实也能够可靠的同步双方的初始化序号，但由于第二步和第三步可以优化成一步，所以就成了「三次握手」。
 
 TCP通过观察分组丢失来推断拥塞。
 
@@ -508,6 +520,28 @@ TCP是面向连接的协议，S和C之间要使用TCP，必须先建立连接，
 
 -  TFRC TCP友好速率控制：一种拥塞控制协议。
 
+
+TCP存在的缺陷
+--------------
+1. https://www.zhihu.com/question/47560918/answer/2302296292
+2. https://mp.weixin.qq.com/s/XzaXbF8vla6lMMqgyT5A0g
+
+BBR算法不依赖于丢包，可以克服传统TCP对丢包的过分敏感与过激反应，避免发送速率骤增与骤减，
+使得整体发送速率在一个小范围内波动，更平缓、更平滑。
+
+TCP option做了补丁，比如：
+
+Scaling window 应对长肥管道
+
+Selective ACK 应对高丢包率场景
+
+Timestamp 应对序列号回滚、RTT测量的精度
+
+Authentication Option 应对数据完整性挑战
+
+TCP Cookie 应对SYN Flooding DOS攻击
+
+FAST TCP Open 应对TCP传输数据延时大
 第四章 网络层-数据平面
 ======================
 
