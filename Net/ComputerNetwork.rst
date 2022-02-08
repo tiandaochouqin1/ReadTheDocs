@@ -155,9 +155,12 @@ OSI模型
 超文本传输协议
 --------------
 
-   《HTTP权威指南》
+《HTTP权威指南》
 
 RFC 2616
+
+页面请求的历程: `What happens when… <https://github.com/alex/what-happens-when>`__
+
 
 **HTTP**\ （超文本传输协议）：
 
@@ -176,7 +179,7 @@ RFC 2616
 **HTTP报文的格式**
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
 
-请求报文:
+**请求报文**:
 
 -  请求行：方法、URL、HTTP版本
 -  首部行
@@ -187,7 +190,7 @@ PATCH等\ `方法的含义 <https://developer.mozilla.org/en-US/docs/Web/HTTP/Me
 
 --------------
 
-响应报文:
+**响应报文**:
 
 -  状态行：版本、状态码、相应状态信息。
 
@@ -195,13 +198,8 @@ PATCH等\ `方法的含义 <https://developer.mozilla.org/en-US/docs/Web/HTTP/Me
 
 -  实体体
 
-..
 
-   **响应状态码**\ ：
-
---------------
-
-**Cookies**:识别用户，允许站点对用户进行跟踪。在无状态的HTTP之上建立一个用户会话层。
+**响应状态码** ：
 
 1. 响应报文中的cookie首部行，Set-cookie（单次）；
 
@@ -210,6 +208,9 @@ PATCH等\ `方法的含义 <https://developer.mozilla.org/en-US/docs/Web/HTTP/Me
 3. 请求报文中的cookie首部行；
 
 4. Web站点的后端数据库。
+
+
+**Cookies**:识别用户，允许站点对用户进行跟踪。在无状态的HTTP之上建立一个用户会话层。
 
 **Web缓存器**\ ：也叫代理服务器。CDN
 
@@ -1090,10 +1091,7 @@ MPLS还鞥能用于MPLS转发路径的快速恢复、虚拟专用网（VPN）。
 
 -  模块化数据中心：组件随着时间推移出现故障时，服务继续运行但性能下降。
 
-页面请求的历程
---------------
 
-`What happens when… <https://github.com/alex/what-happens-when>`__
 
 无线网络和移动网络
 ==================
