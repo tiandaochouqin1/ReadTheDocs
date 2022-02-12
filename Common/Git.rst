@@ -195,6 +195,8 @@ diff
 
 log与查找
 ----------
+1. https://git-scm.com/book/en/v2/Git-Tools-Searching
+2. https://git-scm.com/docs/git-log
 
 ::
 
@@ -203,6 +205,7 @@ log与查找
       git blame file //查看每一行最近一次commit信息
       git show commit_id file //
       git log [branch_name]
+         -p 按补丁格式显示改动内容，详细
          -n 最近n次提交
          --since/after 指定时间之后 （git log --after="2020-15-05" --before="2020-25-05"）
          --until/before  指定时间之前
@@ -210,6 +213,10 @@ log与查找
          --commiter  指定提交者
          --grep  搜索commit内容（ -i 区分大小写）
          -S  搜索添加/删除的内容
+
+      git grep 搜索(当前版本)
+         -n 行号
+         -p 上下文
 
       git log --graph --decorate --oneline --simplify-by-deocration --all
          --decorate 显示commit的引用
