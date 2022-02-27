@@ -11,6 +11,7 @@ Basics
    
 
    Git.rst
+   LinuxCmd.rst
    regex.rst
    vim.rst
    Blog.rst

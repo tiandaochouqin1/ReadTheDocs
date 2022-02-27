@@ -31,7 +31,8 @@ author = '6-1'
 # ones.
 extensions = [
 #    'myst_parser',
-    "sphinx_rtd_theme"
+    "sphinx_rtd_theme"，
+    'sphinx_search.extension',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -44,7 +44,35 @@ readthedocs配置
 可参考 `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 的源码。
 
 
-待补充。
+自动构建pdf
+~~~~~~~~~~~~~
+1. https://docs.readthedocs.io/en/stable/tutorial/index.html
+2. https://docs.readthedocs.io/en/stable/guides/pdf-non-ascii-languages.html
+
+add this extra content to your .readthedocs.yaml:
+
+::
+
+  formats:
+  - pdf
+  - epub
+
+
+
+rtd默认使用pdflatex，对中文不友好。(编译错误：CTeX fontset 'fandol' is unavailable in current mode. )
+
+For Chinese projects, it appends to your conf.py these settings:
+
+::
+     
+  latex_engine = 'xelatex'
+  latex_use_xindy = False
+  latex_elements = {
+      'preamble': '\\usepackage[UTF8]{ctex}\n',
+  }
+
+
+构建成功即可在网页下载pdf。
 
 语法
 ----
@@ -78,6 +106,8 @@ Section
 
    pandoc --standalone --from markdown --to rst src.md  -o  des.rst
 
+先使用notepadd++对md进行处理，然后在做转换。
+
 图片链接替换：注意文件目录和图片目录等级
 
 ::
@@ -85,15 +115,14 @@ Section
    <img\s{1,4}src=\"(.*)"\s?alt="?(.*?)"?\s*\w{5,6}=.*$
    ![\2]\(\1\)
 
+加空行：
+
 ::
 
-   无序列表
-   ^\s{0,3}\*(?=\s\S)
-   \n*
+   有序/无序列表
+   ^\s{0,3}(\-|\*)(?=\s\S)
+   \n\1
 
-   有序列表
-   ^\s{0,3}(?=\w\.\s\S)
-   \n
 
    标题
    ^#
