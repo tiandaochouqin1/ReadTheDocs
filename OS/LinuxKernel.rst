@@ -439,7 +439,7 @@ pick_next_task_rt 操作的是 rt_rq，pick_next_task_fair 操作的是 cfs_rq�
 
 调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
 
-.. figure:: ../images/sched.jfif
+.. figure:: ../images/sched.jpg
 
            调度过程
 

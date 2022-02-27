@@ -191,10 +191,9 @@ C 和 C++
 语言层次
 --------
 
-.. figure:: ../images/VmLayers.gif
+.. figure:: ../images/VmLayers.jpg
    :alt: 虚拟机层次结构
 
-   虚拟机层次结构
 
 1. 计算机\ **数字逻辑硬件**\ 表示为 Level 1 机器。
 
@@ -209,7 +208,7 @@ C 和 C++
    C++
    编译器生成的列表文件输出，就可以看到这样的翻译。汇编语言代码由编译器自动汇编为机器语言。
 
-.. figure:: ../images/ASCII.gif
+.. figure:: ../images/ASCII.jpg
    :alt: ASCII表
 
    ASCII表
