@@ -202,9 +202,7 @@ crontab
 
 ::
 
-
    * * * * sleep 10 php /script
-
    * * * * sleep 20 php /script
 
 文件
@@ -240,7 +238,7 @@ rm无法删除的文件，具有\ ``immutable``\ 属性。
 chattr
 改变一个Linux文件系统上的文件属性。通用格式是：\ ``+-=[aAcCdDeijsStTu]``
 
-‘+’选项，将给文件添加属性；‘-’选项，移除文件中的属性；‘=’选项，使得文件只有这些属性。
+'+’选项，将给文件添加属性；'-’选项，移除文件中的属性；'=’选项，使得文件只有这些属性。
 
 stat
 ----
@@ -304,18 +302,17 @@ cp
 文件系统操作
 ------------
 
-``mount/unmount 文件系统 挂载目录`` 开机自动挂载：将挂载信息写入
-``/etc/fstab``\ 。如 /dev/sdb2/backup ext4 defaults 0 0
-``fdisk``\ ：硬盘管理(需要root权限) mkfs：格式化。用法：
-``mkfs.文件类型名称 如mkfs.ext4 硬盘分区名称``
-``df -ah``:查看挂载点信息与磁盘使用量。
-``du -sh``:查看指定文件的磁盘占用。 ``free -h`` ``cat /proc/cpuinfo``
-``uname -a``
+1. ``mount/unmount 文件系统 挂载目录`` 开机自动挂载：将挂载信息写入 ``/etc/fstab``\ 。如 /dev/sdb2/backup ext4 defaults 0 0
+2. ``fdisk``\ ：硬盘管理(需要root权限) mkfs：格式化。用法：``mkfs.文件类型名称 如mkfs.ext4 硬盘分区名称``
+3. ``df -ah``:查看挂载点信息与磁盘使用量。
+4. ``du -sh``:查看指定文件的磁盘占用。 ``free -h`` ``cat /proc/cpuinfo``
+5. ``uname -a``
 
 lsof 一切皆文件
 ---------------
 
 lsof（list open files）是一个查看当前系统文件的工具。
+
 https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/lsof.html
 
 ::
@@ -449,6 +446,7 @@ whereis命令
 -----------
 
 whereis命令用来定位指令的二进制程序、源代码文件和man手册页等相关文件的路径。
+
 ``whereis +[选项]+ 指令名``
 
 -  whereis命令用来查找二进制程序、源代码文件和帮助文件在文件系统中的位置。
@@ -461,22 +459,18 @@ whereis命令用来定位指令的二进制程序、源代码文件和man手册�
 
 ::
 
-
    # whereis vi 
    vi: /usr/bin/vi /usr/share/man/man1/vi.1.gz
 
 locate
 ------
 
-locate 命令比 find 命令运行得更快，因为它使用 updatedb 数据库，而 find
-命令在真实系统中搜索。
-它使用数据库而不是搜索单个目录路径来获取给定文件。 locate
-命令未在大多数发行版中预安装，因此，请使用你的包管理器进行安装。
-``sudo apt install mlocate`` 数据库通过 cron
-任务定期更新，但我们可以通过运行以下命令手动更新它： ``sudo updatedb``
+locate 命令比 find 命令运行得更快，因为它使用 updatedb 数据库，而 find命令在真实系统中搜索。
+ 
+locate命令未在大多数发行版中预安装，因此，请使用你的包管理器进行安装。
+``sudo apt install mlocate`` 数据库通过 cron任务定期更新，但我们可以通过运行以下命令手动更新它： ``sudo updatedb``
 
-locate
-命令维护了一份文件和目录的数据库，所以检索速度会快一些，数据库通常一天更新一次，可以手动更新数据库
+locate命令维护了一份文件和目录的数据库，所以检索速度会快一些，数据库通常一天更新一次，可以手动更新数据库
 
 ::
 
@@ -488,10 +482,10 @@ locate 使用的方式和 find 大致差不多。
 find
 ----
 
-| `find <http://einverne.github.io/post/2018/02/find-command.html#%E9%80%9A%E8%BF%87%E6%97%B6%E9%97%B4%E6%9D%A5%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6>`__
-  最基本的使用
-| ``find [path] [expression]`` 在 path 目录下查找 expression 的文件。
-  默认当前目录。
+1. `find <http://einverne.github.io/post/2018/02/find-command.html#%E9%80%9A%E8%BF%87%E6%97%B6%E9%97%B4%E6%9D%A5%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6>`__
+
+最基本的使用:
+``find [path] [expression]`` 在 path 目录下查找 expression 的文件,默认当前目录。
 
 通过文件名查找
 ~~~~~~~~~~~~~~
@@ -517,13 +511,13 @@ find
    b 块设备文件 block devices
 
 比如要查找系统中所有以 .conf 结尾的文件
+
 ``find / -type f -name "*.conf"``
 
 通过文件大小查找
 ~~~~~~~~~~~~~~~~
 
-``find /path/to/folder -size 50M`` 查找 50M 的文件，size
-后能够使用的单位有：
+``find /path/to/folder -size 50M`` 查找 50M 的文件，size后能够使用的单位有：
 
 ::
 
@@ -608,18 +602,17 @@ Linux 会存储下面的时间：
 
 1. 批量修改权限
 
-find . -type f -perm 644 -exec chmod 664 {} ; find . -type d -perm 755
--exec chmod 700 {} ; # 批量修改文件夹权限
+``find . -type f -perm 644 -exec chmod 664 {} ; find . -type d -perm 755 -exec chmod 700 {} ;`` # 批量修改文件夹权限
 
 2. 批量删除时间超过 1 天的文件
    综合上面按时间查找文件和对搜索结果批处理，可以获知
 
-find /path/to/folder/\* -mtime +1 -exec rm {} ; find 后面接一个完整的
-path -mtime +1 表示的查找时间超过 1 天的内容 -exec
-后面表示对搜索的结果进行处理
+``find /path/to/folder/\* -mtime +1 -exec rm {} ;`` 
+find 后面接一个完整的 path; -mtime +1 表示的查找时间超过 1 天的内容; -exec 后面表示对搜索的结果进行处理
 
-3. 删除目录下空文件夹 find path/to/folder -type d -empty -print find
-   path/to/folder -type d -empty -delete
+3. 删除目录下空文件夹 
+   find path/to/folder -type d -empty -print 
+   find path/to/folder -type d -empty -delete
 
 文本
 ====
@@ -781,7 +774,6 @@ awk脚本
 
 ::
 
-
    cat /etc/passwd|awk -F ':' '/home/ {print $1}'
 
    awk -F ':' '/usr/ {print $1}' demo.txt
@@ -849,15 +841,11 @@ sed语法
 2. Hold Space：用于保存流，和Pattern
    Space内容可相互移动，以实现复杂处理。
 
--  g: hold space内容拷贝到pattern space,原pattern space被清空。
-
--  G：hold space追加到pattern space
-
--  h：h -> p
-
--  H：h追加到p
-
--  x：交换h空间和p空间内容
+   -  g: hold space内容拷贝到pattern space,原pattern space被清空。
+   -  G：hold space追加到pattern space
+   -  h：h -> p
+   -  H：h追加到p
+   -  x：交换h空间和p空间内容
 
 文本行逆序： ``sed '1!G;h;$!d' test.txt``
 
@@ -876,9 +864,8 @@ sed语法
 
 5. ``sed -i 's/old/new/g' file``\ 直接编辑源文件。
 
--  ``/g``:全部替换,
-
--  ``/Ng``:从第N行开始替换
+   -  ``/g``:全部替换,
+   -  ``/Ng``:从第N行开始替换
 
 3. 删除:d命令
 
@@ -963,15 +950,15 @@ GNU sed provides an extension address syntax of **first~step**
 
 2. 保持、获取和互换:h、g、x
 
-``sed -e '/test/h'-e '$G' file``:将匹配到的行复制并追加到该文件的末尾
+   1. ``sed -e '/test/h'-e '$G' file``:将匹配到的行复制并追加到该文件的末尾
 
-``h``:将模式空间内容复制并存入到保持缓存区。
+   2. ``h``:将模式空间内容复制并存入到保持缓存区。
 
-``G``:取出保持缓存区的内容,追加到模式空间。
+   3. ``G``:取出保持缓存区的内容,追加到模式空间。
 
-``x``:互换模式空间和保持缓冲区的内容。
+   4. ``x``:互换模式空间和保持缓冲区的内容。
 
-``sed -e '/test/h' -e '/check/x' file``
+   5. ``sed -e '/test/h' -e '/check/x' file``
 
 3. 脚本scriptfile:
 
@@ -982,21 +969,21 @@ GNU sed provides an extension address syntax of **first~step**
 sed处理log
 ~~~~~~~~~~
 
-sed可以直接处理二进制日志，以wtmp举例，比如：sed -i ‘/your_ip/d’
-/var/log/wtmp，如果要改成别的IP的话，sed -i ‘s/your_ip/fake_ip/g’
-/var/log/wtmp
+sed可以直接处理二进制日志，以wtmp举例，比如：
+sed -i '/your_ip/d' /var/log/wtmp，如果要改成别的IP的话，
+sed -i 's/your_ip/fake_ip/g' /var/log/wtmp
 
 更改记录：
 
 ::
 
-   sed -i -e ‘/pptpd/d’ /var/log/messages
+   sed -i -e '/pptpd/d’ /var/log/messages
 
-   sed -i -e ‘/123\.123\.123\.123/d’ /var/log/messages
+   sed -i -e '/123\.123\.123\.123/d’ /var/log/messages
 
-   sed  -i ‘/当前时间/’d  /var/log/messages
+   sed  -i '/当前时间/’d  /var/log/messages
 
-   sed -i ‘s/192.168.1.1/8.8.8.8/’ /var/log/lastlo
+   sed -i 's/192.168.1.1/8.8.8.8/’ /var/log/lastlo
 
 自定义变量的方法 方法一：-v varname=value ，变量名区分字符大小写。
 方法二：在program中直接定义。
@@ -1111,7 +1098,7 @@ https://www.cnblogs.com/muahao/p/6098675.html
 date -d “2010-07-20 10:25:30” +%s
 
 2. 将时间戳转换为标准时间格式 date -d “@1279592730” +“%F %H:%M:%S” echo
-   “1279592730” \|awk ‘{print strftime (“%F %T”,$0)}’
+   “1279592730” \|awk '{print strftime (“%F %T”,$0)}’
 
 调整cpu频率
 -----------
@@ -1229,8 +1216,7 @@ netplan配置wifi
 延时测量
 --------
 
-通过 局域网ssh登录 和
-本机登录(采集卡查看），同时执行显示当前时间的命令，截图对比时间差。
+通过 局域网ssh登录 和本机登录(采集卡查看），同时执行显示当前时间的命令，截图对比时间差。
 
 ``watch -n 0.01 "adjtimex -p| awk '/raw time:/ {print $6}'"``
 :adjtimex可显示ns级时间。
@@ -1253,5 +1239,4 @@ no login shell
 --------------
 
 -  no login shell: 加载.bashrc。Mobaxterm
-
 -  login shell: 加载.profile。SecureCRT

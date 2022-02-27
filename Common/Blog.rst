@@ -74,6 +74,17 @@ For Chinese projects, it appends to your conf.py these settings:
 
 构建成功即可在网页下载pdf。
 
+构建多版本
+~~~~~~~~~~~~
+Active versions are built whenever new code is pushed to that branch or tag.
+rtd可识别branch、tag，推送到git后即自动构建。
+
+选择如何展示多版本：
+
+``⚙ Admin -> Advanced Settings -> Default version/Default branch``
+
+选择 Single version，则链接更为简洁，不会带有 /zh_CN/latest/ 这样的字段。
+
 搜索框
 ~~~~~~~~
 实时显示结果，比默认方式快。

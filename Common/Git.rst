@@ -279,6 +279,19 @@ git clean -xfd
 	git apply --check xxxx.patch   　//检查patch是否能够打上
 	git apply --reject xxx.patch   //强制打补丁
 
+tag标签
+-------
+
+::
+
+   git tag -a v1.4 -m "my version 1.4"
+   git tag v1.0 
+   git tag -d v1.0
+
+   git push origin [delete] v1.5
+
+
+
 
 重置与回滚
 ==========
