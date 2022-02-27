@@ -1,16 +1,16 @@
-==============
-Linux 命令学习
-==============
+=========
+Linux Cmd
+=========
 
 :Date:   2019-12-16 13:28:13
 
 
 参考资料
-============
+========
+
 1. `Linux工具快速教程 <https://linuxtools-rst.readthedocs.io/zh_CN/latest/index.html>`__
 
-2. Linux Command搜索引擎：
-   https://github.com/jaywcjlove/linux-command
+2. Linux Command搜索引擎： https://github.com/jaywcjlove/linux-command
    https://wangchujiang.com/linux-command/ https://tldr.ostera.io/
 
 VIM
@@ -389,9 +389,9 @@ ln
 
 fio / Crystal Disk Mark
 
-fio –name=fio-test –filename=test.data –size=1G –bs=4k –rw=randwrite
-–ioengine=libaio –direct=1 –iodepth=1 –time_based –runtime=600
-–group_reporting
+::
+
+   fio --name=fio-test --filename=test.data --size=1G --bs=4k --rw=randwrite --ioengine=libaio --direct=1 --iodepth=1 --time_based --runtime=600 --group_reporting
 
 查找
 ====
@@ -609,13 +609,17 @@ Linux 会存储下面的时间：
 1. 批量修改权限
 
 find . -type f -perm 644 -exec chmod 664 {} ; find . -type d -perm 755
--exec chmod 700 {} ; # 批量修改文件夹权限 2. 批量删除时间超过 1 天的文件
-综合上面按时间查找文件和对搜索结果批处理，可以获知
+-exec chmod 700 {} ; # 批量修改文件夹权限
+
+2. 批量删除时间超过 1 天的文件
+   综合上面按时间查找文件和对搜索结果批处理，可以获知
 
 find /path/to/folder/\* -mtime +1 -exec rm {} ; find 后面接一个完整的
 path -mtime +1 表示的查找时间超过 1 天的内容 -exec
-后面表示对搜索的结果进行处理 3. 删除目录下空文件夹 find path/to/folder
--type d -empty -print find path/to/folder -type d -empty -delete
+后面表示对搜索的结果进行处理
+
+3. 删除目录下空文件夹 find path/to/folder -type d -empty -print find
+   path/to/folder -type d -empty -delete
 
 文本
 ====
@@ -635,13 +639,17 @@ tail和head
 ----------
 
 1. 查看最后1000行的数据 cat filename \| tail -n 1000
+
 2. 查看1000到3000行的数据
 
 ``cat filename | head -n 3000 | tail -n +1000``
 
 1. tail -n 1000 最后1000行的数据
+
 2. tail -n +1000 第1000行开始以后的内容
+
 3. head -n 1000 前1000的内容
+
 4. head -n -1000 倒数1000行以前
 
 监控log：
@@ -710,6 +718,7 @@ awk
 文本分析工具。支持正则。
 
 1. `Understanding AWK <https://earthly.dev/blog/awk-examples/>`__
+
 2. `30 Examples For Awk Command In Text
    Processing <https://likegeeks.com/awk-command/>`__
 
@@ -797,14 +806,22 @@ awk脚本
 分为内置变量和自定义变量;输入分隔符FS和输出分隔符OFS都属于内置变量。
 
 1. FS(Field Separator)：输入字段分隔符， 默认为空白字符
+
 2. OFS(Out of Field Separator)：输出字段分隔符， 默认为空白字符
+
 3. RS(Record Separator)：输入记录分隔符(输入换行符)， 指定输入时的换行符
+
 4. ORS(Output Record
    Separate)：输出记录分隔符（输出换行符），输出时用指定符号代替换行符
+
 5. NF(Number for Field)：当前行的字段的个数(即当前行被分割成了几列)
+
 6. NR(Number of Record)：行号，当前处理的文本行的行号。
+
 7. FNR：各文件分别计数的行号
+
 8. ARGC：命令行参数的个数
+
 9. ARGV：数组，保存的是命令行所给定的各参数
 
 sed
@@ -818,7 +835,9 @@ sed语法
 ~~~~~~~
 
 1. `sed详解 <https://wangchujiang.com/linux-command/c/sed.html>`__
+
 2. `sed简明教程 <https://coolshell.cn/articles/9104.html>`__
+
 3. https://www.gnu.org/software/sed/manual/sed.html
 
 ::
@@ -826,6 +845,7 @@ sed语法
    sed [-hnV][-e<script>][-f<script文件>][文本文件]
 
 1. Pattern Space：每次流处理后，该空间的内容即为该次的结果
+
 2. Hold Space：用于保存流，和Pattern
    Space内容可相互移动，以实现复杂处理。
 
@@ -850,9 +870,11 @@ sed语法
 
 2. 替换:s命令
 
-   1. ``sed 's/old/new' file``
-   2. ``sed -n 's/old/new/p' file``:只打印发生替换的行
-   3. ``sed -i 's/old/new/g' file``\ 直接编辑源文件。
+3. ``sed 's/old/new' file``
+
+4. ``sed -n 's/old/new/p' file``:只打印发生替换的行
+
+5. ``sed -i 's/old/new/g' file``\ 直接编辑源文件。
 
 -  ``/g``:全部替换,
 
@@ -911,6 +933,7 @@ sed语法
 5. 下一行:n
 
 ::
+
 
    1. 移动到匹配行的下一行。
    `sed '/test/{n;s/aa/bb/;}' file`:
@@ -1120,6 +1143,7 @@ throttle配置后，xtu大部分功能不饿能使用（灰色按钮）。
 cpu core/cpu cache 降压 125mV。GPU降压 125mV。
 
 1. aida64烤机核显uhd630 tdp 10W。
+
 2. cpu+核显双烤：pkg 45W，ia 30W，gt 10W
 
 均衡模式：
@@ -1187,7 +1211,9 @@ netplan配置wifi
 ----------
 
 1. 可采集bios画面。
+
 2. 可使用dp-hdmi线接入，采集卡输入端为hdmi。
+
 3. 图形界面和tty界面延时差别不大。
 
 `PotPlayer采集卡采集视频的的方法 <http://www.potplayercn.com/course/2925.html>`__
@@ -1213,10 +1239,14 @@ netplan配置wifi
 --------
 
 1. MobaXterm。仅windows。集各功能与一体（包括ftp功能），宏，有单文件版，免费，专业版可破解。
+
 2. terminus，全平台+同步。
+
 3. Xshell系列，可申请\ `个人免费版 <https://www.netsarang.com/zh/free-for-home-school/>`__\ Xshell/Xftp（ftp功能需要另外安装Xftp），界面好看。
+
 4. securecrt + securefx
    ，全平台。功能强大，交互脚本。破解版https://sysin.org/blog/securecrt-9-1/
+
 5. WindTerm，全平台，宏。 https://github.com/kingToolbox/WindTerm
 
 no login shell
