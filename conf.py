@@ -31,7 +31,7 @@ author = '6-1'
 # ones.
 extensions = [
 #    'myst_parser',
-    "sphinx_rtd_theme"，
+    "sphinx_rtd_theme",
     'sphinx_search.extension',
 ]
 
