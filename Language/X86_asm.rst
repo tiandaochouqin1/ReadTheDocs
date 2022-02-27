@@ -208,7 +208,7 @@ C 和 C++
    C++
    编译器生成的列表文件输出，就可以看到这样的翻译。汇编语言代码由编译器自动汇编为机器语言。
 
-.. figure:: ../images/ASCII.jpg
+.. figure:: ../images/ASCII.png
    :alt: ASCII表
 
    ASCII表
