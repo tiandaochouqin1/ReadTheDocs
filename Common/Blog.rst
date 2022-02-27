@@ -74,6 +74,24 @@ For Chinese projects, it appends to your conf.py these settings:
 
 构建成功即可在网页下载pdf。
 
+搜索框
+~~~~~~~~
+实时显示结果，比默认方式快。
+
+1. https://readthedocs-sphinx-search.readthedocs.io/en/latest/installation.html
+
+::
+     
+  pip install readthedocs-sphinx-search
+  Then, enable this extension by adding it to your conf.py.
+
+  # conf.py
+  extensions = [
+      # ... other extensions
+      'sphinx_search.extension',
+  ]
+
+
 语法
 ----
 

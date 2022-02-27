@@ -10,8 +10,8 @@ Basics
    :numbered: 4
    
 
-   Git.rst
    LinuxCmd.rst
+   Git.rst
    regex.rst
    vim.rst
    Blog.rst
