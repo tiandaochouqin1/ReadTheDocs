@@ -354,14 +354,15 @@ crash
 ========
 内核coredump分析。
 
-perf
+perf性能优化
 =============
 主要为用户态，也有内核。
 
-1. !! https://www.brendangregg.com/perf.html :perf examples，详细介绍了events
-2. https://www.brendangregg.com/flamegraphs.html
+1. `☆ perf examples <https://www.brendangregg.com/perf.html>`__ :详细介绍了events
+2. `flamegraphs <https://www.brendangregg.com/flamegraphs.html>`__
 3. https://perf.wiki.kernel.org/index.php/Tutorial
-4. https://www.cnblogs.com/arnoldlu/p/6241297.html
+4. `系统级性能分析工具perf的介绍与使用 <https://www.cnblogs.com/arnoldlu/p/6241297.html>`__`
+5. `Linux性能优化全景指南 <https://mp.weixin.qq.com/s/dcE5TZ9lBOpZdRDeHsHUYQ>`__`
 
 sudo执行。-p pid
 

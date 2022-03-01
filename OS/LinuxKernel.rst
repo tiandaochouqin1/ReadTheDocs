@@ -46,7 +46,7 @@ Linux Kernel
 ~~~~~~~~~~~~~~~~~~
 linux、glibc、gcc等。
 
-1. https://elixir.bootlin.com/linux/v5.10/C/ident/ 
+1. https://elixir.bootlin.com/linux/v5.10/C/ident/ 不止有Linux。
 2. http://sbexr.rabexc.org/latest/sources/meta/index
 3. https://code.woboq.org/ :跳转准确
 4. https://www.busybox.net/

@@ -14,7 +14,7 @@ Embeded OS
 
 设备 ——> IRQ线 ——> IPC控制器 <——> CPUs
 
-多核cpu中，cpu核可通过ipc直接向目标cpu核发送中断信号，以使其执行特定操作——向ipc的IPIBase寄存器写入硬件线程ID、
+多核cpu中，cpu核可通过ipc直接向目标cpu核发送中断信号，以使其执行特定操作——向ipc的IPI寄存器写入硬件线程ID、
 中断向量、中断类型等，ipc则会通知目标cpu核挂起执行序列并跳转到isr。可使用共享内存进行核间通信。
 
 
@@ -26,3 +26,14 @@ NUMA
 
 
 
+cpud_idle
+-----------
+idle线程。节能+等待可调度线程。
+
+https://elixir.bootlin.com/linux/v3.1.6/source/arch/x86/kernel/process_64.c#L109
+::
+
+    * The idle thread. There's no useful work to be
+    * done, so just try to conserve power and have a
+    * low exit latency (ie sit in a loop waiting for
+    * somebody to say that they'd like to reschedule)
