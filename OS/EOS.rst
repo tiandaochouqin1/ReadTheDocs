@@ -31,6 +31,7 @@ cpud_idle
 idle线程。节能+等待可调度线程。
 
 https://elixir.bootlin.com/linux/v3.1.6/source/arch/x86/kernel/process_64.c#L109
+
 ::
 
     * The idle thread. There's no useful work to be

@@ -451,6 +451,12 @@ TCP使用端到端的拥塞控制，因为IP层不向网络层提供显式的网
 **AIMD加性增、乘性减**\ ：每个RTT内cwnd线性增加1MSS，然后出现3个冗余ACK事件时cwnd减半。
 RTT(Round Trip Time)：一个连接的往返时间，即数据发送时刻到接收到确认的时刻的差值；
 
+
+MTU和MSS
+~~~~~~~~~~~
+.. figure:: ../images/MTU_MSS.png
+
+
 MTU（Maximum Transmission
 Unit）：最大传输单元，MSS+头部40字节=1500字节。 MSS：Maximum Segment
 Size。1460字节。
