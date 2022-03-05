@@ -74,6 +74,7 @@ linux、glibc、gcc等。
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 4. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
 5. http://www.wowotech.net/ ：很多不错的文章
+6. `Linux内存管理专题 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8051674.html>`__ ：Linux等多个系列文章
 
 
 
