@@ -39,8 +39,14 @@ Learn
    `pdf <https://people.freebsd.org/~lstewart/articles/cpumemory.pdf>`__
 
 
-性能分析
--------------
+云原生
+--------
+`解读云原生的2021：抢占技术C位，迎来落地大爆发_云计算_褚杏娟_InfoQ精选文章  <https://www.infoq.cn/article/Z24fthyOAJLi0Bp4T3sZ>`__
+
+云原生领域涵盖的技术类别越来越多，但最关键的三项是容器、Serverless、Service Mesh
+
+性能分析和eBPF
+---------------
 
 
 1. BPF Performance Tools，

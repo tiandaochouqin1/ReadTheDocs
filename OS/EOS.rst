@@ -54,6 +54,43 @@ https://elixir.bootlin.com/linux/v3.1.6/source/arch/x86/kernel/process_64.c#L109
     * somebody to say that they'd like to reschedule)
 
 
+僵尸线程、僵尸进程
+----------------------
+
+僵尸线程：以jionable创建而未被pthread_join的线程。
+
+Each zombie thread consumes some system resources, 
+and when enough zombie threads have accumulated, 
+it will no longer be possible to create new threads (or processes).
+   
+
+::
+
+    On my desktop (probably with various debug options enabled) the
+   task_struct alone is 3272 bytes. (Obtained from
+   /sys/kernel/slab/task_struct/object_size.)
+
+   The mm_struct (512 bytes on my desktop) is a per-process structure, so
+   needs to be counted separately. In a multithreaded process there is
+   only one mm_struct regardless of the number of threads.
+
+   However, there are additional overheads. There is also a per-task
+   kernel stack (usually 4K) and the userspace stack
+   (application-adjustable, but usually defaults to 2 or 4MB).
+
+
+守护进程
+~~~~~~~~~~~
+1. `linux系统编程之进程（八）：守护进程详解及创建，daemon()使用 - mickole - 博客园  <https://www.cnblogs.com/mickole/p/3188321.html>`__
+
+
+daemon()创建守护进程。
+
+
+守护进程的父进程在fork出子进程后先行exit了，守护进程成为init进程收养的孤儿进程。
+
+非交互式，通常周期性执行或等待事件发生；无控制终端，故其stdout/stderr都需要进行特殊处理。
+
 
 工具使用
 ==========

@@ -61,6 +61,13 @@ SIMD并行
 -  addss — do just one single-precision addition, using the low 32-bits
    of the register
 
+
+at&t和intel风格
+----------------
+intel风格常在DOS和windows上使用(masm/nasm)，AT&T在Unix类操作系统使用(gcc)。
+
+
+
 x86简介
 ==========
 

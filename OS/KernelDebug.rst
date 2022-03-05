@@ -36,6 +36,12 @@ Kernel Debug & Trace
    可允许跟踪 Linux 内核和用户程序, 并控制跟踪会话(开始/停止跟踪、启动/停止事件 等等).
 8. **KDB**   访问内核内存和数据结构。需要打补丁并重新编译内核。
 
+taskstats
+==========
+统计任务的调度、内存使用、I/O信息、系统调用的信息，基于netlink套接字，从内核向用户空间提供任务/进程的统计信息。
+
+1. `Per-task statistics interface — The Linux Kernel documentation  <https://docs.kernel.org/accounting/taskstats.html>`__
+
 
 debugfs
 ===============
