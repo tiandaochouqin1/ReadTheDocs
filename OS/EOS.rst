@@ -12,7 +12,7 @@ Embeded OS
 
 硬件线程也称之为逻辑核，将软件线程的任务分发在多个硬件线程上，通过负载均衡，可以分配在各个硬件线程之间。
 
-设备 ——> IRQ线 ——> IPC控制器 <——> CPUs
+``设备 ——> IRQ线 ——> IPC控制器 <——> CPUs``
 
 多核cpu中，cpu核可通过ipc直接向目标cpu核发送中断信号，以使其执行特定操作——向ipc的IPI寄存器写入硬件线程ID、
 中断向量、中断类型等，ipc则会通知目标cpu核挂起执行序列并跳转到isr。可使用共享内存进行核间通信。
@@ -28,10 +28,10 @@ NUMA
 ---------
 1. `从CPU层次结构到调度域的建立  <https://arc.838281.xyz/archive/1646066823.474205/singlefile.html>`__
 
-::
 
-    调度范围： Threads   ->   Cores    ->  Clusters 
-    共享：    所有Cache    LLC(一般为L3)    无
+调度范围： ``Threads   ->   Cores    ->  Clusters`` 
+
+共享：     ``所有Cache    LLC(一般为L3)    无``
 
 
 在numa中则还需要考虑内存访问速度，为了减少对内存总线的访问竞争，可以将CPU分属于不同的Node节点，通常情况下，CPU只访问Node内的memory。
@@ -90,6 +90,55 @@ daemon()创建守护进程。
 守护进程的父进程在fork出子进程后先行exit了，守护进程成为init进程收养的孤儿进程。
 
 非交互式，通常周期性执行或等待事件发生；无控制终端，故其stdout/stderr都需要进行特殊处理。
+
+
+ioctl
+---------
+1. `ioctl(2) - Linux manual page  <https://man7.org/linux/man-pages/man2/ioctl.2.html>`__
+2. `Linux设备驱动之Ioctl控制 - LoveFM - 博客园  <https://www.cnblogs.com/geneil/archive/2011/12/04/2275372.html>`__
+
+
+控制设备输入输出的系统调用，传入一个设备相关的请求码，使得用户空间可以与设备驱动通信，为用户提供内核调用权限。
+
+ioctl的实现为switch {case}结构，每一个case对应一个请求，对应驱动程序的特定操作。
+
+int ioctl(int fd, unsigned long request, ...);
+
+The ioctl() system call manipulates the underlying device parameters of special files.
+
+tmpfs
+--------
+1. `tmpfs(5) - Linux manual page  <https://man7.org/linux/man-pages/man5/tmpfs.5.html>`__
+
+
+以tmpfs类型mount时自动创建。
+
+在虚拟内存中创建的文件系统，速度快。按需使用、可使用swap、remount不丢失数据。
+
+
+POSIX与System V IPC
+-----------------------
+1. TLPI C43、C51
+
+
+三种类别：通信、同步、信号。
+
+.. figure:: ../images/SystemV_IPC.png
+
+    IPC
+
+
+
+1. System V:  msgget、semget、shmget;
+2. POSIX IPC: mq_open、sem_open、shm——open。用于替代System V的三种 IPC 机制——消息队列、信号量以及共享内存。
+
+       * 接口更简单，与Unix文件模型更一致、带引用计数(简化了删除操作)。
+       * 兼容性稍差。
+
+
+伪终端
+-----------
+
 
 
 工具使用
