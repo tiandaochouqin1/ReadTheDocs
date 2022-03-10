@@ -230,7 +230,7 @@ menuentry
 
 2. 在源码树外部编译：（OSC中的Lab，在ubuntu18中会提示insmod签名问题）
 
-   :download:`simple.c <../files/code/simple.c>`
+   :download:`kernel_module.c <../files/code/kernel_module.c>`
 
 
    需要自己写makefile。本机内核模块目录 ``/lib/modules/$(uname -r)/build``，避免在修改模块的源代码时重新编译整个内核。

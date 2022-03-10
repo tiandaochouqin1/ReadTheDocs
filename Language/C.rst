@@ -20,14 +20,9 @@ cjson
 待总结。
 
 
-cmockery
-------------
-https://github.com/google/cmockery
 
-待学习。
 
-mockcpp
---------
+
 
 ahttpd
 --------
@@ -148,3 +143,85 @@ gcno和gcda文件格式
 
 
 
+mock测试
+===============
+
+
+mock外部依赖接口，测试代码逻辑功能。
+
+mock工具的作用是指定函数的行为（模拟函数的行为）。可以对入参进行校验，对出参进行设定，还可以指定函数的返回值。
+
+Any symbols external to the module being tested should be mocked - replaced with functions that return values determined by the test。
+
+the unit testing is still valid since its goal is to test the logic of a code modules at a functional level
+
+
+
+
+cmockery
+----------
+  
+1. https://github.com/google/cmockery   :download:`cmockery-0.1.2.zip <../files/code/cmockery-0.1.2.zip>`
+2. `cmockery/user_guide.md at master · google/cmockery  <https://github.com/google/cmockery/blob/master/docs/user_guide.md#MockFunctions>`__
+
+特性：异常处理、断言、支持多种失败条件、动态内存分配管理、mock函数、入参检查。
+
+
+小巧，不依赖其它库，侵入性小。
+
+C语言实现的cmockery框架，自然受到 **链接符号解析** 的限制，即同一个elf文件不能存在两个相同符号名的函数。
+
+will_return将桩值入队(对应func)，在mock_func中调用mock() ，会按顺序在队列中找到一个桩值并返回。可实现mock出参、返回值。
+
+::
+
+    // Mock query database function.
+   unsigned int mock_query_database(
+           DatabaseConnection* const connection, const char * const query_string,
+           void *** const results) {
+       *results = (void**)mock();
+       return (unsigned int)mock();
+   }
+
+   void test_get_customer_id_by_name(void **state) {
+       DatabaseConnection connection = {
+           "somedatabase.somewhere.com", 12345678, mock_query_database
+       };
+       // Return a single customer ID when mock_query_database() is called.
+       int customer_ids = 543;
+       will_return(mock_query_database, &customer_ids);
+       will_return(mock_query_database, 1);
+       assert_int_equal(get_customer_id_by_name(&connection, "john doe"), 543);
+   }
+
+
+mockcpp
+---------
+1. `mockcpp/ChineseVersionManual.md at master · sinojelly/mockcpp  <https://github.com/sinojelly/mockcpp/blob/master/docs/ChineseVersionManual.md>`__
+2. `mockcpp/SimpleUserInstruction_zh.md at master · sinojelly/mockcpp  <https://github.com/sinojelly/mockcpp/blob/master/docs/SimpleUserInstruction_zh.md>`__
+
+侵入式Mock
+--------------
+修改代码区的二进制机器码，直接实现跳转、return功能。
+
+使用方便，功能较为单一，与架构相关。
+
+1. 备份并直接修改原func，将func头部位置指令改为 return var;
+2. 备份并直接修改原func，将func头部位置指令改为 jump mock_func。
+
+arm64实现mock
+~~~~~~~~~~~~~~~
+arm64为定长8Bytes指令，一条指令无法覆盖所有返回值/函数偏移值(数值至少需64位)。
+
+return指令：
+
+
+jump指令：
+
+x86-64实现mock
+~~~~~~~~~~~~~~
+变长指令，一条指令即可。
+
+return指令：
+
+jump指令：
