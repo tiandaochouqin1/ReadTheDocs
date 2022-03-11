@@ -8,9 +8,9 @@ C语言、汇编、MySQL、算法等。
    :numbered: 3
 
    Arm.rst
+   X86_asm.rst
    C.rst
    Concurrncy.rst
-   X86_asm.rst
    MySQL.rst
    
    
