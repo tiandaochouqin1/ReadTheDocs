@@ -63,7 +63,7 @@ SIMD并行
 
 
 at&t和intel风格
-----------------
+=================
 intel风格常在DOS和windows上使用(masm/nasm)，AT&T在Unix类操作系统使用(gcc)。
 
 

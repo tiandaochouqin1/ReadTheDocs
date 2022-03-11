@@ -19,10 +19,11 @@ cjson
 --------
 待总结。
 
+coreutils
+-----------
+1. `Decoded: GNU coreutils – MaiZure's Projects  <http://www.maizure.org/projects/decoded-gnu-coreutils/index.html>`__
 
-
-
-
+This resource is for novice programmers exploring the design of command-line utilities.
 
 ahttpd
 --------

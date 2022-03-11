@@ -364,3 +364,10 @@ PCRE风格。
        s = match.findall(text) //匹配第一个
 
        s2 = datepat.sub("ddd", text)
+
+
+Rgex应用
+==========
+url匹配
+-------
+1. `In search of the perfect URL validation regex  <https://mathiasbynens.be/demo/url-regex>`__

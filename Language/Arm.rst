@@ -17,7 +17,7 @@ arm简介
    :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
 
 
-2. arm-arm手册 `Arm Architecture Reference Manual  <https://developer.arm.com/architectures/cpu-architecture/a-profile/docs>`__
+2. ☆ arm-arm手册 `Arm Architecture Reference Manual  <https://developer.arm.com/architectures/cpu-architecture/a-profile/docs>`__
    
    :download:`DDI0487G_b_armv8_arm <../files/arm/DDI0487G_b_armv8_arm.pdf>` ; 机器码位于C4.1。
 
@@ -25,7 +25,6 @@ arm简介
 3. arm-N1: trm  `Neoverse-reference-design <https://developer.arm.com/tools-and-software/development-boards/neoverse-reference-design>`__
 
    :download:`Technical Reference Manual <../files/arm/arm_neoverse_n1_trm.pdf>`
-
 
    :download:`Software_Optimization_Guide <../files/arm/Arm_Neoverse_N1_Software_Optimization_Guide.pdf>`
    
@@ -70,8 +69,27 @@ ARMv8-A 将 64 位架构支持引入 ARM 架构中，其中包括：
 
 指令
 ========
+1. DDI0487G_b_armv8_arm.pdf  这两章重点
+   
+   * C6.2 Alphabetical list of A64 base instructions
+   * C4.1 A64 instruction set encoding
 
-指令长度
+
+PC
+----
+not general purpose register
+
+ARM指令的三级流水线执行(取指->译码->执行)
+
+
+1. aarch64模式下，pc指向正在执行的指令。使用 ``MOV PC,R0`` 读取。 `ARM Compiler armasm User Guide Version 6.00  <https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Program-Counter-in-AArch64-state>`__
+2. During execution, the PC does not contain the address of the currently executing instruction.
+   The address of the currently executing instruction is typically ``PC-8 for A32, or PC-4 for T32.``  
+   使用 ``ADR Xd, .`` 
+   `ARM Compiler armasm User Guide Version 6.00  <https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch32-state/Program-Counter-in-AArch32-state?lang=en>`__
+
+
+aarch64指令
 -------------
 32位，64位指令集指的是操作数据宽度，即内存操作的数据宽度，不是指指令只有32位，64位。
 
@@ -82,15 +100,16 @@ Aarch64使用A64指令集，指令长度是32位！
     aarch
 
 
+指令索引：
+
 .. figure:: ../images/arm64_op.png
     
-    aarch
+    C4.1 A64 instruction set encoding
 
 
-ARM指令的三级流水线执行，程序计数器R15(PC)总是指向“正在取指”的指令（即下下个执行的指令），而不是指向“正在执行”的指令或者正在“译码”的指令。
 
 aarch32位指令格式
--------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 指令为定长（x86不定长）。
 
@@ -115,6 +134,22 @@ aarch32位指令格式
 
 .. figure:: ../images/arm_op.png
    :alt: arm指令类型
+
+
+Branch
+------------------------
+b unconditional Branch
+~~~~~~~~~~~~~~~~~~~~~~~~
+bits(64) offset = SignExtend(imm26:'00', 64)
+
+
+The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the high bits fill with 1 if imm26 < 0, and with 0, otherwise).
+
+
+br
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 arm立即数
@@ -156,7 +191,7 @@ a64 mov使用 imm16 ，"hw" field as <shift>/16。
 大部分data processing instructions同时支持32和64bit操作。编译器基于data types选择variant。
 
 
-变体
+mov变体
 ~~~~~~~~~
 分为32和64位两类，每一类有三种变体：普通mov、取反movn、取和movk。
 
@@ -164,8 +199,8 @@ a64 mov使用 imm16 ，"hw" field as <shift>/16。
 三种变体：
 
 1. movn: Move wide with NOT, moves the inverse of an optionally-shifted 16-bit immediate value to a register. mov+移位+非
-2. movz: Move wide with zero, moves an optionally-shifted 16-bit immediate value to a register. mov+移位
-3. movk: Move wide with keep moves an optionally-shifted 16-bit immediate value into a register, keeping other bits unchanged. mov+移位+与 。C6.2.191 。
+2. movz: Move wide with zero, moves an `optionally-shifted 16-bit immediate value to a register.` mov+移位
+3. movk: Move wide with keep moves an `optionally-shifted 16-bit immediate value into a register, keeping other bits unchanged.` mov+移位+与 。C6.2.191 。
 
 
 
@@ -316,10 +351,11 @@ that can optionally be shifted by 12 bits (1 bit for the shift).
 arm汇编
 =============
 
-arm 64位
+aarch64状态
 ------------
-1. `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
-2. `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
+
+1. ☆ `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly <../files/arm/syshella_arm-assembly.pdf>`
+2. `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
 3. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
 
 In AArch64 state, the following registers are available:
@@ -330,14 +366,40 @@ In AArch64 state, the following registers are available:
 4. 3 saved program status registers SPSR_EL1, SPSR_EL2, SPSR_EL3.
 5. 1 program counter.
 
+arm64指令格式
+--------------
+``指令方向： 从右向左``
 
-常用寄存器：
+::
 
+   MNEMON­IC{­S}{­con­dition} {Rd}, Operand1, Operand2
+   
+
+   MNEMONIC   Descri­ption
+   {S}
+   An optional suffix. If S is specified, the condition flags are updated on the result of the operation
+   
+   {condi­tion}
+   Condition that is needed to be met in order for the instru­ction to be executed
+   
+   {Rd}
+   Register destin­ation for storing the result of the instru­ction
+   
+   Operand1
+   First operand. Either a register or an inmediate value
+   
+   Operand2
+   Second (flexible) operand. Either an inmediate value (number) or a register with an optional shift
+   
+   {} - Optional
+
+arm64常用寄存器
+-----------------
 1. x0–x7: function arguments, scratch (x0 is also function return value)
 2. x8–x18: scratch (x8 is syscall number, x16–x18 sometimes reserved)
 3. x19–x28: callee-saved registers (save to stack at beginning of function, restore from stack before returning)
-4. x29: frame pointer
-5. x30: link register (save to stack for non-leaf functions)
+4. **x29: frame pointer**
+5. **x30: link register** (save to stack for non-leaf functions)
 6. sp: stack pointer
 7. pc: The Program Counter (PC) is not a general-purpose register in A64, and it cannot be used with data processing instructions.
 8. There is no register named W31 or X31. Depending on the instruction, 
@@ -346,11 +408,10 @@ In AArch64 state, the following registers are available:
 
 
 
-arm 32位
------------
+arm32汇编和寄存器
+~~~~~~~~~~~~~~~~~~
 1. `arm asm cheat-sheets <https://cheatography.com/syshella/cheat-sheets/arm-assembly/>`__
 2. https://azeria-labs.com/writing-arm-assembly-part-1/
-3. `ARM汇编语言 - 简介 <https://zhuanlan.zhihu.com/p/82490125>`__
 
 
 
@@ -358,8 +419,7 @@ arm 32位
       :alt: asm cheetsheet
 
 
-寄存器
-~~~~~~~~~~~~~
+**常用寄存器：**
 
 accessible in any privilege mode: r0-15.
 
@@ -391,41 +451,6 @@ accessible in any privilege mode: r0-15.
 CPSR: 对应x86的EFLAGS
 
 
-x86与arm函数调用规约
------------------------
-1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
-2. `GCC的调用约定 <https://blog.csdn.net/weixin_44395686/article/details/105036297>`__
-3. `system V ABI <https://blog.csdn.net/weixin_44395686/article/details/105022059>`__
-
-
-1. X86 函数调用约定
-
-    1. X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
-
-    cdecl 函数调用约定
-
-    参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
-    GCC的默认调用约定为cdecl
-
-    stdcall 函数调用约定
-
-    参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
-
-    fastcall 函数调用约定
-
-    参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
-
-    2. X86-64
-
-    x64的调用约定只有一种，遵守system v ABI的规范。
-    但是Linux和windows却有一些差别。在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
-    在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
-    其余的参数按照从右向左的顺序压栈。
-
-2. ARM和ARM64使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
-ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
-ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
-
 寻址模式和偏移模式
 --------------------
 三种 **寻址模式**：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。
@@ -451,7 +476,7 @@ ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从
    这种操作后Rn的值 = Rn+offset
 
 
-LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 中有三种 **偏移形式**：
+LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 有三种 **偏移形式**：
 
 ::
             
@@ -492,3 +517,46 @@ https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
 3. ISB:Instruction Synchronization Barrier,清空cpu流水线。
    flushes the pipeline in the processor, so that all instructions following the ISB are fetched from cache or memory, after the instruction has been completed
    
+
+x86与arm函数调用规约
+=======================
+1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
+2. `GCC的调用约定 <https://blog.csdn.net/weixin_44395686/article/details/105036297>`__
+3. `system V ABI <https://blog.csdn.net/weixin_44395686/article/details/105022059>`__
+
+
+X86 函数调用规约
+--------------------
+1. X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
+
+   1. cdecl 函数调用约定
+
+   参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
+   GCC的默认调用约定为cdecl
+
+   2. stdcall 函数调用约定
+
+   参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+
+   3. fastcall 函数调用约定
+
+   参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
+
+2. X86-64
+
+x64的调用约定只有一种，遵守system v ABI的规范。但是Linux和windows却有一些差别。
+ 
+   1. 在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
+   2. 在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
+   3. 其余的参数按照从右向左的顺序压栈。
+
+ARM和ARM64函数调用规约
+---------------------------
+使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
+
+1. ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
+2. ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
+
+
+aarch64堆栈回溯
+==================
