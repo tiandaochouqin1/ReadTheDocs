@@ -186,6 +186,28 @@ https://sphinx-doc.readthedocs.io/zh_CN/master/usage/markdown.html
        '.md': 'markdown',
    }
 
+
+主题配置
+-----------
+1. `Configuration — Read the Docs Sphinx Theme 1.0.0 documentation  <https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-collapse_navigation>`__
+
+::
+
+   html_theme = 'sphinx_rtd_theme'
+
+
+   html_theme_options = {
+       'style_external_links': False,
+       'vcs_pageview_mode': 'True',
+       # Toc options
+       'style_external_links': True,
+       # Setting collapse_navigation to False and using a high value for navigation_depth on projects
+       # with many files and a deep file structure can cause long compilation times 
+       # and can result in HTML files that are significantly larger in file size.
+       'collapse_navigation': False,
+       'navigation_depth': 4,
+   }
+
 其它搭建Blog方法
 ================
 

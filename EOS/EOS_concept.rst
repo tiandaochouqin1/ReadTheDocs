@@ -1,5 +1,5 @@
 =====================
-Embeded OS
+Embeded OS Concept
 =====================
 
 :Date:   2022-03-01 22:25:43
@@ -139,7 +139,9 @@ POSIX与System V IPC
 伪终端
 -----------
 
-
+arm mmu
+----------
+1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
 
 工具使用
 ==========

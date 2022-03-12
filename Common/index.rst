@@ -10,7 +10,7 @@ Basics
    :numbered: 4
    
 
-   LinuxCmd.rst
+   Linux_cmd.rst
    Git.rst
    regex.rst
    vim.rst

@@ -9,11 +9,10 @@ Linux内核、操作系统、编译等相关知识。
    DynamicLink.rst
    xv6.rst
    Elf.rst
-   KernelDebug.rst
-   LinuxKernel.rst
-   KernelCompile.rst
+   Kernel_debug.rst
+   Linux_kernel.rst
+   Kernel_compilation.rst
    makefile.rst
    OSC.rst
-   EOS.rst
 
 

@@ -23,10 +23,8 @@ My NoteBook
    Common/index
    OS/index
    Net/index
-   Language/index
+   EOS/index
 
-..   Language/DP.rst
-   Language/Asm.rst
 
 
 

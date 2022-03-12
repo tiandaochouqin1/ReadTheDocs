@@ -135,83 +135,6 @@ aarch32位指令格式
 .. figure:: ../images/arm_op.png
    :alt: arm指令类型
 
-
-aarch64 mock
-=========================
-b unconditional Branch(imm)
-----------------------------------
-bits(64) offset = SignExtend(imm26:'00', 64)
-
-
-The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the high bits fill with 1 if imm26 < 0, and with 0, otherwise).
-
-::
-
-   大端
-   rela = (new_addr - old_addr)/arm_cmd_len
-   opcode = 0
-   opcode += rela & 0x1ffff  //bit[0-24]
-   opcode += new_addr>old_addr? 0:1  //bit25
-   opcode += (0b000101)<<26
-
-
-.. figure:: ../images/opcode_b.png
-   :alt: opcode_b
-
-
-br unconditional Branch(reg)
----------------------------------
-
-``0b 1101011 0000 11111 000000 5bits-RN 00000``
-
-Rn即寄存器编号。The use of R indicates that the registers can be either X or W registers.
-
-``br x8(0b01000) 则 0xd6f0100``
-
-::
-
-   与下文ret配合movk打桩相同的方法将vaddr保存到reg，地址48bits有效
-
-   opcode_0 = opcode_1 = opcode_2 = 0
-
-   opcode_k +=  0x8 //x19, 5bits
-   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
-   opcode_k +=  (k)<<21    //2bits
-   opcode_k +=  (0b111100101)<<23    //9bits
-
-
-   cmd[0] = opcode_0
-   cmd[1] = opcode_1
-   cmd[2] = opcode_2
-   cmd[3] = 0xd6f0100
-
-.. figure:: ../images/opcode_br.png
-   :alt: opcode_b
-
-ret配合movk打桩
-------------------
-
-``1 11 100101 2bits-shift imm16 Rd``
-
-Rd=x19
-
-::
-
-   opcode_0 = opcode_1 = opcode_2 = 0
-
-   opcode_k +=  0x0 //x0, 5bits
-   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
-   opcode_k +=  (k)<<21    //2bits
-   opcode_k +=  (0b111100101)<<23    //9bits
-
-
-   cmd[0] = opcode_0
-   cmd[1] = opcode_1
-   cmd[2] = opcode_2
-   cmd[2] = opcode_3
-   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 , 固定，返回值x0，branch到x30/lr
-
-
 arm立即数
 ==============
 
@@ -406,3 +329,83 @@ All instructions of the add/sub immediate instruction class allow a 12-bit unsig
 that can optionally be shifted by 12 bits (1 bit for the shift). 
 
 另外还有使用address tag的变体addg。
+
+
+
+
+aarch64 mock
+=========================
+b unconditional Branch(imm)
+----------------------------------
+bits(64) offset = SignExtend(imm26:'00', 64)
+
+
+The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the high bits fill with 1 if imm26 < 0, and with 0, otherwise).
+
+::
+
+   大端
+   rela = (new_addr - old_addr)/arm_cmd_len
+   opcode = 0
+   opcode += rela & 0x1ffff  //bit[0-24]
+   opcode += new_addr>old_addr? 0:1  //bit25
+   opcode += (0b000101)<<26
+
+
+.. figure:: ../images/opcode_b.png
+   :alt: opcode_b
+
+
+br unconditional Branch(reg)
+---------------------------------
+
+``0b 1101011 0000 11111 000000 5bits-Rn 00000``
+
+Rn即寄存器编号。Rn代表X或W，64位或32位。The use of R indicates that the registers can be either X or W registers.
+
+``br x8(0b01000) 即 0xd6f0100``
+
+::
+
+   与下文ret配合movk打桩相同的方法将vaddr保存到reg，地址48bits有效
+
+   opcode_0 = opcode_1 = opcode_2 = 0
+
+   opcode_k +=  0x8 //x19, 5bits
+   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
+   opcode_k +=  (k)<<21    //2bits
+   opcode_k +=  (0b111100101)<<23    //9bits
+
+
+   cmd[0] = opcode_0
+   cmd[1] = opcode_1
+   cmd[2] = opcode_2
+   cmd[3] = 0xd6f0100
+
+
+.. figure:: ../images/opcode_br.png
+   :alt: opcode_b
+
+ret配合movk打桩
+------------------
+
+``1 11 100101 2bits-shift imm16 Rd``
+
+Rd=x0
+
+::
+
+   opcode_0 = opcode_1 = opcode_2 = 0
+
+   opcode_k +=  0x0 //x0, 5bits
+   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
+   opcode_k +=  (k)<<21    //2bits
+   opcode_k +=  (0b111100101)<<23    //9bits
+
+
+   cmd[0] = opcode_0
+   cmd[1] = opcode_1
+   cmd[2] = opcode_2
+   cmd[2] = opcode_3
+   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 , 固定，返回值x0，branch到x30/lr
+

@@ -14,7 +14,8 @@ aarch64状态
 
 1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly <../files/arm/syshella_arm-assembly.pdf>`
 2. ☆ 栈回溯 `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
-3. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
+3. `ARMv8 A64 Quick Reference <https://courses.cs.washington.edu/courses/cse469/19wi/arm64.pdf>`__
+4. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
 
 In AArch64 state, the following registers are available:
 
@@ -220,14 +221,17 @@ ARM和ARM64函数调用规约
 2. ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
 
 
-aarch64堆栈回溯
+aarch64堆栈
 ==================
-1. Many CPU instructions automatically update esp as a side effect, and it’s impractical to use the stack without this register. 
-   Unlike esp, ebp is mostly maintained by program code with little CPU interference. 
+1. Many CPU instructions automatically update esp as a side effect, ebp is mostly maintained by program code with little CPU interference. 
+   一些cpu指令会自动更新esp(push、call)，ebp则是由代码显式维护。
    `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__
 
 2. `ARM64 Assembly Language Notes  <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
 3. `Releases · ARM-software/abi-aa  <https://github.com/ARM-software/abi-aa/releases>`__ ; Procedure Call、Elf等内容。
+
+
+**栈帧16Bytes对齐。** 变量所占空间与其类型一致，使用对应宽度的寄存器保存。
 
 frame-pointer
 --------------
@@ -266,9 +270,9 @@ aarch64函数调用Stack
 
         |                      |
         | caller's stack frame |
-        |                      |       //x29,fp
+        |                      |       //x29,fp(栈保存的sp)
         +----------------------+
-        | saved return address |  +8   //x30
+        | saved return address |  +8   //x30,lr
         +----------------------+
    fp-->| saved frame pointer  |   0
         +----------------------+
