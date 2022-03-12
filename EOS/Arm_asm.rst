@@ -227,7 +227,7 @@ aarch64堆栈
    一些cpu指令会自动更新esp(push、call)，ebp则是由代码显式维护。
    `journey-to-the-stack <https://manybutfinite.com/post/journey-to-the-stack/>`__
 
-2. `ARM64 Assembly Language Notes  <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
+2. ☆ `ARM64 Assembly Language Notes  <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__
 3. `Releases · ARM-software/abi-aa  <https://github.com/ARM-software/abi-aa/releases>`__ ; Procedure Call、Elf等内容。
 
 

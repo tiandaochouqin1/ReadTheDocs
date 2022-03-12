@@ -58,6 +58,19 @@ exclude_patterns = []
 #
 html_theme = 'sphinx_rtd_theme'
 
+
+html_theme_options = {
+    'style_external_links': False,
+    'vcs_pageview_mode': 'True',
+    # Toc options
+    'style_external_links': True,
+    # Setting collapse_navigation to False and using a high value for navigation_depth on projects
+    # with many files and a deep file structure can cause long compilation times 
+    # and can result in HTML files that are significantly larger in file size.
+    'collapse_navigation': False,
+    'navigation_depth': 5,
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
