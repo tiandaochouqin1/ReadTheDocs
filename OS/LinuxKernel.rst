@@ -764,14 +764,14 @@ sysenter和sysexit都是CPU原生支持的指令集
 
 Linux virtual Dynamic Shared Object (vDSO)
 
-The Linux vDSO is a set of code that is part of the kernel, b
-ut is mapped into the address space of a user program to be run in userland.
+The Linux vDSO is a set of code that is part of the kernel, but is mapped into the address space of a user program to be run in userland.
 
 
-**地址随机(安全)：**
-
+地址随机(安全)
+~~~~~~~~~~~~~~~~
 Due to `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
 the vDSO will be loaded at a random address when a program is started.
+每次运行都会有不同的地址。
 
 
 

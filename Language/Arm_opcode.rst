@@ -1,6 +1,6 @@
 
 ============
-Arm
+Arm Opcode
 ============
 
 :Date:   2021-09-29 19:28:27
@@ -136,10 +136,10 @@ aarch32位指令格式
    :alt: arm指令类型
 
 
-Branch
-------------------------
-b unconditional Branch
-~~~~~~~~~~~~~~~~~~~~~~~~
+aarch64 mock
+=========================
+b unconditional Branch(imm)
+----------------------------------
 bits(64) offset = SignExtend(imm26:'00', 64)
 
 
@@ -159,21 +159,22 @@ The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the hig
    :alt: opcode_b
 
 
-br
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+br unconditional Branch(reg)
+---------------------------------
 
 ``0b 1101011 0000 11111 000000 5bits-RN 00000``
 
 Rn即寄存器编号。The use of R indicates that the registers can be either X or W registers.
 
-``br x19(0b10011) 则 0xd6f0260``
+``br x8(0b01000) 则 0xd6f0100``
 
 ::
+
    与下文ret配合movk打桩相同的方法将vaddr保存到reg，地址48bits有效
 
    opcode_0 = opcode_1 = opcode_2 = 0
 
-   opcode_k +=  0x13 //x19, 5bits
+   opcode_k +=  0x8 //x19, 5bits
    opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
    opcode_k +=  (k)<<21    //2bits
    opcode_k +=  (0b111100101)<<23    //9bits
@@ -182,19 +183,20 @@ Rn即寄存器编号。The use of R indicates that the registers can be either X
    cmd[0] = opcode_0
    cmd[1] = opcode_1
    cmd[2] = opcode_2
-   cmd[3] = 0xd6f0260
+   cmd[3] = 0xd6f0100
 
 .. figure:: ../images/opcode_br.png
    :alt: opcode_b
 
 ret配合movk打桩
-~~~~~~~~~~~~~~~
+------------------
 
 ``1 11 100101 2bits-shift imm16 Rd``
 
 Rd=x19
 
 ::
+
    opcode_0 = opcode_1 = opcode_2 = 0
 
    opcode_k +=  0x0 //x0, 5bits
@@ -207,7 +209,7 @@ Rd=x19
    cmd[1] = opcode_1
    cmd[2] = opcode_2
    cmd[2] = opcode_3
-   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 ,返回值x0，branch到x30/lr
+   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 , 固定，返回值x0，branch到x30/lr
 
 
 arm立即数
@@ -404,217 +406,3 @@ All instructions of the add/sub immediate instruction class allow a 12-bit unsig
 that can optionally be shifted by 12 bits (1 bit for the shift). 
 
 另外还有使用address tag的变体addg。
-
-
-arm汇编
-=============
-
-aarch64状态
-------------
-
-1. ☆ `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly <../files/arm/syshella_arm-assembly.pdf>`
-2. `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
-3. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
-
-In AArch64 state, the following registers are available:
-
-1. 31 64-bit general-purpose registers X0-X30, the bottom halves of which are accessible as W0-W30.
-2. 4 stack pointer registers SP_EL0, SP_EL1, SP_EL2, SP_EL3.
-3. 3 exception link registers ELR_EL1, ELR_EL2, ELR_EL3.
-4. 3 saved program status registers SPSR_EL1, SPSR_EL2, SPSR_EL3.
-5. 1 program counter.
-
-arm64指令格式
---------------
-``指令方向： 从右向左``
-
-::
-
-   MNEMON­IC{­S}{­con­dition} {Rd}, Operand1, Operand2
-   
-
-   MNEMONIC   Descri­ption
-   {S}
-   An optional suffix. If S is specified, the condition flags are updated on the result of the operation
-   
-   {condi­tion}
-   Condition that is needed to be met in order for the instru­ction to be executed
-   
-   {Rd}
-   Register destin­ation for storing the result of the instru­ction
-   
-   Operand1
-   First operand. Either a register or an inmediate value
-   
-   Operand2
-   Second (flexible) operand. Either an inmediate value (number) or a register with an optional shift
-   
-   {} - Optional
-
-arm64常用寄存器
------------------
-1. x0–x7: function arguments, scratch (x0 is also function return value)
-2. x8–x18: scratch (x8 is syscall number, x16–x18 sometimes reserved)
-3. x19–x28: callee-saved registers (save to stack at beginning of function, restore from stack before returning)
-4. **x29: frame pointer**
-5. **x30: link register** (save to stack for non-leaf functions)
-6. sp: stack pointer
-7. pc: The Program Counter (PC) is not a general-purpose register in A64, and it cannot be used with data processing instructions.
-8. There is no register named W31 or X31. Depending on the instruction, 
-   register 31 is either the stack pointer or the zero register. When used as the stack pointer, you refer to it as SP. 
-   W   hen used as the zero register, you refer to it as WZR in a 32-bit context or XZR in a 64-bit context.
-
-
-
-arm32汇编和寄存器
-~~~~~~~~~~~~~~~~~~
-1. `arm asm cheat-sheets <https://cheatography.com/syshella/cheat-sheets/arm-assembly/>`__
-2. https://azeria-labs.com/writing-arm-assembly-part-1/
-
-
-
-.. figure:: ../images/arm_asm.png
-      :alt: asm cheetsheet
-
-
-**常用寄存器：**
-
-accessible in any privilege mode: r0-15.
-
-+----------+----------------------------+-------------------------+
-| ARM      | Description                | x86                     |
-+==========+============================+=========================+
-| R0       | General Purpose            | EAX                     |
-+----------+----------------------------+-------------------------+
-| R1-R5    | General Purpose            | EBX, ECX, EDX, ESI, EDI |
-+----------+----------------------------+-------------------------+
-| R6-R10   | General Purpose            | –                       |
-+----------+----------------------------+-------------------------+
-| R11 (FP) | Frame Pointer              | EBP                     |
-+----------+----------------------------+-------------------------+
-| R12      | Intra Procedural Call      | –                       |
-+----------+----------------------------+-------------------------+
-| R13 (SP) | Stack Pointer              | ESP                     |
-+----------+----------------------------+-------------------------+
-| R14 (LR) | Link Register              | –                       |
-+----------+----------------------------+-------------------------+
-| R15 (PC) | <- Program Counter /       | EIP                     |
-|          | Instruction Pointer ->     |                         |
-+----------+----------------------------+-------------------------+
-| CPSR     | Current Program State      | EFLAGS                  |
-|          | Register/Flags             |                         |
-+----------+----------------------------+-------------------------+
-
-
-CPSR: 对应x86的EFLAGS
-
-
-寻址模式和偏移模式
---------------------
-三种 **寻址模式**：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。
-
-::
-      
-   偏移寻址
-
-   [Rn, offset]
-   最终访问内存的地址 = Rn+offset
-   这种操作后Rn的值不会改变
-
-   前变址寻址
-
-   [Rn, offset]!
-   最终访问内存的地址 = Rn+offset
-   这种操作后Rn的值 = Rn+offset
-
-   后变址寻址
-
-   [Rn], offset
-   最终访问内存的地址 = Rn
-   这种操作后Rn的值 = Rn+offset
-
-
-LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的方向） 有三种 **偏移形式**：
-
-::
-            
-      立即数作为偏移量：ldr r3, [r1, #4]
-      寄存器作为偏移量：ldr r3, [r1, r2]
-      带有位移操作的寄存器作为偏移量：ldr r3, [r1, r2, LSL#2]
-
-
-      如果带有!，就是前变址寻址
-      ldr r3, [r1, #4]!
-
-      如果基地值寄存器（R1）带中括号，就是后变址寻址
-      ldr r3, [r1], #4
-
-      其他的都是带偏移量的寄存器间接寻址
-      ldr r3, [r1, #4]
-
-
-
-LDM和STM指令，"M"在这里代表Multiple。
-
-1. STM是把多个寄存器的值传送到内存相邻的位置。
-2. LDM多个寄存器在ARM汇编语言中用"{}"圈起来，表示待传送的寄存器列表。
-
-arm dsb
--------------
-arm-asm 3.37
-
-https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
-
-
-1. DMB:Data Memory Barrier,只作用于显式内存访问指令，保证dmb前的指令先执行完。
-   all explicit memory accesses that appear in program order before the DMB instruction are observed before any explicit memory accesses that appear in program order after the DMB instruction. 
-
-2. DSB:Data Synchronization Barrier，一种特殊的dmb，作用于所有指令，保证dsb之前的指令执行完之后才执行dsb之后的指令。
-   No instruction in program order after this instruction executes until this instruction completes.
-   dsb指令完成的条件包括：All Cache, Branch predictor and TLB maintenance operations before this instruction complete.
-3. ISB:Instruction Synchronization Barrier,清空cpu流水线。
-   flushes the pipeline in the processor, so that all instructions following the ISB are fetched from cache or memory, after the instruction has been completed
-   
-
-x86与arm函数调用规约
-=======================
-1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
-2. `GCC的调用约定 <https://blog.csdn.net/weixin_44395686/article/details/105036297>`__
-3. `system V ABI <https://blog.csdn.net/weixin_44395686/article/details/105022059>`__
-
-
-X86 函数调用规约
---------------------
-1. X86 有三种常用调用约定，cdecl(C规范)/stdcall(WinAPI默认)/fastcall 函数调用约定。
-
-   1. cdecl 函数调用约定
-
-   参数从右往左一次入栈，调用者实现栈平衡，返回值存放在 EAX 中。允许了变长入参如printf
-   GCC的默认调用约定为cdecl
-
-   2. stdcall 函数调用约定
-
-   参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
-
-   3. fastcall 函数调用约定
-
-   参数1、参数2分别保存在 ECX、EDX ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 EAX 中。
-
-2. X86-64
-
-x64的调用约定只有一种，遵守system v ABI的规范。但是Linux和windows却有一些差别。
- 
-   1. 在windows X64中，前4个参数通过rcx，rdx，r8，r9来传递；
-   2. 在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
-   3. 其余的参数按照从右向左的顺序压栈。
-
-ARM和ARM64函数调用规约
----------------------------
-使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
-
-1. ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
-2. ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
-
-
-aarch64堆栈回溯
-==================
