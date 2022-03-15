@@ -1,4 +1,3 @@
-
 =============
 Arm Assembly
 =============
@@ -54,6 +53,10 @@ arm64指令格式
 
 arm64常用寄存器
 -----------------
+> 9.1.1 Parameters in general-purpose registers
+  arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
+  :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
+
 1. x0–x7: function arguments, ``scratch`` (x0 is also function return value)
 2. x8–x18: ``scratch`` (x8 is syscall number, x16–x18 sometimes reserved)
 3. x19–x28: callee-saved registers (save to stack at beginning of function, restore from stack before returning)
@@ -70,11 +73,16 @@ arm64常用寄存器
       :alt: abi_general_purpose_registers
 
 
+
+* callee-saved registers: 保存在callee的stack上,并在返回时恢复。
+* caller-saved registers: caller在调用subroutine前需保存,因为callee会进行修改且不会恢复。
+
+
 scratch register
 ~~~~~~~~~~~~~~~~~
 1. `abi-aa/aapcs32.rst at 320a56971fdcba282b7001cf4b84abb4fd993131 · ARM-software/abi-aa  <https://github.com/ARM-software/abi-aa/blob/320a56971fdcba282b7001cf4b84abb4fd993131/aapcs32/aapcs32.rst>`__
 
-又名temporary register，保存算术运算中间值。
+又名temporary register，保存算术运算中间值(一般不对应程序中的变量)。
 
 
 
