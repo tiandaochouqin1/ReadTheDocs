@@ -22,30 +22,35 @@ ELF、Compile & Main
 
 objdump
 ----------
-objdump -x -d:
+objdump -x -D -s:
 
 ::
 
-   -s:    二进制形式打印所有段内容
-   -d/S:  反汇编代码段
-   -D:    反汇编所有段
    -x:    文件头、动态库、符号表. 等于-a -f -h -p -r -t
+   -s:    二进制形式打印所有段内容
+   -D:    反汇编所有段
+   -d/S:  反汇编代码段
    -t:    符号表 = nm
    -j .text/.data: 指定段,需要配合-d使用
+   -h:    关键段表
           
 
 readelf
 ---------
-1. size exe: 查看text、data、bss的长度。
 
-2. readelf -r .so ：查看重定位表。
-3. readelf -s : 符号表（nm、objdump -t）
-4. readelf -l : 程序头中的段表——Program Headers,以及与Section的对应关系
-5. readelf -a : 所有
-6. readelf -d : 查看so的.dynamic段。
-7. ldd exe： 查看so依赖
-8. ar:  静态库打包、解压等
-9. strings: 可打印字符串
+1. readelf -h : elf文件头。elf文件和平台信息;Program Header Table 和 Section Header Table 的 offset/size/number。
+2. readelf -S : 节区表/节头部表Section Headers。 objdump -h(只显示关键段)。
+3. readelf -r .so ：查看重定位表。
+4. readelf -s : 符号表（nm、objdump -t）
+5. readelf -l : 程序头中的段表——Program Headers,以及与Section的对应关系
+6. readelf -a : 所有
+7. readelf -d : 查看so的.dynamic段。
+
+
+8. ldd exe： 查看so依赖
+9. ar:  静态库打包、解压等
+10. strings: 查看可打印字符串
+11. size exe: 查看text、data、bss的长度。
 
 .. figure:: ../images/Elf-layout.png
 
@@ -54,7 +59,6 @@ readelf
 vim xxd
 -----------
 objdump和readelf可查看解析后的符号表，xxd查看原始二进制符号表。
-
 
 ::
 
@@ -72,12 +76,10 @@ ELF结构
 4. `File Format (Linker and Libraries Guide)  <https://docs.oracle.com/cd/E19683-01/816-1386/6m7qcoblj/index.html#chapter6-tbl-21>`__
 
 
+
 - Elf文件头：readelf -h 
-- 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
-
-
-1. elf文件和平台信息;
-2. Program Header Table 和 Section Header Table 的 offset/size/number
+- 
+1. 
 
 
 

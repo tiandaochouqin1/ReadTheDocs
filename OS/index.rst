@@ -1,4 +1,4 @@
-Operating System
+OS
 ==================
 Linux内核、操作系统、编译等相关知识。
 
