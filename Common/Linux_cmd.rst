@@ -213,8 +213,12 @@ crontab
 
 ::
 
+   tar -xf // 自动检测类型
+
    tar -zxvf *.tar.gz
    tar -zcvf *.tar.gz /file
+
+   tar -xjf *.tar.bz2
 
    zip/unzip
 
@@ -681,7 +685,11 @@ awk构造命令然后bash执行。
 
 文本处理
 --------
+col
+----
+col — filter reverse line feeds from input
 
+过滤反向换行符，如 ``^H`` .
 grep
 ----
 

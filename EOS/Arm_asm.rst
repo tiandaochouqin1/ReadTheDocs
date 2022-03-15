@@ -70,6 +70,13 @@ arm64常用寄存器
       :alt: abi_general_purpose_registers
 
 
+scratch register
+~~~~~~~~~~~~~~~~~
+1. `abi-aa/aapcs32.rst at 320a56971fdcba282b7001cf4b84abb4fd993131 · ARM-software/abi-aa  <https://github.com/ARM-software/abi-aa/blob/320a56971fdcba282b7001cf4b84abb4fd993131/aapcs32/aapcs32.rst>`__
+
+又名temporary register，保存算术运算中间值。
+
+
 
 arm32汇编和寄存器
 ~~~~~~~~~~~~~~~~~~

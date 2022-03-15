@@ -5,7 +5,7 @@ ELF、Compile & Main
 :Date:   2020-07-15 22:45:43
 
 
-ELF与链接
+参考文章
 ==============
 1. :download:`TLPI <../books/The Linux Programming Interface.pdf>` 
    
@@ -14,33 +14,28 @@ ELF与链接
    :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
    :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
 
-2. 很详细： https://man7.org/linux/man-pages/man5/elf.5.html
-3. :download:`gcc 9.2 manual <../files/gcc_9.2_manuals.pdf>`
-
-ELF结构
---------------
-- Elf文件头：readelf -h 
-- 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
+2. :download:`gcc 9.2 manual <../files/gcc_9.2_manuals.pdf>`
 
 
-1. elf文件和平台信息;
-2. Program Header Table 和 Section Header Table 的 offset/size/number
+反汇编常用命令
+===============
 
-
-
-常用命令
+objdump
 ----------
-1. objdump -x -d:
+objdump -x -d:
 
 ::
 
    -s:    二进制形式打印所有段内容
-   -d/S:  代码的反汇编
-   -x:    文件头、动态库、符号表
+   -d/S:  反汇编代码段
+   -D:    反汇编所有段
+   -x:    文件头、动态库、符号表. 等于-a -f -h -p -r -t
    -t:    符号表 = nm
    -j .text/.data: 指定段,需要配合-d使用
           
 
+readelf
+---------
 1. size exe: 查看text、data、bss的长度。
 
 2. readelf -r .so ：查看重定位表。
@@ -56,10 +51,38 @@ ELF结构
 
     ELF结构
 
+vim xxd
+-----------
+objdump和readelf可查看解析后的符号表，xxd查看原始二进制符号表。
+
+
+::
+
+      vim -b main.o
+      hex形式： vim执行 %!xxd
+      回写： %!xxd -r
+
+
+
+ELF结构
+=============
+1. ☆ `[原创] ELF文件结构详解-Android安全-看雪论坛-安全社区|安全招聘|bbs.pediy.com  <https://bbs.pediy.com/thread-255670.htm>`__
+2. ☆ `elf(5) - Linux manual page  <https://man7.org/linux/man-pages/man5/elf.5.html>`__
+3. ☆ `.symtab: Symbol Table - CTF Wiki  <https://ctf-wiki.org/executable/elf/structure/symbol-table/#_2>`__
+4. `File Format (Linker and Libraries Guide)  <https://docs.oracle.com/cd/E19683-01/816-1386/6m7qcoblj/index.html#chapter6-tbl-21>`__
+
+
+- Elf文件头：readelf -h 
+- 节区表/节头部表Section Headers：readelf -S 、 objdump -h(只显示关键段)。
+
+
+1. elf文件和平台信息;
+2. Program Header Table 和 Section Header Table 的 offset/size/number
+
 
 
 Section Header
-~~~~~~~~~~~~~~~~
+----------------
 
 ::
 
@@ -93,48 +116,9 @@ Section Header
       开头的16B Magic number
 
 
-Program header (Phdr)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-   typedef struct {
-        Elf64_Word      p_type;
-        Elf64_Word      p_flags;
-        Elf64_Off       p_offset;
-        Elf64_Addr      p_vaddr;
-        Elf64_Addr      p_paddr;
-        Elf64_Xword     p_filesz;
-        Elf64_Xword     p_memsz;
-        Elf64_Xword     p_align;
-   } Elf64_Phdr;
-
-   
-
-p_paddr：
-
-::
-
-   man5/elf.5.html
-   On systems for which physical addressing is relevant, this
-   member is reserved for the segment's physical address.
-   Under BSD this member is not used and must be zero.
-
-
-   Oracle Solaris 11 
-   The segment's physical address for systems in which physical addressing is relevant.
-   Because the system ignores physical addressing for application programs, 
-   this member has unspecified contents for executable files and shared objects.
-
-   该字段在所有系统中都没有意义?
-
-
-
-
-
 
 段位置与长度
--------------
+~~~~~~~~~~~~~
 
 ::
 
@@ -201,7 +185,133 @@ shstrtab结束后长度为0x410（1040），段表长度为64×13=832（0x340）
 此处段表位于最后，与csapp的描述一致。
 
 
-elf装载
+
+
+Program header (Phdr)
+----------------------
+
+::
+
+   typedef struct {
+        Elf64_Word      p_type;
+        Elf64_Word      p_flags;
+        Elf64_Off       p_offset;
+        Elf64_Addr      p_vaddr;
+        Elf64_Addr      p_paddr;
+        Elf64_Xword     p_filesz;
+        Elf64_Xword     p_memsz;
+        Elf64_Xword     p_align;
+   } Elf64_Phdr;
+
+   
+
+p_paddr：
+
+::
+
+   man5/elf.5.html
+   On systems for which physical addressing is relevant, this
+   member is reserved for the segment's physical address.
+   Under BSD this member is not used and must be zero.
+
+
+   Oracle Solaris 11 
+   The segment's physical address for systems in which physical addressing is relevant.
+   Because the system ignores physical addressing for application programs, 
+   this member has unspecified contents for executable files and shared objects.
+
+   该字段在所有系统中都没有意义?
+
+
+symbol table
+--------------
+符号表定义在linux-src\include\uapi\linux\elf.h
+
+::
+
+      typedef struct elf64_sym {
+           Elf64_Word st_name;		/* Symbol name, index in string tbl */  在字符串表的索引
+           unsigned char	st_info;	/* Type and binding attributes */   4bits BIND : 4bits TYPE
+           unsigned char	st_other;	/* No defined meaning, 0 */
+           Elf64_Half st_shndx;		/* Associated section index */    符号位置的section
+           Elf64_Addr st_value;		/* Value of the symbol */
+           Elf64_Xword st_size;		/* Associated symbol size */
+      } Elf64_Sym;
+
+
+   objdump -x 反汇编
+
+::
+
+
+st_name
+~~~~~~~~~~~~~~~~~~~~~
+
+symtab中的st_name指向字符串表的索引。
+
+`Symbol Table Section <https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-79797/index.html>`__
+
+
+An index into the object file's symbol string table, which holds the character representations of the symbol names. 
+If the value is nonzero, the value represents a string table index that gives the symbol name. 
+
+st_value
+~~~~~~~~~~~~~~~~
+symtab中的st_value。
+
+`Symbol Values <https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-35166/index.html>`__
+
+st_value的含义取决于object文件类型：
+
+   1. In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
+
+   2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
+
+   3. In **executable and shared object files**, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
+   即指向了 **符号的虚拟地址**。
+
+
+
+st_info
+~~~~~~~~~
+
+::
+
+      /* This info is needed when parsing the symbol table */
+
+      #define STB_LOCAL  0
+      #define STB_GLOBAL 1
+      #define STB_WEAK   2
+
+      /* 表示符号关联(BIND)的对象的信息。
+      /* 若外部引用符号为未解析则为STT_NOTYPE，其类型由找到的外部定义来确定（这里不区分函数、变量）。
+      #define STT_NOTYPE  0         //The symbol's type is not defined.
+      #define STT_OBJECT  1         //The symbol is associated with a data object.
+      #define STT_FUNC    2         //The symbol is associated with a function or other executable code.
+      #define STT_SECTION 3
+      #define STT_FILE    4
+      #define STT_COMMON  5
+      #define STT_TLS     6
+
+      #define ELF_ST_BIND(x)		((x) >> 4)
+      #define ELF_ST_TYPE(x)		(((unsigned int) x) & 0xf)
+
+
+.. figure:: ../images/elf_st_info.png
+   :alt: elf_st_info
+
+
+**实例**:
+
+外部引用符号未被解析TYPE则为STT_NOTYPE，其类型由找到的外部定义来确定（这里不区分函数、变量）；其BIND为STB_GLOBAL。
+
+
+重定位表
+---------------------------------
+Relocation entries (Rel & Rela)
+
+
+elf程序装载
 -----------
 
 elf文件头中的section表按照读写属性在程序头中的segment表中合并。
@@ -253,7 +363,7 @@ ar -t libc.a 查看包含的.O
 相似段合并，两步链接：
 
 1. 空间与地址分配：扫描输入文件，计算合并段的位置和长度；同时生成全局符号表。
-2. 符号解析与重定位：调整代码中的地址等。
+2. 符号解析与重定位：将未定义符号与定义关联，调整代码中的地址等。
 
 objdump -r .o:重定位表，所有引用外部符号的地址。
 

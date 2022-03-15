@@ -120,46 +120,6 @@ PIC与PLT
 3. ld.so运行时决定：主程序中未定义的符号，引用动态库（fpic）。
 
 
-符号表.symtab
-~~~~~~~~~~~~~~~~~~~~~
-.dynsym是.symtab的子集
-
-
-::
-
-   typedef struct {
-        Elf64_Word      st_name;
-        unsigned char   st_info;
-        unsigned char   st_other;
-        Elf64_Half      st_shndx;
-        Elf64_Addr      st_value;
-        Elf64_Xword     st_size;
-   } Elf64_Sym;
-
-
-
-1. symtab中的st_name指向字符串表的索引。
-
-`Symbol Table Section <https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-79797/index.html>`__
-
-
-An index into the object file's symbol string table, which holds the character representations of the symbol names. If the value is nonzero, the value represents a string table index that gives the symbol name. Otherwise, the symbol table entry has no name.
-
-
-1. symtab中的st_value。
-
-`Symbol Values <https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter6-35166/index.html>`__
-
-Symbol table entries for different object file types have slightly different interpretations for the st_value member.
-
-   1. In relocatable files, st_value holds alignment constraints for a symbol whose section index is SHN_COMMON.
-
-   2. In relocatable files, st_value holds a section offset for a defined symbol. st_value is an offset from the beginning of the section that st_shndx identifies.
-
-   3. In **executable and shared object files**, st_value holds a virtual address. To make these files' symbols more useful for the runtime linker, the section offset (file interpretation) gives way to a virtual address (memory interpretation) for which the section number is irrelevant.
-   即指向了 **符号的虚拟地址**。
-
-
 
 运行时地址
 -------------

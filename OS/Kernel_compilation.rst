@@ -270,6 +270,13 @@ dmesg : 查看内核日志缓冲区（包括printk的输出内容）。
 4. eabi - 嵌入式应用二进制接口（Embedded Application Binary Interface）。
    gnu(使用glibc)。hf( hard float,fpu计算并传参，性能好，中断负荷高)
 
+x86 Linux交叉编译工具链可选择:
+
+::
+
+   AArch64 GNU/Linux target (aarch64-none-linux-gnu)
+   gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.xz
+
 
 配置工具链目录：
 
