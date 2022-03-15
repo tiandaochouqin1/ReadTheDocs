@@ -7,9 +7,8 @@ Vim
 
 参考资料
 ==========
-Doc
+Docs
 -----------
-
 
 1. `VimDoc <https://yianwillis.github.io/vimcdoc/doc/help.html>`__
 2. 《Vim - Vi Improved》 - by Steve Oualline
@@ -140,7 +139,16 @@ grep
     y + f + 字符 ：当前位置到字符
     /time回车 y/tutor : 指定字符串范围
 
-    Ctrl + v ：区块模式 I/d/x + Esp
+
+visual mode
+~~~~~~~~~~~~~~~~
+三种可视化模式
+
+::
+
+    Ctrl + v ：区块模式 I/d/x + Esc
+    V ：行
+    v ：字符
 
 
 括号
@@ -165,6 +173,32 @@ grep
 ``q+reg``：记录宏，q停止。
 
 ``@+reg``：应用宏。
+
+外部命令
+--------
+
+::
+
+       
+   1. 进入 shell:
+      在 vim 中执行 :shell 或 :sh
+   
+   2. 在 vim 中执行 shell 命令:
+      :! sort %
+      当前编辑的文件（％）。但该命令仅对文件内容进行操作，命令不会缓存中的内容进行操作。
+
+   
+   3. 读取命令的输出
+      read命令读取文本、命令输出：
+      :read textfile
+      :read ! ls | sort
+
+      write把缓冲区内容作为指定 {cmd} 的标准输入
+      :write !{cmd} 
+
+   4. 使用外部命令过滤文本
+      进入 vim visual模式，选中想操作的文本，然后执行 shell 命令。
+      选中的命令会被 shell 命令的输出替换。
 
 
 标签与会话

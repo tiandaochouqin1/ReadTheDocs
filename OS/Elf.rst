@@ -59,8 +59,8 @@ objdump和readelf可查看解析后的符号表，xxd查看原始二进制符号
 ::
 
       vim -b main.o
-      hex形式： vim执行 %!xxd
-      回写： %!xxd -r
+      hex形式-- vim执行 %!xxd
+      回写  ：%!xxd -r
 
 
 
@@ -233,15 +233,11 @@ symbol table
            Elf64_Word st_name;		/* Symbol name, index in string tbl */  在字符串表的索引
            unsigned char	st_info;	/* Type and binding attributes */   4bits BIND : 4bits TYPE
            unsigned char	st_other;	/* No defined meaning, 0 */
-           Elf64_Half st_shndx;		/* Associated section index */    符号位置的section
+           Elf64_Half st_shndx;		/* Associated section index */    符号定义所处的section。外部引用符号为0
            Elf64_Addr st_value;		/* Value of the symbol */
            Elf64_Xword st_size;		/* Associated symbol size */
       } Elf64_Sym;
 
-
-   objdump -x 反汇编
-
-::
 
 
 st_name
@@ -301,9 +297,49 @@ st_info
    :alt: elf_st_info
 
 
-**实例**:
+符号表反汇编实例
+~~~~~~~~~~~~~~~~~~~
+x86 小端，gcc version 9.3.0 
 
-外部引用符号未被解析TYPE则为STT_NOTYPE，其类型由找到的外部定义来确定（这里不区分函数、变量）；其BIND为STB_GLOBAL。
+外部引用符号f未被解析TYPE则为STT_NOTYPE，其类型由找到的外部定义来确定（这里不区分函数、变量）；其BIND为STB_GLOBAL。
+
+::
+
+      readelf -S main.o
+
+        [10] .symtab           SYMTAB           0000000000000000  000000e8
+             0000000000000120  0000000000000018          11     9     8
+        [11] .strtab           STRTAB           0000000000000000  00000208
+             0000000000000025  0000000000000000           0     0     1
+
+         
+
+      readelf -s main.o
+
+      Symbol table '.symtab' contains 12 entries:
+         Num:    Value          Size Type    Bind   Vis      Ndx Name
+           0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+           1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS main.c
+           2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1
+           3: 0000000000000000     0 SECTION LOCAL  DEFAULT    3
+           4: 0000000000000000     0 SECTION LOCAL  DEFAULT    4
+           5: 0000000000000000     0 SECTION LOCAL  DEFAULT    6
+           6: 0000000000000000     0 SECTION LOCAL  DEFAULT    7
+           7: 0000000000000000     0 SECTION LOCAL  DEFAULT    8
+           8: 0000000000000000     0 SECTION LOCAL  DEFAULT    5
+           9: 0000000000000000    35 FUNC    GLOBAL DEFAULT    1 main
+          10: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND _GLOBAL_OFFSET_TABLE_
+          11: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND f
+
+
+      f符号表项起始地址: 0xe8 + (Elf64_Sym结构体 24Bytes * f编号11) = 0x1f0;
+
+         000001f0: 2300 0000 1000 0000 0000 0000 0000 0000  #...............
+         00000200: 0000 0000 0000 0000 006d 6169 6e2e 6300  .........main.c.
+         00000210: 6d61 696e 005f 474c 4f42 414c 5f4f 4646  main._GLOBAL_OFF
+          
+      可得: st_name=0x23; bind=1,type=0;st_shndx=st_value=st_size=0
+
 
 
 重定位表
