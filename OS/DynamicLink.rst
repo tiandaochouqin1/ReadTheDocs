@@ -505,13 +505,16 @@ visibility
      another shared library
 
 
-common
+common与bss
 ------------
 1. `GCC 下的 COMMON 块控制 <https://www.yhspy.com/2020/06/19/GCC-%E4%B8%8B%E7%9A%84-COMMON-%E5%9D%97%E6%8E%A7%E5%88%B6/>`__
-
 2.  `Symbol Processing <https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter2-90421.html>`__
 
-COMMOM段：未被分配位置的未初始化数据，将弱全局符号的决定权留给链接器。gcc中弱符号，common存放未被初始化的全局变量，bss存放未被初始化的静态变量和初始化为0的全局、静态变量。
+COMMOM段： ``未被分配位置`` 的未初始化数据，将弱全局符号的决定权留给链接器。
+
+gcc中弱符号: common存放未被初始化的全局变量，bss存放未被初始化的静态变量和初始化为0的全局、静态变量。
+
+编译选项：
 
 1. -fno-common：specifies that the compiler places uninitialized global variables in the BSS section of the object file.
    一个符号只能分配一个空间，所以重复符号放到bss段后会报错。
