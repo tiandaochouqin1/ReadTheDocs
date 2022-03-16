@@ -162,7 +162,8 @@ isn some architectures (x86-32, x86-64)
 
 1. .got.plt[0] is the link time address of _DYNAMIC. 
 2. .got.plt[1] and .got.plt[2] are reserved by ld.so. 
-3. .got.plt[1] is a descriptor of the current component while .got.plt[2] is the address of the PLT resolver.
+    .got.plt[1] is a descriptor of the current component 
+     while .got.plt[2] is the address of the PLT resolver.
 
 
 - eager binding:ld -z now、LD_BIND_NOW=1。更安全。实际大部分符号不会被使用。
@@ -170,21 +171,22 @@ isn some architectures (x86-32, x86-64)
 
 plt过程
 ~~~~~~~~~~~~~~
-PLT的基本流程：
+PLT的基本流程(plt表)：
 
 ::
 
+    /** csapp中的GOT是指(.got.plt + got)
       PLT0:
-      push *(GOT + 4)    4. 将本so模块id压入栈
-      jump *(GOT + 8)    5. 调用_dl_runtime_resolve()完成符号解析和重定位，并将地址填入bar@GOT。
+      push *(GOT + 4)    4. 将本so模块id压入栈.
+      jump *(GOT + 8)    5. 调用_dl_runtime_resolve()，根据id+n完成符号解析和重定位，并将地址填入bar@GOT。
                         参数为2、3入栈的值。
 
       ...
 
       bar@plt:
       jmp *(bar@GOT)     1. 若符号已绑定，则跳到符号位置；若未绑定，则跳到 2.push n的位置
-      push n             2. 将符号在重定位表中的下标压入栈
-      jump PLT0          3. 跳到PLT开始处
+      push n             2. 将符号在重定位表中的下标压入栈。rel.plt
+      jump PLT0          3. 跳到PLT0处
 
 
 
@@ -195,6 +197,24 @@ PLT的基本流程：
 
 符号哈希表.hash：加快符号查找。
 
+
+.got.plt表
+~~~~~~~~~~~~
+ELF将GOT拆分成两个表".got"和"".got.plt"。其中"".got"用来保存全局变量的引用地址。".got.plt"用来保存函数引用的地址
+
+.got.plt表前三项具有特殊意义：
+
+::
+
+   ---------------------------------
+   .dynamic段地址
+   ---------------------------------
+   本模块ID
+   ---------------------------------
+   _dl_runtime_resolve()地址
+   ---------------------------------
+   ... ...
+   ---------------------------------
 
 fno-plt
 ~~~~~~~~~~~~~
