@@ -280,16 +280,44 @@ Linux on AArch64 is compiled with that flag so that stack frames look like regul
 
 aarch64函数调用Stack
 ----------------------
+1. 由x29保存的fp `递归串起来` —— ``本层fp起始地址中保存着上层caller fp的地址``。
 
+2. fp+8则为 link returnd地址，该地址addr2line可得出对应函数。
+
+3. dump出来的stack memory通常按地址增长方向显示。
+
+栈帧的保存与恢复
+~~~~~~~~~~~~~~~
+::
+
+   /* 函数调用，会将bl的下一条指令保存到x30
+   bl func
+
+   -->
+
+   /* 保存x30 -> 保存x29 -> sp 增长
+   stp    x29, x30, [sp, #-16]!
+   /* 将新栈地址保存到x29
+   mov    x29, sp
+   ......
+
+   /* 恢复
+   ldp     x29, x30, [sp], #32
+   ret
+
+
+
+栈帧视图
+~~~~~~~~~~~~
 ::
 
         |                      |
-        | caller's stack frame |
-        |                      |       //x29,fp(栈保存的sp)
+        | caller's stack frame |     bigger addr
+        |                      |     
         +----------------------+
-        | saved return address |  +8   //x30,lr
+        | saved return address |  +8   // x30,lr
         +----------------------+
-   fp-->| saved frame pointer  |   0
+   fp-->| saved frame pointer  |   0   // x29,fp(栈保存的sp)
         +----------------------+
         | saved x22            |  -8
         +----------------------+
