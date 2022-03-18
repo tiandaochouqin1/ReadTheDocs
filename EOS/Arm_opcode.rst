@@ -28,6 +28,8 @@ arm简介
 
    :download:`Software_Optimization_Guide <../files/arm/Arm_Neoverse_N1_Software_Optimization_Guide.pdf>`
    
+   :download:`neon_programmers_guide <../files/arm/DEN0018A_neon_programmers_guide.pdf>`
+
 
 4. arm-asm `RM Compiler armasm Reference Guide <https://developer.arm.com/documentation/dui0802/a/A64-General-Instructions/ORR--immediate->`__ 。
    比arm-arm的指令内容详细，如5.105 ORR (immediate) 。
@@ -74,15 +76,25 @@ opcode指令编码
    * C6.2 Alphabetical list of A64 base instructions
    * C4.1 A64 instruction set encoding
 
+arm流水线
+-----------
+1. 流水线级别取决于具体core类型。
+   
+   * cortex-a53:In-order, eight stage pipeline;
+   * a57:Out-of-order, 15+ stage pipeline; 
+   * N1: uperscalar, variable-length, out-of-order pipeline.   
+   * ARM7及之前是三级流水线执行(取指->译码->执行)。
 
-PC
-----
-not general purpose register
-
-ARM指令的三级流水线执行(取指->译码->执行)
+3. branch分支指令会刷新流水线。因为Instruction fetches are speculative.Execution is not guaranteed, because there can be several unresolved
+branches in the pipeline.
 
 
-1. aarch64模式下，pc指向正在执行的指令。使用 ``MOV PC,R0`` 读取。 `ARM Compiler armasm User Guide Version 6.00  <https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Program-Counter-in-AArch64-state>`__
+PC地址指向
+------------
+Program Counter, not general purpose register
+
+
+1. aarch64模式下，pc指向正在执行的指令。使用 mov 从pc读取。 `ARM Compiler armasm User Guide Version 6.00  <https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Program-Counter-in-AArch64-state>`__
 2. During execution, the PC does not contain the address of the currently executing instruction.
    The address of the currently executing instruction is typically ``PC-8 for A32, or PC-4 for T32.``  
    使用 ``ADR Xd, .`` 

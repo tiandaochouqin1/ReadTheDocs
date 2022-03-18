@@ -77,6 +77,14 @@ arm64常用寄存器
 * callee-saved registers: 保存在callee的stack上,并在返回时恢复。
 * caller-saved registers: caller在调用subroutine前需保存,因为callee会进行修改且不会恢复。
 
+arm64浮点寄存器
+~~~~~~~~~~~~~~~~
+1. `ARM Developer Suite Assembler Guide  <https://developer.arm.com/documentation/dui0068/b/Vector-Floating-point-Programming/Floating-point-registers>`__
+
+* 32 single-precision registers, s0 to s31. Each register can contain either a single-precision floating-point value, or a 32-bit integer.
+
+* These 32 registers are also treated as 16 double-precision registers, d0 to d15. dn occupies the same hardware as s(2n) and s(2n+1).
+
 
 scratch register
 ~~~~~~~~~~~~~~~~~
@@ -201,6 +209,7 @@ x86与arm函数调用规约
 1. `[原创]常见函数调用约定(x86、x64、arm、arm64) <https://bbs.pediy.com/thread-224583.htm>`__，主要是windows
 2. `GCC的调用约定 <https://blog.csdn.net/weixin_44395686/article/details/105036297>`__
 3. `system V ABI <https://blog.csdn.net/weixin_44395686/article/details/105022059>`__
+4. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/AArch64-Floating-point-and-NEON/NEON-and-Floating-Point-architecture/Floating-point-parameters>`__
 
 
 X86 函数调用规约
@@ -228,12 +237,21 @@ x64的调用约定只有一种，遵守system v ABI的规范。但是Linux和win
    2. 在Linux上，则是前6个参数通过rdi，rsi，rdx，rcx，r8，r9传递。
    3. 其余的参数按照从右向左的顺序压栈。
 
+若入参、返回值为浮点型，则会对应使用浮点寄存器，可与整型寄存器一起使用。
+
 ARM和ARM64函数调用规约
 ---------------------------
 使用的是ATPCS(ARM-Thumb Procedure Call Standard/ARM-Thumb过程调用标准)的函数调用约定。
 
 1. ARM：参数1~参数4 分别保存到 R0~R3 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 R0 中。
 2. ARM64：参数1~参数8 分别保存到 X0~X7 寄存器中 ，剩下的参数从右往左一次入栈，被调用者实现栈平衡，返回值存放在 X0 中。
+
+浮点型
+~~~~~~~~
+1. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/AArch64-Floating-point-and-NEON/NEON-and-Floating-Point-architecture/Floating-point-parameters>`__
+
+* the floating-point parameters are passed in the floating-point H, S or D registers and other parameters are passed in integer X or W registers.
+* Both integer (general-purpose) and floating-point registers can be used at the same time. 
 
 
 aarch64堆栈
@@ -246,7 +264,69 @@ aarch64堆栈
 3. `Releases · ARM-software/abi-aa  <https://github.com/ARM-software/abi-aa/releases>`__ ; Procedure Call、Elf等内容。
 
 
-**栈帧16Bytes对齐。** 变量所占空间与其类型一致，使用对应宽度的寄存器保存。
+重点概念
+---------
+1. **栈帧16Bytes对齐。** 
+2. **变量所占空间与其类型一致，使用对应宽度的寄存器保存。**
+
+aarch64函数调用Stack
+----------------------
+1. 由x29保存的fp `递归串起来` —— ``本层fp起始地址中保存着上层caller fp的地址``。
+
+2. fp+8则为 link returnd地址，该地址addr2line可得出对应函数。
+
+3. dump出来的stack memory通常按地址增长方向显示。
+
+栈帧的保存与恢复
+~~~~~~~~~~~~~~~~~
+栈帧地址=栈顶地址=入栈的最后一个元素的地址
+
+::
+
+   /* 函数调用，会将bl的下一条指令保存到x30
+   bl func
+
+   -->
+
+   /* 保存x30 -> 保存x29 -> sp 增长
+   stp    x29, x30, [sp, #-16]!
+   /* 将新栈地址保存到x29。当前x29的值为旧x29被保存到栈的地址
+   mov    x29, sp
+   ......
+
+   /* 恢复
+   ldp     x29, x30, [sp], #32
+   ret
+
+
+
+STP: Store Pair of Registers. 计算地址，并将两个寄存器值保存到计算出来的地址。
+
+STP Xt1, Xt2, [Xn|SP, #imm]! ; 64-bit general registers, Pre-index
+
+<Xt1> Is the 64-bit name of the ``first`` general-purpose register to be transferred, encoded in the "Rt" field.
+
+栈帧视图
+~~~~~~~~~~~~
+::
+
+        |                      |
+        | caller's stack frame |     bigger addr
+        |                      |     
+        +----------------------+
+        | saved return address |  +8   // x30,lr
+        +----------------------+
+   fp-->| saved frame pointer  |   0   // x29,fp(栈保存的sp)
+        +----------------------+
+        | saved x22            |  -8
+        +----------------------+
+        | saved x21            |  -16
+        +----------------------+
+        | saved x20            |  -24
+        +----------------------+
+   sp-->| saved x19            |  -32
+        +----------------------+
+
 
 frame-pointer
 --------------
@@ -277,55 +357,3 @@ The indirect addressing with the post-increment where the saved values x29, x30,
 The code examples above are called the prologue and epilogue of the function respectively. 
 
 Linux on AArch64 is compiled with that flag so that stack frames look like regular code (except assembly code).
-
-aarch64函数调用Stack
-----------------------
-1. 由x29保存的fp `递归串起来` —— ``本层fp起始地址中保存着上层caller fp的地址``。
-
-2. fp+8则为 link returnd地址，该地址addr2line可得出对应函数。
-
-3. dump出来的stack memory通常按地址增长方向显示。
-
-栈帧的保存与恢复
-~~~~~~~~~~~~~~~
-::
-
-   /* 函数调用，会将bl的下一条指令保存到x30
-   bl func
-
-   -->
-
-   /* 保存x30 -> 保存x29 -> sp 增长
-   stp    x29, x30, [sp, #-16]!
-   /* 将新栈地址保存到x29
-   mov    x29, sp
-   ......
-
-   /* 恢复
-   ldp     x29, x30, [sp], #32
-   ret
-
-
-
-栈帧视图
-~~~~~~~~~~~~
-::
-
-        |                      |
-        | caller's stack frame |     bigger addr
-        |                      |     
-        +----------------------+
-        | saved return address |  +8   // x30,lr
-        +----------------------+
-   fp-->| saved frame pointer  |   0   // x29,fp(栈保存的sp)
-        +----------------------+
-        | saved x22            |  -8
-        +----------------------+
-        | saved x21            |  -16
-        +----------------------+
-        | saved x20            |  -24
-        +----------------------+
-   sp-->| saved x19            |  -32
-        +----------------------+
-
-      

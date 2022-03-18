@@ -143,6 +143,11 @@ arm mmu
 ----------
 1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
 
+enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
+
+The Translation Lookaside Buffer (TLB) is a cache of recently accessed page translations in the MMU. 
+
+
 工具使用
 ==========
 内存debug
