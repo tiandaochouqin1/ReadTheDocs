@@ -1516,7 +1516,7 @@ clocksource和clockevents
 信号
 ==========
 1. `Linux信号（signal) 机制分析 <https://www.cnblogs.com/hoys/archive/2012/08/19/2646377.html>`__
-2. 
+
 
 原理
 ------
@@ -1528,7 +1528,7 @@ clocksource和clockevents
 ~~~~~~~~~~
 1. 内核设置进程PCB的未决信号集对应的位并将信号信息加入未决信号信息链。（实时信号可重复注册）
 2. 若进程睡眠且处于可被中断的优先级上，则唤醒。
-3. 处理时机：从内核态返回用户态时。
+3. 处理时机： ``从内核态返回用户态时``。
 4. 处理信号有三种类型：进程接收到信号后退出；进程忽略该信号；进程收到信号后执行用户设定用系统调用signal的函数
 
 
@@ -1648,8 +1648,11 @@ SUSv3 规定了这些函数，但将它们标记为已废止。SUSv4 则将其�
 
 context使得linux程序可以在用户态执行上下文切换，从而避免了进程或者线程切换导致的切换用户空间、切换堆栈，因此，效率相对更高。
 
-信号的产生
+内核如何产生信号
 ----------------
+1. `为什么发送segment fault信号的进程总是PID0 ？ - One Man's Yammer  <http://laoar.github.io/blogs/435/>`__
+
+
 在内核中，force_sig_fault_to_task获取了current (task_strcut,包括堆栈等信息), 然后产生信号(send_signal,带第三个参数，给sigaction处理).
 
 ::
