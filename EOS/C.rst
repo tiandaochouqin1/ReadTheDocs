@@ -12,6 +12,115 @@ C
 1. 在线gdb：https://www.onlinegdb.com/myfiles
 2. 在线汇编：https://godbolt.org/
 
+
+语法知识
+=========
+The C Programming Language 2ed.pdf
+
+extern
+---------
+1. static： The static declaration, applied to an external variable or function, limits the scope of
+that object to the rest of the source file being compiled.
+2. extern： Functions themselves are always external, because C does not allow functions to be defined inside other functions
+
+位域、联合体与大小端
+---------------------
+1. `简单讲解C/C++中大小端及其对位域的影响 - FranzKafka Blog  <https://coderfan.net/big-endian-and-little-endian-in-c-or-c-plus.html>`__
+
+如果是 ``大端模式，其位域排列顺序对应在内存中由高bit指向低bit``，而小端模式则相反。
+
+::
+
+    #include <stdio.h>
+
+   typedef struct{
+       int a;       int b;       int c;
+   }S_a;
+
+   typedef struct{
+       int a:4;       int b:5;       int c:6;       int d:7;
+       // int e:6;
+   }S_b;
+
+   int main ()
+   {
+       S_a s_a;       s_a.a = 1;       s_a.b = 2;       s_a.c = 3;
+       S_b s_b;       s_b.a = 1;       s_b.b = 2;       s_b.c = 3;       s_b.d = 5;
+       // s_b.e = 6; 
+
+       int a[3];       a[0]=1;       a[1]=2;       a[2]=3;
+
+       printf("struct: %p %p %p\n", &s_a.a, &s_a.b, &s_a.c);
+       printf("array:  %p %p %p\n", &a[0], &a[1], &a[2]);
+       int* a2 = &s_b;
+       printf("bitfield:0x%x \n", a2[0]);
+
+       return 0;
+   }
+
+
+::
+    
+      x86小端结果:
+      struct: 0x7ffea082ac00 0x7ffea082ac04 0x7ffea082ac08
+      array:  0x7ffea082ac0c 0x7ffea082ac10 0x7ffea082ac14
+      bitfield:0x28621 
+
+      arrch64_be大端端结果:
+      struct和array的成员均是地址逐渐增长，与x86一直
+      bitfiesd:0x110617ff
+
+
+大小端读取的bitfield对比：(aarch64_be剩余未使用bit为1，x86为0)
+
+::
+
+                    |a:4=1|b:5=2 |c:6=3  |d:7=5     |剩余10bits为1
+    大端0x110617ff： 0001  0001  0000  0110  0001  0111  1111  1111
+
+                    |剩余10bits为0 |d:7=5     |c:6=3 |b:5=2  |a:4=1|       
+    小端0x00028621： 0000  0000  0000  0010  1000  0110  0010  0001
+
+
+可得： ``大端时bitfiled先往大地址存数据``，小端先往小地址存数据。 位域本身的bits无大小端。
+
+推测(??)：
+
+1. 大小端按照bit全部反序(而不是按照Bytes),这样可兼容 Byte和bitfield (屏蔽了内部bit顺序)。
+2. 其它数据类型(int/char等)Byte读取，计算机对我们屏蔽了Byte内部bit顺序的差异，所以平常可按Byte理解。
+3. bitfield内部bit也全部反序，读写入时计算机仍然屏蔽了bitfield内部bit的顺序差异
+
+位域结构体顺序
+~~~~~~~~~~~~~~~~
+位域在大端和小端系统上的定义顺序需要相反，这样无论在大小端系统，按bitfield保存值后，按整体读出来的值是一样的。。(见iphdr)
+
+
+`Linux v5.17-rc8 - include/uapi/linux/ip.h  <https://sbexr.rabexc.org/latest/sources/c7/124a3bc7fedb4c.html#000560010006a001>`__
+
+::
+
+   struct iphdr {
+   #if defined(__LITTLE_ENDIAN_BITFIELD)
+   	__u8	ihl:4,
+   		version:4;
+   #elif defined (__BIG_ENDIAN_BITFIELD)
+   	__u8	version:4,
+     		ihl:4;
+   #else
+   #error	"Please fix <asm/byteorder.h>"
+   #endif
+   	__u8	tos;
+   	__be16	tot_len;
+   	__be16	id;
+   	__be16	frag_off;
+   	__u8	ttl;
+   	__u8	protocol;
+   	__sum16	check;
+   	__be32	saddr;
+   	__be32	daddr;
+   	/*The options start here. */
+   };
+
 优秀项目学习
 =================
 

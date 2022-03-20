@@ -106,8 +106,8 @@ https://www.cnblogs.com/jyfyonghu/p/11256608.html
 
 同时提供原子变量（实际上就是int），用作原子操作的参数。
 
-CAS实现
--------
+X86 CAS实现
+------------
 
 X86对应一个原子命令cmpxchgl，arm则使用内存屏障dmb+原子加载ldxr+原子存贮stlxr
 实现。
@@ -126,8 +126,10 @@ X86对应一个原子命令cmpxchgl，arm则使用内存屏障dmb+原子加载ld
        return 0;
    }
 
-x8664汇编
-~~~~~~~~~
+
+
+汇编
+
 
 ::
 
@@ -141,14 +143,41 @@ x8664汇编
    movl    $0, %eax
    popq    %rbp
 
-arm64汇编
-~~~~~~~~~
 
-LDXR (load exclusive register 和STXR （store exclusive
-register）及其变种指令。
 
-`ARMv8
-架构与指令集.学习笔记 <https://www.cnblogs.com/lvdongjie/p/6644821.html>`__
+
+
+
+arm64原子操作
+-------------------
+1. `ARMv8 架构与指令集.学习笔记 <https://www.cnblogs.com/lvdongjie/p/6644821.html>`__
+2. `ARMv8.1平台下新添加原子操作指令_  <https://blog.csdn.net/Roland_Sun/article/details/107552574>`__
+3. `ARM64+Linux5.0 自旋锁  <https://blog.csdn.net/zhoutaopower/article/details/117966631>`__
+4. `ARM平台下独占访问指令LDREX和STREX的原理与使用详解  <https://blog.csdn.net/Roland_Sun/article/details/47670099>`__
+
+armv8.1指令集添加了不少新功能，包括lse(large system extension)——包括许多原生原子操作指令。
+
+在这之前必须使用LL/SC操作来实现原子操作。
+
+
+LL/SC
+~~~~~~~~
+Load-Link（LL）和Store-Conditional（SC）。
+
+LL/SC操作本质上是 ``很多CPU核去抢某个内存变量的独占访问``，在核数量日渐增长的情况下会造成性能问题。
+
+LL操作返回一个内存地址上当前存储的值，后面的SC操作，会向这个内存地址写入一个新值，
+但是只有在这个内存地址上存储的值， ``从上个LL操作开始直到现在都没有发生改变的情况下``，
+写入操作才能成功，否则都会失败。
+
+对于ARM平台来说，也在硬件层面上提供了对LL/SC的支持，LL操作用的是LDREX指令，SC操作用的是STREX指令。
+
+LDXR
+~~~~~~~
+LDXR (load exclusive register 和STXR （store exclusive register）及其变种指令。
+
+stlxr失败后会重试。
+
 
 ::
 
@@ -181,10 +210,96 @@ register）及其变种指令。
            .ident  "GCC: (Debian 8.3.0-6) 8.3.0"
            .section        .note.GNU-stack,"",@progbits
 
-stlxr失败后重试。
+
+
+LSE指令
+~~~~~~~~~~
+LD/ST:ADD/SET/CLR/EOR/SMAX/UMAX、SWP、CAS 
+
+ST打头的指令和LD打头的指令，基本功能上没区别。
+
+只不过LD打头的指令会把在执行该原子指令之前内存中的值存入第二个参数指定的寄存器中，ST打头的指令则少一个参数，没有此功能。
+
+默认有32位和64位两种形式。可加后缀H（Halfword）、B（Byte）。
+
+::
+
+   LDADD <Ws>, <Wt>, [<Xn|SP>]
+   LDADD <Xs>, <Xt>, [<Xn|SP>]
+    
+   STADD <Ws>, [<Xn|SP>]
+   STADD <Xs>, [<Xn|SP>]
+
+
+staddh与spinlock的实现
+~~~~~~~~~~~~~~~~~~~~~~~~
+1. `Arm A64 Instruction Set Architecture  <https://developer.arm.com/documentation/ddi0596/2021-12/Base-Instructions/STADD--STADDL--Atomic-add-on-word-or-doubleword-in-memory--without-return--an-alias-of-LDADD--LDADDA--LDADDAL--LDADDL-?lang=en>`__
+
+Atomic add on halfword in memory, without return, atomically loads a 16-bit halfword from memory, adds the value held in a register to it, and stores the result back to memory.
+
+::
+
+   static inline void arch_spin_lock(arch_spinlock_t *lock)
+   {
+   	unsigned int tmp;
+   	arch_spinlock_t lockval, newval;
+    
+   	asm volatile(
+   	/* Atomically increment the next ticket. */
+   	ARM64_LSE_ATOMIC_INSN(
+   	/* LL/SC */
+   "	prfm	pstl1strm, %3\n"
+   "1:	ldaxr	%w0, %3\n"
+   "	add	%w1, %w0, %w5\n"
+   "	stxr	%w2, %w1, %3\n"
+   "	cbnz	%w2, 1b\n",
+   	/* LSE atomics */
+   "	mov	%w2, %w5\n"
+   "	ldadda	%w2, %w0, %3\n"
+   	__nops(3)
+   	)
+   	/* Did we get the lock? */
+   "	eor	%w1, %w0, %w0, ror #16\n"
+   "	cbz	%w1, 3f\n"
+   	/*
+   	 * No: spin on the owner. Send a local event to avoid missing an
+   	 * unlock before the exclusive load.
+   	 */
+   "	sevl\n"
+   "2:	wfe\n"
+   "	ldaxrh	%w2, %4\n"
+   "	eor	%w1, %w2, %w0, lsr #16\n"
+   "	cbnz	%w1, 2b\n"
+   	/* We got the lock. Critical section starts here. */
+   "3:"
+   	: "=&r" (lockval), "=&r" (newval), "=&r" (tmp), "+Q" (*lock)
+   	: "Q" (lock->owner), "I" (1 << TICKET_SHIFT)
+   	: "memory");
+   }
+    
+   static inline void arch_spin_unlock(arch_spinlock_t *lock)
+   {
+   	unsigned long tmp;
+    
+   	asm volatile(ARM64_LSE_ATOMIC_INSN(
+   	/* LL/SC */
+   	"	ldrh	%w1, %0\n"
+   	"	add	%w1, %w1, #1\n"
+   	"	stlrh	%w1, %0",
+   	/* LSE atomics */
+   	"	mov	%w1, #1\n"
+   	"	staddlh	%w1, %0\n"
+   	__nops(1))
+   	: "=Q" (lock->owner), "=&r" (tmp)
+   	:
+   	: "memory");
+   }
+
+
+
 
 ABA问题
-~~~~~~~
+---------
 
 1. 进程P1在共享变量中读到值为A
 2. P1被抢占了，进程P2执行
@@ -193,17 +308,25 @@ ABA问题
 
 使用double-CAS解决。
 
+
+
 ARM内存屏障
 -----------
 
 由于一些编译器优化或者CPU设计的流水线乱序执行，导致最终内存的访问顺序可能和代码中的逻辑顺序不符，所以需要增加内存屏障指令来保证顺序性。
+
 ARM平台上存在三种内存屏障指令：
 
-1. DMB{cond} {option}
+1. DMB{cond} {option}：数据内存屏障
+   
    这种指令只影响到了内存访问指令的顺序，保证在此指令前的内存访问完成后才执行后面的内存访问指令。
-2. DSB{cond} {option}
-   比DMB更加严格，保证在此指令前的内存访问指令/cache/TLB/分支预测指令都完成，然后才会执行后面的所有指令。
-3. ISB{cond} {option}
+
+2. DSB{cond} {option}：数据同步屏障
+   
+   ``比DMB更加严格``，保证在此指令前的内存访问指令/cache/TLB/分支预测指令都完成，然后才会执行后面的所有指令。
+
+3. ISB{cond} {option}：指令同步屏障
+   
    最为严格的一种，冲洗流水线和预取buffer，然后才会从cache或者内存中预取ISB后面的指令。
 
 option的选择：
@@ -240,6 +363,22 @@ option的选择：
 
 smp相关的内存屏障都加入了ish选项，也就是限制指令只针对inner shareable
 domain。
+
+单向内存屏障
+~~~~~~~~~~~~~
+1. `Arm64内存屏障_Roland_Sun的博客-CSDN博客_arm 内存屏障  <https://blog.csdn.net/Roland_Sun/article/details/107468055>`__
+
+
+ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指令。
+
+1. Load-Acquire：这条指令之后的所有 ``加载和存储操作一定不会被重排序到这条指令之前``；
+2. Store-Release：这条指令之前的所有加载和存储才做一定不会被重排序到这条指令 ``之后``；
+3. 数据内存屏障DMB = Load-Acquire + Store-Release
+
+指令形式：
+
+1. Store-Release：基本指令后面加上L；
+2. Load-Acquire：基本指令后面加上A；
 
 锁
 ==========
