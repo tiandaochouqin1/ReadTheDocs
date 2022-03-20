@@ -60,13 +60,16 @@ GDB
         
     1. bt/backtrace -full n:  显示n层调用链并打印局部变量
 
-    2. info frame/f n :       显示栈信息，当前栈编号为0
+    2. info frame/f [n] :       显示栈信息，当前栈编号为0
 
     3. up/down :              向上向下 切换栈
 
-    4. info args/locals :      当前栈帧
+    4. f n/addr :              切换到指定栈
 
-    5. info variables/functions : 当前程序
+    5. info args/locals :      当前栈帧
+
+    6. info variables/functions : 当前程序
+
 
 dump栈内存
 ----------
@@ -116,6 +119,36 @@ tui
 
 pwndbg和peda
 -------------
+
+
+coredump
+-----------
+1. `coredump配置、产生、分析以及分析示例 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/11160510.html>`__
+2. `调试器GDB的基本使用方法 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/9633254.html#core_gdb>`__
+
+
+保存了问题现场。可回溯堆栈等。 ``gdb ./main ./core`` 即可回到现场。
+
+配置
+~~~~~~
+
+* 打开coredump: ``ulimit -c 81960``。
+* coredump文件默认存储位置与可执行文件在同一目录下，文件名为core。
+
+可以通过/proc/sys/kernel/core_pattern进行设置。
+
+::
+       
+   %p  出Core进程的PID
+   %u  出Core进程的UID
+   %s  造成Core的signal号
+   %t  出Core的时间，从1970-01-0100:00:00开始的秒数
+   %e  出Core进程对应的可执行文件名
+
+   $ cat /proc/sys/kernel/core_pattern
+   |/usr/share/apport/apport %p %s %c %d %P %E
+
+
 
 GDB原理
 ========

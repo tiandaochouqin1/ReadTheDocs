@@ -89,6 +89,7 @@ that object to the rest of the source file being compiled.
 1. 大小端按照bit全部反序(而不是按照Bytes),这样可兼容 Byte和bitfield (屏蔽了内部bit顺序)。
 2. 其它数据类型(int/char等)Byte读取，计算机对我们屏蔽了Byte内部bit顺序的差异，所以平常可按Byte理解。
 3. bitfield内部bit也全部反序，读写入时计算机仍然屏蔽了bitfield内部bit的顺序差异
+4. 如何验证? `C语言面试题——位域及大小端模式的理解 - 云+社区 - 腾讯云  <https://cloud.tencent.com/developer/article/1692952>`__
 
 位域结构体顺序
 ~~~~~~~~~~~~~~~~
@@ -120,6 +121,7 @@ that object to the rest of the source file being compiled.
    	__be32	daddr;
    	/*The options start here. */
    };
+
 
 优秀项目学习
 =================
