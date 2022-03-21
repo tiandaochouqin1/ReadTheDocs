@@ -84,7 +84,19 @@ that object to the rest of the source file being compiled.
 
 可得： ``大端时bitfiled先往大地址存数据``，小端先往小地址存数据。 位域本身的bits无大小端。
 
-推测(??)：
+
+位域的存储顺序取决于实现
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. `Bit field extract with struct and endianness in C - Stack Overflow  <https://stackoverflow.com/questions/54223407/bit-field-extract-with-struct-and-endianness-in-c>`__
+2. `EXP11-C. Do not make assumptions regarding the layout of structures with bit-fields - SEI CERT C Coding Standard - Confluence  <https://wiki.sei.cmu.edu/confluence/display/c/EXP11-C.+Do+not+make+assumptions+regarding+the+layout+of+structures+with+bit-fields>`__
+3. 6.7.2 Type specifiers, paragraph 11 of the C Standard:
+
+以上两处参考文献均指出：
+
+1. 存储顺序：The order of allocation of bit-fields within a unit (high-order to low-order or low-order to high-order) is ``implementation-defined``. 
+2. 对齐：The alignment of the addressable storage unit is unspecified.
+
+推测(××)：
 
 1. 大小端按照bit全部反序(而不是按照Bytes),这样可兼容 Byte和bitfield (屏蔽了内部bit顺序)。
 2. 其它数据类型(int/char等)Byte读取，计算机对我们屏蔽了Byte内部bit顺序的差异，所以平常可按Byte理解。
