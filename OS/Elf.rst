@@ -42,7 +42,7 @@ readelf
 2. readelf -S : 节区表/节头部表Section Headers。 objdump -h(只显示关键段)。
 3. readelf -r .so ：查看重定位表。
 4. readelf -s : 符号表（nm、objdump -t）
-5. readelf -l : 程序头中的段表——Program Headers,以及与Section的对应关系
+5. readelf -l : rogram Headers,以及segment与Section的对应关系
 6. readelf -a : 所有
 7. readelf -d : 查看so的.dynamic段。
 
@@ -78,8 +78,6 @@ ELF结构
 
 
 - Elf文件头：readelf -h 
-- 
-1. 
 
 
 

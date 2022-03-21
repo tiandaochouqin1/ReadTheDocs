@@ -139,8 +139,8 @@ POSIX与System V IPC
 伪终端
 -----------
 
-arm mmu
-----------
+☆arm mmu
+------------------
 1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
 
 enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.

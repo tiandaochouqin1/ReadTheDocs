@@ -8,11 +8,12 @@ GDB
 ===============
 参考文档
 -----------
-1. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
-2. https://sourceware.org/gdb/onlinedocs/gdb/ 
+1. https://sourceware.org/gdb/onlinedocs/gdb/ 
+2. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
 3. `GDB调试入门指南 <https://zhuanlan.zhihu.com/p/74897601>`__
-4. :download:`gdb_slides <../files/gdb_slides.pdf>`
-5. `GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__
+4. `GDB中应该知道的几个调试方法 | 酷 壳 - CoolShell  <https://coolshell.cn/articles/3643.html>`__
+5. :download:`gdb_slides <../files/gdb_slides.pdf>`
+6. `GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__
 
 基本命令
 ----------
@@ -40,18 +41,34 @@ GDB
 
    10. p打印：        print。以c语句形式打印;
 
-   11. list打印：    list <location>,按行打印源码;
-
-   12. info打印：    info registers/frame/break/sharedlibrary —— 寄存器、栈帧、断电、共享库
-
-
-   13. 反汇编:   disassemble func
+   11. list打印：    list <location>,按行打印源码; 
    
-   14. 符号文件更换： symbol-file obj/kern/kernel
+   12. 指定源码：    directory
 
-   15. layout：      显示调试窗口
+   13. info打印：    info registers/frame/break/sharedlibrary —— 寄存器、栈帧、断电、共享库
 
-   16. 一直显示下一行源码对应的汇编: set disassemble-next-line on
+
+   14. 反汇编:   disassemble func
+   
+   15. 符号文件更换： symbol-file obj/kern/kernel
+
+   16. layout：      显示调试窗口
+   
+   17. 变量:       $a 定义gdb变量；set可更改程序变量和gdb变量
+   
+   18. 参数:       set args命令、-args参数
+
+   19. 一直显示下一行源码对应的汇编: set disassemble-next-line on
+
+x命令
+--------
+::
+
+    x/x 以十六进制输出
+    x/d 以十进制输出
+    x/c 以单字符输出
+    x/i  反汇编 – 通常，我们会使用 x/10i $ip-20 来查看当前的汇编（$ip是指令寄存器）
+    x/s 以字符串输出
 
 
 栈帧
@@ -148,6 +165,12 @@ coredump
    $ cat /proc/sys/kernel/core_pattern
    |/usr/share/apport/apport %p %s %c %d %P %E
 
+
+编译选项
+-------------
+1. -g: os native format，兼容性。
+2. -ggdb: -ggdb2。gdb专用debug信息。
+3. -ggdb3: 更多debug信息，包括宏。
 
 
 GDB原理
