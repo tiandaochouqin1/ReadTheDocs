@@ -11,7 +11,7 @@ Linux Kernel
 =============
 以下各问题可新开主题来回答。
    
-1. 虚拟内存？段选择子的作用？三级页表的工作原理？
+1. 虚拟内存？分页？page fault ？
 2. 上下文切换的具体过程？
 3. 时间子系统——RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 4. 异常、陷阱、中断、系统调用等概念辨析；中断为什么不能休眠？如何查看中断向量表？实模式？系统调用的细节？
@@ -562,7 +562,8 @@ need_resched
 
 **内核抢占时机**
 
-可以在任何时间抢占任务（只要没有锁），通常发生在 **preempt_enable()** 中。
+1. 可以在任何时间抢占任务（只要没有锁），通常发生在 **preempt_enable()** 中。
+2. 中断返回到内核时。
 
 preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count 和 TIF_NEED_RESCHED 看是否可以被抢占。
 如果可以，就调用 preempt_schedule->preempt_schedule_common->__schedule 进行调度。
@@ -579,21 +580,22 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
                context_switch
 
-进程优先级的表示
+进程优先级
 -----------------
-`关于Linux进程优先级数字混乱的彻底澄清 <https://mp.weixin.qq.com/s/44Gamu17Vkl77OGV2KkRmQ>`__
+1. `关于Linux进程优先级数字混乱的彻底澄清 <https://mp.weixin.qq.com/s/44Gamu17Vkl77OGV2KkRmQ>`__
+2. `proc(5) - Linux manual page  <https://man7.org/linux/man-pages/man5/proc.5.html>`__
 
 **用户态：**
-最常用，sched_priority(chrt、/proc/pid/stat 字段40)，
-nice(/proc/pid/stat 字段19),policy(字段41)
+~~~~~~~~~~~~~~~~~~~
+
+1. sched_priority(chrt、/proc/pid/stat 字段 **40**)，最常用。sched_priority : 1(low) to 99(high)
+2. nice(/proc/pid/stat 字段 **19**)。nice :-19(high) to 20(low)
+3. policy(字段 **41**)
 
 
-sched_priority : 1(low) to 99(high)
-
-nice :-19(high) to 20(low)
 
 **内核态：**
-
+~~~~~~~~~~~~~~~~
 内核调度bitmap使用。 /proc/pid/sched。小->优先级高。
 
 prio = 99 - sched_priority
@@ -601,10 +603,8 @@ prio = 99 - sched_priority
 normal = 120 + nice
 
 **top命令：**
-
-/proc/pid/stat 字段18.
-
-top_prio = -1 -sched_priority
+~~~~~~~~~~~~~~~
+/proc/pid/stat 字段 **18**. top_prio = -1 - sched_priority
 
 
 
@@ -1051,6 +1051,32 @@ MMU以页为单位进行处理，即虚拟内存中页即最小单位。处理�
 struct pages表示系统中的物理页，而不是虚拟页。
 其目的是描述物理内存本身，而不是其中包含的数据。
 描述当前时刻相关的物理页中存放的东西，该结构对页的描述只是短暂的。
+
+分页与分段
+~~~~~~~~~~~~~
+1. `x86段寄存器和分段机制 - 知乎  <https://zhuanlan.zhihu.com/p/324210723>`__
+
+
+1. x86 cpu才有分段机制，x86_64摒弃使用分段，arm没有分段。
+2. Linux实际没有使用分段。
+
+::
+
+   段选择符:逻辑地址 --->  线性地址 ---> 物理地址
+                     分段       分页
+
+   x64或Linux中，逻辑地址=线性地址
+
+
+分段作用：
+
+1. 权限控制。 linux只使用了这个功能。
+2. 划分物理内存为段，使os支持访问大于地址线对应的物理内存。linux使用分页+虚拟内存实现了该功能。
+
+
+页目录要放在线性映射区，但页表却不一定。
+`进程的页表和页目录存储在内核空间还是用户空间？低端内存还是高端内存_NewThinker_wei的博客-CSDN博客_页表存放在哪里  <https://blog.csdn.net/NewThinker_wei/article/details/42089707>`__
+
 
 区
 ------------
