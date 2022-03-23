@@ -117,11 +117,8 @@ linux、glibc、gcc等。
 3. 当前5.11为15-Feb-2021发布
 
 -  mainline 是主线版本。
--  stable 是稳定版，由 mainline
-   在时机成熟时发布，稳定版也会在相应版本号的主线上提供 bug
-   修复和安全补丁
--  longterm
-   是长期支持版，多为\ `6年 <https://www.kernel.org/category/releases.html>`__
+-  stable 是稳定版，由 mainline   在时机成熟时发布，稳定版也会在相应版本号的主线上提供 bug   修复和安全补丁
+-  longterm   是长期支持版，多为\ `6年 <https://www.kernel.org/category/releases.html>`__
 -  RC：release candidates。
 
 
@@ -129,14 +126,16 @@ linux、glibc、gcc等。
 =====
 进程管理
 ---------
-进程：处于执行期的程序以及相关资源的总称。程序：存放在存储介质上的目标吗。
+* 进程：处于执行期的程序以及相关资源的总称。
+* 程序：存放在存储介质上的。
 
+管理结构：
 
 1. 任务队列：task_struct双向循环列表。
-2. 进程描述符（task_struct）中保存了能完整描述一个正在执行的程序的左右数据。1.7KB(32位及机器)。
+2. 进程描述符（task_struct）中保存了能完整描述一个正在执行的程序的左右数据。1.7KB(32位机器)。
 3. 使用slab分配器分配，实现对象复用和缓存着色。
 4. thread info结构在进程内核栈尾端分配，包含了指向task_struct的指针。
-5. current宏：找到当前进程的进程描述符。
+5. current宏：一个宏，找到当前进程的进程描述符。
 
 进程的五种状态
 ~~~~~~~~~~~~~~
@@ -186,7 +185,6 @@ linux、glibc、gcc等。
    #define TASK_STATE_MAX			0x1000
 
 
-fork -> exec -> exit + wait
 
 fork
 开销：复制父进程的页表和创建子进程的进程描述符。
@@ -198,7 +196,8 @@ fork
 内核进程：没有独立的地址空间，可以被调度和抢占。
 
 进程的生命周期
-~~~~~~~~~~~~~~
+------------------
+fork -> exec -> exit + wait
 
 fork -> clone -> _do_fork -> copy_process
 
@@ -293,7 +292,7 @@ Linux提供抢占式多任务模式（preemptive multitaking）。
 
 调度策略的平衡： 优先调度IO消耗型以保证短的响应时间，或优先调度CPU消耗型以保证高吞吐量。
 
-Linux更倾向于优先调度IO消耗型进程，以保证响应时间（交互式应用和桌面系统等）。
+Linux更倾向于 ``优先调度IO消耗型进程``，以保证响应时间（交互式应用和桌面系统等）。
 
 
 O(1)调度
@@ -357,10 +356,10 @@ FIFO:严格按照优先级来执行，同一优先级先进先得到执行。
 
 RR:调度策略，:存在一个RR_TIMESLICE时隙设置，可以通过调节时隙让各进程得到相对公平的机会。
 
-当相同优先级的FIFO和RR进程执行时，RR相对吃亏，因为FIFO一旦抢占会执行到主动放弃。
+当相同优先级的FIFO和RR进程执行时，RR相对吃亏，因为FIFO一旦抢占会执行到不会主动放弃。
 
 
-RT Bandwith
+RT Bandwidth
 ~~~~~~~~~~~~~~~~~~~~~~
 RT进程和普通进程之间有一个分配带宽的比例，默认情况是 RT:CFS=95:5。
 
@@ -379,8 +378,8 @@ CFS调度
 
 时间片与nice
 ~~~~~~~~~~~~
-时间片：进程在被抢占之前能够运行的时间，预先分配的。
-nice：决定处理器的使用比例。
+1. 时间片：进程在被抢占之前能够运行的时间，预先分配的。
+2. nice：决定处理器的使用比例。
 
 采用固定时间片则会引发固定的切换频率，会影响公平性。
 
@@ -392,9 +391,9 @@ nice：决定处理器的使用比例。
 ~~~~~~~~~
 又被称为调度周期，即该时间内所有任务均会被运行一次。
 
-当进程数 < sched_nr_latency（８）时，值固定的为sysctl_sched_latency（６ms）
+当进程数 < sched_nr_latency(默认为为8)时，值固定的为sysctl_sched_latency(6 ms)
 
-当进程数 > sched_nr_latency（８）时,为进程数乘以sched_min_granularity_ns(0.75ms)
+当进程数 > sched_nr_latency(8)时,为进程数乘以sched_min_granularity_ns(0.75ms)
 
 **sysctl_sched_latency  =   cat /proc/sys/kernel/sched_latency_ns**
 
@@ -409,6 +408,7 @@ CFS使用调度器实体结构来维护每个进程运行的时间记张。（li
 
 
 vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加权计算结果。单位ns，与定时器节拍不相关。
+
 ``虚拟运行时间 vruntime += 实际运行时间 delta_exec * NICE_0_LOAD/ 权重``
 
 系统定时器周期性调用 update_curr()，以更新所有进程的vruntime(包括可运行和阻塞态的所有进程)。
@@ -423,9 +423,7 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 使用红黑树rbtree来组织可运行的进程队列，节点键值即vruntime。
 
 
-1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。
-此处不需要遍历树来查找最左节点，因为最左节点已经被缓存起来的（在更新rbtree时缓存的）。
-
+1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。此处不需要遍历树来查找最左节点，因为 ``最左节点已经被缓存起来`` （在更新rbtree时缓存的）。
 2. 在rbtree插入进程：进程被唤醒或fork()创建进程时。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
 3. 删除进程：进程阻塞或终止时。dequeue_entity()。
 
@@ -436,8 +434,9 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 调度类sched_class定义了很多种方法，用于操作上述调度队列上的任务。每种调度策略各实现了一种调度类，并放在同一个链表中。
 
 调度类中的方法，如pick_next_task在不同的调度类中有不同的实现，返回空时则继续操作下一个队列。
-fair_sched_class 的实现是 pick_next_task_fair，rt_sched_class 的实现是 pick_next_task_rt；
-pick_next_task_rt 操作的是 rt_rq，pick_next_task_fair 操作的是 cfs_rq。
+
+1. fair_sched_class 的实现是 pick_next_task_fair，rt_sched_class 的实现是 pick_next_task_rt；
+2. pick_next_task_rt 操作的是 rt_rq，pick_next_task_fair 操作的是 cfs_rq。
 
 调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
 
@@ -450,6 +449,7 @@ pick_next_task_rt 操作的是 rt_rq，pick_next_task_fair 操作的是 cfs_rq�
 ~~~~~~~~~~~~
 
 休眠（被阻塞）通过等待队列处理，有两种状态，TASK_INTTERUPTIBLE和TASK_UNITTERUPTIBLE。
+
 当与等待队列相关的时间发生时，队列上所有进程都会被唤醒（存在虚假唤醒）。
 
 1. DEFINE_WAIT()创建一个等待队列的项；
@@ -480,7 +480,7 @@ wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此
 
 - 用户空间的堆栈，task_struct->mm->vm_area，属于进程虚拟地址空间。
 
-- 内核态的栈，tsak_struct->stack(其底部是thread_info对象，thread_info可以用来快速获取task_struct对象)。
+- 内核态的栈，tsak_struct->stack(其 ``底部是thread_info对象``，thread_info可以用来快速获取task_struct对象)。
   整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
 
 
@@ -504,18 +504,66 @@ https://zhuanlan.zhihu.com/p/296750228
 
 上下文切换：即从一个可执行程序切换到另一个可执行程序。
 
-context_switch()：完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
+context_switch
+~~~~~~~~~~~~~~~~~~~
+_schedule -> context_switch()： 完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
+
+::
+
+   /*
+    * context_switch - switch to the new MM and the new thread's register state.
+    */
+   static __always_inline struct rq *
+   context_switch(struct rq *rq, struct task_struct *prev,
+   	       struct task_struct *next, struct rq_flags *rf)
+   {
+   	struct mm_struct *mm, *oldmm;
+   ......
+   	mm = next->mm;
+   	oldmm = prev->active_mm;
+   ......
+   	switch_mm_irqs_off(oldmm, mm, next);
+   ......
+   	/* Here we just switch the register state and the stack. */
+   	switch_to(prev, next, prev);
+   	barrier();
+   	return finish_task_switch(prev);
+   }
+
+
+switch_to
+~~~~~~~~~~~
+通过三个变量 switch_to(prev = A, next=B, last=C)，
+
+A 进程就明白了，我当时被切换走的时候，是切换成 B，这次切换回来，是从 C 回来的。
+
+::
+
+   #define switch_to(prev, next, last)					\
+   do {									\
+   	prepare_switch_to(prev, next);					\
+   									\
+   	((last) = __switch_to_asm((prev), (next)));			\
+   } while (0)
+
+
 
 TSS
 ~~~~~~~
+内核态。
 
-x86 提供了一种以硬件的方式进行进程切换的模式，对于每个进程，x86 希望在内存里面维护一个 TSS（Task State Segment，任务状态段）结构。这里面有所有的寄存器。
 
-为了避免全量切换，Linux在 cpu_init 中给每一个 CPU 关联一个 TSS，然后将 TR 指向这个 TSS，然后在操作系统的运行过程中，TR 就不切换了，永远指向这个 TSS。
+x86 在内存里面维护一个 TSS（Task State Segment，任务状态段）结构。这里面有所有的寄存器。
 
-真的参与进程切换的寄存器很少，主要的就是栈顶寄存器。	
+为了避免全量切换，Linux在 cpu_init 中给每一个 CPU 关联一个 TSS，然后将 TR 永远指向这个 TSS。
 
 task_struct的最后一个成员变量thread保存了需要切换的寄存器：
+
+
+真的参与进程切换的寄存器很少，主要的就是 ``栈顶寄存器``。	
+
+
+CPU角度的进程切换：将某个进程的 thread_struct 里面的寄存器的值，写入到 CPU 的 TR 指向的 tss_struct
 
 ::
 
@@ -523,15 +571,17 @@ task_struct的最后一个成员变量thread保存了需要切换的寄存器：
    struct thread_struct		thread; //这个结构的内容与体系相关!! ia64和x86都不一样
 
 
+
 pt_regs和cpu_context
 ~~~~~~~~~~~~~~~~~~~~~
-成员stack的pt_regs中也保存了regs重复了？ 
+task_struct成员stack指向内核栈，内核栈顶部的pt_regs中保存用户态的regs。
+
 
 arm：
 
 1. pt_regs和cpu_context都是处理器架构相关的结构。
 
-2. pt_regs是发生异常时（当然包括中断）保存的处理器现场，用于异常处理完后来恢复现场，就好像没有发生异常一样，它保存在进程内核栈中。
+2. pt_regs是发生异常时（当然包括中断）保存的处理器现场，用于异常处理完后来恢复现场，它保存在进程内核栈中。
 
 3. cpu_context是发生进程切换时，保存当前进程的上下文，保存在当前进程的进程描述符中。
 
@@ -567,6 +617,7 @@ need_resched
 2. 中断返回到内核时。
 
 preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count 和 TIF_NEED_RESCHED 看是否可以被抢占。
+
 如果可以，就调用 preempt_schedule->preempt_schedule_common->__schedule 进行调度。
 
 .. figure:: ../images/schedule_and_preempt.png
@@ -574,8 +625,8 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
             抢占式调度
 
 
-上下文切换
-~~~~~~~~~~~~~~~~~~
+_schedule上下文切换
+~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: ../images/context_switch.jpg
 
