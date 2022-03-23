@@ -785,7 +785,7 @@ _syscalln() -> K_INLINE_SYSCALL : 内联汇编
 2. 使用文件描述符来表示。
 
 
-快速系统调用
+x86 系统调用
 -------------------
 
 
@@ -808,24 +808,85 @@ https://www.cnblogs.com/LittleHann/p/4111692.html
 sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
 sysenter和sysexit都是CPU原生支持的指令集
 
+arm64系统调用
+--------------
+1. `armv8/arm64 中断/系统调用流程 <https://cloud.tencent.com/developer/article/1413292>`__
 
 
-虚拟系统调用vDSO
+arm异常向量表
+~~~~~~~~~~~~~~~~~~
+1. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/CHDEEDDC>`__
+
+
+有四张表，每张表有四个异常入口，分别对应同步异常，IRQ，FIQ和出错异常。
+
+1. 如果发生异常并不会导致exception level切换，并且使用的栈指针是SP_EL0，那么使用第一张异常向量表。
+2. 如果发生异常并不会导致exception level切换，并且使用的栈指针是SP_EL1/2/3，那么使用第二张异常向量表。
+3. 如果发生异常会导致exception level切换，并且比目的exception level低一级的exception level运行在AARCH64模式，那么使用第三张异常向量表。
+4. 如果发生异常会导致exception level切换，并且比目的exception level低一级的exception level运行在AARCH32模式，那么使用第四张异常向量表。
+
+.. figure:: ../images/exception_vector_table.png
+   :alt: exception_vector_table
+
+
+linux中断向量表
+~~~~~~~~~~~~~~~~~~~~
+arch/arm64/kernel/entry.S：
+
+1. **el1_sync**：当前处于内核态时，发生了指令执行异常、缺页中断（跳转地址或者取地址）。
+
+2. **el1_irq**：当前处于内核态时，发生硬件中断。
+
+3. **el0_sync**：当前处于用户态时，发生了指令执行异常、缺页中断（跳转地址或者取地址）、系统调用。
+
+4. **el0_iqr**：当前处于用户态时，发生了硬件中断。
+
+el1_sync，el1_irq，el0_sync，el0_irq在开始时会调用kernel_entry，在结束时会调用kernel_exit。
+
+当发生中断、异常、系统调用时，硬件会自动：
+
+1）把当前程序的pc值放入ELR_EL1中
+
+2）把当前状态PSTATE存入SPSR_EL1中
+
+3）根据发生在内核态还是用户态，中断还是异常，会自动跳转到el1_sync，el1_irq，el0_sync，el0_irq
+
+4）改变PSTATE，如果是用户态发生中断、异常、系统调用，此时已经进入内核态，堆栈是sp_el1。
+
+
+SVC系统调用约定
+~~~~~~~~~~~~~~~~~
+
+SVC指令在ARMv8体系中被归于异常处理类指令
+ESR为SVC使用的立即数
+
+
+用SVC指令触发系统调用的约定如下[2]：
+
+1. 64位用户程序使用寄存器x8传递系统调用号，32位用户程序使用寄存器x7传递系统调用号；
+2. 使用寄存器x0-x6传递系统调用所需参数，最多可传递7个参数；
+3. 系统调用执行完后，用寄存器x0存放返回值。
+
+
+虚拟系统调用vDSO和ASLR
 ----------------------
 不进入内核即可执行系统调用，例如gettimeofday。
 
-Linux virtual Dynamic Shared Object (vDSO)
 
-The Linux vDSO is a set of code that is part of the kernel, but is mapped into the address space of a user program to be run in userland.
+The Linux vDSO is a set of code that is part of the kernel.
 
+The "vDSO" (virtual dynamic shared object) is a small shared  library that the kernel automatically maps into the address space   of all user-space applications.
 
 地址随机(安全)
 ~~~~~~~~~~~~~~~~
-Due to `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
+1. `The Definitive Guide to Linux System Calls | Packagecloud Blog  <https://blog.packagecloud.io/the-definitive-guide-to-linux-system-calls/>`__
+
+Due to ASLR `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
 the vDSO will be loaded at a random address when a program is started.
+
 每次运行都会有不同的地址。
 
-
+ASLR can locate the base, libraries, heap, and stack at random positions in a process's address space
 
 _kernel_vsyscall
 ~~~~~~~~~~~~~~~~~~~~~~~~
