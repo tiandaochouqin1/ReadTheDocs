@@ -430,10 +430,9 @@ main之前
 1. 构造函数(__libc_csu_init)做了什么？ 哪些需要构造？C是否就不需要构造函数？ : 详细走一遍gdb
 
 
-运行过程
------------
-execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init 
--> main -> exit -> atexit/fini/destructor
+程序的运行与结束
+----------------
+``execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init -> main -> exit -> atexit/fini/destructor``
 
 
 .. figure:: ../images/main_call_graph.png
@@ -443,13 +442,13 @@ execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init
 
 
 
-1. execvp: 设置栈，压入argc、argv、envp的值，设置文件描述符（0、1、2），预初始化函数（.preinit）;
-2. _start:置零ebp标记最外层栈，esp对齐16B，压入__libc_start_main的参数（通过esp/esi取到的argc/argv的偏移）；位于glibc/csu/libc-start.c
-3. __libc_start_main:完成主要工作。setuid/setgid；将fini和rtld_fini传递给at_exit;调用init参数；
+1. execvp:   设置栈，压入argc、argv、envp的值，设置文件描述符（0、1、2），预初始化函数（.preinit）;
+2. _start:  置零ebp标记最外层栈，esp对齐16B，压入__libc_start_main的参数（通过esp/esi取到的argc/argv的偏移）；位于glibc/csu/libc-start.c
+3. __libc_start_main:  完成主要工作。setuid/setgid；将fini和rtld_fini传递给at_exit;调用init参数；
    并调用main（原型如下）；调用exit。
 
-4. init -> __libc_csu_init -> _init : 调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
-5. exit : 先调用注册到atexit的函数，然后fini,最后destructor。
+4. init -> __libc_csu_init -> _init :  调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
+5. exit :  先调用注册到atexit的函数，然后fini,最后destructor。
 
 .. figure:: ../images/stack_main_start.png
 
@@ -498,7 +497,7 @@ _start压入参数
       8048301:       f4
 
 
-没有显式传入envp
+不需要显式传入envp
 ~~~~~~~~~~~~~~~~~~~~~
 在argv末尾紧接着的位置取envp， ** envp = &argv[argc + 1] 
 
@@ -509,7 +508,7 @@ _start压入参数
 
 __libc_csu_init 
 -------------------
-在自己的x86环境上gdb跟踪（C语言），发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程（C++和C一样，centos和ubuntu一样，arm和x86也类似，可能是gcc/g++版本的原因？）：
+x86环境上gdb跟踪（C语言），发现调用栈和参考文章的流程图不一样，缺少部分函数调用过程（C++和C一样，centos和ubuntu一样，arm和x86也类似，可能是gcc/g++版本的原因？）：
 
 与这篇文章的反汇编相同 `who call main <http://wen00072.github.io/blog/2015/02/14/main-linux-whos-going-to-call-in-c-language/>`__
 
@@ -518,21 +517,26 @@ __libc_csu_init
 3. 没有段.ctor
 
 
-- .ctor和.dtor段只在可自定义section名的目标文件中被支持（coff/elf都支持），从而使用__do_global_ctors_aux
+.ctor和.dtor段
+~~~~~~~~~~~~~~~~~
 
 `section自定义段 <https://sourceware.org/binutils/docs/as/Section.html>`__
 
 https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
 
-The best way to handle static constructors works only for object file formats which provide arbitrarily-named sections.
- A section is set aside for a list of constructors, and another for a list of destructors. 
- Traditionally these are called ‘.ctors’ and ‘.dtors’. 
- Each object file that defines an initialization function also puts a word in the constructor section to point to that function. 
- The linker accumulates all these words into one contiguous ‘.ctors’ section. Termination functions are handled similarly.
+- .ctor和.dtor段只在可自定义section名的目标文件中被支持（coff/elf都支持）
+
+::
+        
+  The best way to handle static constructors works only for object file formats which provide arbitrarily-named sections.
+   A section is set aside for a list of constructors, and another for a list of destructors. 
+   Traditionally these are called ‘.ctors’ and ‘.dtors’. 
+   Each object file that defines an initialization function also puts a word in the constructor section to point to that function. 
+   The linker accumulates all these words into one contiguous ‘.ctors’ section. Termination functions are handled similarly.
 
 
 
-- 查看源码得知，程序定义了  USE_EH_FRAME_REGISTRY || USE_TM_CLONE_REGISTRY  ，对应register_tm_clones和.eh_frame。
+- 查看源码得知，程序定义了  **USE_EH_FRAME_REGISTRY || USE_TM_CLONE_REGISTRY**  ，对应register_tm_clones和.eh_frame。
   该分支不定义__do_global_ctors_aux 。
 
 https://github.com/gcc-mirror/gcc/blob/master/libgcc/crtstuff.c#L511
@@ -561,6 +565,11 @@ https://code.woboq.org/gcc/libgcc/crtstuff.c.html#448
 
       #else  /* OBJECT_FORMAT_ELF */ # 这个后面就是定义__do_global_ctors_aux的内容了
 
+
+实际堆栈跟踪
+~~~~~~~~~~~~~~~~~
+**a_constructor**
+
 ::
 
       (gdb) bt
@@ -571,7 +580,7 @@ https://code.woboq.org/gcc/libgcc/crtstuff.c.html#448
       #4  0x000055555540057a in _start ()
 
 
-反汇编没有__do_global_ctors_aux ，只有__do_global_dtors_aux:
+反汇编没有__do_global_ctors_aux ，只有 **__do_global_dtors_aux**:
 
 ::
 
@@ -602,12 +611,53 @@ https://code.woboq.org/gcc/libgcc/crtstuff.c.html#448
 
 
 
+.bss与__do_global_dtors_aux
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+__do_global_dtors_aux使用到的一个变量completed.*** 放在.bss。
+
+::
+
+  cat bss.c
+
+  #include <stdio.h>
+  int a;
+  int b=0;
+  int c=1;
+  void main(){
+      printf("%d %d %d\n", a, b, c);
+  }
+
+  bss.o中.bss size=4: a为弱符号,在.common区
+  bss.exe中.bss size=12: a、b在.bss,还多了一个变量 completed.***(1B,对齐4B) 。
+         0000000000601038 l     O .bss   0000000000000001              completed.7247
+
+
+::
+
+      若completed.7247 不为 0,则直接返回。
+      00000000004004e0 <__do_global_dtors_aux>:
+      4004e0:       80 3d 51 0b 20 00 00    cmpb   $0x0,0x200b51(%rip)        # 601038 <__TMC_END__>
+      4004e7:       75 17                   jne    400500 <__do_global_dtors_aux+0x20>
+      4004e9:       55                      push   %rbp
+      4004ea:       48 89 e5                mov    %rsp,%rbp
+      4004ed:       e8 7e ff ff ff          callq  400470 <deregister_tm_clones>
+      4004f2:       c6 05 3f 0b 20 00 01    movb   $0x1,0x200b3f(%rip)        # 601038 <__TMC_END__>
+      4004f9:       5d                      pop    %rbp
+      4004fa:       c3                      retq
+      4004fb:       0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+      400500:       c3                      retq
+      400501:       0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
+      400506:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+      40050d:       00 00 00
+
+
+
 **以下为參考文章的内容：**
 
 get_pc_truck
 ~~~~~~~~~~~~~~~~~
 
-让位置无关码正常工作。将当前地址与GOT之间的偏移值存入基址寄存器（%ebp）。
+让位置无关码正常工作。将 **当前地址与GOT之间的偏移值**存入基址寄存器（%ebp）。
 
 
 _init
@@ -618,8 +668,8 @@ _init
 
 _do_global_ctors_aux
 ~~~~~~~~~~~~~~~~~~~~~~~
-**__do_global_ctors_aux** function simply performs a walk on the .CTORS section, 
-while the __do_global_dtors_aux does the same job only for the .DTORS section which contains the program specified destructors functions.
+**__do_global_ctors_aux** 遍历 .CTORS section, 
+ __do_global_dtors_aux 遍历 .DTORS section包含的destructors functions.
 
 
 ::
