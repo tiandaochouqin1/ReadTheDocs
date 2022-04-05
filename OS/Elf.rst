@@ -251,6 +251,7 @@ symtab中的st_name指向字符串表的索引。
 An index into the object file's symbol string table, which holds the character representations of the symbol names. 
 If the value is nonzero, the value represents a string table index that gives the symbol name. 
 
+
 st_value
 ~~~~~~~~~~~~~~~~
 symtab中的st_value。
