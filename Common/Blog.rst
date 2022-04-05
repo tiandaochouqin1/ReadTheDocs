@@ -76,8 +76,21 @@ For Chinese projects, it appends to your conf.py these settings:
 
 构建多版本
 ~~~~~~~~~~~~
+1. https://docs.readthedocs.io/en/stable/versions.html
+2. `Semantic Versioning  <https://semver.org/>`__
+
+
 Active versions are built whenever new code is pushed to that branch or tag.
 rtd可识别branch、tag，推送到git后即自动构建。
+
+::
+
+   git tag -a v1.4 -m "my version 1.4"
+   git push origin v1.1
+   还需要推动代码改动才能触发rtd构建。
+   
+   tag对应版本自动构建后即发布为stable。
+
 
 选择如何展示多版本：
 
