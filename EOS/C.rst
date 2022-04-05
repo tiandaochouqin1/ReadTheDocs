@@ -76,15 +76,21 @@ inline关键字
                  -> 有-On优化:如下
     5. inline+On: 
     6.           -> c89/c90 ☆   -> static :  fa真实inline插入。inline✔
-    7.                           -> 非static  -> 显式extern定义 : .text不保存fa。inline✔
-    8.                                        -> 非显式extern: .text一直保存fa。 call✔ 
-    9.           -> c99/c11/c17☆ -> static : fa真实inline插入。inline✔
-    10.                           -> 非static  -> fa汇编行数少(约七八行): inline✔
-    11.                                        -> fa汇编行数多: main中调用fa 
-    12.                                                   -> inline声明fa : .text不保存fa , ld符号解析失败。 ★★
-    13.                                                   -> 非inline声明/隐式声明: 默认为external, .text保存fa, ld成功。call✔
+    7.                                        -> static定义+非static声明: 不冲突,当作了两个不同函数。
+    8.                           -> 非static  -> 显式extern定义 : .text不保存fa。inline✔
+    9.                                        -> 非显式extern: .text一直保存fa。 call✔ 
+    10.          -> c99/c11/c17☆ -> static : fa真实inline插入。inline✔
+    11.                                        -> static定义+非static声明: 类型冲突。
+    12.                           -> 非static  -> 非static定义+static声明: 效果通inline✔
+    13.                                        -> fa汇编行数少(约七八行): inline✔
+    14.                                        -> fa汇编行数多: main中调用fa 
+    15.                                                   -> inline声明fa : .text不保存fa , ld符号解析失败。 ★★
+    16.                                                   -> 非inline声明/隐式声明: 默认为external, .text保存fa, ld成功。call✔
+    17.                                                   -> 若声明使用static
 
-
+    未特别指出参数的均为定义处/或定义声明相同。 
+    
+    这里static/inline使用时的类型取决于声明。
 
 
 其它相关编译选项
