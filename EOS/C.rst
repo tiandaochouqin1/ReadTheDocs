@@ -23,6 +23,78 @@ extern
 that object to the rest of the source file being compiled.
 2. extern： Functions themselves are always external, because C does not allow functions to be defined inside other functions
 
+inline关键字
+----------------
+☆☆ 参考： https://gcc.gnu.org/onlinedocs/gcc/Inline.html 6.45 An Inline Function is As Fast As a Macro
+
+1. 减少 function-call overhead
+2. 编译时优化常数入参,减少代码体积。
+3. 不适合inline: 变参函数、调用alloca栈分配函数、使用goto/setjump等跳转指令
+
+
+::
+
+  # gcc -std=gnu99 -Og inline.c -o inline
+
+   /tmp/ccr0JbZ0.o: In function `main':
+   inline.c:(.text+0xa): undefined reference to `fa'
+   collect2: error: ld returned 1 exit status
+
+
+   # cat inline.c
+
+   #include <stdio.h>
+   inline int fa(int a); // 显式声明。隐私声明则认为没有inline。
+   inline int fa(int a)
+   {
+       printf("%d\n", a);
+       printf("%d\n", a+1);
+       return a;
+   }
+
+   int main()
+   {
+       int var = 1;
+       fa(var);
+       return 0;
+    }
+
+          
+查看inline.o，发现 main通过call调用fa，.symtab中有fa(UND)，而.text中无单独的fa。
+
+只有在main调用external函数fa + inline声明使得.text无fa时才会符号解析失败。
+
+影响是否真实inline的因素: ``_always_inline/inline -> -On -> -std=gnu** -> static -> asm行数 -> 声明(c99)/定义(c90)形式(inline、extern等)``
+
+::
+
+    1. __attribute__(__always_inline)☆ : fa真实inline插入到main。inline✔
+
+    2. inline☆  -> 无-On优化: 普通函数,inline完全不起作用。
+    3.                       -> static: 限制了fa不会在.symtab中。符号表call✔
+    4.                       -> external、非static: fa在.symtab。位置偏移call✔
+                 -> 有-On优化:如下
+    5. inline+On: 
+    6.           -> c89/c90 ☆   -> static :  fa真实inline插入。inline✔
+    7.                           -> 非static  -> 显式extern定义 : .text不保存fa。inline✔
+    8.                                        -> 非显式extern: .text一直保存fa。 call✔ 
+    9.           -> c99/c11/c17☆ -> static : fa真实inline插入。inline✔
+    10.                           -> 非static  -> fa汇编行数少(约七八行): inline✔
+    11.                                        -> fa汇编行数多: main中调用fa 
+    12.                                                   -> inline声明fa : .text不保存fa , ld符号解析失败。 ★★
+    13.                                                   -> 非inline声明/隐式声明: 默认为external, .text保存fa, ld成功。call✔
+
+
+
+
+其它相关编译选项
+~~~~~~~~~~~~~~~~~
+https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+
+1. -fkeep-inline-functions: inline+ On + static 时保留fa 代码段
+2. -finline-functions : 足够小的函数则inline。 O2打开。
+3. -finline-functions-called-once: 被调用一次的static函数。 O1打开。
+
 位域、联合体与大小端
 ---------------------
 1. `简单讲解C/C++中大小端及其对位域的影响 - FranzKafka Blog  <https://coderfan.net/big-endian-and-little-endian-in-c-or-c-plus.html>`__

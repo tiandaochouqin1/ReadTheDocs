@@ -811,6 +811,7 @@ sysenter和sysexit都是CPU原生支持的指令集
 arm64系统调用
 --------------
 1. `armv8/arm64 中断/系统调用流程 <https://cloud.tencent.com/developer/article/1413292>`__
+2. `Linux Kernel 5.14 arm64异常向量表解读-中断处理解读  <https://blog.csdn.net/weixin_42135087/article/details/120232101>`__
 
 
 arm异常向量表
