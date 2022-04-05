@@ -885,9 +885,8 @@ The "vDSO" (virtual dynamic shared object) is a small shared  library that the k
 Due to ASLR `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
 the vDSO will be loaded at a random address when a program is started.
 
-每次运行都会有不同的地址。
+每次运行都会有不同的地址。程序代码、库代码、栈、全局变量和堆数据。
 
-ASLR can locate the base, libraries, heap, and stack at random positions in a process's address space
 
 _kernel_vsyscall
 ~~~~~~~~~~~~~~~~~~~~~~~~
