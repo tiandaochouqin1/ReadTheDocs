@@ -129,7 +129,7 @@ so加载地址
 
 > /proc/pid/maps 得到so load基址 + so symtab/.dynsym 地址 .  那么so引用另一个so的符号的地址如何获取？
 
-a.so引用另一个b.so的符号时，该符号只存在a.so的got/plt/symtab/dynsymtab，不会被主程序包含。即每个可执行单元独立。
+a.so引用另一个b.so的符号时，该符号只存在a.so的got/plt、symtab/dynsymtab，不会被主程序包含。即每个可执行单元独立。
 
 
 
@@ -262,7 +262,7 @@ dl_runtime_resolve执行过程：
 
 1. 通过link_map_obj访问.dynamic section，分别取出.dynstr, .dynsym,.rel.plt的地址
 2. .rel.plt+ reloc_index 求出当前函数重定位表项 Elf32_Rel的指针，记为rel
-3. rel->r_info的高24位作为.dynsym的下标，求出Elf32_Sym的指针，记作sym
+3. **rel->r_info的高24位作为.dynsym的下标**，求出Elf32_Sym的指针，记作sym
 4. .dynstr + sym->st_name得到符号名字符串
 5. 在动态链接库查找这个函数的地址，并且把找到的地址赋值给rel->r_offset,即.got.plt
 6. 最后调用这个函数

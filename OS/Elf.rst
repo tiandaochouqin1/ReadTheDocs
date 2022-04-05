@@ -364,6 +364,23 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 4. 初始化elf进程环境；
 5. 将返回地址修改位elf可执行文件的入口。
 
+段分布(.o/exe/vm)
+------------------
+1. bss在.o和exe中不占用空间，只有一条段表条目指示在vm中需要占用的空间。
+2. dynsym是symtab的子集，symtab不会被加载到内存，dl_runtime_resolve时只需要dynsym。
+3. strip移除symtab和strtab(都属于non-alloctable)，GNU strip discards all symbols from object files objfile. 
+
+
+.. figure:: ../images/Elf_Obj_Sections.png
+   :alt: Elf_Obj_Sections
+
+.. figure:: ../images/Elf_Exe_Sections.png
+   :alt: Elf_Exe_Sections
+
+
+.. figure:: ../images/Procee_Vm_Sections.png
+   :alt: Procee_Vm_Sections
+
 
 静态链接
 ===========
@@ -657,7 +674,7 @@ __do_global_dtors_aux使用到的一个变量completed.*** 放在.bss。
 get_pc_truck
 ~~~~~~~~~~~~~~~~~
 
-让位置无关码正常工作。将 **当前地址与GOT之间的偏移值**存入基址寄存器（%ebp）。
+让位置无关码正常工作。将 **当前地址与GOT之间的偏移值** 存入基址寄存器(%ebp)。
 
 
 _init
