@@ -284,7 +284,7 @@ tag标签
 
 ::
 
-   git tag -a v1.4 -m "my version 1.4"
+   git tag -a v1.4 -m "my version 1.4" [commit_id]
    git tag v1.0 
    git tag -d v1.0
 
