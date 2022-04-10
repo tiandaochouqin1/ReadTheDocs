@@ -71,7 +71,8 @@ cache shareable domain
 ``Memory caching`` can be separately controlled through inner and outer attributes, for multiple levels of cache. 
 
 .. figure:: ../images/Cache_Sharable_Domain.png
-   :alt: Cache_Sharable_Domain
+   
+   Cache_Sharable_Domain
 
 
 
@@ -88,8 +89,13 @@ Arm address space
 2. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
 
 
-.. figure:: ../images/va-to-ipa-to-pa-address-translation.png
-   :alt: va-to-ipa-to-pa-address-translation.png
+.. figure:: ../images/Address_spaces_in_Armv8-A.jpg
+   
+   Address_spaces_in_Armv8-A
+
+.. figure:: ../images/va-to-ipa-to-pa-address-translation.jpg
+   
+   va-to-ipa-to-pa-address-translation.png
 
 
 1. Stage 1 translation: OS，通过traslation table将虚拟地址空间转换为IPA(Intermediate Physical Address Space)。
@@ -167,18 +173,26 @@ executed before the ISB instruction are visible to the instructions fetched afte
 
 Linux内核实现
 ~~~~~~~~~~~~~~
+
+arch/arm/include/asm/barrier.h
 ::
 
+   #if __LINUX_ARM_ARCH__ >= 7
+   #define isb(option) __asm__ __volatile__ ("isb " #option : : : "memory")
    #define dsb(option) __asm__ __volatile__ ("dsb " #option : : : "memory")
-   #define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory")
+   #define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory"
 
 
-   #define mb()        do { dsb(); outer_sync(); } while (0)
-   #define rmb()       dsb()
-   #define wmb()       do { dsb(st); outer_sync(); } while (0)
-   #define smp_mb()    dmb(ish)
-   #define smp_rmb()   smp_mb()
-   #define smp_wmb()   dmb(ishst)
+
+   #ifdef CONFIG_ARCH_HAS_BARRIERS
+   #include <mach/barriers.h>
+   #elif defined(CONFIG_ARM_DMA_MEM_BUFFERABLE) || defined(CONFIG_SMP)
+   #define mb()		do { dsb(); outer_sync(); } while (0)
+   #define rmb()		dsb()
+   #define wmb()		do { dsb(st); outer_sync(); } while (0)
+   #define dma_rmb()	dmb(osh)
+   #define dma_wmb()	dmb(oshst)
+
 
 由上面的宏定义可知，对于指令限制的严格程度：
 

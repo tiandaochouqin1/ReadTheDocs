@@ -1520,6 +1520,23 @@ do_mmap:
 do_mummap:从特定地址空间删除指定地址区间。系统调用mummap，与mmap作用相反。
 
 
+mmap, munmap - map or unmap ``files or devices`` into memory
+
+`认真分析mmap：是什么 为什么 怎么用 - 胡潇 - 博客园  <https://www.cnblogs.com/huxiao-tee/p/4660352.html>`__
+
+MESI
+~~~~~~~~~~
+1. `高速缓存一致性协议MESI与内存屏障 - 小熊餐馆 - 博客园  <https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html#_label1_0>`__
+
+
+跟踪cache行的状态，ARM采用MESI协议.
+
+MESI协议依赖总线侦听机制，在某个核心发生本地写事件时，
+为了保证全局只能有一份缓存数据，要求其它核对应的缓存行统统设置为Invalid无效状态。
+为了确保总线写事务的强一致性，发生本地写的高速缓存需要等到远端的所有核心都处理完对应的失效缓存行，
+返回Ack确认消息后才能继续执行下面的内存寻址指令(阻塞)。
+
+
 页表
 ------------
 
