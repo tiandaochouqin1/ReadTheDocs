@@ -1333,12 +1333,12 @@ Copy技术，而大文件会用异步IO。
 
 1. mmap+write:把内核缓冲区里的数据映射到用户空间。减少一次cpu数据拷贝。
 
-2. sendfile:把内核缓冲区里的数据拷贝到 socket 缓冲区。sendfile = read +
-   write。减少一次cpu数据拷贝和2次用户态跟内核态切换。
+2. sendfile:把内核缓冲区里的数据拷贝到 socket 缓冲区。sendfile = read +  write。减少一次cpu数据拷贝和2次用户态跟内核态切换。
 
 3. SG-DMA 技术:直接将内核缓存中的数据拷贝到网卡的缓冲区。
 
 |原始的读写方法| |mmap| |sendfile| |SG_DMA|
+
 
 应用程序I/O接口
 ---------------

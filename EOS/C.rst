@@ -213,6 +213,19 @@ https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
    };
 
 
+部分初始化
+~~~~~~~~~~~~
+1. `ARR02-C. Explicitly specify array bounds, even if implicitly defined by an initializer - SEI CERT C Coding Standard - Confluence  <https://wiki.sei.cmu.edu/confluence/display/c/ARR02-C.+Explicitly+specify+array+bounds%2C+even+if+implicitly+defined+by+an+initializer>`__
+2. K&R A.8.7 Initialization
+
+aggregate类型（数组和结构体）使用括号列表初始化时，剩余成员隐式初始化为0。()
+
+If there are fewer initializers in a ``brace-enclosed list`` than there are elements or members of ``an aggregate``, 
+or fewer characters in a string literal used to initialize an array of known size than there are elements in the array, 
+the remainder of the aggregate shall be initialized implicitly the same as objects that have ``static storage duration``.
+
+If an array of unknown size is initialized, its size is determined by the largest indexed element with an explicit initializer. The array type is completed at the end of its initializer list.
+
 优秀项目学习
 =================
 

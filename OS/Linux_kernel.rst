@@ -1505,7 +1505,7 @@ VMA则可以代表不同类型的内存区域。
 
 
 
-内存操作
+内存操作mmap
 ---------------
 find_vma：查找给定内存地址属于哪个内存区域，mmap需要使用。
 
@@ -1520,22 +1520,45 @@ do_mmap:
 do_mummap:从特定地址空间删除指定地址区间。系统调用mummap，与mmap作用相反。
 
 
-mmap, munmap - map or unmap ``files or devices`` into memory
 
-`认真分析mmap：是什么 为什么 怎么用 - 胡潇 - 博客园  <https://www.cnblogs.com/huxiao-tee/p/4660352.html>`__
+
+mmap内存映射的过程
+~~~~~~~~~~~~~~~~~~
+1. `认真分析mmap：是什么 为什么 怎么用 - 胡潇 - 博客园  <https://www.cnblogs.com/huxiao-tee/p/4660352.html>`__
+
+实现 零拷贝（OSC）。
+
+mmap, munmap 
+
+1. 用户空间：分配虚拟地址空间。map or unmap ``files or devices`` into memory
+2. 内核空间：实现用户进程中的地址与内核中物理页面的映射
+
+
+三个阶段：
+
+1. 进程启动时在虚拟地址空间分配映射区域；
+2. 内核将pcb中的未映射文件的物理地址和进程虚拟地址一一映射；
+3. 访问导致缺页，将文件内容复制到物理内存。
 
 MESI
 ~~~~~~~~~~
 1. `高速缓存一致性协议MESI与内存屏障 - 小熊餐馆 - 博客园  <https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html#_label1_0>`__
+2. `arm64 cache机制分析  <https://mp.weixin.qq.com/s/NlWvs_fjWSSvW2S1FcpgkQ>`__
 
 
 跟踪cache行的状态，ARM采用MESI协议.
 
-MESI协议依赖总线侦听机制，在某个核心发生本地写事件时，
-为了保证全局只能有一份缓存数据，要求其它核对应的缓存行统统设置为Invalid无效状态。
-为了确保总线写事务的强一致性，发生本地写的高速缓存需要等到远端的所有核心都处理完对应的失效缓存行，
-返回Ack确认消息后才能继续执行下面的内存寻址指令(阻塞)。
 
+MESI协议依赖 **总线侦听**机制，在某个核心发生本地写事件时，为了保证全局只能有一份缓存数据，要求其它核对应的缓存行统统设置为 **Invalid**无效状态。
+
+为了确保总线写事务的强一致性，发生本地写的高速缓存需要等到远端的所有核心都处理完对应的失效缓存行，返回Ack确认消息后才能继续执行下面的内存寻址指令(阻塞)。
+
+MESI协议的名字来源于cache line的四个状态：
+
+1. Modified（M）：cache line数据有效，cache line数据被修改，与内存中的数据不一致，修改的数据只存在本cache中；
+2. Exclusive（E）：cache line数据有效，cache line数据和内存中一致，数据只存在本cache中；
+3. Shared（S）：cache line数据有效，cache line数据和内存中一致，数据存在于多个cache中；
+4. Invalid（I）：cache line数据无效；
 
 页表
 ------------
