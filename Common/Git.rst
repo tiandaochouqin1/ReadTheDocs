@@ -279,6 +279,39 @@ git clean -xfd
 	git apply --check xxxx.patch   　//检查patch是否能够打上
 	git apply --reject xxx.patch   //强制打补丁
 
+
+cherry-pick
+-------------
+https://git-scm.com/docs/git-cherry-pick
+
+
+::
+      
+   git cherry-pick commit_id
+
+   pick 合并后的Commit：
+   git cherry-pick  -m / --mainline <parent-number>
+
+   范围pick:
+   git cherry-pick master~4 master~2
+   Apply the changes introduced by the fifth and third last commits pointed to by master 
+   and create 2 new commits with these changes.
+
+
+::
+      
+   - A - D - E - F -   master
+      \     /
+       B - C           branch one
+
+   git cherry-pick E -m 1 means using D-E, 
+   while git cherry-pick E -m 2 means using B-C-E.
+
+   The order is the one in which they're listed in the commit (as viewed by git show and the like)
+
+
+https://stackoverflow.com/questions/9229301/git-cherry-pick-says-38c74d-is-a-merge-but-no-m-option-was-given
+
 tag标签
 -------
 

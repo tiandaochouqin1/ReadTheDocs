@@ -117,6 +117,7 @@ ARM内存屏障
 -----------
 1. arm-asm 3.37
 2. https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
+3. https://developer.arm.com/documentation/den0024/a/Memory-Ordering
 
 
 
@@ -217,3 +218,27 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 
 1. Store-Release：基本指令后面加上L；
 2. Load-Acquire：基本指令后面加上A；
+
+
+SMMU
+--------
+1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
+2. `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
+3. :download:`smmu v3 <../files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
+
+SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
+
+.. figure:: ../images/smmu.png
+
+   System Memory Management Unit
+
+
+1. DMA需要连续的地址.
+2. 虚拟化： 在虚拟化场景， 所有的VM都运行在中间层hypervisor上，每一个VM独立运行自己的OS（guest OS）,Hypervisor完成硬件资源的共享, 隔离和切换。
+    但guest VM使用的物理地址是GPA, 看到的内存并非实际的物理地址HPA，因此Guest OS无法正常的将连续的物理地址分给DMA硬件。
+
+因此，为了支持I/O透传机制中的DMA设备传输，而引入了IOMMU技术（ARM称作SMMU）。
+
+.. figure:: ../images/dma_smmu.png
+
+   虚拟化+DMA -> SMMU

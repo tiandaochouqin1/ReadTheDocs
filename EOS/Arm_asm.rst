@@ -187,21 +187,16 @@ LDM和STM指令，"M"在这里代表Multiple。
 1. STM是把多个寄存器的值传送到内存相邻的位置。
 2. LDM多个寄存器在ARM汇编语言中用"{}"圈起来，表示待传送的寄存器列表。
 
-arm dsb
--------------
+arm memory barrier
+----------------------
 arm-asm 3.37
 
 https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
 
 
-1. DMB:Data Memory Barrier,只作用于 `显式内存访问指令`，保证dmb前的显式内存访问指令先执行完。
-
-2. DSB:Data Synchronization Barrier，一种特殊的dmb，作用于所有指令，保证dsb之前的指令执行完之后才执行dsb之后的指令。
-   
-   No instruction in program order after this instruction executes until this instruction completes.
-   dsb指令完成的条件包括：All Cache, Branch predictor and TLB maintenance operations before this instruction complete.
-
-3. ISB:Instruction Synchronization Barrier,清空cpu流水线，之后的指令从cache/memory取。
+1. DMB:Data Memory Barrier
+2. DSB:Data Synchronization Barrier
+3. ISB:Instruction Synchronization Barrier
    
 
 x86与arm函数调用规约

@@ -319,6 +319,24 @@ ABA问题
 `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
 
 
+
+rcu
+-------
+1. `【原创】Linux RCU原理剖析（一）-初窥门径 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12681494.html>`__
+2. `Linux中的RCU机制[一] - 原理与使用方法 - 知乎  <https://zhuanlan.zhihu.com/p/89439043>`__
+
+RCU的基本思想是：先创建一个旧数据的copy，然后writer更新这个copy，最后再用新的数据替换掉旧的数据。
+
+RCU, Read-Copy-Update，是Linux内核中的一种同步机制。
+
+RCU常被描述为读写锁的替代品，它的特点是读者并不需要直接与写者进行同步，读者与写者也能并发的执行。
+ 
+RCU的目标就是最大程度来减少 ``读者`` 侧的开销.
+
+.. figure:: ../images/rcu.png
+
+
+
 可重入、异步信号安全、多线程安全
 ================================
 为了解决两个问题：多线程并发和信号中断。

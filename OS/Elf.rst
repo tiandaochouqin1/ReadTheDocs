@@ -473,6 +473,16 @@ main之前
    stack_main_start
 
 
+execv
+~~~~~~~~~~
+`Linux内核之execve函数-BugMan-ChinaUnix博客  <http://blog.chinaunix.net/uid-69947851-id-5825847.html>`__
+
+.. figure:: ../images/execv.jpg
+
+   execv x86_64
+
+   
+
 _start和__libc_start_main
 ----------------------------
 glibc/csu/elf-init.c
