@@ -112,12 +112,20 @@ Each VM is assigned a virtual machine identifier (VMID).
 The VMID is used to tag translation lookaside buffer (TLB) entries, to identify which VM each entry belongs to. 
 
 
+Memory Order & Barrier
+==========================
+Memory Order
+--------------
 
 ARM内存屏障
 -----------
 1. arm-asm 3.37
 2. https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
 3. https://developer.arm.com/documentation/den0024/a/Memory-Ordering
+4. `Memory Reordering Caught in the Act  <https://preshing.com/20120515/memory-reordering-caught-in-the-act/>`__
+5. `Memory Model and Synchronization Primitive - Part 1: Memory Barrier - Alibaba Cloud Community  <https://www.alibabacloud.com/blog/memory-model-and-synchronization-primitive---part-1-memory-barrier_597460>`__
+6. https://www.cse.unsw.edu.au/~cs9242/16/lectures/04-smp_locking.pdf
+7. `Memory ordering - Wikiwand  <https://www.wikiwand.com/en/Memory_ordering>`__
 
 
 
@@ -242,3 +250,65 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
 .. figure:: ../images/dma_smmu.png
 
    虚拟化+DMA -> SMMU
+
+
+
+
+TrustZone
+============
+1. ★ `4. Firmware Design — Trusted Firmware-A documentation  <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html>`__
+2. ★ `ARM Trusted Firmware分析——启动、PSCI、OP-TEE接口 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/14175126.html>`__
+3. `学习整理：arm-trusted-firmware - HarmonyHu’s Blog  <https://harmonyhu.com/2018/06/23/Arm-trusted-firmware/>`__
+4. `TEE Reference Documentation – Arm®  <https://www.arm.com/technologies/trustzone-for-cortex-a/tee-reference-documentation>`__
+    其中包括 trustzone security white paper
+5. `TrustZone for Cortex-A – Arm®  <https://www.arm.com/technologies/trustzone-for-cortex-a>`__
+
+TF-A
+-------
+Trusted Firmware-A (TF-A) provides a reference implementation of secure world software for Armv7-A, Armv8-A and Armv9-A, 
+including a Secure Monitor executing at Exception Level 3 (EL3) 
+and a Secure Partition Manager running at Secure EL2 (S-EL2) of the Arm architecture.
+
+
+Trusted Firmware-A implements various Arm interface standards, such as:
+
+1. Power State Coordination Interface (PSCI)
+2. Trusted Board Boot Requirements (TBBR)
+3. SMC Calling Convention  (SMCCC)
+4. System Control and Management Interface (SCMI)
+5. Software Delegated Exception Interface (SDEI)
+
+
+A **System Control Processor (SCP) ** is a processor-based capability that provides a flexible and extensible platform 
+for provision of **power management** functions and services. 
+
+.. figure:: ../images/ATF_Scp.png
+
+   ATF_Scp
+
+
+ATF冷启动
+-------------
+
+.. figure:: ../images/ATF_Boot.png
+
+   ATF_Boot
+
+
+
+.. figure:: ../images/ATF_Cold_Boot.png
+
+   ATF_Cold_Boot
+
+
+ATF输出BL1、BL2、BL31，提供BL32和BL33接口。
+
+ATF冷启动实现分为5个步骤：(详见参考文献)
+
+1. BL1 - AP Trusted ROM，一般为BootRom。EL3。  选择cold/warm boot模式、建立exception vectors、加载BL2。
+2. BL2 - Trusted Boot Firmware，一般为Trusted Bootloader。EL1。   加载BL3x。 
+3. BL31 - EL3 Runtime Firmware，一般为SML，管理SMC执行处理和中断，运行在secure monitor中。EL3。 
+4. BL32 - Secure-EL1 Payload，一般为TEE OS Image。
+5. BL33 - Non-Trusted Firmware，一般为uboot、linux kernel。EL2。
+
+
