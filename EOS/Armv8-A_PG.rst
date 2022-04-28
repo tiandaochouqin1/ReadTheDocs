@@ -83,6 +83,11 @@ cache shareable domain
 3. Non-shareable，表示相关区域只能给指定的处理器访问。
 4. Full System，包含全部处理器。
 
+MESI cache一致性协议
+---------------------
+1. `并发研究之CPU缓存一致性协议(MESI) - 枫飘雪落 - 博客园  <https://www.cnblogs.com/yanlong300/p/8986041.html>`__
+
+
 Arm address space
 -------------------
 1. `(Address-spaces) Learn the architecture: AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/Address-spaces?lang=en>`__
@@ -95,7 +100,7 @@ Arm address space
 
 .. figure:: ../images/va-to-ipa-to-pa-address-translation.jpg
    
-   va-to-ipa-to-pa-address-translation.png
+   va-to-ipa-to-pa-address-translation
 
 
 1. Stage 1 translation: OS，通过traslation table将虚拟地址空间转换为IPA(Intermediate Physical Address Space)。
@@ -116,20 +121,86 @@ Memory Order & Barrier
 ==========================
 Memory Order
 --------------
+1. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/Memory-Ordering>`__
+2. ★ `Memory Model and Synchronization Primitive - Part 1: Memory Barrier - Alibaba Cloud Community  <https://www.alibabacloud.com/blog/memory-model-and-synchronization-primitive---part-1-memory-barrier_597460>`__
+3. x86 cpu重排"无依赖"指令  `Memory Reordering Caught in the Act  <https://preshing.com/20120515/memory-reordering-caught-in-the-act/>`__
+
+
+乱序可能出现的场景：
+
+多核、直接load/write 将要执行的命令、操作页表。
+
+if your code interacts directly either with the hardware or with code executing on other cores, 
+or if it directly loads or writes instructions to be executed, 
+or modifies page tables, you need to be aware of memory ordering issues.
+
+在armv8中, 由于processor的预取, 流水线,  以及多线程并行的执行方式, 而且armv8-a中, 使用的是一种weakly-ordered memory model, 不保证program order和execute order一致。
+
+armv8涉及到的优化包括：
+
+1) multiple issue of instructions, 超流水线技术, 每个cycle, 都会有多个issue和execute, 保证不了各个指令的执行order。
+
+2) ☆ out-of-order execution, 很多processor都会对non-dependent的指令, 做out-of-order的执行, 
+
+3) Speculation, 分组预测, 在遇到conditional instruction时, 判断condition之前, 就会执行之后的instruction。
+
+4) Speculative loads, 预取, 在执行上一条指令的同时, 将下一条指令的数据, 预取到cache中。
+
+5) Load and Store optimizations, 由于写主存的latency很大, processor可以做很多优化, write-merge, write-buffer等。
+
+6) External memory systems, 某些外部device, 像DRAM, 可以同时接受不同master的req, Transaction可能会被buffered, reordered。
+
+7) ☆ Cache coherent multi-core, 一个cluster中的各个core, 对同一个cache的update, 看到的顺序不会是一致的。 因为cache无法实时update。
+
+8) Optimizing compilers, 编译器在编译时的性能优化, 可能打乱program order。使用 ``asm volatile("" ::: "memory");`` 避免。
+
+ 
+memory types
+~~~~~~~~~~~~~~~~~
+armv8支持的memory types：Normal memory和Device memory
+
+1. Normal memory, 主要指RAM, ROM, FLASH等memory, 这类memory, processor以及compiler都可以对program做优化, 
+
+2. Device memory, 通常都是peripheral对应的memory mapped。对于该memory type, processor的约束会很多；
+
+1) write的次数, processor内部必须与program中的相同；
+
+2) 不能将两次的writes, reads, 等效为一个；
+
+3) 但是对于不同的device之间的memory access是不限制order的；
+
+4) speculative是不允许的, 对device的memory；
+
+5) 在device memory中execute, 也是不允许的；
+
+强弱序内存模型
+~~~~~~~~~~~~~~~~~
+1. `CPU memory model  <http://bajamircea.github.io/coding/cpp/2019/10/25/cpu-memory-model.html>`__
+2. `Memory ordering - Wikiwand  <https://www.wikiwand.com/en/Memory_ordering>`__
+
+
+- Armv8为弱内存序模型，this means that the order of memory accesses is not required to be the same as the program order for load and store operations.
+
+- x86为强内存序模型，其Write Buffer为FIFO。仅可能有reads can be reordered ahead of other writes。
+
+
+
+
+.. figure:: ../images/Memory_Ordering_Arch.png
+   
+   Memory_Ordering_Arch
+
+
 
 ARM内存屏障
 -----------
 1. arm-asm 3.37
 2. https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
-3. https://developer.arm.com/documentation/den0024/a/Memory-Ordering
-4. `Memory Reordering Caught in the Act  <https://preshing.com/20120515/memory-reordering-caught-in-the-act/>`__
-5. `Memory Model and Synchronization Primitive - Part 1: Memory Barrier - Alibaba Cloud Community  <https://www.alibabacloud.com/blog/memory-model-and-synchronization-primitive---part-1-memory-barrier_597460>`__
-6. https://www.cse.unsw.edu.au/~cs9242/16/lectures/04-smp_locking.pdf
-7. `Memory ordering - Wikiwand  <https://www.wikiwand.com/en/Memory_ordering>`__
+3. https://www.cse.unsw.edu.au/~cs9242/16/lectures/04-smp_locking.pdf
 
 
 
-由于一些编译器优化或者CPU设计的流水线乱序执行，导致最终内存的访问顺序可能和代码中的逻辑顺序不符，所以需要增加内存屏障指令来保证顺序性。
+由于一些 **编译器优化或者CPU设计的流水线乱序执行** ，导致最终内存的访问顺序可能和代码中的逻辑顺序不符，所以需要增加内存屏障指令来保证顺序性。
 
 ARM平台上存在三种内存屏障指令：
 
@@ -220,7 +291,7 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 
 1. Load-Acquire：这条指令之后的所有 ``加载和存储操作一定不会被重排序到这条指令之前``；
 2. Store-Release：这条指令之前的所有加载和存储才做一定不会被重排序到这条指令 ``之后``；
-3. 数据内存屏障DMB = Load-Acquire + Store-Release
+3. 数据内存屏障 ``DMB = Load-Acquire + Store-Release``
 
 指令形式：
 
