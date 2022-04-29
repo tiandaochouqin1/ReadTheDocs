@@ -385,3 +385,19 @@ ATF冷启动实现分为5个步骤：(详见参考文献)
 5. BL33 - Non-Trusted Firmware，一般为uboot、linux kernel。EL2。
 
 
+从核启动
+~~~~~~~~~~~
+1. `ARM WFI和WFE指令  <http://www.wowotech.net/armv8a_arch/wfe_wfi.html>`__
+2. `SMP多核启动 - yooooooo - 博客园  <https://www.cnblogs.com/linhaostudy/p/9371562.html>`__
+
+启动流程：
+
+1. 主核(核0)启动并运行Linux之后，继续 通过bl31->(PCSI)->scp->(SCMI)->ap 来使从核上电。
+2. 从核上电后从给定Linux位置(主核传参)启动，然后进入WFI/WFE状态等待，直到主核发送核间中断唤醒从核。
+3. 从核之后则可以被动态负载均衡调度。
+
+::
+
+   echo 1/0 > /sys/devices/system/cpu/cpu1/online
+
+   

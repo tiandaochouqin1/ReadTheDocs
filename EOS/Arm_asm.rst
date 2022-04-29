@@ -139,7 +139,7 @@ CPSR: 对应x86的EFLAGS
 
 寻址模式和偏移模式
 --------------------
-三种 **寻址模式**：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。
+三种 **寻址模式** ：偏移寻址（Offset addressing），前变址寻址（Pre-indexed addressing），后变址寻址（Post-indexed addressing）。
 
 ::
       
@@ -168,6 +168,7 @@ LDR(从左到右，右为目标) 和 STR（从右到左，arm大部分指令的�
             
       立即数作为偏移量：ldr r3, [r1, #4]
       寄存器作为偏移量：ldr r3, [r1, r2]
+
       带有位移操作的寄存器作为偏移量：ldr r3, [r1, r2, LSL#2]
 
 
@@ -283,8 +284,8 @@ aarch64函数调用Stack
 
    -->
 
-   /* 保存x30 -> 保存x29 -> sp 增长
-   stp    x29, x30, [sp, #-16]!
+   /* 保存x29到sp -> 保存x30到sp+4 -> sp=sp-32
+   stp    x29, x30, [sp, #-32]!
    /* 将新栈地址保存到x29。当前x29的值为旧x29被保存到栈的地址
    mov    x29, sp
    ......
@@ -295,11 +296,24 @@ aarch64函数调用Stack
 
 
 
-STP: Store Pair of Registers. 计算地址，并将两个寄存器值保存到计算出来的地址。
+Load and store pair 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. `Learn the architecture: AArch64 Instruction Set Architecture  <https://developer.arm.com/documentation/102374/0101/Loads-and-stores---load-pair-and-store-pair>`__
 
-STP Xt1, Xt2, [Xn|SP, #imm]! ; 64-bit general registers, Pre-index
 
-<Xt1> Is the 64-bit name of the ``first`` general-purpose register to be transferred, encoded in the "Rt" field.
+often used for pushing, and popping off the stack. 
+
+::
+      
+   This first instruction pushes X0 and X1 onto the stack:
+   STP        X0, X1, [SP, #-16]!
+
+   This second instruction pops X0 and X1 from the stack:
+   LDP        X0, X1, [SP], #16
+
+   Remember that in AArch64 the stack-pointer must be 128-bit aligned.
+
+
 
 栈帧视图
 ~~~~~~~~~~~~
@@ -334,7 +348,7 @@ For AArch64, the register is ``X29``. This is reserved for the stack frame point
 ::
 
    ffffff80080851b8 <arch_align_stack>:
-   ffffff80080851b8: a9be7bfd stp x29, x30, [sp, #-32]!
+   ffffff80080851b8: a9be7bfd stp x29, x30, [sp, #-16]!
    ffffff80080851bc: 910003fd mov x29, sp
 
 

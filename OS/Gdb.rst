@@ -41,7 +41,7 @@ GDB
 
    10. p打印：        print。p /x addr，也可用于调用函数 
 
-   11. list打印：    list <location>,按行打印源码; 
+   11. list打印：    list <location>/func,按行打印源码; 
    
    12. 指定源码：    directory
 
@@ -88,13 +88,23 @@ x命令
     6. info variables/functions : 当前程序
 
 
-thread调试
+多线程调试
 --------------
+
+1. `GDB调试多线程及多进程  <https://ivanzz1001.github.io/records/post/cplusplus/2018/08/19/cpluscplus-gdbusage_part2#13-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E8%AF%95%E7%A4%BA%E4%BE%8B>`__
+
 ::
 
    1. info thread
-   2. thread num
-   3. set scheduler-lock on/off/    : 所有线程断住
+   
+   2. thread id ：切换
+   
+   3. break file.c:100 thread all  在file.c文件第100行处为所有经过这里的线程设置断点。
+   
+   4. set scheduler-locking off|on|step。只让被调试线程执行。原本在使用step或者continue命令调试当前被调试线程的时候，其他线程也是同时执行的。
+      off 不锁定任何线程，也就是所有线程都执行，这是默认值。
+      on 只有当前被调试程序会执行。
+      step 在单步的时候，除了next过一个函数的情况(next其实是一个设置断点然后continue的行为)以外，只有当前线程会执行。
 
 
 record历史
@@ -102,7 +112,9 @@ record历史
 ::
 
    1. record
+   
    2. rn/reverse-next :回退上一步
+   
    3. rs
 
 watch
