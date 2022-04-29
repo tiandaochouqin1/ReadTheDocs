@@ -88,6 +88,8 @@ MESI cache一致性协议
 1. `并发研究之CPU缓存一致性协议(MESI) - 枫飘雪落 - 博客园  <https://www.cnblogs.com/yanlong300/p/8986041.html>`__
 
 
+
+
 Arm address space
 -------------------
 1. `(Address-spaces) Learn the architecture: AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/Address-spaces?lang=en>`__
@@ -289,8 +291,8 @@ smp相关的内存屏障都加入了ish选项，也就是限制指令只针对in
 
 ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指令。
 
-1. Load-Acquire：这条指令之后的所有 ``加载和存储操作一定不会被重排序到这条指令之前``；
-2. Store-Release：这条指令之前的所有加载和存储才做一定不会被重排序到这条指令 ``之后``；
+1. Load-Acquire：这条指令 ``之后的所有加载和存储操作一定不会被重排序到这条指令之前``；
+2. Store-Release：这条指令 ``之前`` 的所有加载和存储才做一定不会被重排序到这条指令之后；
 3. 数据内存屏障 ``DMB = Load-Acquire + Store-Release``
 
 指令形式：

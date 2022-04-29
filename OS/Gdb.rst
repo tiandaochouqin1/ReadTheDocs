@@ -39,7 +39,7 @@ GDB
 
    9. x打印：        x格式化打印，x/10xw——十六进制内容、x/10i——指令;
 
-   10. p打印：        print。以c语句形式打印;
+   10. p打印：        print。p /x addr，也可用于调用函数 
 
    11. list打印：    list <location>,按行打印源码; 
    
@@ -64,10 +64,10 @@ x命令
 --------
 ::
 
+    x/i  反汇编 – 通常，我们会使用 x/10i $ip-20 来查看当前的汇编（$ip是指令寄存器）
     x/x 以十六进制输出
     x/d 以十进制输出
     x/c 以单字符输出
-    x/i  反汇编 – 通常，我们会使用 x/10i $ip-20 来查看当前的汇编（$ip是指令寄存器）
     x/s 以字符串输出
 
 
@@ -86,6 +86,30 @@ x命令
     5. info args/locals :      当前栈帧
 
     6. info variables/functions : 当前程序
+
+
+thread调试
+--------------
+::
+
+   1. info thread
+   2. thread num
+   3. set scheduler-lock on/off/    : 所有线程断住
+
+
+record历史
+----------
+::
+
+   1. record
+   2. rn/reverse-next :回退上一步
+   3. rs
+
+watch
+-------
+::
+
+   1. watch var/addr：可观察局部变量(作用域内)
 
 
 dump栈内存
