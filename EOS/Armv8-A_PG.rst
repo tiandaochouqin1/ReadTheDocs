@@ -400,4 +400,68 @@ ATF冷启动实现分为5个步骤：(详见参考文献)
 
    echo 1/0 > /sys/devices/system/cpu/cpu1/online
 
+
+Linux启动
+~~~~~~~~~~~~~~
+1. `Linux 内核启动分析-BugMan-ChinaUnix博客  <http://blog.chinaunix.net/uid-69947851-id-5830505.html>`__
+
+arch/arm64/kernel/vmlinux.lds.S
+
+::
+
+
+   OUTPUT_ARCH(aarch64)
+   ENTRY(_text)
    
+   .....
+
+   .head.text : {
+   _text = .;
+
+   .....
+
+   HEAD_TEXT在 arch/arm64/kernel/head.S文件使用，如下：
+
+
+   #define __PHYS_OFFSET   (KERNEL_START - TEXT_OFFSET) // 内核物理地址起始位置
+
+   __HEAD
+   _head:
+       b stext // branch to kernel start, magic
+       .long 0 // reserved
+       le64sym _kernel_offset_le // Image load offset from start of RAM, little-endian
+       le64sym _kernel_size_le // Effective size of kernel image, little-endian
+       le64sym _kernel_flags_le // Informative flags, little-endian
+       .quad 0 // reserved
+       .quad 0 // reserved
+       .quad 0 // reserved
+       .ascii "ARM\x64" // Magic number
+       .long 0 // reserved
+   
+
+   __INIT
+   ENTRY(stext)
+       bl  preserve_boot_args
+       bl  el2_setup           // Drop to EL1, w0=cpu_boot_mode
+       adrp    x23, __PHYS_OFFSET // 物理地址偏移
+       and x23, x23, MIN_KIMG_ALIGN - 1    // KASLR offset, defaults to 0，一种内核安全机制，通过物理地址起始位置计算出偏移大小，偏移大小保存在X23寄存器
+       bl  set_cpu_boot_mode_flag
+       bl  __create_page_tables
+       bl  __cpu_setup         // initialise processor
+       b   __primary_switch
+   ENDPROC(stext)
+
+
+步骤:
+
+1. preserve_boot_args: 将uboot传入的参数 保存到bootargs[4] 全局变量里面。
+
+2. el2_setup :判断启动的模式是el2还是el1并进行相关级别的系统配置(armv8中el2是hypervisor模式,el1是标准的内核模式,具体的参考手册),  然后返回启动模式
+
+3. set_cpu_boot_mode_flag: 将启动模式保存到全局变量
+
+4. __create_page_tables: 创建内存映射表,一共两张,一张存放在swapper_pg_dir(线性映射),一张存放在idmap_pg_dir(一对一映射)。
+
+5. __cpu_setup : 初始化处理器相关的代码,配置访问权限,内存地址划分等。
+
+6. __primary_switch :开启MMU, 准备0号进程和内核栈,然后跳转到start_kernel运行

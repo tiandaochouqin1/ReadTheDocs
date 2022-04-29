@@ -310,8 +310,9 @@ O(1)调度
 
 六大调度策略
 ----------------
-`sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
-`翻译版 <https://www.cnblogs.com/charlieroro/p/12133100.html>`__ 。
+1. `sched man <https://man7.org/linux/man-pages/man7/sched.7.html>`__ 讲得很清楚。
+2. `翻译版 <https://www.cnblogs.com/charlieroro/p/12133100.html>`__ 。
+
 
 
 1. SCHED_FIFO: 先进先出，无时间片。
@@ -348,9 +349,10 @@ Linux调度程序默认试图使进程尽量在同一个处理器运行（软亲
 
 FIFO与RR
 ~~~~~~~~~~~~~
-`实时调度类分析 <https://www.cnblogs.com/arnoldlu/p/9025981.html>`__ （源码分析）
+1. `实时调度类分析 <https://www.cnblogs.com/arnoldlu/p/9025981.html>`__ （源码分析）
 
-`Linux进程调度总结 <https://zhuanlan.zhihu.com/p/335846858>`__ (图不错)
+2. `Linux进程调度总结 <https://zhuanlan.zhihu.com/p/335846858>`__ (图不错)
+3. `Linux schedule 调度算法  <https://mp.weixin.qq.com/s/GaZbL1LVq4rFmKIWwiKOeQ>`__
 
 FIFO:严格按照优先级来执行，同一优先级先进先得到执行。
 
@@ -501,11 +503,20 @@ https://zhuanlan.zhihu.com/p/296750228
 
 抢占和上下文切换
 ------------------
+1. `内核抢占和低延迟_独角鲸的博客-CSDN博客  <https://blog.csdn.net/su_linux/article/details/15500053>`__
+2. `进程切换：自愿(voluntary)与强制(involuntary) | Linux Performance  <http://linuxperf.com/?p=209>`__
 
-上下文切换：即从一个可执行程序切换到另一个可执行程序。
+抢占
+~~~~~~
+自愿切换和强制切换：
+
+1. 自愿切换发生的时候，进程不再处于运行状态，比如由于等待IO而阻塞(TASK_UNINTERRUPTIBLE)，或者因等待资源和特定事件而休眠(TASK_INTERRUPTIBLE)，又或者被debug/trace设置为TASK_STOPPED/TASK_TRACED状态；
+2. 强制切换发生的时候，进程仍然处于运行状态(TASK_RUNNING)，通常是由于被优先级更高的进程抢占(preempt)，或者进程的时间片用完了。
 
 context_switch
 ~~~~~~~~~~~~~~~~~~~
+上下文切换：即从一个可执行程序切换到另一个可执行程序。
+
 _schedule -> context_switch()： 完成地址空间切换switch_mm()和处理器状态恢复switch_to()。
 
 ::
