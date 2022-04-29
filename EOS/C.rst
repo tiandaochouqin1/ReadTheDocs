@@ -17,6 +17,24 @@ C
 =========
 The C Programming Language 2ed.pdf
 
+声明与定义
+---------------
+
+
+复杂的函数声明(signal)
+~~~~~~~~~~~~~~~~~~~~~~
+
+typedef
+~~~~~~~~
+
+
+数组与指针比较
+--------------
+1. 数组名与指针可互换使用，编译器会对寻址解析自动进行转换。
+2. sizeof(arr)与sizeof(p) 不同。
+3. 定义字符串时，arr可变，p指向的字符串不可变。
+4. 若在引用外部arr/p时使用了混用了声明形式，则会导致错误。如 使用extern int * arr 声明数组arr[size].
+
 extern
 ---------
 1. static： The static declaration, applied to an external variable or function, limits the scope of
