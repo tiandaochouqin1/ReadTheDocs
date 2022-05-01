@@ -29,8 +29,7 @@ GDB
 
    5. 运行：         run(开始运行)、continue(运行到断点或Ctrl+C)、advance <location>(运行到指定地址);
 
-
-   6. 断点：         break <location>(地址、函数名、文件行号)，delete, disable, enable;
+   6. 断点：         break <location>(地址、函数名、文件行号). delete/disable/enable <num>; tbreak临时断点;
 
    7. 条件断点：     break <location> if <condition>、cond <number> <condition> ,如 b func if var == 1;
 
@@ -59,6 +58,7 @@ GDB
    18. 参数:       set args命令、-args参数
 
    19. 一直显示下一行源码对应的汇编: set disassemble-next-line on
+   20. 返回值打桩:      进入函数后，return <val>
 
 x命令
 --------
@@ -91,7 +91,8 @@ x命令
 多线程调试
 --------------
 
-1. `GDB调试多线程及多进程  <https://ivanzz1001.github.io/records/post/cplusplus/2018/08/19/cpluscplus-gdbusage_part2#13-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E8%AF%95%E7%A4%BA%E4%BE%8B>`__
+1. `GDB调试多线程及多进程  <https://ivanzz1001.github.io/records/post/cplusplus/2018/08/19/cpluscplus-gdbusage_part2>`__
+2. https://cvvz.github.io/post/gdb-muti-process-and-signal-handle/
 
 ::
 
@@ -101,10 +102,29 @@ x命令
    
    3. break file.c:100 thread all  在file.c文件第100行处为所有经过这里的线程设置断点。
    
-   4. set scheduler-locking off|on|step。只让被调试线程执行。原本在使用step或者continue命令调试当前被调试线程的时候，其他线程也是同时执行的。
+   4. set scheduler-locking off/on/step。all-stop模式中有效，只让被调试线程执行。原本在使用step或者continue命令调试当前被调试线程的时候，其他线程也是同时执行的。
       off 不锁定任何线程，也就是所有线程都执行，这是默认值。
       on 只有当前被调试程序会执行。
       step 在单步的时候，除了next过一个函数的情况(next其实是一个设置断点然后continue的行为)以外，只有当前线程会执行。
+
+执行模式
+~~~~~~~~~
+
+1. All-Stop:任何一个线程在断点处hang住时，所有其他线程也会hang住。默认为all-stop模式。
+
+
+2. Non-Stop:任何一个线程被stop甚至单步调试时，其他线程可以自由运行。continue/intterupt作用于当前线程: 加-a 作用域所有线程。
+
+
+信号处理
+------------
+GDB能够检测到程序中产生的信号，并进行针对性的处理。通过info handle查看对所有信号的处理方式：
+
+1. Stop：检测到信号是否停住程序的运行；
+2. Print：是否打印收到该信号的信息；
+3. Pass to program：是否把该信号传给进程处理（或者说是否屏蔽该信号，无法屏蔽SIGKILL和SIGSTOP信号）
+
+通过handle SIG来指定某个信号的处理方式。
 
 
 record历史
@@ -116,6 +136,8 @@ record历史
    2. rn/reverse-next :回退上一步
    
    3. rs
+   
+   4. record save/restore
 
 watch
 -------
