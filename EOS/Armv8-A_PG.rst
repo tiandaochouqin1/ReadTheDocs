@@ -300,6 +300,21 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 1. Store-Release：基本指令后面加上L；
 2. Load-Acquire：基本指令后面加上A；
 
+arm mmu
+------------------
+1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
+2. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
+
+enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
+
+The Translation Lookaside Buffer (TLB) is a cache of recently accessed page translations in the MMU. 
+
+The **hypervisor** must perform some extra translation steps in a two stage process to share the physical memory system between the different guest operating systems.
+
+.. figure:: ../images/two_stage_translation_process.png
+
+    two_stage_translation_process
+
 
 SMMU
 --------
