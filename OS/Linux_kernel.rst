@@ -466,7 +466,16 @@ wake_up() -> try_to_wake_up()。通常是促使条件达成的代码来调用此
 2. enqueue_task()放入调度队列；
 3. 若被唤醒的进程优先级比正在运行的进程优先级高，则设置need_resched标志。
 
+wake_up
+~~~~~~~~
+1. `进程调度API之wake_up_process_tiantao2012的博客-CSDN博客  <https://blog.csdn.net/tiantao2012/article/details/78872831>`__
+2. `sched feature: TTWU_QUEUE_yiyeguzhou100的博客-CSDN博客  <https://blog.csdn.net/yiyeguzhou100/article/details/104336751>`__
+3. https://elixir.bootlin.com/linux/latest/source/kernel/sched/core.c#L3778
 
+唤醒方式：
+
+1. 分支1：cpus_share_cache判断如果目标CPU与当前CPU **不共享LLC**（即L3 cache），则将该线程加到目标cpu的wake_list后，向目标CPU发送 **IPI中断**。
+2. 分支2：(同Cluster，非IPI形式)try_to_wake_up() 调用 ttwu_queue() 将这个唤醒的任务添加到队列当中。ttwu_queue() 再调用 ttwu_do_activate() 激活这个任务。ttwu_do_activate() 调用 ttwu_do_wakeup()
 
 内核栈
 ----------

@@ -7,6 +7,17 @@ Embeded OS Concept
 
 概念辨析
 =========
+总线
+--------
+1. `9、总线设备驱动模型 - Lioker - 博客园  <https://www.cnblogs.com/Lioker/p/10893768.html>`__
+2. `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
+
+Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
+
+总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
+
+
+
 核间中断IPI
 ------------
 
@@ -120,6 +131,7 @@ tmpfs
 POSIX与System V IPC
 -----------------------
 1. TLPI C43、C51
+2. `Linux内核同步机制之（四）：spin lock  <http://www.wowotech.net/kernel_synchronization/spinlock.html>`__
 
 
 三种类别：通信、同步、信号。
@@ -135,6 +147,14 @@ POSIX与System V IPC
 
        * 接口更简单，与Unix文件模型更一致、带引用计数(简化了删除操作)。
        * 兼容性稍差。
+
+
+3. 一些 UNIX 实现，包括安装了能提供 NPTL 线程实现的 glibc 的 Linux 系统，允许在 ``进程间共享互斥体和条件变量``。
+4. spin lock: 可抢占或SMP系统中使用。可在中断上下文使用。可多进程。
+
+::
+
+    getconf GNU_LIBPTHREAD_VERSION
 
 
 伪终端
