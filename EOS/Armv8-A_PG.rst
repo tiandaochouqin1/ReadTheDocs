@@ -95,7 +95,42 @@ Arm address space
 1. `(Address-spaces) Learn the architecture: AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/Address-spaces?lang=en>`__
 2. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
 
+Memory Layout
+~~~~~~~~~~~~~~~~~
+1. `Memory Layout on AArch64 Linux — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/arm64/memory.html>`__
 
+
+arm64上linux进程用户地址空间和内核地址空间都是256TB.
+Linux内核会配置使用TTBR0和TTBR1寄存器，TTBR0存放用户pgd的基址，TTBR1存放内核pgd的基址.
+MMU根据传入的虚拟地址来选择使用TTBR0还是TTBR1寄存器。
+
+::
+
+   User addresses have bits 63:48 set to 0 while the kernel addresses have the same bits set to 1. 
+   TTBRx selection is given by bit 63 of the virtual address.
+   
+    The swapper_pg_dir contains only kernel (global) mappings while the user pgd contains only user (non-global) mappings. 
+    The swapper_pg_dir address is written to TTBR1 and never written to TTBR0.
+
+   AArch64 Linux memory layout with 4KB pages + 4 levels (48-bit):(armv8.2支持64K Pages，故共52bits)
+
+    Start                 End                     Size            Use
+    -----------------------------------------------------------------------
+    0000000000000000      0000ffffffffffff         256TB          user
+    ffff000000000000      ffff7fffffffffff         128TB          kernel logical memory map
+   [ffff600000000000      ffff7fffffffffff]         32TB          [kasan shadow region]
+    ffff800000000000      ffff800007ffffff         128MB          bpf jit region
+    ffff800008000000      ffff80000fffffff         128MB          modules
+    ffff800010000000      fffffbffefffffff         124TB          vmalloc
+    fffffbfff0000000      fffffbfffdffffff         224MB          fixed mappings (top down)
+    fffffbfffe000000      fffffbfffe7fffff           8MB          [guard region]
+    fffffbfffe800000      fffffbffff7fffff          16MB          PCI I/O space
+    fffffbffff800000      fffffbffffffffff           8MB          [guard region]
+    fffffc0000000000      fffffdffffffffff           2TB          vmemmap
+    fffffe0000000000      ffffffffffffffff           2TB          [guard region]
+
+2 stages
+~~~~~~~~~~~
 .. figure:: ../images/Address_spaces_in_Armv8-A.jpg
    
    Address_spaces_in_Armv8-A
