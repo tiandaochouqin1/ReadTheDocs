@@ -1,5 +1,6 @@
 {
     "restructuredtext.confPath": "${workspaceFolder}",
     "restructuredtext.languageServer.disabled": true,
-    "restructuredtext.pythonRecommendation.disabled": true
+    "restructuredtext.pythonRecommendation.disabled": true,
+    "esbonio.sphinx.confDir": "${workspaceFolder}"
 }
