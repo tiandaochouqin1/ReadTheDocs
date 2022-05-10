@@ -20,6 +20,28 @@ The C Programming Language 2ed.pdf
 声明与定义
 ---------------
 
+别名alias
+~~~~~~~~~~
+1. `Common Variable Attributes (Using the GNU Compiler Collection (GCC))  <https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html>`__
+2. https://developer.arm.com/documentation/dui0491/f/Compiler-specific-Features/--attribute----alias---function-attribute
+
+alias和real_func可以同时使用。
+
+
+Where a function is defined in the current translation unit, the alias call is replaced by a call to the function, 
+and the alias is emitted alongside the original name
+
+
+::
+
+    int var_target;
+    extern int __attribute__ ((alias ("var_target"))) var_alias;
+
+    或
+
+    void __f () { /* Do something. */; }
+    void f () __attribute__ ((weak, alias ("__f")));
+
 
 复杂的函数声明(signal)
 ~~~~~~~~~~~~~~~~~~~~~~
