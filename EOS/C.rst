@@ -266,6 +266,40 @@ the remainder of the aggregate shall be initialized implicitly the same as objec
 
 If an array of unknown size is initialized, its size is determined by the largest indexed element with an explicit initializer. The array type is completed at the end of its initializer list.
 
+CERT C
+=======
+sequence point
+-----------------
+1. `EXP30-C. Do not depend on the order of evaluation for side effects - SEI CERT C Coding Standard - Confluence  <https://wiki.sei.cmu.edu/confluence/display/c/EXP30-C.+Do+not+depend+on+the+order+of+evaluation+for+side+effects>`__
+2. `Warning Options (Using the GNU Compiler Collection (GCC))  <https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html>`__
+
+1. 序列点可保证其前后求值的顺序。
+2. 若无序列点，则表达式求值顺序未定义。
+
+3. 两个序列点之间，只能修改一次值。
+
+the C and C++ standards specify that “Between the previous and next sequence point an object 
+shall **have its stored value modified at most once by the evaluation of an expression.**
+Furthermore, the prior value shall be read only to determine the value to be stored.”
+
+序列点
+~~~~~~~~~~~
+包括: 函数调用、控制语句(如while)、 **部分运算符(逻辑与、逻辑或、逗号、条件运算符。其它运算符均非序列点!!)** 。
+
+常见问题与示例
+~~~~~~~~~~~~~~~~
+
+1. 函数参数求值顺序不定
+2. 自增/减使用的一些场景，如下。
+
+::
+
+    /* i is modified twice between sequence points */
+    i = ++i + 1; 
+    
+    /* i is read other than to determine the value to be stored */
+    a[i++] = i;  
+
 优秀项目学习
 =================
 

@@ -8,7 +8,7 @@ Blog
 
 --------------
 
-Read the Docs
+Sphinx与rst
 =============
 
 -  `Read the  Docs <https://readthedocs.org/>`__\ 一个在线文档托管服务，可以从各种版本控制系统中导入文档。
@@ -32,14 +32,13 @@ Read the Docs
 2. `Quick  reStructuredText <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`__
 
 3. `Sphinx 使用手册 -  入门 <https://zh-sphinx-doc.readthedocs.io/en/latest/tutorial.html>`__
-   or `Sphinx  使用手册2 <https://sphinx-doc.readthedocs.io/zh_CN/master/usage/quickstart.html>`__
 
 4. `Docutils: Documentation  Utilities <https://docutils.sourceforge.io/rst.html>`__
 
 5. `Sphinx + GitHub + ReadtheDocs  托管文档 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>`__
 
-readthedocs配置
----------------
+readthedocs自动发布
+---------------------
 
 可参考 `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 的源码。
 
@@ -116,8 +115,8 @@ rtd可识别branch、tag，推送到git后即自动构建。
   ]
 
 
-语法
-----
+rst语法
+-------
 
 1. **列表、代码块等前后均需要空一行。**
 2. 会自动忽略空格和回车/换行。空行才是换行。
@@ -200,8 +199,9 @@ https://sphinx-doc.readthedocs.io/zh_CN/master/usage/markdown.html
    }
 
 
-主题配置
------------
+
+sphinx-rtd-theme主题配置
+--------------------------
 1. `Configuration — Read the Docs Sphinx Theme 1.0.0 documentation  <https://sphinx-rtd-theme.readthedocs.io/en/stable/configuring.html#confval-collapse_navigation>`__
 
 ::
@@ -220,15 +220,16 @@ https://sphinx-doc.readthedocs.io/zh_CN/master/usage/markdown.html
        'collapse_navigation': False,
        'navigation_depth': 4,
    }
+   
 
 其它搭建Blog方法
 ================
 
-1. 静态托管：如wordpress.com，有免费套餐。\ `Netlify <https://www.netlify.com/>`__\ 。
+1. 静态托管：如wordpress.com、 `Netlify <https://www.netlify.com/>`__\ 。
    `腾讯静态网站托管按量计费 <https://cloud.tencent.com/document/product/1210/43365>`__\ 
    一年\ `不到10  Rmb <https://cloud.tencent.com/act/pro/wh99>`__\ ，支持hexo、VuePress、hugo等。
-2. 购买建站主机使用，通常按使用量计费。
-3. 购买云服务器，选择wordpress镜像的系统，开箱即用。
+2. 建站主机，通常按使用量计费。
+3. 云服务器，wordpress系统开箱即用、静态内容nginx。
 4. 使用\ `宝塔 <https://www.aapanel.com/>`__\ 面板，方便的可视化操作。
 
 HUGO
