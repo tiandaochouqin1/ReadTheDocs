@@ -491,12 +491,12 @@ cmockery
 1. https://github.com/google/cmockery   :download:`cmockery-0.1.2.zip <../files/code/cmockery-0.1.2.zip>`
 2. `cmockery/user_guide.md at master · google/cmockery  <https://github.com/google/cmockery/blob/master/docs/user_guide.md#MockFunctions>`__
 
-特性：异常处理、断言、支持多种失败条件、动态内存分配管理、mock函数、入参检查。
+特性： ``异常处理fail、断言assert、条件检查expect/check、动态内存分配管理test_free、mock函数、入参检查、符号/列表管理list。``
 
 
 小巧，不依赖其它库，侵入性小。
 
-C语言实现的cmockery框架，自然受到 **链接符号解析** 的限制，即同一个elf文件不能存在两个相同符号名的函数。
+C语言实现的cmockery框架，自然受到 **链接符号解析** 的限制，即同一个elf文件 **不能存在两个相同符号名的函数**。
 
 因此要求 **源码有较好的层次结构** ，被mock的接口最好在单独的文件中(不编译)；否则需考虑在正式源代码中使用UNIT_TESTING宏。
 
@@ -544,10 +544,7 @@ arm64实现mock
 ~~~~~~~~~~~~~~~
 arm64为定长8Bytes指令，一条指令无法覆盖所有返回值/函数偏移值(数值至少需64位)。
 
-return指令：
-
-
-jump指令：
+见 opcode movk b/br ret
 
 x86-64实现mock
 ~~~~~~~~~~~~~~
@@ -555,8 +552,23 @@ x86-64实现mock
 
 return指令：
 
+::
+    mov 32bit地址也够用。
+       
+    mov $val,%edx   // movsabs ?
+    mov %rdx,%rax
+    req
+
 jump指令：
 
+::
+
+    jump offset
+
+    cmd[0]=JUMP(0xe9)
+    cmd[1]=offset&0xff
+    .......
+    cmd[5]=(offset>>24)%0xff
 
 glibc
 ==========

@@ -347,21 +347,52 @@ that can optionally be shifted by 12 bits (1 bit for the shift).
 
 aarch64 mock
 =========================
+movk+ret打桩
+------------------
+
+1. movk: ``1 11 100101 2bits-shift imm16 Rd``
+2. ret: RET_CMD = 0xd65f03c0 ,ret x0
+
+Rd=x0
+
+::
+
+   使用3次movk保存vaddr(<=48bits) 到reg x0
+
+   opcode_0 = opcode_1 = opcode_2 = 0
+
+   opcode_movk +=  0x0 //x0, 5bits
+   opcode_movk +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
+   opcode_movk +=  (k)<<21    //2bits
+   opcode_movk +=  (0b111100101)<<23    //9bits
+
+
+   cmd[0] = opcode_0
+   cmd[1] = opcode_1
+   cmd[2] = opcode_2
+   cmd[2] = opcode_3
+   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 , 固定，返回值x0。branch到x30/lr
+
+
+
 b unconditional Branch(imm)
 ----------------------------------
 bits(64) offset = SignExtend(imm26:'00', 64)
 
+相对跳转，支持±128M 共256M(28bit)地址范围。
 
 The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the high bits fill with 1 if imm26 < 0, and with 0, otherwise).
+
+由于指令均为4字节，即指令4字节对齐，故末尾2bit可不保存。
 
 ::
 
    大端
    rela = (new_addr - old_addr)/arm_cmd_len
    opcode = 0
-   opcode += rela & 0x1ffff  //bit[0-24]
-   opcode += new_addr>old_addr? 0:1  //bit25
-   opcode += (0b000101)<<26
+
+   opcode |= (rela & bit[27:2])>>2  //bit[0-25]
+   opcode |= (0b000101)<<26
 
 
 .. figure:: ../images/opcode_b.png
@@ -371,6 +402,7 @@ The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the hig
 br unconditional Branch(reg)
 ---------------------------------
 
+
 ``0b 1101011 0000 11111 000000 5bits-Rn 00000``
 
 Rn即寄存器编号。Rn代表X或W，64位或32位。The use of R indicates that the registers can be either X or W registers.
@@ -379,14 +411,14 @@ Rn即寄存器编号。Rn代表X或W，64位或32位。The use of R indicates th
 
 ::
 
-   与下文ret配合movk打桩相同的方法将vaddr保存到reg，地址48bits有效
+   使用3次movk保存vaddr(<=48bits) 到reg x0，然后br跳转到x0保存的地址。
 
    opcode_0 = opcode_1 = opcode_2 = 0
 
-   opcode_k +=  0x8 //x19, 5bits
-   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
-   opcode_k +=  (k)<<21    //2bits
-   opcode_k +=  (0b111100101)<<23    //9bits
+   opcode_movk +=  0x8 //x19, 5bits
+   opcode_movk +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
+   opcode_movk +=  (k)<<21    //2bits
+   opcode_movk +=  (0b111100101)<<23    //9bits
 
 
    cmd[0] = opcode_0
@@ -397,27 +429,4 @@ Rn即寄存器编号。Rn代表X或W，64位或32位。The use of R indicates th
 
 .. figure:: ../images/opcode_br.png
    :alt: opcode_b
-
-ret配合movk打桩
-------------------
-
-``1 11 100101 2bits-shift imm16 Rd``
-
-Rd=x0
-
-::
-
-   opcode_0 = opcode_1 = opcode_2 = 0
-
-   opcode_k +=  0x0 //x0, 5bits
-   opcode_k +=  ((ret_val>(k*16)) & 0xffff) <<5  //16bits
-   opcode_k +=  (k)<<21    //2bits
-   opcode_k +=  (0b111100101)<<23    //9bits
-
-
-   cmd[0] = opcode_0
-   cmd[1] = opcode_1
-   cmd[2] = opcode_2
-   cmd[2] = opcode_3
-   cmd[4] = RET_CMD  //RET_CMD = 0xd65f03c0 , 固定，返回值x0，branch到x30/lr
 
