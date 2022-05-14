@@ -548,13 +548,13 @@ arm64为定长8Bytes指令，一条指令无法覆盖所有返回值/函数偏�
 
 x86-64实现mock
 ~~~~~~~~~~~~~~
-变长指令，一条指令即可。
+变长指令，一条指令即可。以下支持32bit系统。
 
 return指令：
 
 ::
-    mov 32bit地址也够用。
-       
+
+
     mov $val,%edx   // movsabs ?
     mov %rdx,%rax
     req

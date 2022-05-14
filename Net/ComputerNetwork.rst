@@ -1084,25 +1084,43 @@ ARP：地址解析协议，网络层地址和链路层地址之间的转换。
 ~~~~~~~~~~~~
 
 -  在局域网内部限制广播流量；
-
 -  减少交换机的使用；
-
 -  便于管理用户，变更时不需要物理操作。
 
-VLAN干线连接：互联两台VLAN交换机。由4字节的VLAN
-tag标识所属VLAN（802.1Q）标识所属VLAN。
+VLAN干线连接：互联两台VLAN交换机。
+
+由4字节的VLAN tag标识所属VLAN（802.1Q）标识所属VLAN。
 
 VLAN tag：标签协议标识符TPID + 标签控制信息字段，在MAC头之后。
 
 VLAN也可基于网络层协议，跨越IP路由器。
+
+vlan tag
+~~~~~~~~~~~~~
+
+::
+
+   Tag control information (TCI)：PCP、CFI、VID
+
+   802.1Q tag format
+
+   16 bits	3 bits	1 bit	 12 bits
+   TPID	            TCI
+             PCP     	DEI	    VID
+
+
+1. Tag Protocol Identifier, TPID: 0x8100，表示是 801.q标签帧
+2. Priority code point (PCP)：优先级，Qos功能；
+3. Drop eligible indicator (DEI)：A 1-bit field. formerly CFI。
+   May be used separately or in conjunction with PCP to indicate frames eligible to be dropped in the presence of congestion
+4. VLAN identifier (VID)：vlan id， 0和4095保留。
 
 链路虚拟化
 ----------
 
 **多协议标签交换（MPLS）**:可通过选择性标识数据报并允许路由器基于固定长度的标签来转发数据，以增强基于目的地的IP数据报转发。多协议的含义是指MPLS不但可以支持多种网络层层面上的协议，还可以兼容第二层的多种数据链路层技术。
 
--  基于MPLS标签处理，不需要处理IP地址，增加交换速度（）；
-
+-  基于MPLS标签处理，不需要处理IP地址，增加交换速度；
 -  新的流量管理能力，即沿多条路由转发分组的能力（IP路由选择协议只给出单一最小成本路径）。
 
 MPLS首部：链路层和网络层首部之间。
