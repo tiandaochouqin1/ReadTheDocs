@@ -402,7 +402,7 @@ Trusted Firmware-A implements various Arm interface standards, such as:
 5. Software Delegated Exception Interface (SDEI)
 
 
-A **System Control Processor (SCP) ** is a processor-based capability that provides a flexible and extensible platform 
+A **System Control Processor (SCP)** is a processor-based capability that provides a flexible and extensible platform 
 for provision of **power management** functions and services. 
 
 .. figure:: ../images/ATF_Scp.png
@@ -432,7 +432,7 @@ ATF冷启动实现分为5个步骤：(详见参考文献)
 2. BL2 - Trusted Boot Firmware，一般为Trusted Bootloader。EL1。   加载BL3x。 
 3. BL31 - EL3 Runtime Firmware，一般为SML，管理SMC执行处理和中断，运行在secure monitor中。EL3。 
 4. BL32 - Secure-EL1 Payload，一般为TEE OS Image。
-5. BL33 - Non-Trusted Firmware，一般为uboot、linux kernel。EL2。
+5. BL33 - Non-Trusted Firmware，一般为uboot、linux kernel。EL1。
 
 
 从核启动
@@ -442,7 +442,7 @@ ATF冷启动实现分为5个步骤：(详见参考文献)
 
 启动流程：
 
-1. 主核(核0)启动并运行Linux之后，继续 通过bl31->(PCSI)->scp->(SCMI)->ap 来使从核上电。
+1. 主核(核0)启动并运行Linux之后，继续 通过 **bl31->(PCSI)->scp->(SCMI)->ap** 来使从核上电。
 2. 从核上电后从给定Linux位置(主核传参)启动，然后进入WFI/WFE状态等待，直到主核发送核间中断唤醒从核。
 3. 从核之后则可以被动态负载均衡调度。
 

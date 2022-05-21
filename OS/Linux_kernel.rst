@@ -140,9 +140,9 @@ linux、glibc、gcc等。
 进程的五种状态
 ~~~~~~~~~~~~~~
 
-1. TASK_RUNNING: 运行——可执行的,即正在执行或在运行队列中等待。用户空间进程的唯一状态；内核进程也有此状态。
+1. TASK_RUNNING: 运行——可执行的,即正在执行或在运行队列中等待。 **用户空间进程的唯一状态**；内核进程也有此状态。
 2. TASK_INTERRUPTIBLE: 可中断的——睡眠中，等待特定条件达成，可被信号唤醒。
-3. TASK_UNINTERRUPTIBLE: 不可中断——睡眠中，不会被信号唤醒。在进程等待过程必须不受干扰或等待事件很快会发生时使用。
+3. TASK_UNINTERRUPTIBLE: 不可中断——睡眠中， **不会被信号唤醒**。在进程等待过程必须不受干扰或等待事件很快会发生时使用(硬件操作、io等)。
 4. __TASK_TRACED: 被其他进程跟踪，如ptrace。
 5. __TASK_STOPPED: 停止执行，进程没有投入运行也不能投入运行。通常发生在接收SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU等信号时。
 
@@ -187,7 +187,14 @@ linux、glibc、gcc等。
 
 
 fork
-开销：复制父进程的页表和创建子进程的进程描述符。
+-----
+1. `vfork(2) - Linux manual page  <https://man7.org/linux/man-pages/man2/vfork.2.html>`__
+2. `fork 在 Linux 内核里面的实现 - scriptk1d - 博客园  <https://www.cnblogs.com/crybaby/p/12938807.html#_do_frok>`__
+3. `fork 在 Linux 内核里面的实现 - scriptk1d - 博客园  <https://www.cnblogs.com/crybaby/p/12938807.html#%E6%A0%87%E5%BF%97%E5%90%AB%E4%B9%89>`__
+
+
+开销： **复制父进程的页表和创建子进程的进程描述符。**
+
 资源采用写时复制，即只有在需要写入时才拷贝页，是他们拥有独立的数据副本
 
 
@@ -195,11 +202,35 @@ fork
 
 内核进程：没有独立的地址空间，可以被调度和抢占。
 
+
+fork vfork clone比较
+~~~~~~~~~~~~~~~~~~~~~
+
+1. clone比fork提供更多选项控制父子进程共享的执行上下文；
+2. vfork(与fork相比)calling 挂起，且共享所有memory(包括stack)，直到child结束或执行execv；vfork共享vm，不复制页表.
+
+       it is used to create new
+       processes without copying the page tables of the parent process.
+       It may be useful in performance-sensitive applications where a
+       child is created which then immediately issues an execve(2).
+
+::
+
+
+    vfork = clone + (CLONE_VM | CLONE_VFORK | SIGCHLD)
+    
+    ntpl  pthread_create = 
+    const int clone_flags = (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | CLONE_SIGHAND | CLONE_THREAD | CLONE_SETTLS | CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID | 0);
+    ARCH_CLONE (&start_thread, STACK_VARIABLES_ARGS, clone_flags, pd, &pd->tid, tp, &pd->tid)；
+
+
+
+
 进程的生命周期
 ------------------
 fork -> exec -> exit + wait
 
-fork -> clone -> _do_fork -> copy_process
+fork / clone(pthread_create) -> _do_fork -> copy_process
 
 1.  dup_task_struct(): 创建内核栈、task_struct、thread_info.
 2.  检查当前用户进程数目是否超出限制。
@@ -1730,7 +1761,7 @@ clocksource和clockevents
 原理
 ------
 
-1. 实时信号：可靠信号，支持排队，不会丢失。信号值位于SIGRTMIN和SIGRTMAX之间
+1. 实时信号：可靠信号，支持多个相同信号排队，不会丢失。信号值位于SIGRTMIN和SIGRTMAX之间
 2. 非实时信号：不可靠信号，
 
 发送信号

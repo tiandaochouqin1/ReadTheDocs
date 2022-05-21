@@ -914,6 +914,7 @@ SNMP代理向管理服务器发送一种陷阱报文以通知一种异常情况�
 
 第六章 链路层和局域网
 =====================
+Mac头
 
 .. figure:: ../images/EthernetFormat.png
 
@@ -1049,7 +1050,7 @@ ARP：地址解析协议，网络层地址和链路层地址之间的转换。
 -  为同一子网内的主机和路由器接口解析IP地址。（\ **子网内发送数据报**\ ）
 -  查询分组和相应分组都具有相同的格式。
 -  ARP表是自动建立的（即插即用）。
--  ARP具有MAC头，消息体包含网络层地址和MAC地址，故有重复信息（？）。
+-  ARP具有MAC头，消息体包含网络层地址和MAC地址，故有重复信息。
 
 **子网间如何发送数据报**\ ：通过工作在网络层的路由器可获知目的IP在另一子网，故以路由器mac为目的发送请求分组，路由器则将该帧传递给网络层，然后通过转发表转发到本路由器对应的接口，该接口适配器封装数据报为二层帧，然后在新子网内传递。
 
@@ -1111,9 +1112,17 @@ vlan tag
 
 1. Tag Protocol Identifier, TPID: 0x8100，表示是 801.q标签帧
 2. Priority code point (PCP)：优先级，Qos功能；
-3. Drop eligible indicator (DEI)：A 1-bit field. formerly CFI。
+3. Drop eligible indicator (DEI)：丢弃指示。A 1-bit field. formerly CFI。
    May be used separately or in conjunction with PCP to indicate frames eligible to be dropped in the presence of congestion
 4. VLAN identifier (VID)：vlan id， 0和4095保留。
+
+QoS
+~~~~~
+1. `什么是服务质量？- 瞻博网络  <https://www.juniper.net/cn/zh/research-topics/what-is-qos.html>`__
+
+服务质量 (QoS) 是对流量的操纵，使得路由器或交换机等网络设备采取与生成该流量的应用程序所需行为一致的方式转发流量。
+
+换言之，QoS 使网络设备能够 **区分流量**，然后向流量应用不同的行为。
 
 链路虚拟化
 ----------
