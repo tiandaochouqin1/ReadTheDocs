@@ -7,6 +7,24 @@ Embeded OS Concept
 
 概念辨析
 =========
+/dev/mem
+-----------
+1. `解决Linux内核问题实用技巧之-dev/mem的新玩法 - 云+社区 - 腾讯云  <https://cloud.tencent.com/developer/article/1543163>`__
+
+a character device file that is an image of the main  memory of the computer.
+
+/dev/mem包括ram、pcie等地址。cat /proc/iomem
+
+
+通过mmap可以将物理地址映射到用户空间的虚拟地址上，在用户空间完成对设备寄存器的操作
+
+
+It is typically created by:
+
+    mknod -m 660 /dev/mem c 1 1
+    chown root:kmem /dev/mem
+
+
 总线
 --------
 1. `9、总线设备驱动模型 - Lioker - 博客园  <https://www.cnblogs.com/Lioker/p/10893768.html>`__

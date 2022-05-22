@@ -142,7 +142,7 @@ net_rx_action
 ~~~~~~~~~~~~~~~~~~~~
 很重要的下半部收包函数，NAPI设备和非NAPI设备都可能会使用它来收包。该函数的主要工作就是操作收包队列和执行poll函数。
 
-net_rx_action -> ntl_poll -> 注册的用户实现的poll/process_backlog 
+net_rx_action -> nic_poll -> 注册的用户实现的poll/process_backlog 
 
 linux 通过软中断机制调用网络协议栈代码，处理数据。 在 net_dev 模块初始化时，注册网络收发数据的软中断处理函数：
 
