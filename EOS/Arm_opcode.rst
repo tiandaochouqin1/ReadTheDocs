@@ -262,9 +262,16 @@ MOV (bitmask immediate)
 
 1. element的格式用正则表达为: `0+1+`
 
-2. imms:第一个0开始后的bits有n位，值为k，2^n为element的长度，e=k+1为element中1的数量。
+2. imms:以第一个0分割，0后的bits有n位，这n位值为k。 **则2^n为element的长度，e=k+1为element中1的数量**。
 
 3. immr:值表示循环左移的位数，值不超过e。
+
+element实例：
+
+::
+
+   0|111100 represents element 01 (2 bits element size, one 1)    //左边bit为 N 字段
+   0|110101 represents element 00111111 (8 bits element size, six 1’s)
 
 实例： https://godbolt.org/z/T3Wo4K98Y
 

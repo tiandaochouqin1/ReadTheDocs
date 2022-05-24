@@ -21,7 +21,7 @@ Concurrency
 
 多线程编程
 ============
-进程与线程的去呗
+进程与线程的区别
 ----------------------
 线程是一种对等关系：
  
@@ -234,6 +234,8 @@ ST打头的指令和LD打头的指令，基本功能上没区别。
 staddh与spinlock的实现
 ~~~~~~~~~~~~~~~~~~~~~~~~
 1. `Arm A64 Instruction Set Architecture  <https://developer.arm.com/documentation/ddi0596/2021-12/Base-Instructions/STADD--STADDL--Atomic-add-on-word-or-doubleword-in-memory--without-return--an-alias-of-LDADD--LDADDA--LDADDAL--LDADDL-?lang=en>`__
+2. `Linux Kernel中spinlock的设计与实现_代码改变世界ctw的博客-CSDN博客_spinlock的实现  <https://blog.csdn.net/weixin_42135087/article/details/120950133>`__
+
 
 Atomic add on halfword in memory, without return, atomically loads a 16-bit halfword from memory, adds the value held in a register to it, and stores the result back to memory.
 

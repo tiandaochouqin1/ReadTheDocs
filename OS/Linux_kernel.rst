@@ -190,7 +190,6 @@ fork
 -----
 1. `vfork(2) - Linux manual page  <https://man7.org/linux/man-pages/man2/vfork.2.html>`__
 2. `fork 在 Linux 内核里面的实现 - scriptk1d - 博客园  <https://www.cnblogs.com/crybaby/p/12938807.html#_do_frok>`__
-3. `fork 在 Linux 内核里面的实现 - scriptk1d - 博客园  <https://www.cnblogs.com/crybaby/p/12938807.html#%E6%A0%87%E5%BF%97%E5%90%AB%E4%B9%89>`__
 
 
 开销： **复制父进程的页表和创建子进程的进程描述符。**
@@ -457,7 +456,7 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 
 
 1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。此处不需要遍历树来查找最左节点，因为 ``最左节点已经被缓存起来`` （在更新rbtree时缓存的）。
-2. 在rbtree插入进程：进程被唤醒或fork()创建进程时。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
+2. 在rbtree插入进程： ``进程被唤醒或fork()创建进程时``。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
 3. 删除进程：进程阻塞或终止时。dequeue_entity()。
 
 调度器

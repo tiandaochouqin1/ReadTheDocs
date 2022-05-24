@@ -7,7 +7,7 @@ Operating System Concept
 
 
 
-如何学习操作系统
+学习资料和方法
 ==================
 书籍比较：
 
@@ -16,8 +16,7 @@ Operating System Concept
 
 `有没有好的操作系统的书 <https://www.zhihu.com/question/31863104>`__
 
-1. 推荐\ `Operating Systems: Three Easy
-   Pieces <https://pages.cs.wisc.edu/~remzi/OSTEP/>`__\ ：众多US高校的教材。
+1. 推荐\ `Operating Systems: Three Easy  Pieces <https://pages.cs.wisc.edu/~remzi/OSTEP/>`__\ ：众多US高校的教材。
 
    :download:`PDF <../books/OperatingSystemThreePieces.pdf>`
 
@@ -29,28 +28,27 @@ Operating System Concept
 其它参考文章
 ------------
 
-`操作系统讲解 <https://mp.weixin.qq.com/s/gOY8M7JyjcnW8OtQdZ0W8A>`__
-
-`CPU缓存-WikiPedia <https://www.wikiwand.com/zh-cn/CPU%E7%BC%93%E5%AD%98>`__
-
-`Linux I/O 原理和 Zero-copy技术 <https://zhuanlan.zhihu.com/p/308054212>`__
+1. `操作系统讲解 <https://mp.weixin.qq.com/s/gOY8M7JyjcnW8OtQdZ0W8A>`__
+2. `CPU缓存-WikiPedia <https://www.wikiwand.com/zh-cn/CPU%E7%BC%93%E5%AD%98>`__
+3. `Linux I/O 原理和 Zero-copy技术 <https://zhuanlan.zhihu.com/p/308054212>`__
 
 
 导论
 =====
 
-   以内存为中心的视角来学习操作系统。关注计算机其它组成部分与内存的交互。
+以内存为中心的视角来学习操作系统。关注计算机其它组成部分与内存的交互。
 
 **操作系统**\ 是管理计算机硬件的程序。关注易用性和资源利用率。
+
 包括一个或多个cpu和若干设备控制器，cpu与设备控制器可以并发执行，\ **通过总线竞争访问内存**\ ，因此需要内存控制器确保有序访问共享内存。
 
 .. figure:: ../images/ModernComputerWorkingPrinceple.jpg
    :alt: 工作原理
 
-   工作原理
+
 
 中断
-----
+-----
 
 现代操作系统是\ **中断驱动**\ 的，事件总是由中断或陷阱引起的。
 
