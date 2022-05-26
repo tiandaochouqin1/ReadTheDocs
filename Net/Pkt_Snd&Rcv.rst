@@ -106,9 +106,13 @@ NAPI的工作机制如下：
                         ->napi_gro_receive。
 
 
+
+``napi时使用napi_schedule发起软中断，软中断中执行net_rx_action``
+
+
 napi_schedule源码
 ~~~~~~~~~~~~~~~~~~~~~
-napi_schedule -> __napi_schedule -> ____napi_schedule -> __raise_softirq_irqoff
+napi_schedule -> __napi_schedule -> ____napi_schedule -> __raise_softirq_irqoff 然后在软中断中调用
 
 ::
 
@@ -139,8 +143,10 @@ napi_schedule -> __napi_schedule -> ____napi_schedule -> __raise_softirq_irqoff
 
 
 net_rx_action
-~~~~~~~~~~~~~~~~~~~~
-很重要的下半部收包函数，NAPI设备和非NAPI设备都可能会使用它来收包。该函数的主要工作就是操作收包队列和执行poll函数。
+-----------------
+很下半部收包函数， ``NAPI设备和非NAPI设备都会使用net_rx_action来收包``。
+该函数的主要工作就是操作收包队列和执行poll函数。
+
 
 net_rx_action -> nic_poll -> 注册的用户实现的poll/process_backlog 
 
@@ -296,3 +302,78 @@ poll与epoll
    内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知。
    (此处去掉了遍历文件描述符，而是通过监听回调的的机制。)
  
+
+
+tcpdump原理
+============
+1. `用户态 tcpdump 如何实现抓到内核网络包的?  <https://mp.weixin.qq.com/s/ZX8Jluh-RgJXcVh3OvycRQ>`__
+2. `图解Linux网络包接收过程  <https://mp.weixin.qq.com/s?__biz=MjM5Njg5NDgwNA==&mid=2247484058&idx=1&sn=a2621bc27c74b313528eefbc81ee8c0f&scene=21#wechat_redirect>`__
+3. `25 张图，一万字，拆解 Linux 网络包发送过程  <https://mp.weixin.qq.com/s?__biz=MjM5Njg5NDgwNA==&mid=2247485146&idx=1&sn=e5bfc79ba915df1f6a8b32b87ef0ef78&scene=21#wechat_redirect>`__
+4. `Linux 网络设备驱动开发（一） —— linux内核网络分层结构_mb5fe94ba3ca002的技术博客_51CTO博客  <https://blog.51cto.com/u_15069477/3560475>`__
+
+libpcap原理
+------------
+注册一个虚拟协议，收发包时会送虚拟协议处理，这时拷贝skb。
+
+抓包位置分析
+--------------
+
+
+.. figure:: ../images/pkt_tx.png
+
+    pkt_tx
+
+.. figure:: ../images/net_dev_layer.png
+
+    net_dev_layer
+
+
+收包
+~~~~~
+rx比tx经过的路径少，无网络设备子系统层？？？。因为已经硬中断已经区分了硬件接口/队列?
+
+::
+
+   netif_receive_skb->..-> __netif_receive_skb_core函数中抓包
+
+   	list_for_each_entry_rcu(ptype, &ptype_all, list) {
+		if (pt_prev)
+			ret = deliver_skb(skb, pt_prev, orig_dev);
+		pt_prev = ptype;
+      }
+
+发包
+~~~~~~~~~~~
+网络设备子系统抓包。主要实现队列选择
+
+dev_queue_xmit->   : Queue a buffer for transmission to a network device
+
+::
+
+   dev_queue_xmit->   : Queue a buffer for transmission to a network device
+      
+      ..->dev_hard_start_xmit->xmit_one
+
+                                 -> dev_queue_xmit_nit ： 这里抓包
+                                 -> netdev_start_xmit ->..->(net_device_ops->ndo_start_xmit)
+
+
+::
+
+   static int xmit_one(struct sk_buff *skb, struct net_device *dev,
+            struct netdev_queue *txq, bool more)
+   {
+      unsigned int len;
+      int rc;
+
+      if (dev_nit_active(dev))
+         dev_queue_xmit_nit(skb, dev);
+
+      len = skb->len;
+      PRANDOM_ADD_NOISE(skb, dev, txq, len + jiffies);
+      trace_net_dev_start_xmit(skb, dev);
+      rc = netdev_start_xmit(skb, dev, txq, more);
+      trace_net_dev_xmit(skb, rc, dev, len);
+
+      return rc;
+   }

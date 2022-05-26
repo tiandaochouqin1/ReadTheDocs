@@ -82,6 +82,8 @@ ftrace
 4. Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
 `Part2 <https://lwn.net/Articles/366796/>`__ lwn的教程。
 
+5. `Linux使用 ftrace 来跟踪内核函数调用_SweeNeil的博客-CSDN博客  <https://blog.csdn.net/SweeNeil/article/details/90038286>`__
+
 used for debugging or analyzing latencies and performance issues that take place outside of user-space.
 
 a framework of several assorted tracing utilities. 
