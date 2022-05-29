@@ -377,3 +377,48 @@ dev_queue_xmit->   : Queue a buffer for transmission to a network device
 
       return rc;
    }
+
+
+arp原理与源码
+=============
+
+ARP具有MAC头，消息体包含网络层地址和MAC地址，故有重复信息。
+
+ARP地址解析协议
+------------------
+1. `arp(7) - Linux manual page  <https://man7.org/linux/man-pages/man7/arp.7.html>`__
+2. `邻居子系统之邻居项状态更新_fanxiaoyu321的博客-CSDN博客  <https://blog.csdn.net/xiaoyu_750516366/article/details/104590052>`__
+3. `邻居子系统_fanxiaoyu321的博客-CSDN博客  <https://blog.csdn.net/xiaoyu_750516366/category_9761623.html>`__
+4. `Linux网络协议栈3--neighbor子系统 - 简书  <https://www.jianshu.com/p/afee7bada23a>`__
+5. `linux arp机制解析 | i博客  <https://vcpu.me/linuxarp/>`__
+   
+   arping会让对端增加arp且处于stale? ping但禁止了回应，会让对端+delay？
+
+
+``ip neigh show``
+
+
+.. figure:: ../images/nud_states_transmitions.png
+
+    arp状态转换
+
+
+::
+
+   net\ipv4\arp.c : neigh_table arp_tbl
+
+   arp_ioctl : 用户io接口—— del/set/get 
+   -> arp_req_get -> arp_state_to_flags ->
+   #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
+   以上均返回有效 #define ATF_COM		0x02		/* completed entry (ha valid)	*/
+
+   net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
+
+ 
+   ☆ neigh_timer_handler，定时器超时事件导致的状态机更新
+   neigh_event_send，数据报文接收事件导致的状态机更新
+   neigh_update，协议报文接收事件导致的状态机更新，（如更新 neigh->confirmed）
+      这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
+      静态配置arp表项(neigh_add)等。
+
+

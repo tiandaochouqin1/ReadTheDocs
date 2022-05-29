@@ -1069,40 +1069,6 @@ MAC地址：又称LAN地址、物理地址。6字节。网络适配器具有的�
 3. 适配器如果不使用任何地址，则每个受到帧都需要向上传递到网络层以判断目的地址，此时局域网上的每个帧都会使主机产生中断；
 4. IP是和地域相关的，便于路由。
 
-ARP地址解析协议
-~~~~~~~~~~~~~~~
-1. `arp(7) - Linux manual page  <https://man7.org/linux/man-pages/man7/arp.7.html>`__
-2. `邻居子系统之邻居项状态更新_fanxiaoyu321的博客-CSDN博客  <https://blog.csdn.net/xiaoyu_750516366/article/details/104590052>`__
-3. `邻居子系统_fanxiaoyu321的博客-CSDN博客  <https://blog.csdn.net/xiaoyu_750516366/category_9761623.html>`__
-4. `Linux网络协议栈3--neighbor子系统 - 简书  <https://www.jianshu.com/p/afee7bada23a>`__
-5. `linux arp机制解析 | i博客  <https://vcpu.me/linuxarp/>`__
-   arping会让对端+且处于stale? pingd但禁止了回应，会让对端+delay？
-
-
-``ip neigh show``
-
-
-.. figure:: ../images/nud_states_transmitions.png
-
-    arp状态转换
-
-
-::
-
-   net\ipv4\arp.c : neigh_table arp_tbl
-
-   arp_ioctl : 用户io接口—— del/set/get 
-   -> arp_req_get -> arp_state_to_flags ->
-   #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
-   以上均返回有效 #define ATF_COM		0x02		/* completed entry (ha valid)	*/
-
-   net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
-
-
-   neigh_timer_handler : 定时器到达，设定状态
-
-
-
 
 网络层地址和链路层地址之间的转换。
 
@@ -1111,7 +1077,9 @@ ARP地址解析协议
 -  ARP表是自动建立的（即插即用）。
 -  ARP具有MAC头，消息体包含网络层地址和MAC地址，故有重复信息。
 
-**子网间如何发送数据报**\ ：通过工作在网络层的路由器可获知目的IP在另一子网，故以路由器mac为目的发送请求分组，路由器则将该帧传递给网络层，然后通过转发表转发到本路由器对应的接口，该接口适配器封装数据报为二层帧，然后在新子网内传递。
+**子网间如何发送数据报**：
+通过工作在网络层的路由器可获知目的IP在另一子网，故以路由器mac为目的发送请求分组，路由器则将该帧传递给网络层，
+然后通过转发表转发到本路由器对应的接口，该接口适配器封装数据报为二层帧，然后在新子网内传递。
 
 以太网 802.3
 ~~~~~~~~~~~~
