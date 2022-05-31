@@ -7,6 +7,7 @@
 ===========
 1. :download:`IEEE802.3-2018 <../files/8023/IEEE802.3-2018.rar>`
 2. xlinx的手册
+3. 以太网权威指南(第二版)/ :download:`Ethernet: The Definitive Guide 2nd <../books/Ethernet The Definitive Guide, 2nd Edition.pdf>`
 
 LLC子层的服务与服务在IEEE 802.2 LAN协议中有所定义，MAC层的主要功能作用则在IEEE 802.3中定义，并采用CSMA/CD访问控制方式.
 

@@ -416,7 +416,7 @@ ARP地址解析协议
 
  
    ☆ neigh_timer_handler，定时器超时事件导致的状态机更新
-   neigh_event_send，数据报文接收事件导致的状态机更新
+   neigh_resolve_output-> neigh_event_send，数据报文接收事件导致的状态机更新
    neigh_update，协议报文接收事件导致的状态机更新，（如更新 neigh->confirmed）
       这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
       静态配置arp表项(neigh_add)等。
