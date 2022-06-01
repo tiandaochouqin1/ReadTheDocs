@@ -400,8 +400,25 @@ ARP地址解析协议
 
 .. figure:: ../images/nud_states_transmitions.png
 
-    arp状态转换
+    nud状态转换
 
+   
+
+.. figure:: ../images/nud_states_transition_2.png
+
+    nud状态转换-简化版
+
+
+1. neigh_timer_handler：异步。L4 confirmation后要到下一次timer执行状态转换。
+2. neigh_update ：同步。RX solicitation reply。
+
+3个关键时间
+
+::
+
+   neigh->confirmed: 可达确认
+   neigh->used: 被使用
+   neigh->updated :nud_state更新
 
 ::
 
@@ -414,11 +431,77 @@ ARP地址解析协议
 
    net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
 
- 
-   ☆ neigh_timer_handler，定时器超时事件导致的状态机更新
+   
+
+   ☆ neigh_timer_handler(异步，会有延时)，定时器超时事件导致的状态机更新
    neigh_resolve_output-> neigh_event_send，数据报文接收事件导致的状态机更新
-   neigh_update，协议报文接收事件导致的状态机更新，（如更新 neigh->confirmed）
+   neigh_update，协议报文接收事件导致的状态机更新，（如__ipv6_confirm_neigh 更新 neigh->confirmed）
       这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
       静态配置arp表项(neigh_add)等。
 
 
+
+neigh_timer_handler
+----------------------
+reachable->stale/delay部分。
+
+::
+
+   if (state & NUD_REACHABLE) {
+		if (time_before_eq(now,
+				   neigh->confirmed + neigh->parms->reachable_time)) {
+			neigh_dbg(2, "neigh %p is still alive\n", neigh);
+			next = neigh->confirmed + neigh->parms->reachable_time;
+		} else if (time_before_eq(now,
+					  neigh->used +
+					  NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME))) {     // 最近是否被使用过
+			neigh_dbg(2, "neigh %p is delayed\n", neigh);
+			neigh->nud_state = NUD_DELAY;
+			neigh->updated = jiffies;
+			neigh_suspect(neigh);
+			next = now + NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME);
+		} else {
+			neigh_dbg(2, "neigh %p is suspected\n", neigh);
+			neigh->nud_state = NUD_STALE;
+			neigh->updated = jiffies;
+			neigh_suspect(neigh);
+			notify = 1;
+		}
+   } 
+
+
+proc查看arp
+-----------
+1. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
+2. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
+
+
+`/proc/sys/net/ipv4/neigh/eth0/`
+
+静态变量neigh_sysctl_table定义了PROC文件信息
+
+
+1. base_reachable_time_ms: 30000
+2. gc_stale_time: 60
+3. delay_first_probe_time: 5
+4. retrans_time_ms：1000。函数 neigh_max_probes 值，计算结果为3。3次*1s = 3s
+
+
+
+
+::
+
+   static __inline__ int neigh_max_probes(struct neighbour *n)
+   {
+      struct neigh_parms *p = n->parms;
+      return NEIGH_VAR(p, UCAST_PROBES) + NEIGH_VAR(p, APP_PROBES) +
+            (n->nud_state & NUD_PROBE ? NEIGH_VAR(p, MCAST_REPROBES) :
+            NEIGH_VAR(p, MCAST_PROBES));
+   }
+
+   对应 ubuntu 5.4.0-42-generic #46-Ubuntu SMP Fri Jul 10 00:24:02 UTC 2020 x86_64 
+
+   mcast_solicit  3
+   app_solicit  0
+   ucast_solicit  3
+   mcast_resolicit  0
