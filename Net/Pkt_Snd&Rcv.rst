@@ -422,14 +422,12 @@ ARP地址解析协议
 
 ::
 
-   net\ipv4\arp.c : neigh_table arp_tbl
-
    arp_ioctl : 用户io接口—— del/set/get 
    -> arp_req_get -> arp_state_to_flags ->
    #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
    以上均返回有效 #define ATF_COM		0x02		/* completed entry (ha valid)	*/
 
-   net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
+
 
    
 
@@ -470,16 +468,58 @@ reachable->stale/delay部分。
    } 
 
 
-proc查看arp
+查看arp配置
 -----------
 1. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
 2. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
 
 
+1. ``ip ntable show dev eth0``
+2. ``arp_tbl`` 里定义了值(net\ipv4\arp.c : neigh_table arp_tbl), neigh_sysctl_table定义了PROC文件信息
+3. ``/proc/sys/net/ipv4/neigh/eth0/``
+
+arp_tbl
+~~~~~~~~~~~~~
+
+::
+
+   struct neigh_table arp_tbl = {
+      .family		= AF_INET,
+      .key_len	= 4,
+      .protocol	= cpu_to_be16(ETH_P_IP),
+      .hash		= arp_hash,
+      .key_eq		= arp_key_eq,
+      .constructor	= arp_constructor,
+      .proxy_redo	= parp_redo,
+      .is_multicast	= arp_is_multicast,
+      .id		= "arp_cache",
+      .parms		= {
+         .tbl			= &arp_tbl,
+         .reachable_time		= 30 * HZ,
+         .data	= {
+            [NEIGH_VAR_MCAST_PROBES] = 3,
+            [NEIGH_VAR_UCAST_PROBES] = 3,
+            [NEIGH_VAR_RETRANS_TIME] = 1 * HZ,
+            [NEIGH_VAR_BASE_REACHABLE_TIME] = 30 * HZ,
+            [NEIGH_VAR_DELAY_PROBE_TIME] = 5 * HZ,
+            [NEIGH_VAR_GC_STALETIME] = 60 * HZ,
+            [NEIGH_VAR_QUEUE_LEN_BYTES] = SK_WMEM_MAX,
+            [NEIGH_VAR_PROXY_QLEN] = 64,
+            [NEIGH_VAR_ANYCAST_DELAY] = 1 * HZ,
+            [NEIGH_VAR_PROXY_DELAY]	= (8 * HZ) / 10,
+            [NEIGH_VAR_LOCKTIME] = 1 * HZ,
+         },
+      },
+      .gc_interval	= 30 * HZ,
+      .gc_thresh1	= 128,
+      .gc_thresh2	= 512,
+      .gc_thresh3	= 1024,
+   };
+
+
+proc neigh
+~~~~~~~~~~~~~
 `/proc/sys/net/ipv4/neigh/eth0/`
-
-静态变量neigh_sysctl_table定义了PROC文件信息
-
 
 1. base_reachable_time_ms: 30000
 2. gc_stale_time: 60
@@ -505,3 +545,33 @@ proc查看arp
    app_solicit  0
    ucast_solicit  3
    mcast_resolicit  0
+
+
+neigh_rand_reach_time
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+30即15~44
+
+net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
+
+::
+
+   unsigned long neigh_rand_reach_time(unsigned long base)
+   {
+      return base ? (prandom_u32() % base) + (base >> 1) : 0;
+   }
+   
+HZ和USER_HZ
+-------------
+1. 内核：cat /boot/config-`uname -r` | grep 'CONFIG_HZ=' ：1000 ，通常可变.
+    在2.6以前的内核中，如果改变内核中的HZ值会给用户空间中某些程序造成异常结果。
+2. 用户：getconf CLK_TCK  ：100，固定
+
+include\asm-generic\param.h
+
+::
+         
+   # undef HZ
+   # define HZ		CONFIG_HZ	/* Internal kernel timer frequency */
+   # define USER_HZ	100		/* some user interfaces are */
+   # define CLOCKS_PER_SEC	(USER_HZ)       /* in "ticks" like times() */
+   #endif /* __ASM_GENERIC_PARAM_H */
