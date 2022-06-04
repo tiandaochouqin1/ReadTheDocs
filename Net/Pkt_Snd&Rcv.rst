@@ -420,6 +420,7 @@ ARP地址解析协议
    neigh->used: 被使用
    neigh->updated :nud_state更新
 
+
 ::
 
    arp_ioctl : 用户io接口—— del/set/get 
@@ -433,11 +434,24 @@ ARP地址解析协议
 
    ☆ neigh_timer_handler(异步，会有延时)，定时器超时事件导致的状态机更新
    neigh_resolve_output-> neigh_event_send，数据报文接收事件导致的状态机更新
-   neigh_update，协议报文接收事件导致的状态机更新，（如__ipv6_confirm_neigh 更新 neigh->confirmed）
-      这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
-      静态配置arp表项(neigh_add)等。
 
 
+
+neigh_update
+----------------------------
+协议报文接收事件导致的状态机更新，这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
+静态配置arp表项(neigh_add)等。
+
+raw_sendmsg/udp_sendmsg->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
+
+::
+
+   MSG_CONFIRM: 阻止 ARP 缓存过期
+
+
+   if (msg->msg_flags&MSG_CONFIRM)
+            goto do_confirm;
+   back_from_confirm:
 
 neigh_timer_handler
 ----------------------
@@ -471,7 +485,6 @@ reachable->stale/delay部分。
 查看arp配置
 -----------
 1. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
-2. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
 
 
 1. ``ip ntable show dev eth0``
@@ -522,7 +535,7 @@ proc neigh
 `/proc/sys/net/ipv4/neigh/eth0/`
 
 1. base_reachable_time_ms: 30000
-2. gc_stale_time: 60
+2. gc_stale_time: 60,还需要满足refcnt=1.(或refcnt=1 且fail)
 3. delay_first_probe_time: 5
 4. retrans_time_ms：1000。函数 neigh_max_probes 值，计算结果为3。3次*1s = 3s
 
