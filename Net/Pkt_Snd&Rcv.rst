@@ -437,12 +437,35 @@ ARP地址解析协议
 
 
 
+
+可达性确认与L4 confirm
+-------------------------------
+可达性确认(变为reachable)有两种方式：
+1. 收到unicast solicitation' reply。（broadcast solicitation's reply则变为stale）
+2. L4的有数据流的信息（IP层无），当host收到neighbor's pkt是对以前host发出去的pkt的回应，则说明neighbor可达。
+
+L4 confirm
+~~~~~~~~~~~~~~~
+1. tcp的ack包，发出即可达确认。
+2. 其它协议在传输函数中使用MSG_CONFIRM标志来确认可达。Valid only on  SOCK_DGRAM and SOCK_RAW sockets and currently implemented only for IPv4 and IPv6. 
+
+ip协议：ip_finish_output2->sock_confirm_neigh->skb_get_dst_pending_confirm并更新 neigh->confirmed 
+        __ip_append_data(MSG_CONFIRM)->skb_set_dst_pending_confirm
+        __tcp_send_ack-> **__tcp_transmit_skb 每个tcp都是?** ->skb_set_dst_pending_confirm
+
+套接字： raw_sendmsg/udp_sendmsg(MSG_CONFIRM)->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
+
+MSG_CONFIRM
+~~~~~~~~~~~~~~~~~~
+1. `arp(7) - Linux manual page  <https://man7.org/linux/man-pages/man7/arp.7.html>`__
+2. `send(2) - Linux manual page  <https://man7.org/linux/man-pages/man2/sendmsg.2.html>`__
+
+
 neigh_update
 ----------------------------
 协议报文接收事件导致的状态机更新，这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
 静态配置arp表项(neigh_add)等。
 
-raw_sendmsg/udp_sendmsg->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
 
 ::
 
@@ -452,6 +475,7 @@ raw_sendmsg/udp_sendmsg->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh �
    if (msg->msg_flags&MSG_CONFIRM)
             goto do_confirm;
    back_from_confirm:
+
 
 neigh_timer_handler
 ----------------------
@@ -588,3 +612,4 @@ include\asm-generic\param.h
    # define USER_HZ	100		/* some user interfaces are */
    # define CLOCKS_PER_SEC	(USER_HZ)       /* in "ticks" like times() */
    #endif /* __ASM_GENERIC_PARAM_H */
+
