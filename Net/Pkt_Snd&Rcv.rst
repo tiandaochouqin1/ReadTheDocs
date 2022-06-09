@@ -449,11 +449,23 @@ L4 confirm
 1. tcp的ack包，发出即可达确认。
 2. 其它协议在传输函数中使用MSG_CONFIRM标志来确认可达。Valid only on  SOCK_DGRAM and SOCK_RAW sockets and currently implemented only for IPv4 and IPv6. 
 
-ip协议：ip_finish_output2->sock_confirm_neigh->skb_get_dst_pending_confirm并更新 neigh->confirmed 
-        __ip_append_data(MSG_CONFIRM)->skb_set_dst_pending_confirm
-        __tcp_send_ack-> **__tcp_transmit_skb 每个tcp都是?** ->skb_set_dst_pending_confirm
 
-套接字： raw_sendmsg/udp_sendmsg(MSG_CONFIRM)->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
+好乱!!
+
+::
+      
+   ip协议：ip_finish_output2->sock_confirm_neigh->skb_get_dst_pending_confirm并更新 neigh->confirmed 
+
+         __ip_append_data(MSG_CONFIRM)->skb_set_dst_pending_confirm
+
+         __tcp_send_ack-> **__tcp_transmit_skb 每个tcp都是?** ->skb_set_dst_pending_confirm -> __ip_queue_xmit ->ip_output 
+
+                        -> tcp_send_syn_data : Build and send a SYN with data and (cached) Fast Open cookie.
+                                             -> 
+                                                   err = tp->fastopen_req ? tcp_send_syn_data(sk, buff) :
+                                                         tcp_transmit_skb(sk, buff, 1, sk->sk_allocation);
+
+   套接字： raw_sendmsg/udp_sendmsg(MSG_CONFIRM)->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
 
 MSG_CONFIRM
 ~~~~~~~~~~~~~~~~~~

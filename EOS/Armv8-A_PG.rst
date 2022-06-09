@@ -16,6 +16,8 @@ Fundamentals of Armv8
 
    :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
 
+2. 很全，很好，部分收费 `[目录]-博客笔记导读目录(全部)_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/107037145>`__
+
 
 
 
