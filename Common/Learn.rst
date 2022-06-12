@@ -213,12 +213,14 @@ arm
 网络
 -----------
 
-1. Unix环境高级编程
+1. Unix环境高级编程 :download:`UNIX环境高级编程 第三版 <../books/UNIX环境高级编程 第三版.pdf>`  :download:`apue <../books/APUE-3rd.pdf>`  
 2. TCP/IP详解
 3. Unix网络编程
-4. 深入Linux网络技术内幕
+4. **深入Linux网络技术内幕**
 5. Wireshark网络分析就这么简单
 6. Wireshark网络分析的艺术
+7. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) <../books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
+8. Linux-UNIX系统编程手册
 
 算法
 ----------------
@@ -255,7 +257,7 @@ Linux内核
 
 1. LKD3: Linux内核设计与开发第三版
 2. ULK3: 深入理解LINUX内核，
-   相比于LKD的内容不够深入、覆盖面不广，ULK要深入全面得多。前面这两本，一本提纲挈领，一本全面深入。
+   LKD的内容不够深入、覆盖面不广，ULK要深入全面得多。前面这两本，一本提纲挈领，一本全面深入。
 3. LDD3: Linux驱动开发第三版
 4. ULNI：深入理解LINUX网络技术内幕
 5. ULVMM：深入理解Linux虚拟内存管理
