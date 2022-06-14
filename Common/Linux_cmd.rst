@@ -64,9 +64,10 @@ screen
 fg和bg
 ------
 
-``CTRL+Z``\ ：暂停进程/挂载到后台。 ``jobs``\ ：查看后台运行的程序。
-``bg [job_spec ...]``\ ：后台进程继续执行。与在指令后面添加符号&的效果是相同的。
-``fg [job_spec ...]``\ ：将后台进程调回前台。
+1. ``CTRL+Z``\ ：暂停进程/挂载到后台。 
+2. ``jobs``\ ：查看后台运行的程序。
+3. ``bg [job_spec ...]``\ ：后台进程继续执行。与在指令后面添加符号&的效果是相同的。
+4. ``fg [job_spec ...]``\ ：将后台进程调回前台。
 
 定时与任务
 ----------
@@ -74,13 +75,13 @@ fg和bg
 watch
 ~~~~~
 
-默认2s，最小精度0.1s。
+默认2s，最小精度0.1s。(busbox则精度1s)
 
 ::
 
    watch -n 1 -d uptime
 
-   可使用""包含后面的命令，这样可以使用多级管道命令，但命令中的"需要转义。
+   使用""包含后面的命令，这样可以使用多级管道命令，但命令中的"需要转义。
 
    watch -d "/bin/cat /proc/softirqs | /usr/bin/awk 'NR == 1{printf \"%-15s %-15s %-15s\n\",\" \",\$1,\$2}; NR > 1{printf \"%-15s %-15s %-15s\n\",\$1,\$2,\$3}'"
 
@@ -142,10 +143,11 @@ chattr
 
    lsattr -al
 
-rm无法删除的文件，具有\ ``immutable``\ 属性。
+rm无法删除的文件具有\ ``immutable``\ 属性。
 ``chattr -i /home/wwwroot/你的网站目录/.user.ini``
 
 chattr
+~~~~~~~~~~~~~~~
 改变一个Linux文件系统上的文件属性。通用格式是：\ ``+-=[aAcCdDeijsStTu]``
 
 '+’选项，将给文件添加属性；'-’选项，移除文件中的属性；'=’选项，使得文件只有这些属性。
@@ -153,21 +155,22 @@ chattr
 stat
 ----
 
-stat命令主要用于显示文件或文件系统的详细信息：
+显示文件或文件系统的详细信息：
 
 ::
 
-   -f　　不显示文件本身的信息，显示文件所在文件系统的信息
-   -L　　显示符号链接
-   -t　　简洁模式，只显示摘要信息
+   -f  不显示文件本身的信息，显示文件所在文件系统的信息
+   -L  显示符号链接
+   -t  简洁模式，只显示摘要信息
 
 touch
 -----
 
-使用touch命令可以手动更新Access和Modify。 touch -d 2000-01-01 file：
-将file的Access和Modify时间改为2000-01-01 touch -a
-file：将file的Access时间改为当前系统时间 touch -m
-file：将filet的Modify时间改为当前系统时间
+使用touch命令可以手动更新Access和Modify。 
+
+1. touch -d 2000-01-01 file：将file的Access和Modify时间改为2000-01-01 
+2. touch -a file：将file的Access时间改为当前系统时间 
+3. touch -m file：将filet的Modify时间改为当前系统时间
 
 du
 --
@@ -197,8 +200,9 @@ chown/chgrp
 
 mv
 --
+大括号+逗号 可生成字符序列，如
 
-//将a.txt重命名为a1.txt ``mv a{,1}.txt``
+将a.txt重命名为a1.txt ``mv a{,1}.txt``
 
 cp
 --
@@ -221,36 +225,37 @@ cp
 lsof 一切皆文件
 ---------------
 
-lsof（list open files）是一个查看当前系统文件的工具。
+lsof（list open files）
 
 https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/lsof.html
 
 ::
 
-   lsof|more
+   lsof -i tcp
+
 
 命令参数
---------
+~~~~~~~~~~~~~
+参数可组合使用
 
 ::
 
    -a 列出打开文件存在的进程
-   -c<进程名> 列出指定进程所打开的文件
+   -c <进程名> 列出指定进程所打开的文件
    -g 列出GID号进程详情
-   -d<文件号> 列出占用该文件号的进程
-   +d<目录> 列出目录下被打开的文件
-   +D<目录> 递归列出目录下被打开的文件
-   -n<目录> 列出使用NFS的文件
-   -i<条件> 列出符合条件的进程。（4、6、协议、:端口、 @ip ）
-   -p<进程号> 列出指定进程号所打开的文件
+   -d <文件号> 列出占用该文件号的进程
+   +d <目录> 列出目录下被打开的文件
+   +D <目录> 递归列出目录下被打开的文件
+   -n <目录> 列出使用NFS的文件
+   -i <条件> 列出符合条件的进程。（4、6、协议、:端口、 @ip ）
+   -p <进程号> 列出指定进程号所打开的文件
    -u 列出UID号进程详情
    -h 显示帮助信息
    -v 显示版本信息
 
-参数可组合使用
 
 使用
-----
+~~~~~~~~
 
 查找某个文件相关的进程
 
@@ -282,8 +287,9 @@ https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/lsof.html
 
    lsof -p 123
 
+
 ln
---
+----
 
 软连接（符号链接）
 
@@ -306,8 +312,8 @@ fio / Crystal Disk Mark
 ripgrep
 -------
 
-文本查找工具。
-`ripgrep <https://github.com/BurntSushi/ripgrep>`__\ ，目前最快的工具，支持全平台。类似工具\ `Ag <https://github.com/ggreer/the_silver_searcher>`__
+`ripgrep <https://github.com/BurntSushi/ripgrep>`__\ ，目前最快的工具，支持全平台。
+类似工具 `Ag <https://github.com/ggreer/the_silver_searcher>`__
 
 `Release下载 <https://github.com/BurntSushi/ripgrep/releases>`__ 或
 
@@ -316,8 +322,9 @@ ripgrep
    scoop install ripgrep
    choco install ripgrep
 
-ack
----
+
+ack-grep
+------------
 
 比grep好用的文本搜索工具
 
@@ -340,11 +347,13 @@ ack
    ack-grep -g hello.py$    # 查找正则匹配文件
    ack-grep -g hello  --sort-files     # 查找然后排序
 
+
 which命令
 ---------
 
-| 当前用户的 $PATH 环境变量中列出的目录。 查看\ **可执行文件**\ 的位置：
-| ``which + [选项] + 指令名``
+在当前用户的 $PATH 环境变量的目录中查找\ **可执行文件**\ 的位置：
+
+``which + [选项] + 指令名``
 
 ::
 
@@ -355,7 +364,8 @@ which命令
 whereis命令
 -----------
 
-whereis命令用来定位指令的二进制程序、源代码文件和man手册页等相关文件的路径。
+whereis then attempts to locate the desired program in the standard Linux places, 
+and in the places specified by $PATH and $MANPATH.
 
 ``whereis +[选项]+ 指令名``
 
@@ -377,10 +387,11 @@ locate
 
 locate 命令比 find 命令运行得更快，因为它使用 updatedb 数据库，而 find命令在真实系统中搜索。
  
-locate命令未在大多数发行版中预安装，因此，请使用你的包管理器进行安装。
-``sudo apt install mlocate`` 数据库通过 cron任务定期更新，但我们可以通过运行以下命令手动更新它： ``sudo updatedb``
 
-locate命令维护了一份文件和目录的数据库，所以检索速度会快一些，数据库通常一天更新一次，可以手动更新数据库
+``sudo apt install mlocate`` 
+
+数据库通过 cron任务定期更新，或手动更新： ``sudo updatedb``
+
 
 ::
 
@@ -394,8 +405,7 @@ find
 
 1. `find <http://einverne.github.io/post/2018/02/find-command.html#%E9%80%9A%E8%BF%87%E6%97%B6%E9%97%B4%E6%9D%A5%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6>`__
 
-最基本的使用:
-``find [path] [expression]`` 在 path 目录下查找 expression 的文件,默认当前目录。
+最基本的使用: ``find [path] [expression]`` 在 path 目录下查找 expression 的文件,默认当前目录。
 
 通过文件名查找
 ~~~~~~~~~~~~~~
@@ -532,27 +542,24 @@ cat
 
 ::
 
-       ‍cat /dev/null > /var/log/wtmp
-       ‍cat /dev/null > /var/log/btmp
-       ‍cat /dev/null > /var/log/lastlog
+      ‍cat /dev/null > /var/log/wtmp
+      ‍cat /dev/null > /var/log/btmp
+      ‍cat /dev/null > /var/log/lastlog
 
 或是直接删除，再重新建个同名，改权限与原来的一样
 
 tail和head
 ----------
 
-1. 查看最后1000行的数据 cat filename \| tail -n 1000
+1. 查看最后1000行的数据 ``cat filename | tail -n 1000``
 
-2. 查看1000到3000行的数据
+2. 查看1000到3000行的数据 ``cat filename | head -n 3000 | tail -n +1000``
 
-``cat filename | head -n 3000 | tail -n +1000``
 
-1. tail -n 1000 最后1000行的数据
-
+1. tail -n [-]1000 最后1000行的数据
 2. tail -n +1000 第1000行开始以后的内容
 
-3. head -n 1000 前1000的内容
-
+3. head -n [+]1000 前1000的内容
 4. head -n -1000 倒数1000行以前
 
 监控log：
