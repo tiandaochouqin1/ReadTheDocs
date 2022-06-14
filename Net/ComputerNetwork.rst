@@ -457,9 +457,9 @@ MTU和MSS
 .. figure:: ../images/MTU_MSS.png
 
 
-MTU（Maximum Transmission
-Unit）：最大传输单元，MSS+头部40字节=1500字节。 MSS：Maximum Segment
-Size。1460字节。
+- MTU（Maximum Transmission Unit）：最大传输单元，MSS+头部40字节=1500字节。 
+
+- MSS：Maximum SegmentSize。1460字节。
 
 TCP拥塞算法
 ~~~~~~~~~~~~
@@ -524,9 +524,12 @@ TCP通过观察分组丢失来推断拥塞。
 
 TCP数据流和UDP数据报
 --------------------
+
 1. UDP不是面向连接的，每个数据包都是独立的包，包一般不会合并。发送端调用了几次write，接收端必须用相同次数的read读完。
-TCP是面向连接的协议，S和C之间要使用TCP，必须先建立连接，数据就在该连接上流动，可以是双向的。所以叫数据流，占系统资源多。write与read次数不需要统一。
-2. TCP保证数据正确性，UDP可能丢包，TCP保证数据顺序，UDP不保证，
+
+2. TCP是面向连接的协议，S和C之间要使用TCP，必须先建立连接，数据就在该连接上流动，可以是双向的。所以叫数据流，占系统资源多。write与read次数不需要统一。
+
+3. TCP保证数据正确性，UDP可能丢包，TCP保证数据顺序，UDP不保证，
 
 相关协议
 --------
@@ -547,13 +550,13 @@ TCP是面向连接的协议，S和C之间要使用TCP，必须先建立连接，
 
 TCP存在的缺陷
 --------------
-1. https://www.zhihu.com/question/47560918/answer/2302296292
+1. https://www.zhihu.com/question/47560918/answer/2302296292 https://www.zhihu.com/people/Cornelius-Scipio/posts
 2. https://mp.weixin.qq.com/s/XzaXbF8vla6lMMqgyT5A0g
 
 BBR算法不依赖于丢包，可以克服传统TCP对丢包的过分敏感与过激反应，避免发送速率骤增与骤减，
 使得整体发送速率在一个小范围内波动，更平缓、更平滑。
 
-TCP option做了补丁，比如：
+**TCP option** 做了补丁，比如：
 
 Scaling window 应对长肥管道
 

@@ -364,3 +364,19 @@ C语言
 1. Computer Systems: A Programmer’s perspective
 2. 《C语言的科学和艺术》（《The Art and Science of C》）
 3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)
+
+
+code
+------------
+1. `CodeTop企业题库  <https://codetop.cc/home>`__
+2. `排名前 10 的高频面试题，看看哪道你还不会？  <https://mp.weixin.qq.com/s/Ei7zGmmX5LsSYOTxbUExFw>`__
+
+leetcode
+
+1. kth-largest-element-in-an-array：时间复杂度n，快排变体。利用快排每一次排序可以确定一个数字在数组中的位置的特性，如果某一次快排后确定数字的位置是正好是 k-1 ，那么就直接返回结束。
+2. longest-substring-without-repeating-characters：时间复杂度n。，使用字符map[256]维护窗口中的成员，map检查冲突，若冲突则移动左侧直至不冲突，否则移动右侧。
+3. lru-cache：？
+4. 翻转链表
+5. 判断环形链表
+6. 二叉树中后序遍历(非递归)、层序遍历
+7. 两个栈实现队列：U形，一个作为队首，用于删除；一个站作为队尾用于插入。
