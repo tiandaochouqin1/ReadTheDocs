@@ -220,7 +220,7 @@ arm
 5. Wireshark网络分析就这么简单
 6. Wireshark网络分析的艺术
 7. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) <../books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
-8. Linux-UNIX系统编程手册
+8. Linux/UNIX系统编程手册
 
 算法
 ----------------
@@ -239,6 +239,7 @@ arm
 5. 设计模式
 6. Effective c++
 7. 计算机软件的构造与解释
+8. 架构整洁之道
 
 
 
