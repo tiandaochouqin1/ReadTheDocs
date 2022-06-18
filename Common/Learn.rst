@@ -10,9 +10,8 @@ Learn
 资讯网站
 ------------
 
-1. `技术雷达 <https://www.thoughtworks.com/radar>`__:（20210215）看不懂。
+1. `技术雷达 <https://www.thoughtworks.com/radar>`__
 
-|TechRadar| >technology-radar-vol-23 待阅读
 
 2. `infoq国际版 <https://www.infoq.com/>`__ Or
 `infoq国内版 <https://www.infoq.cn/>`__
@@ -45,25 +44,6 @@ Learn
 
 云原生领域涵盖的技术类别越来越多，但最关键的三项是容器、Serverless、Service Mesh
 
-性能分析和eBPF
----------------
-
-
-1. BPF Performance Tools，
-2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
-3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
-   `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
-
-`作者主页 <http://www.brendangregg.com/linuxperf.html>`__
-
-4. https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55
-
-5. https://lrita.github.io/wiki/books/
-
-.. figure:: ../images/linux_observability_tools.png
-
-   linux_observability_tools
-
 
 嵌入式
 ------
@@ -76,33 +56,17 @@ Learn
 
 1. `嵌入式学习的几种线路 <http://www.embeddedlinux.org.cn/emb-linux/entry-level/201701/02-6070.html>`__
 
-arm
-~~~~~~~
-
-
-1. **开发者指南(Armv8-A)**: Cortex-A Series Programmer’s Guide for Armv8-A，强烈推荐，每个章节都值得细读，适合入门者。
-
-2. Armv8-A Instruction Set Architecture.pdf 学习CPU架构、内存及系统架构的不二之选。
-3. TRM 文档、软件优化指南，可以从 https://developer.arm.com/ip-products/processors/cortex-a 页面点击 “Read more” 入口，包括：
-   Technical Reference Manual和 Software Optimization Guide
-
-4. 其它参考：
-   Arm C/C++ Compiler reference guide 和
-   Arm Compiler armlink User Guide(v6.12) 和
-   Arm Compiler armasm User Guide(v6.12)
-
 
 资源集合
 -------------------
 
-   学习路径参考：《程序员练级攻略》——左耳听风。知识面全，从入门到深入。
+学习路径参考：《程序员练级攻略》——左耳听风。知识面全，从入门到深入。
 
 `极客时间专栏 <https://zter.ml/>`__
 
-1. `学习C语言的教材 <http://www.ruanyifeng.com/blog/2011/09/c_programming_language_textbooks.html>`__
-2. https://github.com/fuhmmin/it-ebooks-cn
-3. https://github.com/guanpengchn/awesome-books
-4. https://kinegratii.github.io/library/
+1. https://github.com/fuhmmin/it-ebooks-cn
+2. https://github.com/guanpengchn/awesome-books
+3. https://kinegratii.github.io/library/
 
 网盘合集：
 
@@ -112,9 +76,7 @@ arm
 4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
 5. onedrive极客时间专栏
 
-.. |TechRadar| image:: ../images/TechRadar.png
-   
-   
+
    
 计算机科学
 ==========
@@ -213,14 +175,10 @@ arm
 网络
 -----------
 
-1. Unix环境高级编程 :download:`UNIX环境高级编程 第三版 <../books/UNIX环境高级编程 第三版.pdf>`  :download:`apue <../books/APUE-3rd.pdf>`  
-2. TCP/IP详解
-3. Unix网络编程
-4. **深入Linux网络技术内幕**
-5. Wireshark网络分析就这么简单
-6. Wireshark网络分析的艺术
-7. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) <../books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
-8. Linux/UNIX系统编程手册
+1. TCP/IP详解
+2. **深入Linux网络技术内幕**
+3. Wireshark网络分析就这么简单
+4. Wireshark网络分析的艺术
 
 算法
 ----------------
@@ -234,7 +192,7 @@ arm
 
 1. 代码整洁之道
 2. 代码大全2
-3. 重构_改善既有代码的设计2,\ `link1 <https://github.com/gdut-yy/Refactoring2-zh>`__
+3. 重构_改善既有代码的设计2,\ `link1 <https://github.com/gdut-yy/Refactoring2-zh>`__ 。学一门面向对象语言，然后再看
 4. 敏捷软件开发 原则模式与实践
 5. 设计模式
 6. Effective c++
@@ -242,7 +200,8 @@ arm
 8. 架构整洁之道
 
 
-
+编程实践
+===============
 Linux内核
 --------------
 
@@ -256,24 +215,74 @@ Linux内核
 
 `推荐学习顺序是 LKD->ULK->LDD->ULNI->ULVMM <https://www.cnblogs.com/pugang/p/9728983.html>`__
 
-1. LKD3: Linux内核设计与开发第三版
-2. ULK3: 深入理解LINUX内核，
-   LKD的内容不够深入、覆盖面不广，ULK要深入全面得多。前面这两本，一本提纲挈领，一本全面深入。
-3. LDD3: Linux驱动开发第三版
-4. ULNI：深入理解LINUX网络技术内幕
+1. LKD3: Linux内核设计与开发第三版。提纲挈领
+2. ULK3: 深入理解LINUX内核。全面深入
+3. LDD3: Linux驱动开发第三版。设备驱动开发、字符设备、块设备、ioctl
+4. ULNI：深入理解LINUX网络技术内幕。 深入网络
 5. ULVMM：深入理解Linux虚拟内存管理
 6. LSP：Linux 系统编程
 
--  深入理解Linux内核架构：当作一个内核框架图谱说明书来阅读。
--  LINUX KERNEL技术手册：参考手册，很薄，值得一看。
+-  深入理解Linux内核架构：同ULK3。
+-  LINUX KERNEL技术手册：内核构建、定制。
 -  Linux内核完全注释:Linux 0.11,2w行代码。
--  linux内核源代码情景分析
+-  linux内核源代码情景分析。
 -  30天自制操作系统:动手实践
-
-专栏-趣谈Linux操作系统。
+-  专栏-趣谈Linux操作系统。基础理论
 
 .. figure:: ../images/LinuxPath.jpg
    :alt: 嵌入式学习
+
+Linux编程
+------------
+1. Unix环境高级编程 :download:`UNIX环境高级编程 第三版 <../books/UNIX环境高级编程 第三版.pdf>`  :download:`apue <../books/APUE-3rd.pdf>`  
+2. Linux/UNIX系统编程手册
+   :download:`TLPI <../books/The Linux Programming Interface.pdf>` 
+   
+   :download:`Linux-UNIX系统编程手册（上、下册）.pdf <../books/Linux-UNIX系统编程手册（上、下册）.pdf>` 
+
+   :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
+   :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
+
+3. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) <../books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
+4. Unix网络编程
+
+
+
+性能分析和eBPF
+---------------
+
+
+1. BPF Performance Tools，
+2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
+3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
+   `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
+
+`作者主页 <http://www.brendangregg.com/linuxperf.html>`__
+
+4. https://netflixtechblog.com/linux-performance-analysis-in-60-000-milliseconds-accc10403c55
+
+5. https://lrita.github.io/wiki/books/
+
+.. figure:: ../images/linux_observability_tools.png
+
+   linux_observability_tools
+
+
+arm
+--------
+
+
+1. **开发者指南(Armv8-A)**: Cortex-A Series Programmer’s Guide for Armv8-A，强烈推荐，每个章节都值得细读，适合入门者。
+
+2. Armv8-A Instruction Set Architecture.pdf 学习CPU架构、内存及系统架构的不二之选。
+3. TRM 文档、软件优化指南，可以从 https://developer.arm.com/ip-products/processors/cortex-a 页面点击 “Read more” 入口，包括：
+   Technical Reference Manual和 Software Optimization Guide
+
+4. 其它参考：
+   Arm C/C++ Compiler reference guide 和
+   Arm Compiler armlink User Guide(v6.12) 和
+   Arm Compiler armasm User Guide(v6.12)
+
 
 
 lessons&labs
@@ -291,19 +300,6 @@ lessons&labs
 2. 语言只是用于实现需求的可选工具；
 3. 关注语言的峰会
 
-Java
-----
-
-1. Java编程思想
-2. Effective Java
-
-数据库
-------
-
-1. DDIA
-2. 高性能Mysql
-3. Mysql实战45讲:TODO
-4. https://sqlzoo.net/
 
 
 
@@ -319,6 +315,8 @@ C语言
 5. Expert C Programming
 6. `C Programming  FAQs <http://c-faq.com/>`__———《你必须知道的495个C语言问题》
 7. The Standard C Library
+8. `学习C语言的教材 <http://www.ruanyifeng.com/blog/2011/09/c_programming_language_textbooks.html>`__
+
 
 
 
@@ -365,6 +363,20 @@ C语言
 1. Computer Systems: A Programmer’s perspective
 2. 《C语言的科学和艺术》（《The Art and Science of C》）
 3. 《C程序设计的抽象思维》(《Programming Abstractions in C》)
+
+Java
+----
+
+1. Java编程思想
+2. Effective Java
+
+数据库
+------
+
+1. DDIA
+2. 高性能Mysql
+3. Mysql实战45讲:TODO
+4. https://sqlzoo.net/
 
 
 code

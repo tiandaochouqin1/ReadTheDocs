@@ -7,12 +7,7 @@ ELF、Compile & Main
 
 参考文章
 ==============
-1. :download:`TLPI <../books/The Linux Programming Interface.pdf>` 
-   
-   :download:`Linux-UNIX系统编程手册（上、下册）.pdf <../books/Linux-UNIX系统编程手册（上、下册）.pdf>` 
-
-   :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
-   :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
+1. Linux/UNIX系统编程手册(TLPI)
 
 2. :download:`gcc 9.2 manual <../files/gcc_9.2_manuals.pdf>`
 
