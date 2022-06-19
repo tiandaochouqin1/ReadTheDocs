@@ -46,3 +46,60 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
 
    register_call
 
+
+
+
+
+网络设备驱动
+============
+net_dev
+----------
+
+net_device_ops
+~~~~~~~~~~~~~~~~~~~
+include\linux\netdevice.h
+
+::
+    
+    struct net_device_ops {
+        int			(*ndo_init)(struct net_device *dev);
+        int			(*ndo_open)(struct net_device *dev);
+        int			(*ndo_stop)(struct net_device *dev);
+        netdev_tx_t		(*ndo_start_xmit)(struct sk_buff *skb,
+                            struct net_device *dev);
+
+        u16			(*ndo_select_queue)(struct net_device *dev,
+                                struct sk_buff *skb,
+                                struct net_device *sb_dev);
+
+        int			(*ndo_set_mac_address)(struct net_device *dev,
+                                void *addr);
+
+        int			(*ndo_do_ioctl)(struct net_device *dev,
+                                struct ifreq *ifr, int cmd);
+
+        int			(*ndo_change_mtu)(struct net_device *dev,
+                            int new_mtu);
+
+        void			(*ndo_tx_timeout) (struct net_device *dev,
+                            unsigned int txqueue);
+
+        void			(*ndo_get_stats64)(struct net_device *dev, 
+
+
+ioctl
+--------
+ioctl调用链
+~~~~~~~~~~~~~~~~
+1. `Linux网络设备的系统调用_WGS_LV的博客-CSDN博客  <https://blog.csdn.net/lenk2010/article/details/39669411>`__
+
+::
+
+    ioctl(syscall) 
+                    -> do_vfs_ioctl ->vfs_ioctl -> .unlocked_ioctl = sock_ioctl 
+                    -> dev_ioctl -> dev_ifsioc- > .ndo_do_ioctl = my_dev_ioctl
+
+
+fcntl
+~~~~~~~
+
