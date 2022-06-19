@@ -25,16 +25,6 @@ It is typically created by:
     chown root:kmem /dev/mem
 
 
-总线
---------
-1. `9、总线设备驱动模型 - Lioker - 博客园  <https://www.cnblogs.com/Lioker/p/10893768.html>`__
-2. `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
-
-Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
-
-总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
-
-
 
 核间中断IPI
 ------------
