@@ -377,7 +377,22 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
    虚拟化+DMA -> SMMU
 
 
+程序运行过程中打开mmu
+~~~~~~~~~~~~~~~~~~~~~~~~
+1. 提前对要执行的代码段建立页表(虚实相等的一一映射)
+2. 正常建立页表，利用mmu sync abort返回到预先设置的虚地址处继续执行。
 
+::
+
+      ldr    x30, =mmu_on_addr   //设置返回地址(为虚拟地址，即为开启mmu后一条指令的虚地址)
+      msr    SCTLR_EL1, x0       //开启MMU
+      isb                        //MMU找不到这个地址，跳到异常sync abort 处理函数
+
+   mmu_on_addr :
+   ....
+
+   vector_entry sync_exception_sp_elx  //异常处理函数返回到x30的地址，继续之星
+      ret
 
 TrustZone
 ============
@@ -517,3 +532,37 @@ arch/arm64/kernel/vmlinux.lds.S
 5. __cpu_setup : 初始化处理器相关的代码,配置访问权限,内存地址划分等。
 
 6. __primary_switch :开启MMU, 准备0号进程和内核栈,然后跳转到start_kernel运行
+
+
+中断控制器
+==============
+1. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
+2. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
+3. `7_Linux硬件中断处理 - 最后一只晴天小猪的博客  <https://santapasserby.com/2021/07/06/ldd/7_Linux%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/>`__
+4. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
+5. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
+6. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
+7. ☆ 从硬件到软件，系列4篇 `【原创】Linux中断子系统（一）-中断控制器及驱动分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12996812.html>`__
+
+可延时函数与工作队列
+-----------------------
+1. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
+2. `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
+
+可延时函数：由软中断或tasklet实现。运行在中断上下文(如do_IRQ退出时即为一个软中断检查点)，不能睡眠、阻塞。
+
+工作队列：运行在进程上下文，可阻塞。
+
+中断线程化：wakeup_softirqd唤醒内核线程来执行，该线程和其它线程一样需要调度。 耗时较长、实时性不高的场景，避免影响用户线程的实时性。
+
+非线程化中断：调用__do_softirq函数来处理。Bottom-half Enable 和 do_IRQ退出 时检查执行。
+
+proc interrupts
+------------------
+1. `/proc/interrupts 的数值是如何获得的？ – 肥叉烧 feichashao.com  <https://feichashao.com/proc-interrupts/>`__
+cat /proc/interrupts
+
+kernel/irq/proc.c show_interrupts 调用 irq_to_desc() 获取中断的信息，并打印每个 CPU 对应的统计数量 kstat_irqs_cpu().
+然后调用 arch_show_interrupts()，打印架构相关的中断信息。比如 MNI, TLB 等统计信息。
+
+irq domain 内部维护了一个 hwirq,可能会显示在 触发方式(Edge/Level)的前一列。
