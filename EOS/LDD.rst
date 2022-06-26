@@ -48,6 +48,9 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
 
 
 
+PCIE
+======
+1. `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
 
 
 网络设备驱动
