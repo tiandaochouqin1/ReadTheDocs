@@ -231,11 +231,70 @@ ST打头的指令和LD打头的指令，基本功能上没区别。
    STADD <Xs>, [<Xn|SP>]
 
 
-staddh与spinlock的实现
+
+
+ABA问题
+---------
+
+1. 进程P1在共享变量中读到值为A
+2. P1被抢占了，进程P2执行
+3. P2把共享变量里的值从A改成了B，再改回到A，此时被P1抢占。
+4. P1回来看到共享变量里的值没有被改变，于是继续执行。
+
+使用double-CAS解决。
+
+
+
+锁
+==========
+
+自旋锁、互斥量、信号量的实现原理。
+
+
+
+mutex和semphore
+----------------
+1. `【原创】Linux信号量机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12907230.html>`__
+2. `【原创】Linux Mutex机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12826811.html>`__
+
+互斥锁是一种休眠锁，锁争用时可能存在进程的睡眠与唤醒，context的切换带来的代价较高，适用于加锁时间较长的场景；
+
+互斥锁每次只允许一个进程进入临界区，有点类似于二值信号量；与信号量相比，互斥锁的性能与扩展性都更好，因此，在内核中总是会优先考虑互斥锁；
+
+互斥锁在锁争用时，在锁被持有时，选择自选等待，而不立即进行休眠，可以极大的提高性能，这种机制（optimistic spinning）也应用到了读写信号量上；
+
+互斥锁的缺点是互斥锁对象的结构较大，会占用更多的CPU缓存和内存空间；
+
+互斥锁按为了提高性能，提供了三条路径处理：快速路径，中速路径，慢速路径；
+
+
+spinlock
+-----------
+1. `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
+2. `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
+
+
+spinlock的核心思想是基于tickets的机制：
+
+1. 每个锁的数据结构arch_spinlock_t中维护两个字段：next和owner，只有当next和owner相等时才能获取锁；
+2. 每个进程在获取锁的时候，next值会增加，当进程在释放锁的时候owner值会增加；
+3. 如果有多个进程在争抢锁的时候，看起来就像是一个排队系统， **FIFO ticket spinlock**；
+
+rwlock
+~~~~~~~~~~~
+写者饿死
+
+seqlock
+~~~~~~~~~~
+
+stadda与spinlock的实现
 ~~~~~~~~~~~~~~~~~~~~~~~~
 1. `Arm A64 Instruction Set Architecture  <https://developer.arm.com/documentation/ddi0596/2021-12/Base-Instructions/STADD--STADDL--Atomic-add-on-word-or-doubleword-in-memory--without-return--an-alias-of-LDADD--LDADDA--LDADDAL--LDADDL-?lang=en>`__
 2. `Linux Kernel中spinlock的设计与实现_代码改变世界ctw的博客-CSDN博客_spinlock的实现  <https://blog.csdn.net/weixin_42135087/article/details/120950133>`__
+3. `【原创】linux spinlock/rwlock/seqlock原理剖析（基于ARM64） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12632532.html>`__
 
+
+spinlock基于lse 硬件独占指令实现。包括stxt、stadda、eor、ldaxrh。
 
 Atomic add on halfword in memory, without return, atomically loads a 16-bit halfword from memory, adds the value held in a register to it, and stores the result back to memory.
 
@@ -299,41 +358,17 @@ Atomic add on halfword in memory, without return, atomically loads a 16-bit half
 
 
 
-
-ABA问题
----------
-
-1. 进程P1在共享变量中读到值为A
-2. P1被抢占了，进程P2执行
-3. P2把共享变量里的值从A改成了B，再改回到A，此时被P1抢占。
-4. P1回来看到共享变量里的值没有被改变，于是继续执行。
-
-使用double-CAS解决。
-
-
-
-锁
-==========
-
-自旋锁、互斥量、信号量的实现原理。
-
-`自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
-`Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
-
-
-
 rcu
 -------
 1. `【原创】Linux RCU原理剖析（一）-初窥门径 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12681494.html>`__
 2. `Linux中的RCU机制[一] - 原理与使用方法 - 知乎  <https://zhuanlan.zhihu.com/p/89439043>`__
+3. `【原创】Linux RCU原理剖析（一）-初窥门径 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12681494.html>`__
 
 RCU的基本思想是：先创建一个旧数据的copy，然后writer更新这个copy，最后再用新的数据替换掉旧的数据。
 
 RCU, Read-Copy-Update，是Linux内核中的一种同步机制。
 
-RCU常被描述为读写锁的替代品，它的特点是读者并不需要直接与写者进行同步，读者与写者也能并发的执行。
- 
-RCU的目标就是最大程度来减少 ``读者`` 侧的开销.
+RCU常被描述为读写锁的替代品，特点是 **读者并不需要直接与写者进行同步**，读写能并发的执行。最大程度来减少 ``读者`` 侧的开销.
 
 .. figure:: ../images/rcu.png
 

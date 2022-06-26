@@ -32,11 +32,12 @@ Learn
    :download:`网络基本功 <../files/NetworkBasics.pdf>`
 3. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
-4. https://blog.csdn.net/dog250 ,网络相关。
+4. https://blog.csdn.net/dog250 ,网络、TCP
 5. http://www.wowotech.net/
 6. `What every programmer should know about memory <https://lwn.net/Articles/250967/>`__ ; 
    `pdf <https://people.freebsd.org/~lstewart/articles/cpumemory.pdf>`__
 
+7. ☆ https://www.cnblogs.com/LoyenWang/ Linux内核各个模块
 
 云原生
 --------
@@ -186,6 +187,7 @@ Learn
 1. Mastering Algorithms with C
 2. 数据结构与算法——极客时间 :TODO
 3. `算法小抄 <https://labuladong.gitbook.io/algo/>`__
+4. 并行计算 `book.pdf - Google 云端硬盘  <https://drive.google.com/file/d/0B4z2gzEmkDDCb0NBSlFWYnBDNEk/view?resourcekey=0-U96fPYDchiVoIvnEp49w1w>`__
 
 软件工程
 ---------------------
