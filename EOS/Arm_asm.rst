@@ -13,7 +13,7 @@ aarch64状态
 
 1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly <../files/arm/syshella_arm-assembly.pdf>`
 2. ☆ 栈回溯 `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
-3. `ARMv8 A64 Quick Reference <https://courses.cs.washington.edu/courses/cse469/19wi/arm64.pdf>`__
+3. ☆指令大全 `ARMv8 A64 Quick Reference <https://courses.cs.washington.edu/courses/cse469/19wi/arm64.pdf>`__
 4. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
 
 In AArch64 state, the following registers are available:
@@ -199,6 +199,29 @@ https://developer.arm.com/documentation/dui0489/c/CIHGHHIE
 2. DSB:Data Synchronization Barrier
 3. ISB:Instruction Synchronization Barrier
    
+arm64常用汇编指令
+----------------------
+
+adrp
+~~~~~~~~~~~
+1. `Arm A-profile A64 Instruction Set Architecture  <https://developer.arm.com/documentation/ddi0602/2022-03/Base-Instructions/ADRP--Form-PC-relative-address-to-4KB-page->`__
+
+``ADRP <Xd>, <label>`` : 加载4k对齐的地址到寄存器。
+
+adds an immediate value that is shifted left by 12 bits, to the PC value to form a PC-relative address,
+ with the bottom 12 bits masked out, and writes the result to the destination register.
+
+
+
+::
+
+   imm = SignExtend(immhi:immlo:Zeros(12), 64);
+
+   bits(64) base = PC[];
+   if page then
+      base<11:0> = Zeros(12);
+   X[d] = base + imm;
+
 
 x86与arm函数调用规约
 =======================

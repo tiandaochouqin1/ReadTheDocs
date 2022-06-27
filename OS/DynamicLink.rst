@@ -109,7 +109,7 @@ PIC与PLT
 -----------
 >> symtab、strtab和got、plt、got.plt的index如何对应？ 
 
-1. https://maskray.me/blog/2021-09-19-all-about-procedure-linkage-table
+1. ☆ `All about Procedure Linkage Table | MaskRay  <https://maskray.me/blog/2021-09-19-all-about-procedure-linkage-table>`__
 2. https://maskray.me/blog/2021-08-29-all-about-global-offset-table
 
 
@@ -359,6 +359,7 @@ https://github.com/iqiyi/xHook/blob/master/docs/overview/android_plt_hook_overvi
        __builtin___clear_cache((void *)PAGE_START(addr), (void *)PAGE_END(addr));
    }
 
+
 从elf文件读取符号地址
 ~~~~~~~~~~~~~~~~~~~~~~~~
 读文件有性能损耗。
@@ -458,7 +459,6 @@ dso重复符号处理
 1. 导出符号的概念 `Controlling the Exported Symbols of Shared Libraries <https://www.gnu.org/software/gnulib/manual/html_node/Exported-Symbols-of-Shared-Libraries.html>`__ 
 2. https://stackoverflow.com/questions/6538501/linking-two-shared-libraries-with-some-of-the-same-symbols
 3. `linux下动态库的符号冲突、隐藏和强制优先使用库内符号 <https://blog.csdn.net/wwyyxx26/article/details/48289659>`__ 
-
 4. `Linux 編譯 shared library 的方法和注意事項 <https://medium.com/fcamels-notes/linux-%E7%B7%A8%E8%AD%AF-shared-library-%E7%9A%84%E6%96%B9%E6%B3%95%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85-cb35844ef331>`__
 5.  `open.solaris Symbol Resolution <https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/chapter2-93321/index.html>`__
 
@@ -466,22 +466,20 @@ dso重复符号处理
 
 三种解决方法：
 
-1. Pass -Bsymbolic or -Bsymbolic-functions to the linker. 
-   This has a global effect: every reference to a global symbol 
-   (of function type for -Bsymbolic-functions) that can be resolved to a symbol 
-   in the library is resolved to that symbol. With this you lose the ability
-   to interpose internal library calls to those symbols using LD_PRELOAD. 
+1. Pass **-Bsymbolic or -Bsymbolic-functions** to the linker. 
+   When creating a shared library, bind references to global symbols to the definition **within the shared library**, if any. 
    The symbols are still exported, so they can be referenced from outside the library.
 
-2. Use a version script to mark symbols as local to the library, e.g.
+2. Use a **version script to mark symbols as local to the library**, e.g.
    use something like: {local: bar;}; and pass --version-script=versionfile to the linker. 
    The symbols are not exported.
 
-3. Mark symbols with an approppiate visibility (GCC info page for visibility),
-   which will be either hidden, internal, or protected. protected visibility symbols are exported  
-   as .protected, hidden symbols are not exported, 
-   and internal symbols are not exported and you compromise not to 
+3. Mark symbols with an approppiate **visibility** (GCC info page for visibility),
+   which will be either hidden, internal, or protected. 
+   protected visibility symbols are exported  as .protected, 
+   hidden symbols are not exported,   and internal symbols are not exported and you compromise not to 
    call them from outside the library, even indirectly through function pointers.
+
 
 You can check which symbols are exported with objdump -T.
 
