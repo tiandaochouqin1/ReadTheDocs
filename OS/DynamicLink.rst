@@ -169,7 +169,7 @@ isn some architectures (x86-32, x86-64)
 - eager binding:ld -z now、LD_BIND_NOW=1。更安全。实际大部分符号不会被使用。
 - lazy binding:慢，每次resolve都需要按序扫描so，并遍历所有符号以查找。
 
-plt过程
+x86 plt过程
 ~~~~~~~~~~~~~~
 PLT的基本流程(plt表)：
 
@@ -215,6 +215,22 @@ ELF将GOT拆分成两个表".got"和"".got.plt"。其中"".got"用来保存全�
    ---------------------------------
    ... ...
    ---------------------------------
+
+
+aarch64 plt
+~~~~~~~~~~~~~
+1. R_AARCH64_GLOB_DAT: 重定位类型，创建GOT表项存储特定符号的地址
+2. R_AARCH64_JUMP_SLOT: 重定位类型，通过PLT找到目标符号的地址
+
+::
+
+   adrp x16, Page(&(.plt.got[n]))
+   ldr  x17, [x16, Offset(&(.plt.got[n]))]
+   add  x16, x16, Offset(&(.plt.got[n]))
+   br   x17
+
+   //x16 holds the address of the .plt.got entry and x17 holds the target address. 
+
 
 fno-plt
 ~~~~~~~~~~~~~
