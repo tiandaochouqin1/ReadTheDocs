@@ -509,7 +509,17 @@ visibility
    any symbols marked local in the version script will not be exported.
 
 
+so内部未定符号
+----------------
+1. `Liunx下解决动态链接库符号未定义问题_Toudsour的博客-CSDN博客  <https://blog.csdn.net/toudsour/article/details/52370795>`__
 
+
+``allow-shlib-undefined`` 默认，生成so时时允许内部引用未定符号，运行时才会暴露错误。man ld
+
+The default behaviour is to report errors for any undefined symbols referenced in shared libraries 
+if the linker is being used to create an executable, but to allow them if the linker is being used to create a shared library.
+
+为什么是这种行为：链接时指定的so和load时可能不一样，所以load时可能可以resolve该symbol。A shared library specified at link time may not be the same as the one that is available at load time, so the symbol might actually be resolvable at load time.
 
 弱符号与COMMON
 ===================

@@ -45,6 +45,8 @@ arm简介
 
 7. arm-isa（简洁） :download:`Armv8-A Instruction Set Architecture <../files/arm/Armv8-A Instruction Set Architecture.pdf>`
 
+8. `Arm技术文档全集合 - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000100851>`__
+
 arm版本
 ----------
 Armv9 延续了 AArch64 作为基准指令集的使用，然而在功能上增加了一些非常重要的扩展：安全、AI 以及改进矢量和 DSP 能力。

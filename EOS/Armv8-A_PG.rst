@@ -12,13 +12,19 @@ Fundamentals of Armv8
 参考手册
 ------------
 
-1. arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
+1. ☆ 两百多页，先看完这个再说 arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
 
    :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
 
-2. 很全，很好，部分收费 `[目录]-博客笔记导读目录(全部)_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/107037145>`__
+2. ☆☆ 很好，部分收费 `[目录]-博客笔记导读目录(全部)_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/107037145>`__
+    `付费专栏-付费课程-【购买须知】 - 非广告_代码改变世界ctw的博客-CSDN博客_csdn付费专栏  <https://blog.csdn.net/weixin_42135087/article/details/124890300>`__
+
+3. 单篇介绍各个概念的短文,基本都是2020年以后发布的 `Documentation – Arm Developer  <https://developer.arm.com/documentation/#&cf[navigationhierarchiesproducts]=%20Architectures,Learn%20the%20architecture>`__
 
 
+To Learn
+~~~~~~~~~~~~~~~
+1. `Learn the architecture - TrustZone for AArch64  <https://developer.arm.com/documentation/102418/0101/TrustZone-in-the-processor>`__
 
 
 异常级别EL
@@ -324,18 +330,25 @@ smp相关的内存屏障都加入了ish选项，也就是限制指令只针对in
 单向内存屏障
 ~~~~~~~~~~~~~
 1. `Arm64内存屏障_Roland_Sun的博客-CSDN博客_arm 内存屏障  <https://blog.csdn.net/Roland_Sun/article/details/107468055>`__
+2. `Learn the architecture - Memory Systems, Ordering, and Barriers  <https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions?lang=en>`__
+
 
 
 ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指令。
 
 1. Load-Acquire：这条指令 ``之后的所有加载和存储操作一定不会被重排序到这条指令之前``；
 2. Store-Release：这条指令 ``之前`` 的所有加载和存储才做一定不会被重排序到这条指令之后；
-3. 数据内存屏障 ``DMB = Load-Acquire + Store-Release``
+3. 数据内存屏障 ``DMB = Load-Acquire + Store-Release`` ,可用于保护临界区代码
 
 指令形式：
 
-1. Store-Release：基本指令后面加上L；
-2. Load-Acquire：基本指令后面加上A；
+1. Store-Release：基本指令后面加上L；LDAR
+2. Load-Acquire：基本指令后面加上A；STLR
+
+
+.. figure:: ../images/LDAR_STLR.png
+
+    LDAR_STLR
 
 arm mmu
 ------------------
