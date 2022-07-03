@@ -134,7 +134,18 @@ Section
 ~~~~~~~~
 部分文件的Section title会提示语法错误：``(INFO/1) Enumerated list start value not ordinal-1: "3" (ordinal 3)``
 
+图片格式
+~~~~~~~~~~~~~~~
+::
 
+   .. image:: picture.jpeg
+   :height: 100px
+   :width: 200 px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+   
 从markdown迁移
 --------------
 

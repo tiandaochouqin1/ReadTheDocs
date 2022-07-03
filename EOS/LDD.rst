@@ -38,6 +38,7 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
 
 
 .. figure:: ../images/bus_device_drive.png
+   :scale: 70 %
 
    bus_device_drive
 
@@ -50,8 +51,63 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
 
 PCIE
 ======
-1. `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
+1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
+2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__
 
+pci总线地址空间
+----------------
+1. x86 CPU可以直接访问memory空间和I/O空间，而配置空间则不能直接访问；
+2. 配置空间中有个寄存器：Base Address Register，也就是BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间，这个空间就是BAR空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
+
+.. figure:: ../images/PCIE_reg_conf.png
+   :scale: 50 %
+   :alt: alternate text
+
+
+
+假设某个设备要对另一个设备进行读取数据的操作，首先这个设备（称之为Requester）需要向另一个设备发送一个Request，
+然后另一个设备（称之为Completer）通过Completion Packet返回数据或者错误信息。
+
+.. figure:: ../images/PCIE_tlp.png
+   :scale: 70 %
+
+   PCIE_tlp
+
+Header中包含了地址信息，各种tlp类型header、寻址方式不同。
+
+
+PCIE架构和分层
+------------------
+
+pcie架构
+~~~~~~~~~~~~~~
+.. figure:: ../images/PCIE_structure.png
+   :scale: 70 %
+
+   PCIE_structure
+
+
+Root Complex：CPU和PCIe总线之间的接口可能会包含几个模块（处理器接口、DRAM接口等），甚至可能还会包含芯片，这个集合就称为Root Complex，
+   它作为PCIe架构的根， **代表CPU与系统其它部分进行交互**。将CPU的request转换成PCIe的4种不同的请求（Configuration、Memory、I/O、Message）；
+
+
+pcie分层
+~~~~~~~~~~~~~~~
+1. 与PCI总线不同（PCI设备共享总线），PCIe总线使用端到端的连接方式，互为接收端和发送端，全双工，基于数据包的传输；
+2. 物理底层采用差分信号（PCI链路采用并行总线，而PCIe链路采用串行总线），一条Lane中有两组差分信号，共四根信号线，而PCIe Link可以由多条Lane组成(1/2/4/8/12/16/32)；
+
+.. figure:: ../images/PCIE_layer.png
+
+   PCIE_layer
+
+
+1. Transaction层: 负责TLP包（Transaction Layer Packet）的封装与解封装，此外还负责QoS，流控、排序等功能；
+2. Data Link层:负责DLLP包（Data Link Layer Packet）的封装与解封装，此外还负责链接错误检测和校正，使用Ack/Nak协议来确保传输可靠；
+3. Physical层:负责Ordered-Set包的封装与解封装，物理层处理TLPs、DLLPs、Ordered-Set三种类型的包传输；
+
+TLP事务层
+~~~~~~~~~~~~
+1. `PCIe扫盲——一个Memory Read操作的例子  <http://blog.chinaaet.com/justlxy/p/5100053263>`__
 
 网络设备驱动
 ============

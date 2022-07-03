@@ -1,7 +1,7 @@
 
 Basics
 =========
-一些必备的基础开发技能。
+基础技能与理论。
 
 
 
@@ -10,10 +10,11 @@ Basics
    :numbered: 4
    
 
-   Linux_cmd.rst
+   CleanArchiechture.rst
+   vim.rst
    Git.rst
    regex.rst
-   vim.rst
+   Linux_cmd.rst
    Blog.rst
    Learn.rst
 
