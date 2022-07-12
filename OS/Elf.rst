@@ -48,8 +48,9 @@ readelf
 11. size exe: 查看text、data、bss的长度。
 
 .. figure:: ../images/Elf-layout.png
+   :scale: 70%
 
-    ELF结构
+   ELF结构
 
 vim xxd
 -----------
@@ -368,13 +369,16 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 
 
 .. figure:: ../images/Elf_Obj_Sections.png
+   :scale: 70%
    :alt: Elf_Obj_Sections
 
 .. figure:: ../images/Elf_Exe_Sections.png
+   :scale: 70%
    :alt: Elf_Exe_Sections
 
 
 .. figure:: ../images/Procee_Vm_Sections.png
+   :scale: 70%
    :alt: Procee_Vm_Sections
 
 
@@ -449,6 +453,7 @@ main之前
 
 
 .. figure:: ../images/main_call_graph.png
+   :scale: 80%
    :alt: main_call_graph
 
    main_call_graph
@@ -464,6 +469,7 @@ main之前
 5. exit :  先调用注册到atexit的函数，然后fini,最后destructor。
 
 .. figure:: ../images/stack_main_start.png
+   :scale: 70%
 
    stack_main_start
 

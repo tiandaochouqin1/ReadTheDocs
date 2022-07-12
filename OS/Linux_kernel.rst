@@ -151,8 +151,9 @@ linux、glibc、gcc等。
 5. __TASK_STOPPED: 停止执行，进程没有投入运行也不能投入运行。通常发生在接收SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU等信号时。
 
 .. figure:: ../images/task_status.png
+   :scale: 50%
 
-           任务状态
+   任务状态
 
 
 ::
@@ -337,8 +338,9 @@ O(1)调度
 3. 调度时间复杂度为 O(1).
 
 .. figure:: ../images/O(1)_schedule.jpg
+   :scale: 50%
 
-           Linux2.6.23以前的O(1)调度
+   Linux2.6.23以前的O(1)调度
 
 
 
@@ -477,8 +479,9 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
 
 .. figure:: ../images/sched.jpg
+   :scale: 70%
 
-           调度过程
+   调度过程
 
 
 休眠与唤醒
@@ -533,6 +536,7 @@ wake_up
 https://zhuanlan.zhihu.com/p/296750228
 
 .. figure:: ../images/kernel_stack.png
+   :scale: 70%
 
 
 - x86: 上图，采用了每cpu变量current_task来保存当前运行进程的task_struct

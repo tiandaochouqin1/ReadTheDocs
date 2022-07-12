@@ -272,7 +272,6 @@ semphore
 
 
 .. figure:: ../images/semaphore.png
-   :scale: 80%
 
    semaphore
 

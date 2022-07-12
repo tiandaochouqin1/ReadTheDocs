@@ -269,6 +269,7 @@ _dl_runtime_resolve
 
 
 .. figure:: ../images/dl_runtime_resolve.png
+   :scale: 50%
    
    .rel.plt->.dynsym/.syntab->.dynstr
 

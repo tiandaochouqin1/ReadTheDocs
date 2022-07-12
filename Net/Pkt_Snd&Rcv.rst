@@ -402,14 +402,16 @@ ARP地址解析协议
 
 
 .. figure:: ../images/nud_states_transmitions.png
+   :scale: 80%
 
-    nud状态转换
+   nud状态转换
 
    
 
 .. figure:: ../images/nud_states_transition_2.png
+   :scale: 60%
 
-    nud状态转换-简化版
+   nud状态转换-简化版
 
 
 1. neigh_timer_handler：异步。L4 confirmation后要到下一次timer执行状态转换。

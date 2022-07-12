@@ -117,8 +117,9 @@ Aarch64使用A64指令集，指令长度是32位！
 指令索引：
 
 .. figure:: ../images/arm64_op.png
+   :scale: 70%
     
-    C4.1 A64 instruction set encoding
+   C4.1 A64 instruction set encoding
 
 
 
@@ -179,6 +180,7 @@ a64 mov使用 imm16 ，"hw" field as <shift>/16。
 
 
 .. figure:: ../images/arm_mov_opcode.png
+   :scale: 60%
 
    arm_mov_opcode
 
@@ -256,6 +258,7 @@ MOV (bitmask immediate)
 
 
 .. figure:: ../images/ORR_immediate.png
+   :scale: 70%
 
    ORR_immediate
 
@@ -405,7 +408,9 @@ The offset `shifts by two bits to the left and converts to 64 bit` (i.e. the hig
 
 
 .. figure:: ../images/opcode_b.png
-   :alt: opcode_b
+   :scale: 70%
+
+   opcode_b
 
 
 br unconditional Branch(reg)
@@ -437,5 +442,7 @@ Rn即寄存器编号。Rn代表X或W，64位或32位。The use of R indicates th
 
 
 .. figure:: ../images/opcode_br.png
-   :alt: opcode_b
+   :scale: 70%
+   
+   opcode_b
 

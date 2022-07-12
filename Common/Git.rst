@@ -23,6 +23,7 @@ Git
 --------
 
 .. figure:: ../images/reset_workflow.png
+   :scale: 70%
    :alt: workflow
 
    workflow
@@ -75,14 +76,15 @@ stash             stash 区
 
    git_basic
 
-.. figure:: ../images/Git.jpg
-   :alt: git_basic2
+.. .. figure:: ../images/Git.jpg
+..    :alt: git_basic2
 
-   git_basic2
+..    git_basic2
 
 git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
 
 .. figure:: ../images/git.png
+   :scale: 80%
    :alt: git_stack
 
    git_stack

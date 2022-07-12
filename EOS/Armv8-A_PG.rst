@@ -35,8 +35,9 @@ To Learn
 Exception Level
 
 .. figure:: ../images/aarch64_exception_levels_2.png
+   :scale: 60%
 
-    aarch64_exception_levels_2
+   aarch64_exception_levels_2
 
 
 
@@ -60,8 +61,9 @@ Exception Level
 
 
 .. figure:: ../images/mov_betw_aarch64_aarch32.png
+   :scale: 60%
 
-    mov_betw_aarch64_aarch32
+   mov_betw_aarch64_aarch32
 
 
 
@@ -79,6 +81,7 @@ cache shareable domain
 ``Memory caching`` can be separately controlled through inner and outer attributes, for multiple levels of cache. 
 
 .. figure:: ../images/Cache_Sharable_Domain.png
+   :scale: 50%
    
    Cache_Sharable_Domain
 
@@ -144,6 +147,7 @@ MMU根据传入的虚拟地址来选择使用TTBR0还是TTBR1寄存器。
    Address_spaces_in_Armv8-A
 
 .. figure:: ../images/va-to-ipa-to-pa-address-translation.jpg
+   :scale: 60%
    
    va-to-ipa-to-pa-address-translation
 
@@ -347,8 +351,9 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 
 
 .. figure:: ../images/LDAR_STLR.png
+   :scale: 60%
 
-    LDAR_STLR
+   LDAR_STLR
 
 arm mmu
 ------------------
@@ -362,8 +367,9 @@ The Translation Lookaside Buffer (TLB) is a cache of recently accessed page tran
 The **hypervisor** must perform some extra translation steps in a two stage process to share the physical memory system between the different guest operating systems.
 
 .. figure:: ../images/two_stage_translation_process.png
+   :scale: 60%
 
-    two_stage_translation_process
+   two_stage_translation_process
 
 
 SMMU
@@ -375,6 +381,7 @@ SMMU
 SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
 
 .. figure:: ../images/smmu.png
+   :scale: 60%
 
    System Memory Management Unit
 
@@ -436,6 +443,7 @@ A **System Control Processor (SCP)** is a processor-based capability that provid
 for provision of **power management** functions and services. 
 
 .. figure:: ../images/ATF_Scp.png
+   :scale: 60%
 
    ATF_Scp
 

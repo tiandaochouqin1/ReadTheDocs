@@ -22,7 +22,9 @@ x86 Assembly
 
 
 .. figure:: ../images/x86-registers.png
-   :alt: Registers
+   :scale: 70%
+
+   Registers
 
 
 
