@@ -111,8 +111,8 @@ TLP事务层
 
 网络设备驱动
 ============
-net_dev
-----------
+net_device
+-----------
 
 net_device_ops
 ~~~~~~~~~~~~~~~~~~~
@@ -145,12 +145,88 @@ include\linux\netdevice.h
 
         void			(*ndo_get_stats64)(struct net_device *dev, 
 
+in_device
+-----------
+1. `in_device和in_ifaddr数据结构_hhhhhyyyyy8的博客-CSDN博客  <https://blog.csdn.net/hhhhhyyyyy8/article/details/103227224>`__
+
+::
+
+   struct in_device {
+      struct net_device	*dev;/*指向所属的网络设备*/
+      atomic_t		refcnt;/*引用计数*/
+      int			dead;/*为1时标识所在的IP配置块将要被释放，不允许再访问其成员*/
+      
+      /*指向 in_ifaddr架构链表，in_ifaddr中存储了网络设备的IP地址，
+      因为一个网络设备可以配置多个IP地址，因此使用链表来存储。*/
+      struct in_ifaddr	*ifa_list;
+   
+      struct ip_mc_list __rcu	*mc_list;	/* IP multicast filter chain    */
+      struct ip_mc_list __rcu	* __rcu *mc_hash;
+   
+      /*与组播相关配置*/
+      int			mc_count;	/* Number of installed mcasts	*/
+      spinlock_t		mc_tomb_lock;
+      struct ip_mc_list	*mc_tomb;
+      unsigned long		mr_v1_seen;
+      unsigned long		mr_v2_seen;
+      unsigned long		mr_maxdelay;
+      unsigned char		mr_qrv;
+      unsigned char		mr_gq_running;
+      unsigned char		mr_ifc_count;
+      struct timer_list	mr_gq_timer;	/* general query timer */
+      struct timer_list	mr_ifc_timer;	/* interface change timer */
+   
+      /*指向neigh_parms结构实例，存储一些与ARP相关的参数*/
+      struct neigh_parms	*arp_parms;
+      
+      struct ipv4_devconf	cnf;
+      
+      /*RCU机制使用，实现互斥*/
+      struct rcu_head		rcu_head;
+   };
+
+
+in_ifaddr数据结构
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   struct in_ifaddr {
+      struct hlist_node	hash;
+      struct in_ifaddr	*ifa_next;//in_ifaddr链表
+      struct in_device	*ifa_dev;//指向所属的in_device结构
+      struct rcu_head		rcu_head;
+      __be32			ifa_local;//本地IP地址
+      __be32			ifa_address;//本地IP地址或对端IP地址
+      __be32			ifa_mask;//子网掩码
+      __be32			ifa_broadcast;//广播地址
+      unsigned char		ifa_scope;//寻址范围
+      unsigned char		ifa_prefixlen;//子网掩码长度
+      __u32			ifa_flags;//IP地址属性
+      char			ifa_label[IFNAMSIZ];//网络设备名
+   
+      /* In seconds, relative to tstamp. Expiry is at tstamp + HZ * lft. */
+      __u32			ifa_valid_lft;
+      __u32			ifa_preferred_lft;
+      unsigned long		ifa_cstamp; /* created timestamp */
+      unsigned long		ifa_tstamp; /* updated timestamp */
+   };
+
+
+
+ifa_local和ifa_address的区别：
+
+1. ifa_local始终表示本地IP地址
+
+2. 如果设备配置了支持广播，ifa_address和if_local一样；如果点对点链路，ifa_address表示对端的IP地址。
+
 
 ioctl
 --------
 ioctl调用链
 ~~~~~~~~~~~~~~~~
 1. `Linux网络设备的系统调用_WGS_LV的博客-CSDN博客  <https://blog.csdn.net/lenk2010/article/details/39669411>`__
+2. `UNP编程：37---struct ifreq、 struct ifconf结构体_董哥的黑板报的博客-CSDN博客  <https://blog.csdn.net/qq_41453285/article/details/100567095>`__
 
 ::
 
@@ -159,6 +235,35 @@ ioctl调用链
                     -> dev_ioctl -> dev_ifsioc- > .ndo_do_ioctl = my_dev_ioctl
 
 
+
+ifreq：保存接口信息。socket ioctl使用。ifconf的成员
+
+
+
 fcntl
 ~~~~~~~
 
+
+内核通知链
+------------
+1. `Linux 内核| 内核通知链机制 - 一丁点儿  <https://www.dingmos.com/index.php/archives/18/#cl-4>`__
+
+net_device和in_device均有各自的通知链结构体，直接使用已封装的api即可。
+
+::
+      
+   blocking_notifier_chain_register
+
+   notifier_call_chain
+
+   struct notifier_block {
+      notifier_fn_t notifier_call;       // 回调函数
+      struct notifier_block __rcu *next; // 下一个回调块
+      int priority;                      // 优先级
+   };
+
+
+
+stmmac driver
+------------------
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c

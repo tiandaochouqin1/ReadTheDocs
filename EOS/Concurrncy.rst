@@ -250,33 +250,32 @@ ABA问题
 
 自旋锁、互斥量、信号量的实现原理。
 
-
-
-mutex和semphore
-----------------
+semphore
+--------------
 1. `【原创】Linux信号量机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12907230.html>`__
-2. `【原创】Linux Mutex机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12826811.html>`__
 
-互斥锁是一种 **休眠锁** ，锁争用时可能存在进程的睡眠与唤醒，context的切换带来的代价较高，适用于加锁时间较长的场景；
+按照等待链表排队。
 
-互斥锁每次只允许一个进程进入临界区，有点类似于二值信号量；与信号量相比，互斥锁的性能与扩展性都更好，因此，在内核中总是会 **优先考虑互斥锁** ；
+::
 
-互斥锁在锁争用时，在锁被持有时，选择自选等待，而不立即进行休眠，可以极大的提高性能，这种机制（optimistic spinning）也应用到了读写信号量上(MCS锁)；
+   struct semaphore {
+      raw_spinlock_t		lock;       //自旋锁，用于count值的互斥访问
+      unsigned int		count;      //计数值，能同时允许访问的数量，也就是上文中的N把锁
+      struct list_head	wait_list;      //不能立即获取到信号量的访问者，都会加入到等待列表中
+   };
 
-互斥锁的缺点是互斥锁对象的结构较大，会占用更多的CPU缓存和内存空间；
+   struct semaphore_waiter {
+      struct list_head list;      //用于添加到信号量的等待列表中
+      struct task_struct *task;   //用于指向等待的进程，在实际实现中，指向current
+      bool up;                    //用于标识是否已经释放
+   };
 
-互斥锁按为了提高性能，提供了三条路径处理：快速路径，中速路径(osq,乐观自旋)，慢速路径；
 
-osq加锁
-~~~~~~~~~~~~
-有几种情况：
+.. figure:: ../images/semaphore.png
+   :scale: 80%
 
-1. 无人持有锁，那是最理想的状态，直接返回；
-2. 有人持有锁，将当前的Node加入到OSQ队列中，在没有高优先级任务抢占时， **自旋等待前驱节点释放锁** ；
-3. 自旋等待过程中，如果遇到高优先级 **任务抢占** ，那么需要做的事情就是将之前加入到OSQ队列中的当前节点，从OSQ队列中移除，移除的过程又分为三个步骤，
-   分别是处理prev前驱节点的next指针指向、当前节点Node的next指针指向、以及将prev节点与next后继节点连接；
+   semaphore
 
-解锁：当于锁的传递，从osq队列上一个节点传递给下一个节点。
 
 ownership
 ~~~~~~~~~~~~~~
@@ -288,6 +287,37 @@ Mutex被持有后有一个明确的owner，而Semaphore并没有owner，当一�
 2. 系统无法对其进行跟踪断言处理，比如 **死锁检测** 等；
 3. 信号量的 **调试** 变得更加麻烦；
 
+
+mutex
+----------------
+1. `【原创】Linux Mutex机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12826811.html>`__
+
+互斥锁是一种 **休眠锁** ，锁争用时可能存在进程的睡眠与唤醒，context的切换带来的代价较高，适用于加锁时间较长的场景；
+
+每次只允许一个进程进入临界区，有点类似于二值信号量；与信号量相比，互斥锁的性能与扩展性都更好，因此，在内核中总是会 **优先考虑互斥锁** ；
+
+缺点是互斥锁对象的结构较大，会占用更多的CPU缓存和内存空间；
+
+三条处理路径
+~~~~~~~~~~~~~~~
+1. 快速路径：__mutex_trylock_fast，若失败则进入mid-path。
+2. 中速路径：osq,乐观自旋。若持有锁者正在临界区运行，则osq；若锁持有者在临界区被调度出去了，则进入slow-path.
+3. 慢速路径：schedule_preempt_disabled，将当前任务切换出去。
+
+
+osq加锁
+~~~~~~~~~~~~
+optimistic spinning，乐观自旋.可以极大的提高性能
+
+有几种情况：
+
+1. 无人持有锁，那是最理想的状态，直接返回；
+2. 有人持有锁，将当前的Node加入到OSQ队列中，在没有高优先级任务抢占时， **自旋等待前驱节点释放锁** ；
+3. 自旋等待过程中，如果遇到高优先级 **任务抢占** ，那么将之前加入到OSQ队列中的当前节点从OSQ队列中移除。
+
+解锁：当于锁的传递，从osq队列上一个节点传递给下一个节点。
+
+
 spinlock
 -----------
 1. `自旋锁 <http://www.wowotech.net/kernel_synchronization/460.html>`__ ;
@@ -296,9 +326,9 @@ spinlock
 
 spinlock的核心思想是基于tickets的机制：
 
-1. 每个锁的数据结构arch_spinlock_t中维护两个字段：next和owner，只有当next和owner相等时才能获取锁；
+1. 每个锁的数据结构arch_spinlock_t中维护两个字段：next和owner，只有当next和owner(local保存next自加前的值)相等时才能获取锁；
 2. 每个进程在获取锁的时候，next值会增加，当进程在释放锁的时候owner值会增加；
-3. 如果有多个进程在争抢锁的时候，看起来就像是一个排队系统， **FIFO ticket spinlock**；
+3. 如果有多个进程在争抢锁的时候，看起来就像是一个 **排队系统， FIFO ticket spinlock**；
 
 rwlock
 ~~~~~~~~~~~

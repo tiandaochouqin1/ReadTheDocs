@@ -136,6 +136,8 @@ Section
 
 图片格式
 ~~~~~~~~~~~~~~~
+`reStructuredText Directives  <https://docutils.sourceforge.io/docs/ref/rst/directives.html#image>`__
+
 ::
 
    .. image:: picture.jpeg
@@ -145,7 +147,7 @@ Section
    :alt: alternate text
    :align: right
 
-   
+
 从markdown迁移
 --------------
 
