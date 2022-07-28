@@ -400,7 +400,8 @@ ARP地址解析协议
 
 ``ip neigh show``
 
-
+nud状态转换
+~~~~~~~~~~~~~
 .. figure:: ../images/nud_states_transmitions.png
    :scale: 80%
 
@@ -414,11 +415,28 @@ ARP地址解析协议
    nud状态转换-简化版
 
 
-1. neigh_timer_handler：异步。L4 confirmation后要到下一次timer执行状态转换。
+关键函数
+~~~~~~~~~~~~
+1. neigh_timer_handler：异步，会有延时。 定时器超时事件导致的状态机更新。L4 confirmation后要到下一次timer执行状态转换。
 2. neigh_update ：同步。RX solicitation reply。
+3. neigh_resolve_output-> neigh_event_send，数据报文接收事件导致的状态机更新。更新neigh结构体各个状态值、timer管理
+4. neigh_periodic_work : 工作队列实现。hash表维护，neigh_rand_reach_time、neigh_cleanup_and_release。每BASE_REACHABLE_TIME/2 遍历hash buckets。
+5. arp_ioctl : 用户io接口—— del/set/get 
+
+::
+
+   ioctl: 
+   arp_req_get -> arp_state_to_flags -> return ATF_COM;
+   #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
+
+   neigh_periodic_work：
+   INIT_DEFERRABLE_WORK(&tbl->gc_work, neigh_periodic_work);
+   queue_delayed_work(system_power_efficient_wq, &tbl->gc_work,
+         tbl->parms.reachable_time);
+
 
 3个关键时间
-
+~~~~~~~~~~~~
 ::
 
    neigh->confirmed: 可达确认
@@ -426,20 +444,53 @@ ARP地址解析协议
    neigh->updated :nud_state更新
 
 
+neigh_update
+----------------------------
+协议报文接收事件导致的状态机更新，这个实际上不准确，直接的状态运行是在调用它的函数中，
+
+如收到arp request/reply报文（arp_process），静态配置arp表项(neigh_add)等。
+
+
 ::
 
-   arp_ioctl : 用户io接口—— del/set/get 
-   -> arp_req_get -> arp_state_to_flags ->
-   #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
-   以上均返回有效 #define ATF_COM		0x02		/* completed entry (ha valid)	*/
+   MSG_CONFIRM: 阻止 ARP 缓存过期
+
+
+   if (msg->msg_flags&MSG_CONFIRM)
+            goto do_confirm;
+   back_from_confirm:
 
 
 
-   
+neigh_timer_handler
+----------------------
+定时器超时事件导致的状态机更新。
 
-   ☆ neigh_timer_handler(异步，会有延时)，定时器超时事件导致的状态机更新
-   neigh_resolve_output-> neigh_event_send，数据报文接收事件导致的状态机更新
+reachable->stale/delay部分。
 
+::
+
+   if (state & NUD_REACHABLE) {
+		if (time_before_eq(now,
+				   neigh->confirmed + neigh->parms->reachable_time)) {
+			neigh_dbg(2, "neigh %p is still alive\n", neigh);
+			next = neigh->confirmed + neigh->parms->reachable_time;
+		} else if (time_before_eq(now,
+					  neigh->used +
+					  NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME))) {     // 最近是否被使用过
+			neigh_dbg(2, "neigh %p is delayed\n", neigh);
+			neigh->nud_state = NUD_DELAY;
+			neigh->updated = jiffies;
+			neigh_suspect(neigh);
+			next = now + NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME);
+		} else {
+			neigh_dbg(2, "neigh %p is suspected\n", neigh);
+			neigh->nud_state = NUD_STALE;
+			neigh->updated = jiffies;
+			neigh_suspect(neigh);
+			notify = 1;
+		}
+   } 
 
 
 
@@ -472,62 +523,20 @@ L4 confirm
 
    套接字： raw_sendmsg/udp_sendmsg(MSG_CONFIRM)->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
 
+
 MSG_CONFIRM
 ~~~~~~~~~~~~~~~~~~
 1. `arp(7) - Linux manual page  <https://man7.org/linux/man-pages/man7/arp.7.html>`__
 2. `send(2) - Linux manual page  <https://man7.org/linux/man-pages/man2/sendmsg.2.html>`__
 
 
-neigh_update
-----------------------------
-协议报文接收事件导致的状态机更新，这个实际上不准确，直接的状态运行是在调用它的函数中，如收到arp request/reply报文（arp_process），
-静态配置arp表项(neigh_add)等。
-
-
-::
-
-   MSG_CONFIRM: 阻止 ARP 缓存过期
-
-
-   if (msg->msg_flags&MSG_CONFIRM)
-            goto do_confirm;
-   back_from_confirm:
-
-
-neigh_timer_handler
-----------------------
-reachable->stale/delay部分。
-
-::
-
-   if (state & NUD_REACHABLE) {
-		if (time_before_eq(now,
-				   neigh->confirmed + neigh->parms->reachable_time)) {
-			neigh_dbg(2, "neigh %p is still alive\n", neigh);
-			next = neigh->confirmed + neigh->parms->reachable_time;
-		} else if (time_before_eq(now,
-					  neigh->used +
-					  NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME))) {     // 最近是否被使用过
-			neigh_dbg(2, "neigh %p is delayed\n", neigh);
-			neigh->nud_state = NUD_DELAY;
-			neigh->updated = jiffies;
-			neigh_suspect(neigh);
-			next = now + NEIGH_VAR(neigh->parms, DELAY_PROBE_TIME);
-		} else {
-			neigh_dbg(2, "neigh %p is suspected\n", neigh);
-			neigh->nud_state = NUD_STALE;
-			neigh->updated = jiffies;
-			neigh_suspect(neigh);
-			notify = 1;
-		}
-   } 
-
 
 查看arp配置
 -----------
 1. `邻居表项的retrans_time时长_redwingz的博客-CSDN博客_retrans timer  <https://blog.csdn.net/sinat_20184565/article/details/109655387>`__
 
-
+常用命令
+~~~~~~~~~~~~
 1. ``ip ntable show dev eth0``
 2. ``arp_tbl`` 里定义了值(net\ipv4\arp.c : neigh_table arp_tbl), neigh_sysctl_table定义了PROC文件信息
 3. ``/proc/sys/net/ipv4/neigh/eth0/``
@@ -571,8 +580,8 @@ arp_tbl
    };
 
 
-proc neigh
-~~~~~~~~~~~~~
+proc neigh配置查看
+~~~~~~~~~~~~~~~~~~~~~
 `/proc/sys/net/ipv4/neigh/eth0/`
 
 1. base_reachable_time_ms: 30000
@@ -614,6 +623,7 @@ net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
       return base ? (prandom_u32() % base) + (base >> 1) : 0;
    }
    
+
 HZ和USER_HZ
 -------------
 1. 内核：cat /boot/config-`uname -r` | grep 'CONFIG_HZ=' ：1000 ，通常可变.

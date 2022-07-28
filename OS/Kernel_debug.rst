@@ -247,14 +247,17 @@ printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers
 
 会遍历所有console。
 
-printk可以在任何环境中使用，而又要获取logbug_lock去保护环形缓冲区,所以需要禁止本地中断，防止死锁.
+printk可以在任何环境中使用，而又要 **获取logbug_lock保护环形缓冲区,所以需要禁止本地中断，防止死锁.**
 
 
 `Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
 
 1. 如何把字符串放到缓存，如何从缓存写到串口。
+   
    首先是在关中断，关调度，保持logbuf_lock自旋锁的情况下，将数据格式化后，放到printk_buf缓冲区，其大小为1K，也就是说，每次printk只能打印1K的内容。格式化完毕后，将数据再复制到log_buf缓冲区。由于在向串口输出的过程中，会暂时打开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由驱动输出。简单的说：调用一次printk，需要打印的并不仅仅是本次printk需要输出的内容，还可能有其他CPU上输出的内容。
+   
    从缓存中输出到真实的设备是由注册的控制台个数决定的。注册多少个设备，就向多少个设备输出。也就是说，如果注册了两个串口控制台，那么关中断的时间就会增加一倍。
+
 2. 采用中断还是轮询。
    采用的是轮询方式。
 
@@ -322,10 +325,11 @@ do_IRQ: 1.55 No irq handler for vector
 **可能的原因**：  https://ilinuxkernel.com/?p=1192
 
 驱动卸载时，调用free_irq（）释放中断资源，但仍需调用pci_disable_device（）来关闭PCI设备。
-若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系，
-可能不会被解除。于是当再次加载该PCI设备驱动后，PCI设备发出中断，
-内核仍然会以旧的中断向量vector来解析中断号。
-但此时vector是第一次驱动加载时，内核分配的vector；
+
+若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系可能不会被解除。
+
+于是当再次加载该PCI设备驱动后，PCI设备发出中断，内核仍然会以旧的中断向量vector来解析中断号。
+
 而驱动卸载调用free_irq（）将vector与物理中断号irq对应关系解除。
 
 
