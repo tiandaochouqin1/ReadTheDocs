@@ -132,3 +132,23 @@ BPF原理
 bpf与tcpdump
 --------------
 1. https://mp.weixin.qq.com/s/cUodZmJZ5sJTcULTvWSLkg 系列三篇文章
+
+
+网络性能测量
+============
+网络带宽
+--------
+iperf
+~~~~~~~~
+`iPerf - The TCP, UDP and SCTP network bandwidth measurement tool  <https://iperf.fr/>`__
+
+基于C-S模式的带宽测量工具。
+
+::
+
+   iperf3 -s
+
+   iperf3 -c 199.9.9.9 -b 100M -t 60 -u
+
+
+类似工具dperf https://github.com/baidu/dperf

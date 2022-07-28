@@ -212,9 +212,35 @@ syslog
 
 printk
 ---------
-1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去调用console输出可能还产生中断。
+1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去 **调用console输出可能还产生中断**。
 2. ring buffer只有1K。
 
+printk等级
+~~~~~~~~~~~~
+1. `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
+
+1. All printk() messages are printed to the kernel log buffer, which is a ring buffer exported to userspace through /dev/kmsg。
+2. 打印等级只是控制是否输出到console。message loglevel <= console_loglevel 则输出到console。
+3. 4.9版本开始，printk默认会换行。不换行需使用pr_cont(KERN_CONT)。 `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
+
+console level查看：
+
+::
+      
+   You can check the current console_loglevel with:
+
+   $ cat /proc/sys/kernel/printk
+   4        4        1        7
+   The result shows the current, default, minimum and boot-time-default log levels.
+
+
+boot(内核启动)可指定loglevel值、quiet(loglevel=4)。 https://www.kernel.org/doc/html/v4.14/admin-guide/kernel-parameters.html
+
+
+
+
+printk源码
+~~~~~~~~~~~~~
 https://elixir.bootlin.com/linux/v4.4.157/source/kernel/printk/printk.c#L1659
 
 printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers 

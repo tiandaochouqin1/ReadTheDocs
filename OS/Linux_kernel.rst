@@ -465,6 +465,16 @@ vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加
 2. 在rbtree插入进程： ``进程被唤醒或fork()创建进程时``。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
 3. 删除进程：进程阻塞或终止时。dequeue_entity()。
 
+大小核与HFI
+~~~~~~~~~~~~~~~~
+1. `14. Hardware-Feedback Interface for scheduling on Intel Hardware — The Linux Kernel documentation  <https://docs.kernel.org/x86/intel-hfi.html#implementation-details-for-linux>`__
+
+The Hardware Feedback Interface provides to the operating system information 
+about the **performance and energy efficiency of each CPU** in the system. 
+Each capability is given as a unit-less quantity in the range **[0-255]**. 
+Higher values indicate higher capability. Energy efficiency and performance are reported in separate capabilities. 
+
+
 调度器
 ~~~~~~~~~~~
 每个CPU都有自己的 struct rq 结构，其用于描述在此 CPU 上所运行的所有进程，其包括一个实时进程队列 rt_rq 和一个 CFS 运行队列 cfs_rq。
