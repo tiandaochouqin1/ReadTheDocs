@@ -247,19 +247,20 @@ printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers
 
 会遍历所有console。
 
-printk可以在任何环境中使用，而又要 **获取logbug_lock保护环形缓冲区,所以需要禁止本地中断，防止死锁.**
+printk可以在任何上下文使用，由于 **要获取logbug_lock保护环形缓冲区,所以需要禁止本地中断，防止死锁.**
 
 
-`Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
+☆ `Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
 
-1. 如何把字符串放到缓存，如何从缓存写到串口。
+1. 如何把字符串放到缓存，如何从缓存写到串口。 **整个过程都处于关中断状态** 
    
-   首先是在关中断，关调度，保持logbuf_lock自旋锁的情况下，将数据格式化后，放到printk_buf缓冲区，其大小为1K，也就是说，每次printk只能打印1K的内容。格式化完毕后，将数据再复制到log_buf缓冲区。由于在向串口输出的过程中，会暂时打开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由驱动输出。简单的说：调用一次printk，需要打印的并不仅仅是本次printk需要输出的内容，还可能有其他CPU上输出的内容。
+   先关中断，关调度，保持 **logbuf_lock自旋锁** 的情况下，将数据格式化，放到printk_buf缓冲区，其大小为1K，然后再复制到log_buf缓冲区。
    
-   从缓存中输出到真实的设备是由注册的控制台个数决定的。注册多少个设备，就向多少个设备输出。也就是说，如果注册了两个串口控制台，那么关中断的时间就会增加一倍。
+   获取console_sem信号量(如串口)，暂时放开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由本次printk的release_console_sem循环检查并输出。
+   
 
-2. 采用中断还是轮询。
-   采用的是轮询方式。
+2. 串口驱动输出采用中断还是轮询。 
+   serial8250_console_write 轮询。
 
 
 串口驱动

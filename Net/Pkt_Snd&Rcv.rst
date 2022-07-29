@@ -429,7 +429,9 @@ nud状态转换
    arp_req_get -> arp_state_to_flags -> return ATF_COM;
    #define NUD_VALID	(NUD_PERMANENT|NUD_NOARP|NUD_REACHABLE|NUD_PROBE|NUD_STALE|NUD_DELAY) 
 
-   neigh_periodic_work：
+neigh_periodic_work： https://linux-kernel-labs.github.io/refs/heads/master/labs/deferred_work.html
+::
+      
    INIT_DEFERRABLE_WORK(&tbl->gc_work, neigh_periodic_work);
    queue_delayed_work(system_power_efficient_wq, &tbl->gc_work,
          tbl->parms.reachable_time);
