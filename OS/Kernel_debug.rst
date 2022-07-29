@@ -243,7 +243,7 @@ printk源码
 ~~~~~~~~~~~~~
 https://elixir.bootlin.com/linux/v4.4.157/source/kernel/printk/printk.c#L1659
 
-printk -> vprintk -> **vprintk_emit** -> console_unlock -> call_console_drivers 
+printk ->  vprintk_default -> **vprintk_emit** -> console_unlock -> call_console_drivers 
 
 会遍历所有console。
 
@@ -261,6 +261,121 @@ printk可以在任何上下文使用，由于 **要获取logbug_lock保护环形
 
 2. 串口驱动输出采用中断还是轮询。 
    serial8250_console_write 轮询。
+
+
+::
+
+   asmlinkage int vprintk_emit(int facility, int level,
+               const char *dict, size_t dictlen,
+               const char *fmt, va_list args)
+   {
+      static char textbuf[LOG_LINE_MAX];
+      char *text = textbuf;
+      size_t text_len = 0;
+
+      0. 加锁
+      
+      /* This stops the holder of console_sem just where we want him */
+      local_irq_save(flags);
+      raw_spin_lock(&logbuf_lock);
+
+      1. 格式化字符串
+
+      /*
+      * The printf needs to come first; we need the syslog
+      * prefix which might be passed-in as a parameter.
+      */
+      text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
+
+
+      2. 解析打印等级
+
+      /* strip kernel syslog prefix and extract log level or control flags */
+      if (facility == 0) {
+         int kern_level = printk_get_level(text);
+         .....
+         					level = kern_level - '0';
+         .....
+            text_len -= end_of_header - text;
+            text = (char *)end_of_header;
+      }
+
+      3. 若cont且和其它cpu无冲突，则cont_add缓存；否则cont_flush
+
+      if (!(lflags & LOG_NEWLINE)) {
+         /*
+         * Flush the conflicting buffer. An earlier newline was missing,
+         * or another task also prints continuation lines.
+         */
+         if (cont.len && (lflags & LOG_PREFIX || cont.owner != current))
+            cont_flush(LOG_NEWLINE);
+
+         /* buffer line if possible, otherwise store it right away */
+         if (cont_add(facility, level, text, text_len))
+            printed_len += text_len;
+         else
+            printed_len += log_store(facility, level,
+                     lflags | LOG_CONT, 0,
+                     dict, dictlen, text, text_len);
+      } else {
+         bool stored = false;
+
+         /*
+         * If an earlier newline was missing and it was the same task,
+         * either merge it with the current buffer and flush, or if
+         * there was a race with interrupts (prefix == true) then just
+         * flush it out and store this line separately.
+         * If the preceding printk was from a different task and missed
+         * a newline, flush and append the newline.
+         */
+         if (cont.len) {
+            if (cont.owner == current && !(lflags & LOG_PREFIX))
+               stored = cont_add(facility, level, text,
+                     text_len);
+            cont_flush(LOG_NEWLINE);
+         }
+
+         if (stored)
+            printed_len += text_len;
+         else
+            printed_len += log_store(facility, level, lflags, 0,
+                     dict, dictlen, text, text_len);
+      }
+
+
+      4. 放开logbuf_lock,开中断
+
+      logbuf_cpu = UINT_MAX;
+      raw_spin_unlock(&logbuf_lock);
+      lockdep_on();
+      local_irq_restore(flags);
+
+
+      5. 关抢占，获取consle semaphore，console_unlock输出
+   
+      /* If called from the scheduler, we can not call up(). */
+      if (!in_sched) {
+         lockdep_off();
+         /*
+         * Disable preemption to avoid being preempted while holding
+         * console_sem which would prevent anyone from printing to
+         * console
+         */
+         preempt_disable();
+
+         /*
+         * Try to acquire and then immediately release the console
+         * semaphore.  The release will print out buffers and wake up
+         * /dev/kmsg and syslog() users.
+         */
+         if (console_trylock_for_printk())
+            console_unlock();
+         preempt_enable();
+         lockdep_on();
+      }
+
+      return printed_len;
+   }
 
 
 串口驱动
@@ -316,6 +431,16 @@ irq处理流程
 `中断处理流程 <https://peiyake.com/2020/09/16/kernel/linux%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F---%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B/>`__
 
 http://www.wowotech.net/sort/irq_subsystem
+
+local_irq_save()/local_irq_restore() 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/irqflags.h
+
+These routines disable hard interrupts on the local CPU, and restore them. 
+
+They are **reentrant**; saving the previous state in their one unsigned long flags argument. 
+
+若当前开关状态已知，则可直接使用 local_irq_disable() and local_irq_enable().
 
 
 No irq handler
