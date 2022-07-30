@@ -267,3 +267,32 @@ net_device和in_device均有各自的通知链结构体，直接使用已封装�
 stmmac driver
 ------------------
 drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+
+
+内核态文件操作
+--------------
+1. `linux内核态文件操作filp_open/filp_close/vfs_read/vfs_write  <https://blog.csdn.net/w968516q/article/details/77964853>`__
+
+filp_open/filp_close/vfs_read/vfs_write
+
+**内核态有snprintf，无fprintf/fwrite.**
+
+1. filp_open需要判断返回值；
+2. vfs_write之前需要set_fs为内核态。
+
+::
+
+   fp = filp_open("/home/kernel_file", O_RDWR | O_CREAT, 0644);  
+   if (IS_ERR(fp)) {  
+      printk("create file error\n");  
+      return -1;  
+   } 
+
+   fs = get_fs();  
+   set_fs(KERNEL_DS);
+
+   pos = fp->f_pos; 
+   vfs_write(fp, buf1, sizeof(buf1), &pos);  
+   fp->f_pos = pos;
+
+   set_fs(fs);
