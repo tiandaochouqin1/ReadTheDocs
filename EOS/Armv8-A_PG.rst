@@ -560,10 +560,9 @@ arch/arm64/kernel/vmlinux.lds.S
 1. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
 2. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
 3. `7_Linux硬件中断处理 - 最后一只晴天小猪的博客  <https://santapasserby.com/2021/07/06/ldd/7_Linux%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/>`__
-4. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
-5. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
-6. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
-7. ☆ 从硬件到软件，系列4篇 `【原创】Linux中断子系统（一）-中断控制器及驱动分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12996812.html>`__
+4. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
+5. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
+6. ☆ 从硬件到软件，系列4篇 `【原创】Linux中断子系统（一）-中断控制器及驱动分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12996812.html>`__
 
 可延时函数与工作队列
 -----------------------
@@ -587,3 +586,37 @@ kernel/irq/proc.c show_interrupts 调用 irq_to_desc() 获取中断的信息，�
 然后调用 arch_show_interrupts()，打印架构相关的中断信息。比如 MNI, TLB 等统计信息。
 
 irq domain 内部维护了一个 hwirq,可能会显示在 触发方式(Edge/Level)的前一列。
+
+GIC v3
+--------
+1. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
+
+GICv3控制器由以下部分组成:
+
+1. distributor： SPI中断的管理，将中断发送给redistributor. (包括 enable/disable、priority、level/edge、group 等配置。distributor和redistributor功能实际很类似)
+2. redistributor： PPI，SGI，LPI中断的管理，将中断发送给cpu interface
+3. cpu interface： 传输中断给core
+
+
+.. figure:: ../images/GIC_v3.png
+
+   GIC_v3
+
+   
+.. figure:: ../images/GIC_v3_controller.png
+
+   GIC_v3_controller
+
+
+中断处理流程
+~~~~~~~~~~~~
+1. 外设发起中断，发送给 Distributor
+2. Distributor 将该中断，分发给合适的 Redistributor
+3. Redistributor 将中断信息，发送给 CPU interface
+4. CPU interface 产生合适的中断异常给处理器
+5. 处理器接收该异常，并且软件处理该中断
+
+
+.. figure:: ../images/intr_state.png
+
+   intr_state

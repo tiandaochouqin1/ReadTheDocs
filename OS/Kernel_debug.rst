@@ -254,12 +254,12 @@ printk可以在任何上下文使用，由于 **要获取logbug_lock保护环形
 
 1. 如何把字符串放到缓存，如何从缓存写到串口。 **整个过程都处于关中断状态** 
    
-   先关中断，关调度，保持 **logbuf_lock自旋锁** 的情况下，将数据格式化，放到printk_buf缓冲区，其大小为1K，然后再复制到log_buf缓冲区。
+   先关中断，保持 **logbuf_lock自旋锁** 的情况下，将数据格式化，放到printk_buf缓冲区，其大小为1K，然后再复制到log_buf缓冲区。
    
    获取console_sem信号量(如串口)，暂时放开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由本次printk的release_console_sem循环检查并输出。
    
 
-2. 串口驱动输出采用中断还是轮询。 
+2. 串口驱动输出采用轮询。输出时会 **关抢占，关中断**。
    serial8250_console_write 轮询。
 
 
@@ -380,6 +380,7 @@ printk可以在任何上下文使用，由于 **要获取logbug_lock保护环形
 
 串口驱动
 ~~~~~~~~~~~
+call_console_drivers调用时也会 **关中断**。
 
 univ8250_console_write -> serial8250_console_write -> uart_console_write -> 
 serial8250_console_putchar -> wait_for_xmitr(此处最长循环等待10ms) -> io_serial_in
