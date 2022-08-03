@@ -1203,9 +1203,9 @@ tasklet
 系统调用时内核代表用户空间的进程运行，可访问用户空间，会映射用户空间的内存。
 
 
-中断为什么不能休眠
---------------------
-https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
+中断为什么不能睡眠/调度
+------------------------
+1. `为什么Linux不能在中断中睡眠 - schips - 博客园  <https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html>`__
 
 中断只能被其他中断中止、抢占，进程不能中止、抢占中断。
 
@@ -1217,8 +1217,208 @@ https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html
    所有的wake_up_xxx都是针对进程task_struct而言，
    Linux是以进程为调度单位的，调度器只看到进程内核栈，而看不到中断栈。
 
-2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule导致进程切换。
+2. 导致上下文错乱。睡眠函数nanosleep(do_nanosleep,v5.13)会调用schedule()，切换进程时，保存当前的进程上下文，但此时的pc、sp等寄存器已经被中断修改了。中断发生后，内核会先保存当前被中断的进程上下文（在调用中断处理程序后恢复）。
 
+
+中断睡眠后会发什么
+~~~~~~~~~~~~~~~~~~
+
+内核会刷屏以下两个打印：
+
+::
+
+   这个warn刷屏： preempt_count!=1，本应该为1
+   bad: scheduling from the idle thread!
+   
+   开始是以下两类warn，20来次。preempt_count=1，
+   BUG: scheduling while atomic: **thread_name**
+   huh, entered softirq 2 NET_TX ffffffff81613740 preempt_count 00000101, exited with 7ffffffe?
+   
+
+均来自于schedule:
+
+1. 中断与进程共享栈，如果idle进程中发生的中断进行睡眠，则内核会有警告。
+
+   为什么do_idle -> schedule_idle不会走到这个分支: 因为执行了preempt_set_need_resched设置了preempt_count为可抢占？
+
+::
+
+   schedule -> __schedule -> deactivate_task -> dequeue_task_idle
+
+   asmlinkage __visible void __sched schedule(void)
+   {
+      struct task_struct *tsk = current;
+
+      sched_submit_work(tsk);
+      do {
+         preempt_disable();
+         __schedule(false);
+         sched_preempt_enable_no_resched();
+      } while (need_resched());
+      sched_update_worker(tsk);
+   }
+
+
+   /*
+   * It is not legal to sleep in the idle task - print a warning
+   * message if some code attempts to do it:
+   */
+   static void  dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+   {
+      raw_spin_unlock_irq(&rq->lock);
+      printk(KERN_ERR "bad: scheduling from the idle thread!\n");
+      dump_stack();
+      raw_spin_lock_irq(&rq->lock);
+   }
+
+
+2. atomic
+
+::
+
+   __schedule -> schedule_debug -> __schedule_bug
+
+   /*
+   * Various schedule()-time debugging checks and statistics:
+   */
+
+   static inline void schedule_debug(struct task_struct *prev, bool preempt)
+   {
+   ....
+
+      if (unlikely(in_atomic_preempt_off())) {
+         __schedule_bug(prev);
+         preempt_count_set(PREEMPT_DISABLED);
+      }
+   ...
+      schedstat_inc(this_rq()->sched_count);
+   }
+
+   /*
+   * Print scheduling while atomic bug:
+   */
+   static noinline void __schedule_bug(struct task_struct *prev)
+   {
+
+      printk(KERN_ERR "BUG: scheduling while atomic: %s/%d/0x%08x\n",
+         prev->comm, prev->pid, preempt_count());
+   ......
+      dump_stack();
+      add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
+   }
+
+3. preempt count
+
+::
+
+   __do_softirq
+
+   	while ((softirq_bit = ffs(pending))) {
+		unsigned int vec_nr;
+		int prev_count;
+
+		h += softirq_bit - 1;
+
+		vec_nr = h - softirq_vec;
+		prev_count = preempt_count();
+
+		kstat_incr_softirqs_this_cpu(vec_nr);
+
+		trace_softirq_entry(vec_nr);
+		h->action(h);
+		trace_softirq_exit(vec_nr);
+		if (unlikely(prev_count != preempt_count())) {
+			pr_err("huh, entered softirq %u %s %p with preempt_count %08x, exited with %08x?\n",
+			       vec_nr, softirq_to_name[vec_nr], h->action,
+			       prev_count, preempt_count());
+			preempt_count_set(prev_count);
+		}
+		h++;
+		pending >>= softirq_bit;
+	}
+
+preempt_count
+~~~~~~~~~~~~~~~~~~~
+1. `调度器17—preempt_count和各种上下文 - Hello-World3 - 博客园  <https://www.cnblogs.com/hellokitty2/p/15652312.html>`__
+2. `LWN：关于preempt_count()的四个小讨论！_LinuxNews搬运工的博客-CSDN博客  <https://blog.csdn.net/Linux_Everything/article/details/109088796>`__  https://lwn.net/Articles/831678/
+3. `进程切换分析（3）：同步处理  <http://www.wowotech.net/process_management/scheudle-sync.html>`__
+4. `Linux进程核心调度器之主调度器schedule--Linux进程的管理与调度(十九） - 腾讯云开发者社区-腾讯云  <https://cloud.tencent.com/developer/article/1367956>`__
+
+
+.. figure:: ../images/preempt_count.png
+
+   preempt_count
+
+
+
+include/preempt.h
+
+::
+
+   /*
+   * We put the hardirq and softirq counter into the preemption
+   * counter. The bitmask has the following meaning:
+   *
+   * - bits 0-7 are the preemption count (max preemption depth: 256)
+   * - bits 8-15 are the softirq count (max # of softirqs: 256)
+   *
+   * The hardirq count could in theory be the same as the number of
+   * interrupts in the system, but we run all interrupt handlers with
+   * interrupts disabled, so we cannot have nesting interrupts. Though
+   * there are a few palaeontologic drivers which reenable interrupts in
+   * the handler, so we need more than one bit here.
+   *
+   *         PREEMPT_MASK:	0x000000ff
+   *         SOFTIRQ_MASK:	0x0000ff00
+   *         HARDIRQ_MASK:	0x000f0000
+   *             NMI_MASK:	0x00f00000
+   * PREEMPT_NEED_RESCHED:	0x80000000
+   */
+
+
+
+每次加1，schedule后不会回来继续执行，可能溢出到其它bit：
+
+IRQ： __irq_enter、__irq_enter_raw、__nmi_enter
+
+
+::
+
+   /*
+   * It is safe to do non-atomic ops on ->hardirq_context,
+   * because NMI handlers may not preempt and the ops are
+   * always balanced, so the interrupted value of ->hardirq_context
+   * will always be restored.
+   */
+   #define __irq_enter()					\
+      do {						\
+         account_irq_enter_time(current);	\
+         preempt_count_add(HARDIRQ_OFFSET);	\
+         lockdep_hardirq_enter();		\
+      } while (0)
+
+
+
+softirq: __local_bh_disable_ip
+
+::
+
+   static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+   {
+      preempt_count_add(cnt);
+      barrier();
+   }
+
+   static inline void local_bh_enable_ip(unsigned long ip)
+   {
+      __local_bh_enable_ip(ip, SOFTIRQ_DISABLE_OFFSET);
+   }
+
+
+
+中断嵌套
+~~~~~~~~~
+实际就是高优先级中断打断低优先级中断，新版本内核已经不支持。
 
 内存管理
 =============

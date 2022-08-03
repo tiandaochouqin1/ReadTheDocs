@@ -9,25 +9,26 @@ Packet Send & Recieve
 参考文档TODO
 =============
 
-1.  :download:`ULNI <../books/Understanding_Linux_Network_Internals.pdf>` 
    
-2. `Linux 网络栈监控和调优：发送数据 <http://arthurchiao.art/blog/tuning-stack-tx-zh/>`__；
-   `英文原版 <https://blog.packagecloud.io/eng/2017/02/06/monitoring-tuning-linux-networking-stack-sending-data/>`__；
-   属于 `系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__ 。
+1.  `系列文章 <https://www.privateinternetaccess.com/blog/linux-networking-stack-from-the-ground-up-part-1/>`__ 。2022有更新
 
-3. `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
+   `Linux 网络栈监控和调优：接收数据 <http://arthurchiao.art/blog/tuning-stack-rx-zh/>`__；
    `英文原版 <https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/>`__；
    `英文版配图 <https://blog.packagecloud.io/eng/2016/10/11/monitoring-tuning-linux-networking-stack-receiving-data-illustrated/>`__
 
+   `Linux 网络栈监控和调优：发送数据 <http://arthurchiao.art/blog/tuning-stack-tx-zh/>`__；
+   `英文原版 <https://blog.packagecloud.io/eng/2017/02/06/monitoring-tuning-linux-networking-stack-sending-data/>`__；
 
-4. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
 
-5. 《深入linux内核架构》 ：大体框架了解，需要细节学习。
-6. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__ 
+
+2. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
+3. 《深入linux内核架构》 ：大体框架
+
+4.  :download:`ULNI <../books/Understanding_Linux_Network_Internals.pdf>` 
+5. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__ 
     :download:`理解了实现再谈网络性能 <../books/理解了实现再谈网络性能.pdf>` 
     
-
-7. :download:`追踪Linux.TCP／IP代码运行：基于2.6内核 <../books/追踪Linux.TCP／IP代码运行：基于2.6内核.pdf>` 
+6. :download:`追踪Linux.TCP／IP代码运行：基于2.6内核 <../books/追踪Linux.TCP／IP代码运行：基于2.6内核.pdf>` 
 
 
 
@@ -210,7 +211,10 @@ netif_rx源码
 
 https://code.woboq.org/linux/linux/net/core/dev.c.html#netif_rx
 
-netif_rx -> netif_rx_internal -> enqueue_to_backlog -> __skb_queue_tail
+netif_rx可用于中断和进程上下文；__netif_rx用于中断上下文。
+
+
+``netif_rx -> netif_rx_internal -> enqueue_to_backlog -> ____napi_schedule + __skb_queue_tail``
 
 ::
 
