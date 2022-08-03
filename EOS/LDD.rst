@@ -271,11 +271,18 @@ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 
 内核态文件操作
 --------------
-1. `linux内核态文件操作filp_open/filp_close/vfs_read/vfs_write  <https://blog.csdn.net/w968516q/article/details/77964853>`__
+1. `那些可进入睡眠状态的Linux内核函数 - 沉风网事  <https://myself659.github.io/post/linux/2015-06-01-linux-may-sleep-function/>`__
+2. `linux内核态文件操作filp_open/filp_close/vfs_read/vfs_write  <https://blog.csdn.net/w968516q/article/details/77964853>`__
 
-filp_open/filp_close/vfs_read/vfs_write
+filp_open/filp_close/kernel_read/kernel_write(vfs_read/vfs_write 4.14以后已废弃)
 
 **内核态有snprintf，无fprintf/fwrite.**
+
+
+::
+
+   write(用户态) -> ksys_write->vfs_write->new_sync_write->call_write_iter ... 底层架构相关的功能，可能会使用semphore导致调用scheduled
+
 
 1. filp_open需要判断返回值；
 2. vfs_write之前需要set_fs为内核态。
@@ -296,3 +303,13 @@ filp_open/filp_close/vfs_read/vfs_write
    fp->f_pos = pos;
 
    set_fs(fs);
+
+
+IO缓冲
+~~~~~~~~~~~~~
+1. `带缓冲I/O和不带缓冲I/O的区别与联系 - ITtecman - 博客园  <https://www.cnblogs.com/nufangrensheng/p/3501245.html>`__
+
+read或write的数据都要被内核缓冲.
+
+不带缓冲的I/O指的是在用户的进程中对这两个函数不会自动缓冲， **每次read或write就要进行一次系统调用**。
+
