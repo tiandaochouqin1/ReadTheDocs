@@ -10,7 +10,6 @@ Basics
    :numbered: 4
    
 
-   CleanArchiechture.rst
    vim.rst
    Git.rst
    regex.rst

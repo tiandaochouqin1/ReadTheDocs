@@ -668,7 +668,7 @@ net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
 
 HZ和USER_HZ
 -------------
-1. 内核：cat /boot/config-`uname -r` | grep 'CONFIG_HZ=' ：1000 ，通常可变.
+1. 内核： ``cat /boot/config-`uname -r` | grep 'CONFIG_HZ='`` ：1000 ，通常可变.
     在2.6以前的内核中，如果改变内核中的HZ值会给用户空间中某些程序造成异常结果。
 2. 用户：getconf CLK_TCK  ：100，固定
 

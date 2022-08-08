@@ -257,6 +257,14 @@ PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。100
 
 自协商模式发送的是/C/码，也就是配置（Configuration）码流，而强制模式发送的是/I/码，也就是idle码流。
 
+状态机
+~~~~~~~~~~
+
+.. figure:: ../images/AN_state_diagram.jpg
+
+   
+
+
 sgmii an
 ---------------
 
