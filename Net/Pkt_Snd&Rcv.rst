@@ -452,19 +452,41 @@ neigh_periodic_work： https://linux-kernel-labs.github.io/refs/heads/master/lab
 
 neigh_update
 ----------------------------
-协议报文接收事件导致的状态机更新，这个实际上不准确，直接的状态运行是在调用它的函数中，
+协议报文接收事件导致的状态机更新，直接的状态维护可能是在调用它的函数中，
 
-如收到arp request/reply报文（arp_process），静态配置arp表项(neigh_add)等。
-
+收到arp request/reply报文（arp_process），静态配置arp表项(neigh_add)等。
 
 ::
 
-   MSG_CONFIRM: 阻止 ARP 缓存过期
+      We want to add an entry to our cache if it is a reply
+   *  to us or if it is a request for our address.
+
+	if (n) {
+		int state = NUD_REACHABLE;
+		int override;
+
+		/* If several different ARP replies follows back-to-back,
+		   use the FIRST one. It is possible, if several proxy
+		   agents are active. Taking the first reply prevents
+		   arp trashing and chooses the fastest router.
+		 */
+		override = time_after(jiffies,
+				      n->updated +
+				      NEIGH_VAR(n->parms, LOCKTIME)) ||
+			   is_garp;
+
+		/* Broadcast replies and request packets
+		   do not assert neighbour reachability.
+		 */
+		if (arp->ar_op != htons(ARPOP_REPLY) ||
+		    skb->pkt_type != PACKET_HOST)
+			state = NUD_STALE;
+		neigh_update(n, sha, state,
+			     override ? NEIGH_UPDATE_F_OVERRIDE : 0, 0);
+		neigh_release(n);
+	}
 
 
-   if (msg->msg_flags&MSG_CONFIRM)
-            goto do_confirm;
-   back_from_confirm:
 
 
 
@@ -528,6 +550,20 @@ L4 confirm
                                                          tcp_transmit_skb(sk, buff, 1, sk->sk_allocation);
 
    套接字： raw_sendmsg/udp_sendmsg(MSG_CONFIRM)->dst_confirm_neigh->.confirm_neigh->ipv4_confirm_neigh 更新 neigh->confirmed
+
+
+
+
+发出L4 confirm ?
+
+::
+
+   MSG_CONFIRM: 阻止 ARP 缓存过期
+
+
+   if (msg->msg_flags&MSG_CONFIRM)
+            goto do_confirm;
+   back_from_confirm:
 
 
 MSG_CONFIRM
