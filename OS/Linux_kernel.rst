@@ -80,6 +80,7 @@ linux、glibc、gcc等。
 4. `Linux进程管理与调度 <https://blog.csdn.net/gatieme/category_6225543.html>`__
 5. http://www.wowotech.net/ ：很多不错的文章
 6. `Linux内存管理专题 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8051674.html>`__ ：Linux等多个系列文章
+7. ☆ `深入理解Linux进程调度  <https://mp.weixin.qq.com/s/3rV6d04QjO9_8Nkq9SrWYg>`__
 
 
 
@@ -671,8 +672,13 @@ need_resched
 该标志包含在进程描述符内，访问进程描述符内的变量比访问全局变量快（current宏速度快且进程描述符通常在告诉缓存内）。
 
 
-用户抢占与内核抢占
-~~~~~~~~~~~~~~~~~~~~~
+用户抢占与内核抢占preempt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+触发调度的点有： **定时器中断、唤醒进程时、迁移进程时、改变进程优先级时**。
+
+执行调度的点有：
+
 **用户抢占时机**
 
 1. 从系统调用返回用户空间时；
@@ -681,8 +687,8 @@ need_resched
 
 **内核抢占时机**
 
-1. 可以在任何时间抢占任务（只要没有锁），通常发生在 **preempt_enable()** 中。
-2. 中断返回到内核时。
+1. 中断返回到内核时。
+2. 可以在任何时间抢占任务（只要没有锁）.通常发生在 禁用抢占临界区结束(preempt_enable)、禁用软中断临界区结束、cond_resched调用点。
 
 preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count 和 TIF_NEED_RESCHED 看是否可以被抢占。
 
