@@ -262,7 +262,25 @@ PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。100
 
 .. figure:: ../images/AN_state_diagram.jpg
 
-   
+1. 配置adv_ability，使能an，会等待link_time;
+2. adv_ability会赋值给tx_config_Reg(ack bit=0)并发送（C码）；
+3. 若收到连续相同rx_config_reg(ack=0)，则ability_match，然后会置tx_config_Reg(ack bit=1)继续发送,否则死等;
+4. 若收到连续相同rx_config_reg(ack=1),则acknowledge_match，然后将rx_config_reg复制到link parterner ability base page，等待link_time;
+5. 若本端和对端的np均为1，则继续步骤3传输next page，否则进入idle状态，发送idle码，等待link_timer；
+6. link_timer结束后进入 link_ok，置status寄存器完成标志；
+7. 然后启动priority resolution模块，得到speed、pause tx/rx、full/half duplex。
+
+37.3.1.2 Functions ：解释了ability_match等
+
+1000base-x和sgmii区别
+~~~~~~~~~~~~~~~~~~~~~~~
+1. 共用大部分寄存器和主流程。
+
+2. adv寄存器定义不同，结果寄存器及其定义不同。
+
+3. 协商失败的处理不同：1000base-x协商失败则需要关闭an，而sgmii从phy获取结果基本不会失败。
+
+4. 场景不同：sgmii对接网口，频繁拔插，需要任务监控；1000base-x不需要。
 
 
 sgmii an
