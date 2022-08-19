@@ -422,6 +422,30 @@ RCU常被描述为读写锁的替代品，特点是 **读者并不需要直接�
 .. figure:: ../images/rcu.png
 
 
+volatile与sequence point
+----------------------------
+1. `Why the “volatile” type class should not be used — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/process/volatile-considered-harmful.html>`__
+2. `ARM Compiler toolchain Using the Compiler Version 4.1  <https://developer.arm.com/documentation/dui0472/c/compiler-coding-practices/compiler-optimization-and-the-volatile-keyword>`__
+3. `Volatiles (Using the GNU Compiler Collection (GCC))  <https://gcc.gnu.org/onlinedocs/gcc/Volatiles.html>`__
+
+
+volatile 3种使用场景：(在当前线程之外被改变的变量。一些场景可以用同步原语替代——spinlock、mutex、memory barriers etc.)
+
+1. accessing memory mapped peripherals
+2. sharing global variables between multiple threads
+3. accessing global variables in an interrupt routine or signal handler.
+
+sequence point: 两个seq point之间只允许对同一个变量改变一次。
+
+volatile memory
+~~~~~~~~~~~~~~~~~~~~
+1. `Extended Asm (Using the GNU Compiler Collection (GCC))  <https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html>`__
+2. `c - The difference between asm, asm volatile and clobbering memory - Stack Overflow  <https://stackoverflow.com/questions/14449141/the-difference-between-asm-asm-volatile-and-clobbering-memory>`__
+
+编译器级别的内存屏障。
+
+asm volatile("" ::: "memory"); 
+
 
 可重入、异步信号安全、多线程安全
 ================================

@@ -515,9 +515,54 @@ https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
 
 
 
+crash &panic
+================
 crash
-========
+----------
 内核coredump分析。
+
+
+hung task detect
+--------------------
+1. `Linux hung task detect_yinjian1013的博客-CSDN博客_hungtask  <https://blog.csdn.net/yinjian1013/article/details/78261879>`__
+
+
+宏配置：
+
+::
+      
+   kernel/linux/arch/arm64/configs/deconfig
+
+   CONFIG_DETECT_HUNG_TASK=y
+   CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=120
+   CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
+   CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE=1
+
+   /proc/sys/kernel/hung_task_timeout_secs
+
+
+
+
+函数调用关系
+
+::
+
+   kernel/linux/kernel/hung_task.c
+
+   subsys_initcall(hung_task_init)->hung_task_init->kthread_run->watchdog->check_hung_uninterruptible_tasks->check_hung_task
+
+   hung_task_init：  创建名为“khungtaskd”的线程，其中watchdog函数为线程运行的函数；
+   watchdog：    每隔CONFIG_DEFAULT_HUNG_TASK_TIMEOUT（120S）时间，检测是否有进程hung；
+   check_hung_uninterruptible_tasks：  遍历所有线程（进程），如果有线程处于TASK_UNINTERRUPTIBLE状态，则执行check_hung_task函数；
+   check_hung_task：   两次间隔CONFIG_DEFAULT_HUNG_TASK_TIMEOUT时间内，如果线程没有主动放弃CPU或者被抢占，则打印hung相关信息，
+   如果CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE为1，则产生panic。
+
+
+   sysctl_hung_task_timeout_secs = CONFIG_DEFAULT_HUNG_TASK_TIMEOUT;
+   sysctl_hung_task_panic =  CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE;
+
+
+
 
 perf性能优化
 =============
