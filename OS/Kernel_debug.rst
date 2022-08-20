@@ -562,6 +562,22 @@ hung task detect
    sysctl_hung_task_panic =  CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE;
 
 
+::
+   
+   kernel\sysctl.c
+
+   #ifdef CONFIG_DETECT_HUNG_TASK
+   ....
+      {
+         .procname	= "hung_task_timeout_secs",
+         .data		= &sysctl_hung_task_timeout_secs,
+         .maxlen		= sizeof(unsigned long),
+         .mode		= 0644,
+         .proc_handler	= proc_dohung_task_timeout_secs,
+         .extra2		= &hung_task_timeout_max,
+      },
+   .....
+   #endif
 
 
 perf性能优化

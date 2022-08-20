@@ -566,8 +566,8 @@ tail和head
 
 tail -f -n 10 /var/log/fail2ban.log
 
-xargs
------
+xargs命令参数构造
+------------------
 
 https://www.ruanyifeng.com/blog/2019/08/xargs-tutorial.html
 
@@ -589,7 +589,7 @@ https://www.ruanyifeng.com/blog/2019/08/xargs-tutorial.html
 
 ``cat file|xargs -n5``
 
-替代方案可使用：awk构造命令然后bash执行。
+等价方案：awk构造字符串然后执行。 ``awk '{print "line=" NR $1' file.txt | sh -x``
 
 文本处理
 --------
@@ -627,9 +627,7 @@ awk
 文本分析工具。支持正则。
 
 1. `Understanding AWK <https://earthly.dev/blog/awk-examples/>`__
-
-2. `30 Examples For Awk Command In Text
-   Processing <https://likegeeks.com/awk-command/>`__
+2. `30 Examples For Awk Command In Text  Processing <https://likegeeks.com/awk-command/>`__
 
 语法
 ~~~~
