@@ -48,6 +48,47 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
    register_call
 
 
+driver
+--------
+整体流程
+~~~~~~~~~~~~~
+
+::
+      
+   driver_register(drv) [core.c]     
+      
+      driver_find(drv->name, drv->bus)  // 1. 判断是否已被注册
+
+      bus_add_driver(drv) [bus.c]      // 2. 添加驱动到bus 
+         if (drv->bus->p->drivers_autoprobe)
+            driver_attach(dev)[dd.c]   /2.1 匹配dev
+               bus_for_each_dev(dev->bus, NULL, drv,__driver_attach)
+                  __driver_attach(dev, drv) [dd.c]
+                     driver_match_device(drv, dev) [base.h]   // 匹配 现有的 drv 与 现在的 dev
+                        drv-bus->match ? drv->bus-amatch(dev, drv) : 1
+                           if false, return;
+                        
+                     driver_probe_device(drv, dev) [dd.c]    // attempt to bind device & driver together
+                        really_probe(dev, drv) [dd.c]
+                           dev-driver = drv;                //在 dev 中记录 driver
+                           driver_sysfs_add(dev)            //通知bus，更新sysfs
+                           if (dev-bus->probe)              //真正的 probe 方法。如果BUS上实现了probe就用BUS的probe；否则才会用driver的probe。
+                              dev->bus->probe(dev);
+                           else if (drv->probe)
+                              drv-aprobe(dev);
+                           probe_failed:
+                              dev->-driver = NULL;
+                           driver_bound(dev);                 //将 device 放入 driver 链表中
+
+          
+            klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);   // 2.2 将 driver 加入 Bus 的 drivers 链表中
+
+      kobject_uevent(&drv->p->kobj, KOBJ_ADD)      //3. 通过uevent通知用户空间
+
+
+
+
+
 
 PCIE
 ======
