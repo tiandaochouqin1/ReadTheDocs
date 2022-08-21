@@ -1428,6 +1428,10 @@ softirq: __local_bh_disable_ip
 
 内存管理
 =============
+Linux内核内存管理的一项重要工作就是如何在频繁申请释放内存的情况下，避免碎片的产生。
+
+Linux采用伙伴系统解决外部碎片的问题，采用slab解决内部碎片的问题。
+
 
 页
 ------------
@@ -1497,15 +1501,13 @@ struct pages表示系统中的物理页，而不是虚拟页。
 
 低级页分配
 ~~~~~~~~~~~~~~
-alloc_pages：以页为单位分配内存，分配连续的物理页。
+1. alloc_pages：以页为单位分配内存，分配连续的物理页。
 
-单页alloc_page。注意错误检查，可能分配失败，从而导致free时奔溃。
+2. page_address：将获得的页转换成它的逻辑地址。
 
-page_address：将获得的页转换成它的逻辑地址。
+3. __get_free_pages ：返回第一个页的逻辑地址。
 
-__get_freee_pages ：返回第一个页的逻辑地址。__get_freee_page
-
-get_zero_page：填充0。
+4. get_zero_page：填充0。
 
 
 
@@ -1513,7 +1515,7 @@ kmalloc
 ~~~~~~~~~~~~~~
 kmalloc与用户空间的malloc函数类似，以字节为单位获取内核内存。分配的内存在物理上连续。
 
-kfree：只能释放kmalloc分配的内存。
+kfree：释放kmalloc分配的内存。
 
 
 gfp_mask分配器标志
@@ -1528,7 +1530,6 @@ gfp_mask分配器标志
 **常用的标志**
 
 1. GFP_KERNEL：这种分配可能引起睡眠，普通优先级。可能阻塞，只能用在可以重新安全调度的进程上下文中（不持有锁时）。
-
 2. GFP_ATOMIC：不能睡眠的内存分配。分配成功可能性较小。用于中断处理程序、软中断、tasklet等。
 
 
@@ -1536,37 +1537,9 @@ vmalloc
 ~~~~~~~~~~~~~~
 vmalloc分配虚拟地址连续的内存，物理内存则无需连续，可能睡眠。（与用户空间的malloc类似）
 
-大多数情况下，只有硬件设备需要物理地址连续的内存。
+大多数情况下，只有硬件设备需要物理地址连续的内存。一般在获取大块内存时使用，如插入内核模块时。
 
-为了将物理上不连续的页转换为虚拟地址中连续的页，需要专门建立页表项，将获得的页一一映射。
-
-性能低，会导致比直接内存映射大得多的TLB抖动。
-
-一般在获取大块内存时使用，如插入内核模块时。
-
-slab
------------------
-通用数据结构缓冲层，便于数据的频繁分配和回收。
-
-当内核请求分配一个新的结构时，内核从部分满或空的slab返回一个指向已分配但未使用的结构的指针。
-
-slab层把不同的对象划分为高速缓存组，每个高速缓存组存放不同类型的对象（task_struct、inode）。
-
-高速缓存被划分为slab，每个slab由一个或多个物理连续的页组成。
-
-kmalloc建立而在slab层之上，对应一组高速缓存组。
-
-slab状态：满、部分满和空。
-
-
-
-
-kmem_getpages：为高速缓存分配足够多的内存。
-
-kmem_cache_creat：创建高速缓存。
-
-kmem_cache_alloc：从高速缓存分配结构。
-
+为了将物理上不连续的页转换为虚拟地址中连续的页，需要专门建立页表项，将获得的页一一映射。性能低，会导致比直接内存映射大得多的TLB抖动。
 
 栈上的静态分配
 ~~~~~~~~~~~~~~~
@@ -1579,7 +1552,6 @@ kmem_cache_alloc：从高速缓存分配结构。
 percpu数据
 ~~~~~~~~~~~~~~~
 创建一个变量，然后每个 CPU 上都会有一个此变量的拷贝。
-约定本地处理器只能访问它自己的唯一数据。
 
 需要禁止内核抢占。
 
@@ -1587,6 +1559,59 @@ percpu数据
 2. 较少缓存失效。
 
 `静态和动态per-CPU变量 <https://blog.csdn.net/longwang155069/article/details/52033243>`__
+
+
+
+伙伴系统
+------------
+1. `Linux伙伴系统(一)--伙伴系统的概述_橙色逆流的博客-CSDN博客_伙伴系统  <https://blog.csdn.net/vanbreaker/article/details/7605367>`__
+
+struct zone中的struct free_area则是用来描述该管理区伙伴系统的空闲内存块
+
+::
+
+   struct zone {
+      ...
+      struct free_area	free_area[MAX_ORDER]; // 分配的内存大小为 2^0 ~ 2^(MAX_ORDER-1) 个页
+      ...
+   }
+
+   struct free_area {
+      struct list_head	free_list[MIGRATE_TYPES]; // 隔离Non-movable/reclainmable/movalbe pages，减少碎片。双向链表
+      unsigned long		nr_free;                  // 该free_area中总共的空闲内存块的数量
+   };
+
+
+
+slab分配器
+---------------------
+1. `图解slub  <http://www.wowotech.net/memory_management/426.html>`__
+
+.. figure:: ../images/mem_manage.png
+   :scale: 30%
+
+   内存管理
+
+
+1. 伙伴系统：物理页帧的管理。负责多页组成的连续内存块的拆分与合并。
+2. slab分配器：处理小块内存的分配，并提供用户层malloc的内核等价物。在伙伴系统之上。允许分配任意用途的小内存，还可以对常用数据结构创建缓存。
+
+3. slab, slub和slob仅仅是分配内存策略不同。有时候用slab来统称slab, slub和slob。
+
+
+slab层把不同的对象划分为高速缓存组，每个高速缓存组存放不同类型的对象（task_struct、inode）。slab由一个或多个物理连续的页组成。
+
+
+
+kmalloc建立而在slab层之上，对应一组高速缓存组。slab状态：满、部分满和空。
+
+
+kmem_getpages：为高速缓存分配足够多的内存。
+
+kmem_cache_creat：创建高速缓存。
+
+kmem_cache_alloc：从高速缓存分配结构。
+
 
 
 虚拟文件系统
