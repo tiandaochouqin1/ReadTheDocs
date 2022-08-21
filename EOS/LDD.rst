@@ -16,26 +16,16 @@ Linux Drive Develop
 5. `Linux设备和驱动的匹配过程_qwaszx523的博客-CSDN博客_linux设备和驱动的匹配  <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
 
 
-总线
---------
-
-Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
 
 
+driver & device注册过程
+-------------------------
 
-
-
-设备与驱动的匹配
------------------
-
-
-1. bus(bus_register)维护注册进来的devcie 与 driver (各一个链表)，每注册(device_register/driver_register)一个device/driver 都会调用 **Bus->match** 函数(定义了Device和Driver绑定时的规则)，
-将device 与 driver 进行配对，并将它们加入链表.
-
+1. bus(bus_register)维护注册进来的devcie 与 driver (各一个链表)，每注册(device_register/driver_register)一个device/driver 都会调用 **Bus->match** 函数(定义了Device和Driver绑定时的规则)，将device 与 driver 进行配对，并将它们加入链表.
 2. 如果配对成功，调用Bus->probe或者driver->probe函数， 调用 kobject_uevent 函数设置环境变量，mdev进行创建 **设备节点** 等操作。
-
 3. 总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
 
+kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一个ktype关联(定义了默认的特性/属性)。
 
 .. figure:: ../images/bus_device_drive.png
    :scale: 70 %
@@ -43,13 +33,95 @@ Linux 称为platform总线，为虚拟总线，所有直接通过内存寻址的
    bus_device_drive
 
 
-.. figure:: ../images/register_call.png
+总线
+--------
 
-   register_call
+Linux 称platform总线为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
 
+platform_bus虚拟总线
+~~~~~~~~~~~~~~~~~~~~~~
+1. `platform_bus、device及driver 注册及介绍_禾仔仔的博客-CSDN博客  <https://blog.csdn.net/weixin_43083491/article/details/119457618>`__
+2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
+
+
+linux开机时，根据dts节点创建sturct platform_device实例,并且把dts节点reg,interrupts属性翻译成struct resource类型结构体存放.
+
+
+match的规则
+~~~~~~~~~~~~
+BUS上实现的.match()函数，定义了Device和Driver绑定时的规则。
+
+
+
+基本上有四种方式
+
+1. 调用of_driver_match_device()函数；(为了支持dts)
+2. ACPI系统专用方法；
+3. driver的id_table；
+4. 设备的名称或别名和驱动的名称进行匹配的。
+
+
+Platform实现的就是先比较id_table，然后比较name的规则。
+
+::
+
+   static int platform_match(struct device *dev, struct device_driver *drv)
+   {
+      struct platform_device *pdev = to_platform_device(dev);
+      struct platform_driver *pdrv = to_platform_driver(drv);
+
+      /* When driver_override is set, only bind to the matching driver */
+      if (pdev->driver_override)
+         return !strcmp(pdev->driver_override, drv->name);
+
+      /* Attempt an OF style match first */
+      if (of_driver_match_device(dev, drv))   // 
+         return 1;
+
+      /* Then try ACPI style match */
+      if (acpi_driver_match_device(dev, drv))
+         return 1;
+
+      /* Then try to match against the id table */
+      if (pdrv->id_table)
+         return platform_match_id(pdrv->id_table, pdev) != NULL;
+
+      /* fall-back to driver name match */
+      return (strcmp(pdev->name, drv->name) == 0);
+   }
+
+
+设备树
+---------
+dts是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
+
+dtb 是 dts 与 dtsi 编译的二进制文件
+
+of_driver_match_device
+~~~~~~~~~~~~~~~~~~~~~~~~~
+1. `内核添加dts后，device和device_driver的match匹配的变动：通过compatible属性进行匹配_jenney_的博客-CSDN博客  <https://blog.csdn.net/ruanjianruanjianruan/article/details/61622053>`__
+
+为了支持dtb内核新添加的match函数。
+
+调用到__of_match_node（）函数，把 device_driver的of_match_table（ **of_device_id** 结构体的数组）和device里的of_node（ **device_node** 结构体）进行匹配。
+（比较两者的name、type、和compatible字符串，三者要同时相同。name、type通常为null。)
+
+
+内核解析dtb文件创建platform设备时，大部分platform设备是没有名字的，大部分是通过 ``compatible`` 这个属性匹配成功的（这个compatible也对应dts里的compatible字符串）。
 
 driver
 --------
+
+device_attach与driver_attach
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+大部分内容一样；
+
+一个驱动可以支持多个设备；一个设备只能绑定一个驱动。
+
+区别： ``device_attach`` 调用driver_match_device匹配设备和驱动，成功就结束循环退出（而不是执行完循环）
+
+
 整体流程
 ~~~~~~~~~~~~~
 
@@ -61,11 +133,12 @@ driver
 
       bus_add_driver(drv) [bus.c]      // 2. 添加驱动到bus 
          if (drv->bus->p->drivers_autoprobe)
+
             driver_attach(dev)[dd.c]   /2.1 匹配dev
                bus_for_each_dev(dev->bus, NULL, drv,__driver_attach)
                   __driver_attach(dev, drv) [dd.c]
                      driver_match_device(drv, dev) [base.h]   // 匹配 现有的 drv 与 现在的 dev
-                        drv-bus->match ? drv->bus-amatch(dev, drv) : 1
+                        drv-bus->match ? drv->bus->match(dev, drv) : 1
                            if false, return;
                         
                      driver_probe_device(drv, dev) [dd.c]    // attempt to bind device & driver together
@@ -87,7 +160,39 @@ driver
 
 
 
+device
+---------
+整体流程
+~~~~~~~~~~~~~
 
+::
+   
+   device_register(dev)[core.c]
+      device_initialize()            // 1. 初始化设备结构
+
+      device_add(dev) [core.c]      // 2. add device to device hierarchy.
+         bus_add_device(dev)        // 2.1 add device to bus
+         bus_probe_device(dev) [bus.c]   // 2.2 probe drivers for a new device
+            if (dev->bus && dev->bus-op->drivers_autoprobe)
+            device_attach(dev) [dd.c]
+               if (dev->driver)          // 2.2 设备已有驱动
+                  device_bind_driver(dev)
+               else       // 从这里开始，与driver_attach一样
+               
+                  bus_for_each_dev(dev->bus, NULL, drv,__driver_attach)
+                  __driver_attach(dev, drv) [dd.c]
+                     driver_match_device(drv, dev) [base.h]
+                        drv->bus->match ? drv->bus-amatch(dev, drv) : 1
+                        if false, return;
+                     driver_probe_device(drv, dev) [dd.c]
+                        really_probe(dev, drv) [dd.c]
+                        dev-driver = drv;
+                        if (dev-bus->probe)
+                           dev->bus->probe(dev);
+                        else if (drv->probe)
+                           drv->probe(dev);
+                        probe_failed:
+                           dev->-driver = NULL;
 
 
 PCIE
