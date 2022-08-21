@@ -12,10 +12,15 @@ Linux Drive Develop
 1. ☆ `Linux 设备总线驱动模型_Linux学习之路的博客-CSDN博客_linux总线设备驱动  <https://blog.csdn.net/lizuobin2/article/details/51570196>`__
 2. ☆ `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
 3. `Linux Device和Driver注册过程，以及Probe的时机_thl789的博客-CSDN博客  <https://blog.csdn.net/thl789/article/details/6723350>`__
-4. `八、device_add_宁可一思进莫在一思停的博客-CSDN博客  <https://blog.csdn.net/qq_20678703/article/details/52841706>`__
+4. `Linux设备模型(5)_device和device driver  <http://www.wowotech.net/linux_kenrel/device_and_driver.html>`__
 5. `Linux设备和驱动的匹配过程_qwaszx523的博客-CSDN博客_linux设备和驱动的匹配  <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
 
 
+设备树
+---------
+dts是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
+
+dtb 是 dts 与 dtsi 编译的二进制文件。
 
 
 driver & device注册过程
@@ -37,14 +42,6 @@ kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一
 --------
 
 Linux 称platform总线为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
-
-platform_bus虚拟总线
-~~~~~~~~~~~~~~~~~~~~~~
-1. `platform_bus、device及driver 注册及介绍_禾仔仔的博客-CSDN博客  <https://blog.csdn.net/weixin_43083491/article/details/119457618>`__
-2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
-
-
-linux开机时，根据dts节点创建sturct platform_device实例,并且把dts节点reg,interrupts属性翻译成struct resource类型结构体存放.
 
 
 match的规则
@@ -75,7 +72,7 @@ Platform实现的就是先比较id_table，然后比较name的规则。
          return !strcmp(pdev->driver_override, drv->name);
 
       /* Attempt an OF style match first */
-      if (of_driver_match_device(dev, drv))   // 
+      if (of_driver_match_device(dev, drv))  
          return 1;
 
       /* Then try ACPI style match */
@@ -91,23 +88,49 @@ Platform实现的就是先比较id_table，然后比较name的规则。
    }
 
 
-设备树
----------
-dts是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
 
-dtb 是 dts 与 dtsi 编译的二进制文件
+platform_bus虚拟总线
+~~~~~~~~~~~~~~~~~~~~~~
+1. `platform_bus、device及driver 注册及介绍_禾仔仔的博客-CSDN博客  <https://blog.csdn.net/weixin_43083491/article/details/119457618>`__
+2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
+
+
+linux开机时，根据dts节点创建sturct platform_device实例,并且把dts节点reg（dts描述：控制器，寄存器地址，memery地址）,interrupts属性翻译成struct resource类型结构体存放.
+
+
+内核解析dtb文件创建platform设备时，大部分platform设备是没有名字的，大部分是通过 ``compatible`` 这个属性匹配成功的（这个compatible也对应dts里的compatible字符串）。
+
 
 of_driver_match_device
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 1. `内核添加dts后，device和device_driver的match匹配的变动：通过compatible属性进行匹配_jenney_的博客-CSDN博客  <https://blog.csdn.net/ruanjianruanjianruan/article/details/61622053>`__
+2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
 
-为了支持dtb内核新添加的match函数。
+
+为了支持dtb新添加的match函数。
 
 调用到__of_match_node（）函数，把 device_driver的of_match_table（ **of_device_id** 结构体的数组）和device里的of_node（ **device_node** 结构体）进行匹配。
-（比较两者的name、type、和compatible字符串，三者要同时相同。name、type通常为null。)
+（比较两者的name、type、和compatible字符串，三者要同时相同。name、type通常为null。比较compatible是直接compare整个字符串，不管字符串里的逗号)
 
 
-内核解析dtb文件创建platform设备时，大部分platform设备是没有名字的，大部分是通过 ``compatible`` 这个属性匹配成功的（这个compatible也对应dts里的compatible字符串）。
+pci_driver示例
+~~~~~~~~~~~~~~~~
+有.id_table和.name
+
+::
+
+   static struct pci_device_id ids[] = {
+      { PCI_DEVICE(0x8086, 0x1570), },
+      { 0, }
+   };
+
+   static struct pci_driver pci_driver = {
+      .name = "pci_e1000e",
+      .id_table = ids,
+      .probe = probe,
+      .remove = remove,
+   };
+
 
 driver
 --------

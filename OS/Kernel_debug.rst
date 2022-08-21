@@ -13,27 +13,21 @@ Kernel Debug & Trace
 -----------
 
 - `Linux内核调试的方式以及工具集锦 <https://blog.csdn.net/gatieme/article/details/68948080>`__
-
 - `Linux内核调试方法总结 <https://blog.csdn.net/bob_fly1984/article/details/51405776>`__
 
 1. **debugfs等文件系统**	提供了 procfs, sysfs, debugfs以及 relayfs 来与用户空间进行数据交互, 
    尤其是 debugfs, 这是内核开发者们实现的专门用来调试的文件系统接口. 其他的工具或者接口, 多数都依赖于 debugfs.
 2. **printk**	强大的输出系统, 没有什么逻辑上的bug是用PRINT解决不了的
-3. **ftrace及其前端工具trace-cmd**	内核提供了 ftrace 工具来实现检查点, 事件等的检测,
-   这一框架依赖于 debugfs, 他在 debugfs 中的 tracing 子系统中为用户提供了丰富的操作接口, 
-   可以通过该系统对内核实现检测和分析. 功能虽然强大, 但是其操作并不是很简单,
-   因此使用者们为实现了 trace-cmd 等前端工具, 简化了 ftrace 的使用.
+3. **ftrace及其前端工具trace-cmd**	内核提供了 ftrace 工具来实现检查点, 事件等的检测,debugfs 的 tracing 子系统, 
+   对内核实现检测和分析. 功能强大, trace-cmd 等前端工具简化了 ftrace 的使用.
 4. **kprobe以及systemtap**	内核中实现的 krpobe 通过类似与代码劫持一样的技巧, 
-   在内核的代码或者函数执行前后, 强制加上某些调试信息, 可以很巧妙的完成调试工作, 
-   这是一项先进的调试技术, 但是仍然有觉得它不够好, 劫持代码需要用驱动的方式编译并加载,
-   能不能通过脚本的方式自动生成劫持代码并自动加载和收集数据, 于是systemtap 出现了. 
-   通过 systemtap 用户只需要编写脚本, 就可以完成调试并动态分析内核
-5. **kgdb && kgtp**	KGDB 是大名鼎鼎的内核调试工具, KGTP则通过驱动的方式强化了 gdb的功能,
-   诸如tracepoint, 打印内核变量等.
-6. **perf**	Perf Event是一款随 inux内核代码一同发布和维护的性能诊断工具, 核社区维护和发展.
-   Perf 不仅可以用于应用程序的性能统计分析, 也可以应用于内核代码的性能统计和分析. 得益于其优秀的体系结构设计, 越来越多的新功能被加入 Perf, 使其已经成为一个多功能的性能统计工具集
-7. **LTTng**	LTTng 是一个 Linux 平台开源的跟踪工具, 是一套软件组件,
-   可允许跟踪 Linux 内核和用户程序, 并控制跟踪会话(开始/停止跟踪、启动/停止事件 等等).
+   在内核的代码或者函数执行前后, 强制加上某些调试信息. 劫持代码需要用驱动的方式编译并加载,
+
+   通过 systemtap 用户只需要编写脚本, 就可以自动生成劫持代码并自动加载和收集数据.
+5. **kgdb && kgtp**	KGTP则通过驱动的方式强化了 gdb的功能, 诸如tracepoint, 打印内核变量等.
+6. **perf**	Perf 是一款随 Linux内核代码一同发布和维护的性能诊断工具, 多功能的性能统计工具集.
+
+7. **LTTng**	LTTng 是一个 Linux 平台开源的跟踪工具, 是一套软件组件,  可允许跟踪 Linux 内核和用户程序, 并控制跟踪会话(开始/停止跟踪、启动/停止事件 等等).
 8. **KDB**   访问内核内存和数据结构。需要打补丁并重新编译内核。
 
 taskstats
@@ -579,6 +573,51 @@ hung task detect
    .....
    #endif
 
+kernel panic
+---------------
+有两种主要类型 kernel panic：
+
+1. hard panic(也就是Aieee信息输出)
+2. soft panic (也就是Oops信息输出)
+
+sysrq魔术键
+----------------
+1. `Linux Magic System Request Key Hacks — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/admin-guide/sysrq.html>`__
+2. `linux 中的 SysRq 魔术键 | RQ BLOG  <https://rqsir.github.io/2019/05/02/linux%E4%B8%AD%E7%9A%84SysRq%E9%AD%94%E6%9C%AF%E9%94%AE/>`__
+
+
+the kernel will respond to regardless of whatever else it is doing, unless it is completely locked up
+
+::
+
+   E - 向除 init 以外所有进程发送 SIGTERM 信号 (让进程自己正常退出)
+      SysRq: Terminate All Tasks
+      
+   I - 向除 init 以外所有进程发送 SIGKILL 信号 (强制结束进程)
+      SysRq: Kill All Tasks
+      
+   K - 结束与当前控制台相关的全部进程
+      SysRq : SAK 
+      
+   F - 人为触发 OOM Killer (可选，除非可以确认是内存使用问题，尽量避免使用这个组合键)
+      SysRq : Manual OOM execution 
+      (OOM Killer 将根据各进程的内存处理情况选取最合适的“凶手”进程，并向其发送 SIGKILL 信		号，中	止其运行。)
+
+
+   M - 打印内存使用信息
+      SysRq : Show Memory
+      
+   P - 打印当前 CPU 寄存器信息
+      SysRq : Show Regs
+      
+   T - 打印进程列表
+      SysRq : Show State
+      
+   W - 打印 CPU 信息
+      SysRq : Show CPUs
+
+
+   
 
 perf性能优化
 =============
