@@ -1582,6 +1582,12 @@ struct zone中的struct free_area则是用来描述该管理区伙伴系统的�
    };
 
 
+.. figure:: ../images/mem_zone.jpg
+   :scale: 30%
+
+   zone和伙伴系统
+
+   
 
 slab分配器
 ---------------------
@@ -1602,15 +1608,11 @@ slab分配器
 slab层把不同的对象划分为高速缓存组，每个高速缓存组存放不同类型的对象（task_struct、inode）。slab由一个或多个物理连续的页组成。
 
 
-
 kmalloc建立而在slab层之上，对应一组高速缓存组。slab状态：满、部分满和空。
 
+1. kmem_cache_creat：创建高速缓存。
 
-kmem_getpages：为高速缓存分配足够多的内存。
-
-kmem_cache_creat：创建高速缓存。
-
-kmem_cache_alloc：从高速缓存分配结构。
+2. kmem_cache_alloc：从高速缓存分配结构。
 
 
 

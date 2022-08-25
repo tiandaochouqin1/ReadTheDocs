@@ -977,6 +977,14 @@ mac地址
 
 The second bit ：0表示全球唯一地址，1表示本地唯一地址。
 
+组播ip和mac的关系
+~~~~~~~~~~~~~~~~~~~~~~~
+组播：
+
+.. figure:: ../images/multicast_mac_ip.png
+
+    multicast_mac_ip
+
 
 差错检测和纠正技术
 ------------------

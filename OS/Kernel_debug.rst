@@ -29,7 +29,7 @@ Kernel Debug & Trace
 
 7. **LTTng**	LTTng 是一个 Linux 平台开源的跟踪工具, 是一套软件组件,  可允许跟踪 Linux 内核和用户程序, 并控制跟踪会话(开始/停止跟踪、启动/停止事件 等等).
 8. **KDB**   访问内核内存和数据结构。需要打补丁并重新编译内核。
-
+9. **kdump+crash**： `kdump机制和crash常见使用 - AhaoMu - 博客园  <https://www.cnblogs.com/muahao/p/9884175.html>`__
 taskstats
 ==========
 统计任务的调度、内存使用、I/O信息、系统调用的信息，基于netlink套接字，从内核向用户空间提供任务/进程的统计信息。
