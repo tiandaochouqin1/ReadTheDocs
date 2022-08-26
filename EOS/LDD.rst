@@ -412,6 +412,15 @@ ifreq：保存接口信息。socket ioctl使用。ifconf的成员
 fcntl
 ~~~~~~~
 
+ifconfig
+~~~~~~~~~~~
+ifconfig使用ioctl，ip.routes使用netlink。
+
+   up     This  flag causes the interface to be activated.  It is implicitly specified if an address is
+         assigned to the interface.
+
+
+
 
 内核通知链
 ------------
@@ -481,4 +490,16 @@ IO缓冲
 read或write的数据都要被内核缓冲.
 
 不带缓冲的I/O指的是在用户的进程中对这两个函数不会自动缓冲， **每次read或write就要进行一次系统调用**。
+
+虚拟网卡
+============
+1. `Linux 虚拟网卡技术：Macvlan – 云原生实验室 - Kubernetes|Docker|Istio|Envoy|Hugo|Golang|云原生  <https://icloudnative.io/posts/netwnetwork-virtualization-macvlan/>`__
+
+Macvlan
+--------
+
+.. figure:: ../images/macvlan.jpg
+   :scale: 70%
+
+   macvlan
 

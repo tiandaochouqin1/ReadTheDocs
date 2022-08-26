@@ -959,6 +959,7 @@ Mac头
 组播和广播
 -------------
 1. `组播MAC地址_转 - yuxi_o - 博客园  <https://www.cnblogs.com/embedded-linux/p/9386116.html>`__
+2. `IP组播基础 | 曹世宏的博客  <https://cshihong.github.io/2018/02/12/IP%E7%BB%84%E6%92%AD%E5%9F%BA%E7%A1%80/>`__
 
 MAC地址包含两部分：前24比特是组织唯一标识符（OUI，OrganizationallyUniqueIdentifier），由IEEE统一分配给设备制造商。
 
