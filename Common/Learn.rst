@@ -38,6 +38,7 @@ Learn
    `pdf <https://people.freebsd.org/~lstewart/articles/cpumemory.pdf>`__
 
 7. ☆ https://www.cnblogs.com/LoyenWang/ Linux内核各个模块
+8. `酷壳 – CoolShell.cn  <https://coolshell.cn/>`__
 
 云原生
 --------
@@ -77,8 +78,80 @@ Learn
 4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
 5. onedrive极客时间专栏
 
+CoolShell
+===========
+SRE能力自评
+--------------
+Google评分卡的来自Google的SRE。为了保证稳定可靠的服务，Google组建了一支专业的团队来负责运行后端服务——Site Reliability Engineer。
 
+《Google SRE: How Google runs production systems》
+
+0. you are unfamiliar with the subject area.
+
+1. you can read/understand the most fundamental aspects of the subject area.
+
+2. ability to implement small changes,understand basic principles and able to figure out additional details with minimal help.
+
+3. basic proficiency in a subject area without relying on help.
+
+4. you are comfortable with the subject area and all routine work on it.
+
+   For software areas - ability to develop medium programs using all basic language features w/o book, awareness of more esoteric features (with book).
    
+   For systems areas - understanding of many fundamentals of networking and systems administration, ability to run a small network of systems including recovery, debugging and nontrivial troubleshooting that relies on the knowledge of internals.
+
+5. an even lower degree of reliance on reference materials. Deeper skills in a field or specific technology in the subject area.
+
+6. ability to develop large programs and systems from scratch. Understanding of low level details and internals. Ability to design/deploy most large, distributed systems from scratch.
+
+7. you understand and make use of most lesser known language features, technologies, and associated internals. Ability to automate significant amounts of systems administration.
+
+8. deep understanding of corner cases, esoteric features, protocols and systems including "theory of operation". Demonstrated ability to design, deploy and own very critical or large infrastructure, build accompanying automation.
+
+9. could have written the book about the subject area but didn't; works with standards committees on defining new standards and methodologies.
+
+10. wrote the book on the subject area (there actually has to be a book). Recognized industry expert in the field, might have invented it.
+
+Subject Areas:
+~~~~~~~~~~~~~~~~~~~~
+::
+      
+   TCP/IP Networking (OSI stack, DNS etc)
+   Unix/Linux internals
+   Unix/Linux Systems administration
+   Algorithms and Data Structures
+   C
+   C++
+   Python
+   Java
+   Perl
+   Go
+   Shell Scripting (sh, Bash, ksh, csh)
+   SQL and/or Database Admin
+   Scripting language of your choice (not already mentioned)
+   People Management
+   Project Management
+
+
+基础知识分类
+------------
+1. 程序语言：语言的原理，类库的实现，编程技术（并发、异步等），编程范式，设计模式……
+2. 系统原理：计算机系统，操作系统，网络协议，数据库原理……
+3. 中间件：消息队列，缓存系统，网关代理，调度系统 ……
+4. 理论知识：算法和数据结构，数据库范式，网络七层模型，分布式系统……
+
+总是在提供解决问题的思路和方案的人
+
+做正确的事，比用正确的方式做事更重要，因为这样才始终会向目的地靠拢。
+
+写文章的几个阶段
+------------------
+1. 学习记录
+2. 利益驱动
+3. 记录自己的观点
+4. 与他人交互
+
+
 计算机科学
 ==========
 

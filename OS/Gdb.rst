@@ -139,11 +139,7 @@ record历史
    
    4. record save/restore
 
-watch
--------
-::
 
-   1. watch var/addr：可观察局部变量(作用域内)
 
 
 dump栈内存
@@ -170,6 +166,57 @@ xxd命令
    -l N	只显示前 N 个字节的数据
    -s N / -s -N	跳过前 N 个字节的数据，之后开始显示，-N 则表示只显示文件末尾的 N 个数据
 
+断点
+=========
+数据断点watch
+---------------------
+::
+
+   1. watch var/addr：可观察局部变量(作用域内)
+   
+   watch <expression>
+   watch -l <address> (value was changed)、
+   rwatch [-l] <expression>( value was read);
+
+
+硬件断点
+~~~~~~~~~
+GDB always uses hardware-assisted watchpoints if they are available, and falls back on software watchpoints otherwise. 
+
+1. 硬件断点：hardware-assisted
+2. 软件断点：软件单步执行，效率很低。
+
+不支持硬件断点时才会使用软件断点，场景包括：
+
+1. watch的内存太大，如x86大于4B；
+2. watchpoints数量超限；
+3. 硬件不支持watchpoint;
+4. 非memory值(如寄存器值)。
+
+踩内存问题
+~~~~~~~~~~~~
+1. `如何利用硬件watchpoint定位踩内存问题 - 腾讯云开发者社区-腾讯云  <https://cloud.tencent.com/developer/article/1578336>`__
+
+常用手段：
+
+1. gdb内存断点。不适用于非固定内存、启动阶段等。
+2. mmu保护。最小单位为4K。
+3. 通过dump现场周边内存，分析数据特征。
+4. 硬件watchpoint功能。
+5. Address sanitizer等linux内存工具。
+
+条件断点break
+---------------
+::
+      
+   break <location>(地址、函数名、文件行号). delete/disable/enable <num>; tbreak临时断点;
+   break <location> if <condition>、cond <number> <condition> ,如 b func if var == 1;
+
+  
+
+
+辅助调试工具
+============
 可视化
 ----------
 layout使用

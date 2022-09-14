@@ -27,6 +27,10 @@ x86 Assembly
    Registers
 
 
+机器码和汇编转换
+-----------------
+1. `shell-storm | Online Assembler and Disassembler  <http://shell-storm.org/online/Online-Assembler-and-Disassembler/>`__
+2. `ARM架构的机器码和汇编指令互相转换 - From_Zero - 博客园  <https://www.cnblogs.com/from-zero/p/13750852.html>`__
 
 调用规则
 ========
