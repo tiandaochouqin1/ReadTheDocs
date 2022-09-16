@@ -80,8 +80,19 @@ Learn
 
 CoolShell
 ===========
+
+
+技术与技术领导力
+------------------
+1. 动手能力
+2. 提升效率
+3. 输出观点。写好文档和文章。
+4. 不断提高对自己的要求标准
+5. 赢得他人的信任
+6. 保持热情和冲劲
+
 SRE能力自评
---------------
+~~~~~~~~~~~~
 Google评分卡的来自Google的SRE。为了保证稳定可靠的服务，Google组建了一支专业的团队来负责运行后端服务——Site Reliability Engineer。
 
 《Google SRE: How Google runs production systems》
@@ -113,7 +124,7 @@ Google评分卡的来自Google的SRE。为了保证稳定可靠的服务，Googl
 10. wrote the book on the subject area (there actually has to be a book). Recognized industry expert in the field, might have invented it.
 
 Subject Areas:
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 ::
       
    TCP/IP Networking (OSI stack, DNS etc)
@@ -134,7 +145,7 @@ Subject Areas:
 
 
 基础知识分类
-------------
+~~~~~~~~~~~~~
 1. 程序语言：语言的原理，类库的实现，编程技术（并发、异步等），编程范式，设计模式……
 2. 系统原理：计算机系统，操作系统，网络协议，数据库原理……
 3. 中间件：消息队列，缓存系统，网关代理，调度系统 ……
@@ -145,11 +156,32 @@ Subject Areas:
 做正确的事，比用正确的方式做事更重要，因为这样才始终会向目的地靠拢。
 
 写文章的几个阶段
-------------------
+~~~~~~~~~~~~~~~~~~~~
 1. 学习记录
 2. 利益驱动
 3. 记录自己的观点
 4. 与他人交互
+
+时间管理
+~~~~~~~~~~~~
+1. 主动管理时间，不被打扰
+2. 说 不 的三种方式
+3. 想清楚再做，每周/月反思
+
+错误处理与异步
+--------------
+1. 错误返回码与异常捕捉的使用
+2. 异步编程比较
+
+分布式系统关键技术
+~~~~~~~~~~~~~~~~~~~~~
+1. 全栈监控：数据收集以及数据的关联
+2. 服务治理：服务依赖问题、服务状态维持与拟合、服务的弹性伸缩与故障迁移、工作流和编排
+3. 状态数据调度
+
+CAP 定理: 一致性、可用性、分区容忍
+
+《数据密集型应用设计》：Designing Data Intensive Applications
 
 
 计算机科学
@@ -261,6 +293,7 @@ Subject Areas:
 2. 数据结构与算法——极客时间 :TODO
 3. `算法小抄 <https://labuladong.gitbook.io/algo/>`__
 4. 并行计算 `book.pdf - Google 云端硬盘  <https://drive.google.com/file/d/0B4z2gzEmkDDCb0NBSlFWYnBDNEk/view?resourcekey=0-U96fPYDchiVoIvnEp49w1w>`__
+5. ☆算法4
 
 软件工程
 ---------------------
@@ -325,7 +358,6 @@ Linux编程
 
 性能分析和eBPF
 ---------------
-
 
 1. BPF Performance Tools，
 2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
