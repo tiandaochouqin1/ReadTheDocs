@@ -31,6 +31,7 @@ x86 Assembly
 -----------------
 1. `shell-storm | Online Assembler and Disassembler  <http://shell-storm.org/online/Online-Assembler-and-Disassembler/>`__
 2. `ARM架构的机器码和汇编指令互相转换 - From_Zero - 博客园  <https://www.cnblogs.com/from-zero/p/13750852.html>`__
+3. `简单学习看机器码的方法   <https://www.cnblogs.com/guocai/archive/2012/10/18/2730048.html>`__
 
 调用规则
 ========

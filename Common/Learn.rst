@@ -165,7 +165,7 @@ Subject Areas:
 时间管理
 ~~~~~~~~~~~~
 1. 主动管理时间，不被打扰
-2. 说 不 的三种方式
+2. 说 不 的三种方式：给出新方案、部分满足、有条件地说是
 3. 想清楚再做，每周/月反思
 
 错误处理与异步
@@ -200,8 +200,10 @@ CAP 定理: 一致性、可用性、分区容忍
 
 
 .. figure:: ../images/Programming_paradigm_a.png
+   :scale: 40%
 
    Programming_paradigm_a
+
 
 
 .. figure:: ../images/Programming_paradigm_b.png
@@ -289,6 +291,18 @@ control和logic耦合导致程序复杂混乱。
 
 
 
+练级攻略
+-----------
+Linux系统、存储、网络
+
+1. `HTTP | MDN  <https://developer.mozilla.org/zh-CN/docs/Web/HTTP>`__   
+2. `How To Ask Questions The Smart Way  <http://www.catb.org/~esr/faqs/smart-questions.html>`__
+3. `The C10K problem  <http://www.kegel.com/c10k.html>`__ 、  `The Secret to 10 Million Concurrent Connections -The Kernel is the Problem, Not the Solution - High Scalability -  <http://highscalability.com/blog/2013/5/13/the-secret-to-10-million-concurrent-connections-the-kernel-i.html>`__
+4. `Hardening Your HTTP Security Headers - KeyCDN  <https://www.keycdn.com/blog/http-security-headers>`__
+5. `Effective Go - The Go Programming Language  <https://go.dev/doc/effective_go>`__ 、 `Go 语言简介（下）— 特性 | 酷 壳 - CoolShell  <https://coolshell.cn/articles/8489.html>`__
+6. `Let's code a TCP/IP stack, 1: Ethernet & ARP  <http://www.saminiir.com/lets-code-tcp-ip-stack-1-ethernet-arp/>`__
+7. `What every programmer should know about memory, Part 1 [LWN.net]  <https://lwn.net/Articles/250967/>`__
+8. `TCP 的那些事儿（上） | 酷 壳 - CoolShell  <https://coolshell.cn/articles/11564.html>`__
 
 计算机科学
 ==========

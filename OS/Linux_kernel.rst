@@ -83,7 +83,14 @@ linux、glibc、gcc等。
 7. ☆ `深入理解Linux进程调度  <https://mp.weixin.qq.com/s/3rV6d04QjO9_8Nkq9SrWYg>`__
 
 
+开源协议
+~~~~~~~~~~~
+1. `常见的开源协议 - 简书  <https://www.jianshu.com/p/02e4248173fc>`__
 
+Linux采用GPLv2。
+
+- GPL（GNU General Public License）：只要你用了任何该协议的库、甚至是一段代码，那么你的整个程序，不管以何种方式链接，都必须全部使用GPL协议、并遵循该协议开源。
+- LGPL （Lesser GPL）是GPL针对动态链接库放松要求了的版本
 
 基本概念
 --------
