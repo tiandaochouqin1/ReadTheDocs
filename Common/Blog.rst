@@ -86,7 +86,7 @@ rtd可识别branch、tag，推送到git后即自动构建。
 
    git tag -a v1.4 -m "my version 1.4"
    git push origin v1.1
-   还需要推动代码改动才能触发rtd构建。
+   还需要推送代码改动才能触发rtd构建。
    
    tag对应版本自动构建后即发布为stable。
 
