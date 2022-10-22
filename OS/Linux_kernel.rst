@@ -1621,6 +1621,10 @@ kmalloc建立而在slab层之上，对应一组高速缓存组。slab状态：�
 
 2. kmem_cache_alloc：从高速缓存分配结构。
 
+slub cache
+---------------
+`图解slub  <http://www.wowotech.net/memory_management/426.html>`__
+
 
 
 虚拟文件系统

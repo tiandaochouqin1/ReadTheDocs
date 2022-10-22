@@ -299,10 +299,9 @@ Linux系统、存储、网络
 2. `How To Ask Questions The Smart Way  <http://www.catb.org/~esr/faqs/smart-questions.html>`__
 3. `The C10K problem  <http://www.kegel.com/c10k.html>`__ 、  `The Secret to 10 Million Concurrent Connections -The Kernel is the Problem, Not the Solution - High Scalability -  <http://highscalability.com/blog/2013/5/13/the-secret-to-10-million-concurrent-connections-the-kernel-i.html>`__
 4. `Hardening Your HTTP Security Headers - KeyCDN  <https://www.keycdn.com/blog/http-security-headers>`__
-5. `Effective Go - The Go Programming Language  <https://go.dev/doc/effective_go>`__ 、 `Go 语言简介（下）— 特性 | 酷 壳 - CoolShell  <https://coolshell.cn/articles/8489.html>`__
+5. `TCP 的那些事儿（上） | 酷 壳 - CoolShell  <https://coolshell.cn/articles/11564.html>`__
 6. `Let's code a TCP/IP stack, 1: Ethernet & ARP  <http://www.saminiir.com/lets-code-tcp-ip-stack-1-ethernet-arp/>`__
 7. `What every programmer should know about memory, Part 1 [LWN.net]  <https://lwn.net/Articles/250967/>`__
-8. `TCP 的那些事儿（上） | 酷 壳 - CoolShell  <https://coolshell.cn/articles/11564.html>`__
 
 高效沟通
 -----------
@@ -551,6 +550,12 @@ lessons&labs
 2. 语言只是用于实现需求的可选工具；
 3. 关注语言的峰会
 
+
+Go
+----
+1. todo `Effective Go - The Go Programming Language  <https://go.dev/doc/effective_go>`__
+2. `Go by Example  <https://gobyexample.com/>`__
+3. `图解Golang的GMP 原理与调度流程 - 掘金  <https://juejin.cn/post/6995091405563494431>`__
 
 
 

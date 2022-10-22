@@ -43,7 +43,82 @@ socket
 ============
 
 
+udp tcp sctp
+------------------
+- udp：用户数据报协议，无连接。
+- tcp：传输控制协议，面向连接、可靠全双工、字节流，确认、超时、重传。
+- sctp：流控制传输协议，面向连接(关联)、可靠全双工、消息服务、多宿。
 
+tcp协议
+--------
+
+长肥管道：高带宽或高延时网络。
+
+FIN：本端不再发送数据，对端将其作为文件结束符传递给应用。
+
+tcp状态转换和分组交换
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../images/tcp_state_trans.jpg
+
+   tcp_state_trans
+
+.. figure:: ../images/tcp_seg_exchg.jpg
+
+   tcp_seg_exchg
+
+
+TIME_WAIT状态为 2*MSL：
+
+1. 实现全双工连接的可靠终止：发送最后一个ack后进入TIME_WAIT并持续2msl。若最后一个ack丢失，则client维护的状态可允许retransfer FIN。
+2. 2msl保证老连接的重复分节在网络上消逝：若老连接结束后出现一个ip+port均一样的连接，则可避免新连接被老连接的分组影响。
+
+socket系统函数
+----------------
+
+tcp socket过程
+~~~~~~~~~~~~~~~~
+
+.. figure:: ../images/socket_tcp_procedure.jpg
+
+   socket_tcp_procedure
+
+
+::
+
+   #include <sys/socket.h>
+
+   int socket(int family, int type, int protocol)  // 返回非负的套接字描述符,主动套接字
+
+   int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen)  // servaddr包含服务器ip和端口
+
+   int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen)  //绑定本端端口、ip
+
+   int listen(int sockfd, int backlog) // 转化为被动套接字，即监听描述符。backlog - socket排队的最大连接数
+
+   int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen) // 返回已连接描述符和client地址
+
+
+
+
+
+socket()
+~~~~~~~~~~~~~~~~~
+family+type -> protocol
+
+.. figure:: ../images/socket_protocol.jpg
+
+   socket_protocol
+
+bind(): tcp client 通常不会绑定ip，内核根据路由选择.
+
+fork(): 实现网络多线程
+~~~~~~~~~~~~~~~~~~~~~~~~~
+1. 需要处理SIGCHLD信号，使用waitpid避免留下僵死进程。waitpid可指定子进程和是否阻塞，wait不能；
+2. 捕获信号时，需处理被中断的系统调用。返回值为EINTR则重启socket函数（connect除外）.
+
+I/O复用：select和poll
+------------------------
 
 
 网卡收包与中断上下文
@@ -291,7 +366,7 @@ POSIX的定义：
 
 阻塞和非阻塞
 -------------------
-关注的是程序在等待 **调用结果**（消息，返回值）时的状态。
+关注的是程序在等待 **调用结果** （消息，返回值）时的状态。
 
 - 阻塞调用是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回。
 - 非阻塞调用指在不能立刻得到结果之前立即返回，不阻塞进程；而在数据已经准备好了的时候，会将数据从内核拷贝到用户态，这个过程中线程阻塞。
