@@ -99,6 +99,29 @@ tcp socket过程
    int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen) // 返回已连接描述符和client地址
 
 
+socket选项
+~~~~~~~~~~~
+
+
+shutdown和close
+~~~~~~~~~~~~~~~~~~~~
+::
+
+   int shutdown(int sockfd, int howto)
+
+   close(int sockfd)  //尝试将sndbuf的数据发送，并立即返回。 SO_LINGER可改变此默认行为。
+
+
+.. figure:: ../images/socket_shutdown_close.jpg
+
+   socket_shutdown_close
+
+
+tcp条件检测：
+
+.. figure:: ../images/tcp_stat_check.jpg
+
+   tcp_stat_check
 
 
 
@@ -110,6 +133,7 @@ family+type -> protocol
 
    socket_protocol
 
+
 bind(): tcp client 通常不会绑定ip，内核根据路由选择.
 
 fork(): 实现网络多线程
@@ -119,7 +143,120 @@ fork(): 实现网络多线程
 
 I/O复用：select和poll
 ------------------------
+io模型
+~~~~~~~~~~~
+同步IO模型：其真正的IO操作会阻塞进程。包括阻塞式IO、非阻塞式IO、IO复用、信号驱动式IO。
 
+.. figure:: ../images/IO_models.jpg
+
+   IO_models
+
+
+select
+~~~~~~~~~~~~~~~~
+
+:: 
+
+   int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set * *exceptset, const struct timeval *timeout)
+
+   fd_set: 描述符集。通常是一个整数数组，每整数的每一位对应一个描述符。
+           select返回时，fd_set就绪位置1，因此重新select之前需要重新设置fd_set。
+
+   maxfdp1: 待测试的描述符个数。0开始，即最大描述符+1.
+
+   void FD_ZERO(fd_set *fdset)
+   void FD_SET(int fd, fd_set *fdset)
+   void FD_CLR(int fd, fd_set *fdset)
+   int FD_ISSET(int fd, fd_set *fdset)
+
+
+
+select就绪条件：
+
+.. figure:: ../images/select_ready_condition.jpg
+
+   select_ready_condition
+
+
+
+poll
+~~~~~~~~~
+
+::
+
+   int poll(struct pollfd *fdarrya, unsigned long nfds, int timeout)
+
+   struct pollfd {
+       int fd;
+       short events;   /* para in. event of interest */
+       short revents;  /* return */
+   }
+
+
+poll识别三类数据：normal、priority band、high priority，体现在event/revent中。
+
+
+.. figure:: ../images/poll_events_revents.jpg
+
+   poll_events_revents
+
+
+
+udp socket
+--------------
+
+
+name and address
+--------------------
+
+
+Linux网络IO模式
+================
+1. `Linux IO模式及 select、poll、epoll详解 <https://segmentfault.com/a/1190000003063859>`__
+
+
+.. figure:: ../images/IO_models.png
+
+   IO 模式比较
+
+
+
+当一个read操作发生时，它会经历两个阶段：
+
+1. 等待数据经网卡到达内核；non-blocking/blocking IO指的就是这一步。
+2. 数据从内核态拷贝到用户态；在等待拷贝完成的过程中，Linux都会阻塞当前线程。
+
+同步和异步描述的则是read的整个过程。
+
+在处理 IO 的时候，阻塞和非阻塞都是同步 IO。只有使用了特殊的 API(部分系统实现) 才是异步 IO。
+
+同步与异步
+-------------
+关注的是通信机制。用户角度，如
+
+- 同步：发出一个调用后，在没得到结果之前主动等待，该调用不返回。一旦返回就得到了返回值。
+- 异步：发出一个调用后，这个调用直接返回，无返回值。而后被调用者会通过状态、通知来通知调用者，或使用回调函数来处理这个调用。
+
+POSIX的定义：
+
+- A synchronous I/O operation causes the requesting process to be blocked until that I/O operation completes;
+- An asynchronous I/O operation does not cause the requesting process to be blocked;
+
+阻塞和非阻塞
+-------------------
+关注的是程序在等待 **调用结果** （消息，返回值）时的状态。
+
+- 阻塞调用是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回。
+- 非阻塞调用指在不能立刻得到结果之前立即返回，不阻塞进程；而在数据已经准备好了的时候，会将数据从内核拷贝到用户态，这个过程中线程阻塞。
+
+poll与epoll
+-----------
+
+1. 在 select/poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行遍历扫描。
+2. epoll事先通过epoll_ctl()来注册一 个文件描述符，一旦基于某个文件描述符就绪时，
+   内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知。
+   (此处去掉了遍历文件描述符，而是通过监听回调的的机制。)
+ 
 
 网卡收包与中断上下文
 ==========================
@@ -332,53 +469,6 @@ netif_rx可用于中断和进程上下文；__netif_rx用于中断上下文。
 在中断处理程序中添加了一个quota值限定每次中断可以处理数据包的个数，在每次中断到来时关闭设备自身的收包中断，并尝试从DMA中获取不大于quota数量的数据包，
 交给netif_rx处理或直接交给netif_receive_skb()。
 
-Linux网络IO模式
-================
-1. `Linux IO模式及 select、poll、epoll详解 <https://segmentfault.com/a/1190000003063859>`__
-
-
-.. figure:: ../images/IO_models.png
-
-   IO 模式比较
-
-
-
-当一个read操作发生时，它会经历两个阶段：
-
-1. 等待数据经网卡到达内核；non-blocking/blocking IO指的就是这一步。
-2. 数据从内核态拷贝到用户态；在等待拷贝完成的过程中，Linux都会阻塞当前线程。
-
-同步和异步描述的则是read的整个过程。
-
-在处理 IO 的时候，阻塞和非阻塞都是同步 IO。只有使用了特殊的 API(部分系统实现) 才是异步 IO。
-
-同步与异步
--------------
-关注的是通信机制。用户角度，如
-
-- 同步：发出一个调用后，在没得到结果之前主动等待，该调用不返回。一旦返回就得到了返回值。
-- 异步：发出一个调用后，这个调用直接返回，无返回值。而后被调用者会通过状态、通知来通知调用者，或使用回调函数来处理这个调用。
-
-POSIX的定义：
-
-- A synchronous I/O operation causes the requesting process to be blocked until that I/O operation completes;
-- An asynchronous I/O operation does not cause the requesting process to be blocked;
-
-阻塞和非阻塞
--------------------
-关注的是程序在等待 **调用结果** （消息，返回值）时的状态。
-
-- 阻塞调用是指调用结果返回之前，当前线程会被挂起。调用线程只有在得到结果之后才会返回。
-- 非阻塞调用指在不能立刻得到结果之前立即返回，不阻塞进程；而在数据已经准备好了的时候，会将数据从内核拷贝到用户态，这个过程中线程阻塞。
-
-poll与epoll
------------
-
-1. 在 select/poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行遍历扫描。
-2. epoll事先通过epoll_ctl()来注册一 个文件描述符，一旦基于某个文件描述符就绪时，
-   内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait() 时便得到通知。
-   (此处去掉了遍历文件描述符，而是通过监听回调的的机制。)
- 
 
 
 tcpdump原理
