@@ -47,7 +47,7 @@ udp tcp sctp
 ------------------
 - udp：用户数据报协议，无连接。
 - tcp：传输控制协议，面向连接、可靠全双工、字节流，确认、超时、重传。
-- sctp：流控制传输协议，面向连接(关联)、可靠全双工、消息服务、多宿。
+- sctp：流控制传输协议，面向连接(关联)、可靠全双工、消息服务、多宿。可接受对端的事件通知
 
 tcp协议
 --------
@@ -60,10 +60,12 @@ tcp状态转换和分组交换
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: ../images/tcp_state_trans.jpg
+   :scale: 80%
 
    tcp_state_trans
 
 .. figure:: ../images/tcp_seg_exchg.jpg
+   :scale: 70%
 
    tcp_seg_exchg
 
@@ -80,6 +82,7 @@ tcp socket过程
 ~~~~~~~~~~~~~~~~
 
 .. figure:: ../images/socket_tcp_procedure.jpg
+   :scale: 70%
 
    socket_tcp_procedure
 
@@ -96,11 +99,46 @@ tcp socket过程
 
    int listen(int sockfd, int backlog) // 转化为被动套接字，即监听描述符。backlog - socket排队的最大连接数
 
-   int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen) // 返回已连接描述符和client地址
+   int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addrlen) // 三次握手，然后返回已连接描述符和client地址
 
 
 socket选项
 ~~~~~~~~~~~
+::
+
+   int getdockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen)
+
+   int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen)
+
+connect/accept完成三次握手后返回已连接套接字，并从监听套接字继承以下属性故这些属性需要在accept之前设置：
+``SO_DEBUG、SO_DONTROUTE、SO_KEEPALIVE\SO_LINGER、SO_OOBILINE、SO_RCVBUF、SO_SNDBUF、SO_RCVLOWAT、SO_SNDLOWAT、TCP_MACMSG、TCP_DELAY``
+
+
+::
+
+   SO_KEEPALIVE: 2h后发送保活探测分节。检测对端主机奔溃、不可达等状态（即半开连接）
+
+   SO_RCVBUF: client在connect之前设置，sever在listen之前设置。因为tcp窗口规模是在建立连接时通过互换syn分节得到的。
+   SO_SNDBUF: client保存发送的seg，直到收到ack
+
+   SO_REUSEADDR: 支持port重复使用，某些协议(如udp)支持ip+port重复使用。
+
+   SO_LINGER: 控制close函数的返回时机和行为。
+
+   TCP_NODELAY/SCTP_NODELAY:  禁止Nagle算法
+   TCP_MAXSEG/SCTP_MAXSEG:  最大分节MSS，通常来源于对端的syn
+
+
+- Nagle算法：减少网络上的分组数量。当有一个未确认分组时，则不继续发送
+- Ack延滞算法：收到数据后不立即恢复ack，等待一段时间，期望自身数据发送时捎带上ack，减少tcp分节。
+
+
+tcp条件检测：
+
+.. figure:: ../images/tcp_stat_check.jpg
+   :scale: 80%
+
+   tcp_stat_check
 
 
 shutdown和close
@@ -113,23 +151,27 @@ shutdown和close
 
 
 .. figure:: ../images/socket_shutdown_close.jpg
+   :scale: 70%
 
    socket_shutdown_close
 
 
-tcp条件检测：
+fcntl ioctl 描述符控制
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: ../images/tcp_stat_check.jpg
+.. figure:: ../images/sockect_fd_property.jpg
+   :scale: 80%
 
-   tcp_stat_check
+   socket_protocol
 
-
+最后一列表示posix推荐的方式。
 
 socket()
 ~~~~~~~~~~~~~~~~~
 family+type -> protocol
 
 .. figure:: ../images/socket_protocol.jpg
+   :scale: 80%
 
    socket_protocol
 
@@ -148,6 +190,7 @@ io模型
 同步IO模型：其真正的IO操作会阻塞进程。包括阻塞式IO、非阻塞式IO、IO复用、信号驱动式IO。
 
 .. figure:: ../images/IO_models.jpg
+   :scale: 70%
 
    IO_models
 
@@ -178,6 +221,8 @@ select就绪条件：
    select_ready_condition
 
 
+套接字描述符唯一的异常条件是带外数据的到达。
+
 
 poll
 ~~~~~~~~~
@@ -193,10 +238,12 @@ poll
    }
 
 
+
 poll识别三类数据：normal、priority band、high priority，体现在event/revent中。
 
 
 .. figure:: ../images/poll_events_revents.jpg
+   :scale: 70%
 
    poll_events_revents
 
@@ -205,6 +252,56 @@ poll识别三类数据：normal、priority band、high priority，体现在event
 udp socket
 --------------
 
+.. figure:: ../images/udp_exchg.jpg
+   :scale: 70%
+
+   udp_exchg
+
+
+udp套接字函数
+~~~~~~~~~~~~~~~~~
+::
+
+   ssize_t recvfrom(int sockfd, oid *buff, size_t nbytes, int flags, struct sockaddr *from, socklen_t *addrlen)
+
+   ssize_t sendto  (int sockfd, oid *buff, size_t nbytes, int flags, const struct sockaddr *to, socklen_t *addrlen)
+
+   recvfrome/sendto 返回值为所读写的数据大小，recvfrom返回0是可接受的。都可以用于tcp。
+
+
+若client没有绑定port，则首次sendto时内核选择一个临时端口。
+
+无连接，意味着udp每个数据报的目的地址可变。
+
+
+- 弱端系统模型：大多数ip实现接收目的地址为本机任一ip地址的数据报，而不管数据报到达的接口。
+- 网卡混杂模式：网卡能够接收所有经过它的数据流，而不论其目的地址(mac)是否是它。
+
+
+.. figure:: ../images/socket_datagram_info.jpg
+   :scale: 100%
+
+   socket_datagram_info
+
+
+
+已连接udp socket与异步错误
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+只有已连接的udp socket，其引发的异步错误(如icmp端口不可达)才会返回给它。
+
+connect后即为已连接socket。 
+
+1. 存储了对方的ip+port，后面socket需使用write/send、read/recv/recvmsg。
+2. 选择了本地ip和路由。
+
+
+.. figure:: ../images/udp_connected_socket.jpg
+   :scale: 80%
+
+   udp_connected_socket
+
+
+未连接socket每次需要复制一次目的ip+port的套接字结构体，约占整个udp传输的的1/3。故udp多次使用同一目的地址时，已连接套接字效率更高。
 
 name and address
 --------------------
