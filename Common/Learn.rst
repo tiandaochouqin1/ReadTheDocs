@@ -448,7 +448,8 @@ Linux系统、存储、网络
 5. 设计模式
 6. Effective c++
 7. 计算机软件的构造与解释
-8. 架构整洁之道
+
+8. 架构整洁之道。  :download:`Clean Architecture <../files/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
 
 
 编程实践
