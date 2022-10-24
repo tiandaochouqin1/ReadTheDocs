@@ -16,6 +16,7 @@ Basics
    Linux_cmd.rst
    Blog.rst
    Learn.rst
+   CleanArchiechture.rst
 
 
 
