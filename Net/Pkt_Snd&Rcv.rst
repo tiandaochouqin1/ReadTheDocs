@@ -49,32 +49,6 @@ udp tcp sctp
 - tcp：传输控制协议，面向连接、可靠全双工、字节流，确认、超时、重传。
 - sctp：流控制传输协议，面向连接(关联)、可靠全双工、消息服务、多宿。可接受对端的事件通知
 
-tcp协议
---------
-
-长肥管道：高带宽或高延时网络。
-
-FIN：本端不再发送数据，对端将其作为文件结束符传递给应用。
-
-tcp状态转换和分组交换
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: ../images/tcp_state_trans.jpg
-   :scale: 80%
-
-   tcp_state_trans
-
-.. figure:: ../images/tcp_seg_exchg.jpg
-   :scale: 70%
-
-   tcp_seg_exchg
-
-
-TIME_WAIT状态为 2*MSL：
-
-1. 实现全双工连接的可靠终止：发送最后一个ack后进入TIME_WAIT并持续2msl。若最后一个ack丢失，则client维护的状态可允许retransfer FIN。
-2. 2msl保证老连接的重复分节在网络上消逝：若老连接结束后出现一个ip+port均一样的连接，则可避免新连接被老连接的分组影响。
-
 socket系统函数
 ----------------
 
@@ -306,6 +280,43 @@ connect后即为已连接socket。
 name and address
 --------------------
 
+tcp ip illustrated
+=======================
+数据流与窗口管理
+------------------
+
+1. 延时Ack
+2. nagle算法
+3. 窗口通告和窗口检测
+4. 糊涂窗口综合征
+5. 缓存、自动调优
+
+
+tcp
+--------
+
+长肥管道：高带宽或高延时网络。
+
+FIN：本端不再发送数据，对端将其作为文件结束符传递给应用。
+
+tcp状态转换和分组交换
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: ../images/tcp_state_trans.jpg
+   :scale: 80%
+
+   tcp_state_trans
+
+.. figure:: ../images/tcp_seg_exchg.jpg
+   :scale: 70%
+
+   tcp_seg_exchg
+
+
+TIME_WAIT状态为 2*MSL：
+
+1. 实现全双工连接的可靠终止：发送最后一个ack后进入TIME_WAIT并持续2msl。若最后一个ack丢失，则client维护的状态可允许retransfer FIN。
+2. 2msl保证老连接的重复分节在网络上消逝：若老连接结束后出现一个ip+port均一样的连接，则可避免新连接被老连接的分组影响。
 
 Linux网络IO模式
 ================
