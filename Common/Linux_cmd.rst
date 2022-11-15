@@ -1041,12 +1041,18 @@ https://www.cnblogs.com/augusite/p/13813559.html
 
 cpuz数据： http://valid.x86.fr/tsa6vi
 
-xtu、throttle
-~~~~~~~~~~~~~
+throttlestop
+~~~~~~~~~~~~~~~~~~~
+☆☆非常频繁（几分钟一次）地出现 whea uncorrectable error蓝屏。取消降压等后则经常出现假死。关闭ts后基本不再出现。
 
-throttle配置后，xtu大部分功能不饿能使用（灰色按钮）。
+- `如何在 Windows* 中WHEA_UNCORRECTABLE_ERROR解决蓝屏错误  <https://www.intel.cn/content/www/cn/zh/support/articles/000028099/processors/intel-core-processors.html>`__
 
-小米游戏本八代增强版i7 8750h tdp锁死45w，软件无法解锁。
+- `如何修复Windows 10中的WHEA_UNCORRECTABLE_ERROR-万兴恢复专家  <https://huifu.wondershare.cn/fix-whea-uncorrectable-error-in-windows-10.html>`__
+
+
+1. throttle配置后，xtu大部分功能不能使用（灰色按钮）。
+2. 使用任务计划实现登录即启动throttlestop。
+3. 小米游戏本八代增强版i7 8750h tdp锁死45w，软件无法解锁。
 
 cpu core/cpu cache 降压 125mV。GPU降压 125mV。
 
@@ -1061,6 +1067,12 @@ cpu core/cpu cache 降压 125mV。GPU降压 125mV。
 15W。
 
 **原配180W电源**\ ：cpu+独显双烤： cpu 45W + gtx 1060 75W。
+
+xtu
+~~~~
+Intel® Extreme Tuning Utility
+
+只调整了pl1、pl2功耗和pl2时长，也出现了假死。
 
 关闭图形界面
 ------------
