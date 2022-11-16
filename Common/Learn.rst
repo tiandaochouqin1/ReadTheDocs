@@ -78,6 +78,18 @@ Learn
 4. https://shimo.im/sheets/Hh6Ct8XJgtpyP389/MODOC
 5. onedrive极客时间专栏
 
+tk模型
+----------
+托马斯——齐曼（TK）模型
+
+
+.. figure:: ../images/tk_model.jpg
+   :scale: 100%
+
+   tk_model
+
+两个维度：横-合作性、纵-自信/专断
+
 CoolShell
 ===========
 
