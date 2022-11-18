@@ -345,7 +345,7 @@ UDP的优点（相对于TCP）：
 
 使用UDP的应用可在自身中建立可靠性机制来实现可靠数据传输。如chrome中的QUIC协议。
 
-**UDP报文段结构** RFC 768
+**UDP报文段结构** RFC 768 https://www.ietf.org/rfc/rfc768.txt
 
 ::
 
@@ -387,7 +387,7 @@ TCP 在不可靠的（IP)端到端网络层之上实现可靠的数据传输协�
 
 涉及 **连接管理、流量控制、往返时间估计、可靠数据传送等。**
 
-**TCP报文段结构** RFC 793
+**TCP报文段结构** RFC 793 https://www.ietf.org/rfc/rfc793.txt
 
 ::
 

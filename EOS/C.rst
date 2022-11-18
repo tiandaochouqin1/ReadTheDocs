@@ -266,6 +266,34 @@ the remainder of the aggregate shall be initialized implicitly the same as objec
 
 If an array of unknown size is initialized, its size is determined by the largest indexed element with an explicit initializer. The array type is completed at the end of its initializer list.
 
+
+size_t类型
+---------------
+1. `About size_t and ptrdiff_t  <https://pvs-studio.com/en/blog/posts/cpp/a0050/>`__
+
+
+跨平台移植性。安全性(越界问题)。可提升性能。
+
+1. wherever you deal with pointers or arrays, you should use size_t and ptrdiff_t types.
+2. 存储指针时一般使用uintptr_t/intptr_t
+
+特性：
+
+1. size_t ： 
+ 
+ - sizeof返回值的类型。
+ - unsigned，与uintptr_t同义。
+ - store the maximum size of a theoretically possible array of any type. 
+ - size_t type is usually used for loop counters, array indexing, and address arithmetic.
+
+
+2. ptrdiff_t： 
+
+ - signed与intptr_t同义。
+ - ptrdiff_t is the type of the result of an expression where one pointer is subtracted from the other (ptr1-ptr2)
+ - ptrdiff_t type is usually used for loop counters, array indexing, size storage, and address arithmetic.
+
+
 CERT C
 =======
 sequence point
