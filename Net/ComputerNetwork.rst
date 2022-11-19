@@ -495,7 +495,7 @@ SRTT = SRTT + α (RTT – SRTT)  —— 计算平滑RTT
 
 DevRTT = (1-β) * DevRTT + β * ( | RTT-SRTT | ) ——计算平滑RTT和真实的差距（加权移动平均）
 
-RTO= µ * SRTT + ∂ * DevRTT —— 神一样的公式
+RTO= µ * SRTT + ∂ * DevRTT 
 
 为什么需要三次握手
 ------------------

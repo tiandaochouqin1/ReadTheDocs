@@ -355,13 +355,35 @@ tcp超时与重传
 
 重传超时算法
 ~~~~~~~~~~~~~
-经典方法：
+EWMA: 指数加权移动平均、低通过滤器。
 
-标准方法：
+1. 经典方法： 得到srtt即平滑的rtt估计值
+
+.. math::
+
+   SRTT ⬅ α(SRTT) + (1- α)RTT-SRTT
+
+   RTO = min( ubound, max(lbound, (SRTT)β))
 
 
-Linux采用的方法：
+2. 标准方法：结合平均值和平均偏差。
 
+.. math::
+
+   Err = M RTT-SRTT
+
+   srtt ⬅ srtt + g(Err)
+
+   rttvar ⬅ rttvar + h(|Err| - rttvar)
+
+   RTO = srtt + s(rttvar)
+
+
+
+3. Linux采用的方法： mdev(计算方法同标准方法中的rttvar)和mdev_max(本方法实际使用的rttvar)
+
+  1) Linux采用更频繁地RTT测量和更细的时钟粒度。可能导致rttvar趋于最小。—— 记录mdev_max，保证rttvar>=mdev_max
+  2) 标准方法中实际RTT大幅降低也会导致RTO增大。 —— Linux方法针对这种情况会减少新样本的权重。
 
 伪超时与伪重传
 ~~~~~~~~~~~~~~~~

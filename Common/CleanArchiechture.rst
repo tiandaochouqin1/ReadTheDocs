@@ -193,9 +193,17 @@ Stable Dependencies Principle
   I = (F_out)/(F_out + F_in)
 
   F_out : 出向依赖
+
   F_in  : 入向依赖
+
   I     : 稳定性，0-完全稳定
 
+:math:`A_\text{c} = (\pi/4) d^2`.
+
+-a  all
+-f file  读入文件
+--file=file  读入一个文件
+/f  MS命令行
 
 稳定抽象原则SAP
 ~~~~~~~~~~~~~~~~~

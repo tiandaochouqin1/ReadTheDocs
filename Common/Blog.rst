@@ -37,6 +37,15 @@ Sphinx与rst
 
 5. `Sphinx + GitHub + ReadtheDocs  托管文档 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>`__
 
+6. `1   reStructuredText 小抄: 语法备忘 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/user/rst/cheatsheet.html#cs-inline-markup>`__
+  
+   `1   reStructuredText标记规范 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/restructuredtext.html>`__
+  
+   `1   reStructuredText指令 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/directives.html>`__
+
+   `reStructuredText解释文本角色 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/roles.html>`__
+
+
 readthedocs自动发布
 ---------------------
 
@@ -113,39 +122,6 @@ rtd可识别branch、tag，推送到git后即自动构建。
       # ... other extensions
       'sphinx_search.extension',
   ]
-
-
-rst语法
--------
-
-1. **列表、代码块等前后均需要空一行。**
-2. 会自动忽略空格和回车/换行。空行才是换行。
-
-表格
-~~~~
-
-**rst表格需要严格对齐，但是有中文时显示是不对齐的。**\ 在线生成：https://truben.no/table/
-
-缩进
-~~~~~
-``Literal block expected; none found.restructuredtext``：各行缩进要统一（Tab/Space）。
-
-Section
-~~~~~~~~
-部分文件的Section title会提示语法错误：``(INFO/1) Enumerated list start value not ordinal-1: "3" (ordinal 3)``
-
-图片格式
-~~~~~~~~~~~~~~~
-`reStructuredText Directives  <https://docutils.sourceforge.io/docs/ref/rst/directives.html#image>`__
-
-::
-
-   .. image:: picture.jpeg
-   :height: 100px
-   :width: 200 px
-   :scale: 50 %
-   :alt: alternate text
-   :align: right
 
 
 从markdown迁移
@@ -234,6 +210,116 @@ sphinx-rtd-theme主题配置
        'navigation_depth': 4,
    }
    
+
+
+
+rst语法
+==========
+
+
+常用语法
+----------
+1. **列表、代码块等前后均需要空一行。**
+2. 会自动忽略空格和回车/换行。空行才是换行。
+
+表格
+~~~~
+
+**rst表格需要严格对齐，但是有中文时显示是不对齐的。**\ 在线生成：https://truben.no/table/
+
+缩进
+~~~~~
+``Literal block expected; none found.restructuredtext``：各行缩进要统一（Tab/Space）。
+
+Section
+~~~~~~~~
+部分文件的Section title会提示语法错误：``(INFO/1) Enumerated list start value not ordinal-1: "3" (ordinal 3)``
+
+图片格式
+~~~~~~~~~~~~~~~
+`reStructuredText Directives  <https://docutils.sourceforge.io/docs/ref/rst/directives.html#image>`__
+
+::
+
+   .. image:: picture.jpeg
+   :height: 100px
+   :width: 200 px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+   
+
+数学公式
+~~~~~~~~~~~~
+
+::
+
+   行内公式(解释文本角色)
+
+   The area of a circle is :math:`A_\text{c} = (\pi/4) d^2`.
+
+
+
+   公式块(指令)
+
+   .. math::
+
+      α_t(i) = P(O_1, O_2, … O_t, q_t = S_i λ)
+
+
+警告指令
+~~~~~~~~~~
+.. important:: this is important
+
+::
+
+   支持的admonition ：
+   
+      “attention”, “caution”, “danger”, “error”, “hint”, “important”, “note”, “tip”, “warning”, “admonition”
+
+   
+   .. DANGER::
+         Beware killer rabbits!
+
+   .. important:: this is important
+   
+
+
+
+
+标记规范
+-----------
+最基本的
+
+解释文本角色
+-----------------
+
+
+
+
+术语 1
+    定义 1.
+
+术语 2
+    定义 2, 段落 1.
+
+    定义 2, 段落 2.
+
+术语 3 : 分类器
+    定义 3.
+
+术语 4 : 分类器 1 : 分类器 2
+    定义 4.
+
+
+指令
+-------
+
+
+latex语法
+-------------
+
 
 其它搭建Blog方法
 ================
