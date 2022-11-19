@@ -270,12 +270,13 @@ If an array of unknown size is initialized, its size is determined by the larges
 size_t类型
 ---------------
 1. `About size_t and ptrdiff_t  <https://pvs-studio.com/en/blog/posts/cpp/a0050/>`__
+2. `int - What is size_t in C? - Stack Overflow  <https://stackoverflow.com/questions/2550774/what-is-size-t-in-c>`__
 
 
 跨平台移植性。安全性(越界问题)。可提升性能。
 
 1. wherever you deal with pointers or arrays, you should use size_t and ptrdiff_t types.
-2. 存储指针时一般使用uintptr_t/intptr_t
+2. 存储ptr时一般使用uintptr_t/intptr_t
 
 特性：
 
