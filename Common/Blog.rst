@@ -27,23 +27,11 @@ Sphinx与rst
 参考资料
 --------
 
-1. `RST语法 <https://sphinx-doc.readthedocs.io/zh_CN/master/usage/restructuredtext/basics.html>`__
+1. `Sphinx 使用手册 -  入门 <https://zh-sphinx-doc.readthedocs.io/en/latest/tutorial.html>`__
 
-2. `Quick  reStructuredText <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`__
+2. `RST语法 <https://sphinx-doc.readthedocs.io/zh_CN/master/usage/restructuredtext/basics.html>`__
 
-3. `Sphinx 使用手册 -  入门 <https://zh-sphinx-doc.readthedocs.io/en/latest/tutorial.html>`__
-
-4. `Docutils: Documentation  Utilities <https://docutils.sourceforge.io/rst.html>`__
-
-5. `Sphinx + GitHub + ReadtheDocs  托管文档 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>`__
-
-6. `1   reStructuredText 小抄: 语法备忘 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/user/rst/cheatsheet.html#cs-inline-markup>`__
-  
-   `1   reStructuredText标记规范 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/restructuredtext.html>`__
-  
-   `1   reStructuredText指令 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/directives.html>`__
-
-   `reStructuredText解释文本角色 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/roles.html>`__
+3. `Sphinx + GitHub + ReadtheDocs  托管文档 <https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html>`__
 
 
 readthedocs自动发布
@@ -215,6 +203,15 @@ sphinx-rtd-theme主题配置
 
 rst语法
 ==========
+1. `Quick  reStructuredText <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`__
+2. `Docutils: Documentation  Utilities <https://docutils.sourceforge.io/rst.html>`__
+3. `1   reStructuredText 小抄: 语法备忘 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/user/rst/cheatsheet.html#cs-inline-markup>`__
+  
+   `1   reStructuredText标记规范 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/restructuredtext.html>`__
+  
+   `1   reStructuredText指令 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/directives.html>`__
+
+   `reStructuredText解释文本角色 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/roles.html>`__
 
 
 常用语法
@@ -231,24 +228,123 @@ rst语法
 ~~~~~
 ``Literal block expected; none found.restructuredtext``：各行缩进要统一（Tab/Space）。
 
+行块
+~~~~~~~
+
+| 这是一个行块。它以一个空行结束。
+|     每个新行以一个竖线开始
+|     折行和初始缩进被保留。
+
+
+::
+
+      | 这是一个行块。它以一个空行结束。
+      |     每个新航以一个竖线开始
+      |     折行和初始缩进被保留。
+      | 连续行辈超装为长行；
+
+引用块
+~~~~~~~~~~
+缩进即可
+
+引用相对路径：
+
+::
+
+   `指令 <../../ref/rst/directives.html>`_
+
+注释
+~~~~~~~
+页面不可见。可从html查看。
+
+::
+
+   .. 注释以两个点和一个空格开始。可以接除了脚注、超链接、指令或替代定义之外的任何东西
+
+
 Section
 ~~~~~~~~
 部分文件的Section title会提示语法错误：``(INFO/1) Enumerated list start value not ordinal-1: "3" (ordinal 3)``
 
-图片格式
-~~~~~~~~~~~~~~~
-`reStructuredText Directives  <https://docutils.sourceforge.io/docs/ref/rst/directives.html#image>`__
+
+替代定义
+~~~~~~~~~~~~~
 
 ::
 
-   .. image:: picture.jpeg
-   :height: 100px
-   :width: 200 px
-   :scale: 50 %
-   :alt: alternate text
-   :align: right
+   一个行内图片 (|example|) 的例子:
 
-   
+   .. |EXAMPLE| image:: images/biohazard.png
+
+   (替代定义在HTML源文件中不可见)   
+
+
+
+
+标记规范
+-----------
+最基本的
+
+解释文本角色
+-----------------
+
+解释文本使用反引号(`)包围文本。一个显式的角色标记可以可选的出现在文本之前或之后，以冒号分隔。
+
+::
+
+   This is `interpreted text` using the default role.
+
+   This is :title:`interpreted text` using an explicit role.
+
+
+   标准角色
+   :emphasis:  -> *text*
+   :literal:   -> ``text``
+   :code:
+   :math:
+   :pep-reference:
+   :rfc-reference:
+   :strong:      -> **text**
+   :subscript:
+   :superscript:
+   :title-reference:  -> 默认的角色
+   专门角色
+   raw
+
+
+指令
+-------
+1. 指令由以开始后跟指令类型、两个冒号、空格（一起被称为指令标记）的显式标记展示。
+2. 指令类型是大小写不敏感的单个单词(字母+单个连字符、冒号、点 不包括空格)。
+3. 指令块的解释由指令代码完成。
+
+
+引用块
+~~~~~~~~~~~
+引言、高亮、pull-quote。看起来一样
+
+.. epigraph::
+
+   No matter where you go, there you are.
+
+   -- Buckaroo Banzai
+
+
+.. highlights::
+
+   No matter where you go, there you are.
+
+.. pull-quote::
+
+   No matter where you go, there you are.
+
+表格
+~~~~~~~~~
+table、csv-table、list-table
+
+1. 表格指令用于创建一个带标题的表格，需要将标题关联到表格:
+2. csv-table”指令用于通过CSV数据创建一个表格。
+
 
 数学公式
 ~~~~~~~~~~~~
@@ -270,7 +366,6 @@ Section
 
 警告指令
 ~~~~~~~~~~
-.. important:: this is important
 
 ::
 
@@ -287,34 +382,67 @@ Section
 
 
 
+.. Attention:: Directives at large.
 
-标记规范
------------
-最基本的
+.. Caution::
 
-解释文本角色
------------------
+   Don't take any wooden nickels.
 
+.. DANGER:: Mad scientist at work!
 
+.. Error:: Does not compute.
 
+.. Hint:: It's bigger than a bread box.
 
-术语 1
-    定义 1.
-
-术语 2
-    定义 2, 段落 1.
-
-    定义 2, 段落 2.
-
-术语 3 : 分类器
-    定义 3.
-
-术语 4 : 分类器 1 : 分类器 2
-    定义 4.
+.. Important::
+   - Wash behind your ears.
+   - Clean up your room.
 
 
-指令
--------
+.. Note:: This is a note.
+
+.. Tip:: 15% if the service is good.
+
+.. WARNING:: Strong prose may provoke extreme mental exertion.
+   Reader discretion is strongly advised.
+
+.. admonition:: And, by the way...
+
+   You can make up your own admonition too.
+
+
+图片格式
+~~~~~~~~~~~~~~~
+`reStructuredText Directives  <https://docutils.sourceforge.io/docs/ref/rst/directives.html#image>`__
+
+::
+
+   .. image:: picture.jpeg
+      :height: 100px
+      :width: 200 px
+      :scale: 50 %
+      :alt: alternate text
+      :align: right
+
+::
+
+   .. figure:: picture.png
+      :scale: 50 %
+      :alt: map to buried treasure
+
+      这是figure的标题(一个简单的段落)。
+
+      铭文由标题后的所有元素组成(可使用表格)
+
+
+独立Topic
+~~~~~~~~~~~
+类似于一个包含标题或自包含章节而无子章节的引用块。表示一个与 **文档流程隔离的自包含的想法**。
+
+.. topic:: Topic Title
+
+    之后的所缩进行包含话题的正文
+    并不解释为正文元素      
 
 
 latex语法
