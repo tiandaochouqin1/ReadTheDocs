@@ -323,6 +323,24 @@ Section
 ~~~~~~~~~~~
 引言、高亮、pull-quote。看起来一样
 
+::
+   
+   .. epigraph::
+
+      No matter where you go, there you are.
+
+      -- Buckaroo Banzai
+
+
+   .. highlights::
+
+      No matter where you go, there you are.
+
+   .. pull-quote::
+
+      No matter where you go, there you are.
+
+
 .. epigraph::
 
    No matter where you go, there you are.
@@ -330,13 +348,7 @@ Section
    -- Buckaroo Banzai
 
 
-.. highlights::
 
-   No matter where you go, there you are.
-
-.. pull-quote::
-
-   No matter where you go, there you are.
 
 表格
 ~~~~~~~~~
@@ -378,6 +390,12 @@ table、csv-table、list-table
          Beware killer rabbits!
 
    .. important:: this is important
+
+   .. Note:: This is a note.
+
+   .. admonition:: And, by the way...
+
+   You can make up your own admonition too.
    
 
 
@@ -443,6 +461,13 @@ table、csv-table、list-table
 
     之后的所缩进行包含话题的正文
     并不解释为正文元素      
+
+::
+      
+   .. topic:: Topic Title
+
+      之后的所缩进行包含话题的正文
+      并不解释为正文元素      
 
 
 latex语法
