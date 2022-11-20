@@ -290,7 +290,7 @@ FIN：本端不再发送数据，对端将其作为文件结束符传递给应�
 
 TCP报文段结构
 ----------------
-RFC 793
+`https://www.ietf.org/rfc/rfc793.txt  <https://www.ietf.org/rfc/rfc793.txt>`__
 
 ::
 
@@ -321,9 +321,8 @@ RFC 793
 2. 确认号：期望收到的下一字节的序号。
 3. 接收窗口：指示接收方愿意接收的字节数量，用于流量控制。
 4. 6比特标识字段：ACK、RST、SYN、FIN、PSH、URG。
-
-5. Checksum:  The checksum field is the 16-bit ones' complement of the ones'
-     complement sum of all 16-bit words in the header and text.
+5. The checksum field is the 16-bit ones' complement of the ones' complement sum of all 16-bit words in the header and text. 
+   见 `ComputerNetwork <./ComputerNetwork.rst>`_
 
 
 

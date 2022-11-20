@@ -68,7 +68,7 @@ OSI模型
 
 -  协议：TCP/UDP
 
--  数据：报文段
+-  数据：报文段 segment
 
 **网络层**
 
@@ -76,7 +76,7 @@ OSI模型
 
 -  协议：IP网际协议
 
--  数据：数据报
+-  数据：数据报 datagram
 
 -  路由器工作在网络层。
 
@@ -86,7 +86,7 @@ OSI模型
 
 -  协议：以太网、WIFI、电缆接入网的DOCSIS协议
 
--  数据：帧
+-  数据：帧 frame
 
 -  交换机工作在链路层。
 
@@ -345,7 +345,9 @@ UDP的优点（相对于TCP）：
 
 使用UDP的应用可在自身中建立可靠性机制来实现可靠数据传输。如chrome中的QUIC协议。
 
-**UDP报文段结构** RFC 768 https://www.ietf.org/rfc/rfc768.txt
+**UDP报文段结构** 
+~~~~~~~~~~~~~~~~~~
+RFC 768 https://www.ietf.org/rfc/rfc768.txt
 
 ::
 
@@ -363,13 +365,54 @@ UDP的优点（相对于TCP）：
 
                          User Datagram Header Format
 
-**UDP检验和**
-在端到端基础上提供差错检测功能（无差错恢复）。在更低层上实现差错检查可能是冗余或无价值的。
 
-校验和：对报文段中的数据，按16比特字求和并进行反码运算，溢出时回卷。
+Length: udp header和data的和。实际是冗余字段(tcp则无此字段)。=ip头的total length - ip Header
+
+
+**UDP检验和**
+~~~~~~~~~~~~~~~
+
+
+在端到端基础上提供差错检测功能（无差错恢复）。
+
+::
+
+   Checksum is the 16-bit one's complement of the one's complement sum of a pseudo header of information from the IP header, 
+   the UDP header, and the data,  padded  with zero octets  at the end (if  necessary)  to  make  a multiple of two octets.
+
+
+校验和：对报文段中的数据，按16比特字求和(溢出时回卷)并进行反码运算。
+
+**udp和tcp 的checksum计算方式一致**。This checksum procedure is the same as is used in TCP.
+
+
+伪首部
+~~~~~~~~
+- 组成：ip头中的 source  address,  the destination  address,  the protocol,  and the  UDP  length.   
+- 目的：用于让udp层验证数据是否到达正确的目的地(即正确的dst_ip和protcol)
+
+
+::
+
+   
+   This information gives protection against misrouted datagrams.
+
+                     0      7 8     15 16    23 24    31 
+                  +--------+--------+--------+--------+
+                  |          source address           |
+                  +--------+--------+--------+--------+
+                  |        destination address        |
+                  +--------+--------+--------+--------+
+                  |  zero  |protocol|   UDP length    |
+                  +--------+--------+--------+--------+
+                  
+                     
+
 
 面向连接的运输TCP
 -----------------
+一种带累积正向确认的滑动窗口协议。
+
 
 可靠数据传输原理
 ~~~~~~~~~~~~~~~~
@@ -457,7 +500,10 @@ MTU和MSS
 .. figure:: ../images/MTU_MSS.png
 
 
-- MTU（Maximum Transmission Unit）：最大传输单元，MSS+头部40字节=1500字节。 
+- MTU（Maximum Transmission Unit）：最大传输单元，MSS+头部40字节=1500字节。MTU的限制来源于NIC，而IP层进行分片动作。 
+   The maximum sized datagram that can be transmitted through the  next network is called the maximum transmission unit (MTU).
+   
+   `RFC 791 - Internet Protocol  <https://datatracker.ietf.org/doc/html/rfc791#page-25>`__
 
 - MSS：Maximum SegmentSize。1460字节。
 
@@ -634,7 +680,7 @@ FAST TCP Open 应对TCP传输数据延时大
 
 3. 循环和加权公平排队RR：参考https://man7.org/linux/man-pages/man7/sched.7.html
 
-IP网际协议
+IPv4
 ----------
 
 IPv4数据报格式
@@ -677,9 +723,7 @@ https://tools.ietf.org/html/rfc791
 -  协议号将网络层与运输层关联起来。
 -  IP层只对首部计算校验和，传输层的TCP/UDP对整个报文的进行计算。
 
-**IPv4数据报分片**
 
-最大传送单元MTU：链路层能承载的最大数据量，以太网帧为1500bytes。不同链路层协议MTU不同。MTU也限制IP数据报的长度。
 
 **IPv4 编址** 主机与物理链路之间的边界叫做\ **接口**\ 。
 
@@ -697,7 +741,9 @@ https://tools.ietf.org/html/rfc791
 
 4. DHCP　ACK：响应请求报文，证实所要求的参数。
 
-**网络地址转换NAT**\ ：
+**网络地址转换NAT**
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 -  NAT转换表表项包含端口号和IP地址。
 
@@ -707,8 +753,17 @@ https://tools.ietf.org/html/rfc791
 
 争议：路由器处于网络层，只应处理网络层的分组，不应修改IP地址和端口号。违反了主机应当直接对话的原则。
 
+**IPv4数据报分片**
+~~~~~~~~~~~~~~~~~~~~~
+最大传送单元MTU：链路层能承载的最大数据量，以太网帧为1500bytes。不同链路层协议MTU不同。MTU也限制IP数据报的长度。
+
+若任何一个分片丢失，则整个数据报就丢失了。tcp则会重传整个数据报。
+
 IPv6
-~~~~
+----------
+
+IPv6 header
+~~~~~~~~~~~~~~~~
 
 ::
 
@@ -919,23 +974,33 @@ SNMP代理向管理服务器发送一种陷阱报文以通知一种异常情况�
 =====================
 二层交换转发不会修改报文；三层路由会修改mac头(设置协议类型)。
 
-Mac头
+链路层帧格式
+--------------
 
 .. figure:: ../images/EthernetFormat.png
 
 
 ::
 
-   The Ethernet (IEEE 802.3) frame format contains source and  destination addresses,
-   an overloaded Length/Type field, a field for data, and a frame
-   check sequence (a CRC32). 
-   Additions to the basic frame format provide for a tag  containing a VLAN ID and priority information (802.1p/q) and more recently for an
-   extensible number of tags. 
-   The preamble and SFD are used for synchronizing  receivers. 
-   When half-duplex operation is used with Ethernet running at 100Mb/s or
-   more, additional bits may be appended to short frames as a carrier extension to
-   ensure that the collision detection circuitry operates properly
+   The Ethernet (IEEE 802.3) frame format contains  source and  destination addresses,  
+   an overloaded Length/Type field, 
+   a field for data, and 
+   a frame  check sequence (a CRC32). 
 
+   Additions to the basic frame format provide for a tag  containing a VLAN ID and 
+   priority information (802.1p/q)  and more recently for an  extensible number of tags. 
+
+   The preamble and SFD are used for synchronizing  receivers. 
+   When half-duplex operation is used with Ethernet running at 100Mb/s or more, 
+   additional bits may be appended to short frames as a carrier extension to ensure that the collision detection circuitry operates properly
+
+
+
+Jumbo帧：
+       负载大于9000的帧。
+
+Jumbo数据报：
+      ipv6使用，大于65535.
 
 链路层概述
 ----------
