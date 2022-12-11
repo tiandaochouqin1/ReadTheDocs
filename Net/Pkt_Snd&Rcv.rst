@@ -87,15 +87,20 @@ socket选项
 connect/accept完成三次握手后返回已连接套接字，并从监听套接字继承以下属性故这些属性需要在accept之前设置：
 ``SO_DEBUG、SO_DONTROUTE、SO_KEEPALIVE\SO_LINGER、SO_OOBILINE、SO_RCVBUF、SO_SNDBUF、SO_RCVLOWAT、SO_SNDLOWAT、TCP_MACMSG、TCP_DELAY``
 
+1. https://man7.org/linux/man-pages/man7/socket.7.html
+2. `linux - How do SO_REUSEADDR and SO_REUSEPORT differ? - Stack Overflow  <https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ>`__
 
 ::
+
+   UNP 7.5
 
    SO_KEEPALIVE: 2h后发送保活探测分节。检测对端主机奔溃、不可达等状态（即半开连接）
 
    SO_RCVBUF: client在connect之前设置，sever在listen之前设置。因为tcp窗口规模是在建立连接时通过互换syn分节得到的。
    SO_SNDBUF: client保存发送的seg，直到收到ack
 
-   SO_REUSEADDR: 支持port重复使用，某些协议(如udp)支持ip+port重复使用。
+   SO_REUSEADDR: 允许使用不同IP(如通配符与特定IP)重用相同port；某些协议(如udp)支持完全重复的ip+port。
+   SO_REUSEPORT: 由多播的引入而添加到选项。相同ip+port的所有套接字都指定本选项时才支持完全重复的绑定。多播时与SO_REUSEADDR同义。
 
    SO_LINGER: 控制close函数的返回时机和行为。
 

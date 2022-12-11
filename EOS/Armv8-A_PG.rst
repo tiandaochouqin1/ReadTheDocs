@@ -620,3 +620,66 @@ GICv3控制器由以下部分组成:
 .. figure:: ../images/intr_state.png
 
    intr_state
+
+
+amba
+===========
+1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/What-is-AMBA--and-why-use-it-?lang=en>`__
+
+
+.. figure:: ../images/amba.png
+
+   amba
+
+
+axi
+------
+1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/AXI-protocol-overview?lang=en>`__
+
+
+.. figure:: ../images/axi_components.jpg
+
+   axi_components
+
+
+.. figure:: ../images/axi_interconnect.jpg
+
+   axi_interconnect
+
+   
+.. figure:: ../images/axi_channels.jpg
+
+   axi_channels
+
+.. figure:: ../images/axi_write_transaction.jpg
+
+   axi_write_transaction
+
+
+
+chi
+----
+`Learn the architecture - Introducing AMBA CHI  <https://developer.arm.com/documentation/102407/0100/Introduction-to-CHI?lang=en>`__
+
+Coherent Hub Interface (CHI) is an evolution of the AXI Coherency Extensions (ACE) protocol. 
+
+.. figure:: ../images/chi_topologies.jpg
+
+   chi_topologies
+
+
+cmn-600
+~~~~~~~~~~~~~
+1. `CMN总线简介_qq_29188181的博客-CSDN博客_cmn700总线  <https://blog.csdn.net/qq_29188181/article/details/126338069>`__
+
+
+The Arm CoreLink CMN-600 Coherent Mesh Network is designed for intelligent connected systems across a wide range of applications 
+  including networking infrastructure, storage, server, HPC, automotive, and industrial solutions.
+
+AMBA 5 CHI
+
+.. figure:: ../images/corelink_cmn-600_scaleable_mesh_network.png
+
+   cmn-600
+
+
