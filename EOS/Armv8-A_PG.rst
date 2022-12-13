@@ -591,7 +591,8 @@ GIC v3
 --------
 1. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
 
-GICv3控制器由以下部分组成:
+GICv3控制器组成和路由
+~~~~~~~~~~~~~~~~~~~~~
 
 1. distributor： SPI中断的管理，将中断发送给redistributor. (包括 enable/disable、priority、level/edge、group 等配置。distributor和redistributor功能实际很类似)
 2. redistributor： PPI，SGI，LPI中断的管理，将中断发送给cpu interface
@@ -608,6 +609,22 @@ GICv3控制器由以下部分组成:
    GIC_v3_controller
 
 
+GIC v3中断类别
+~~~~~~~~~~~~~~~~~~~~
+GICv3定义了以下中断类型：
+
+::
+      
+   SPI (Shared Peripheral Interrupt)
+   公用的外部设备中断，也定义为共享中断。可以多个Cpu或者说Core处理，不限定特定的Cpu。比如按键触发一个中断，手机触摸屏触发的中断。
+   PPI (Private Peripheral Interrupt)
+   私有外设中断。这是每个核心私有的中断。PPI会送达到指定的CPU上，应用场景有CPU本地时钟。
+   SGI (Software Generated Interrupt)
+   软件触发的中断。软件可以通过写GICD_SGIR寄存器来触发一个中断事件，一般用于核间通信。
+   LPI (Locality-specific Peripheral Interrupt)
+   LPI是GICv3中的新特性，它们在很多方面与其他类型的中断不同。LPI始终是基于消息的中断，它们的配置保存在表中而不是寄存器。比如PCIe的MSI/MSI-x中断。
+
+
 中断处理流程
 ~~~~~~~~~~~~
 1. 外设发起中断，发送给 Distributor
@@ -620,6 +637,14 @@ GICv3控制器由以下部分组成:
 .. figure:: ../images/intr_state.png
 
    intr_state
+
+
+ITS
+~~~~~
+
+.. figure:: ../images/Gicv3_ITS.png
+
+   Gicv3_ITS
 
 
 amba
