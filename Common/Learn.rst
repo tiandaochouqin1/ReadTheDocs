@@ -14,13 +14,16 @@ Learn
 
 
 2. `infoq国际版 <https://www.infoq.com/>`__ Or
-`infoq国内版 <https://www.infoq.cn/>`__
+   `infoq国内版 <https://www.infoq.cn/>`__
 
 3. `分享 GitHub 上有趣、入门级的开源项目 <https://hellogithub.com/>`__
 
 
 4. `科技爱好者周刊 <http://www.ruanyifeng.com/blog/archives.html>`__
+
 5. https://developer.aliyun.com/ebook/
+
+6. `一飞周报  <https://harryyifei.notion.site/bd08324733664b67b1b090f86a97115c>`__
 
 
 博客专栏

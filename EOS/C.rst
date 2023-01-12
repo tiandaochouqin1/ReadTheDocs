@@ -690,3 +690,26 @@ malloc将内存分成了大小不同的chunk，使用双向链表将其组成成
 .. figure:: ../images/malloc_bin_trunk.jpg
 
     malloc_bin_trunk
+
+
+calloc
+--------------
+1. `Why does calloc exist? — njs blog` <https://vorpus.org/blog/why-does-calloc-exist/>`__
+
+::
+
+    void *malloc(size_t size);
+
+    void *calloc(size_t nmemb, size_t size);
+
+
+calloc在分配小内存时等价 malloc+memset。
+
+calloc 与 malloc+memset的区别
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. 入参不同。malloc参数size溢出则截断，calloc参数nmemb*size溢出则报错；
+2. calloc在分配大内存时效率更高（glibc中>128K为大内存）。
+
+   1) 内核把内存交给进程前会清零，所以calloc不用再清零；(用户态也会管理内存池)
+   2) 写时复制，calloc时并未真实分配内存，即在使用时才会 清零+赋值，cache友好。

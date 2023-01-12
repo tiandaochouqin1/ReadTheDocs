@@ -223,4 +223,8 @@ kasan提供了一个测试程序test_kacan.c，将其编译成模块，加载到
 
 uart i2c spi
 --------------
+1. `常用基本通信协议UART/I2C/SPI对比 - 自由的青 - 博客园  <https://www.cnblogs.com/qingkai/p/6045091.html>`__
+2. `SPI,UART,I2C都有什么区别，及其各自的特点 - Luckyer - 博客园  <https://www.cnblogs.com/lucky-apple/archive/2008/07/03/1234581.html>`__
+3. `一文搞懂UART通信协议-云社区-华为云  <https://bbs.huaweicloud.com/blogs/372189>`__
+
 
