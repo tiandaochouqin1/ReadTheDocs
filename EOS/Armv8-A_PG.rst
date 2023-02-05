@@ -635,6 +635,7 @@ GICv3定义了以下中断类型：
 
 
 .. figure:: ../images/intr_state.png
+   :scale: 80%
 
    intr_state
 
@@ -643,6 +644,7 @@ ITS
 ~~~~~
 
 .. figure:: ../images/Gicv3_ITS.png
+   :scale: 80%
 
    Gicv3_ITS
 
@@ -663,6 +665,7 @@ axi
 
 
 .. figure:: ../images/axi_components.jpg
+   :scale: 80%
 
    axi_components
 
@@ -677,6 +680,7 @@ axi
    axi_channels
 
 .. figure:: ../images/axi_write_transaction.jpg
+   :scale: 50%
 
    axi_write_transaction
 
@@ -689,6 +693,7 @@ chi
 Coherent Hub Interface (CHI) is an evolution of the AXI Coherency Extensions (ACE) protocol. 
 
 .. figure:: ../images/chi_topologies.jpg
+   :scale: 80%
 
    chi_topologies
 
@@ -704,6 +709,7 @@ The Arm CoreLink CMN-600 Coherent Mesh Network is designed for intelligent conne
 AMBA 5 CHI
 
 .. figure:: ../images/corelink_cmn-600_scaleable_mesh_network.png
+   :scale: 25%
 
    cmn-600
 

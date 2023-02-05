@@ -680,3 +680,44 @@ The types of events are:
   Timed Profiling: Snapshots can be collected at an arbitrary frequency, using perf record -FHz. This is commonly used for CPU usage profiling, and works by creating custom timed interrupt events.
 
 
+典型故障
+==========
+kernel deadlock
+------------------
+1. `Linux内核死锁检测机制` <https://e-mailky.github.io/2017-01-18-kernel-daedlock>`__
+   `Linux内核调试技术——进程D状态死锁检测` <https://e-mailky.github.io/2017-01-18-kernel-daedlock-check>`__
+   `Linux内核调试技术——进程R状态死锁检测` <https://e-mailky.github.io/2017-01-18-kernel-daedlock-check2>`__
+
+
+- D状态死锁：进程长时间处于TASK_UNINTERRUPTIBLE而不恢复的状态。
+- R状态死锁：进程长时间处于TASK_RUNNING 状态抢占CPU而不发生切换(关抢占/中断)。分为softlockup和hardlockup。
+
+D状态死锁-hung task
+~~~~~~~~~~~~~~~~~~~~~~~~
+内核线程循环检测处于D状态的每个进程，两次监测之间(120s，/proc/sys/kernel/hung_task_timeout_secs)若无调度则判断进程一直处于D状态，则触发报警日志打印。
+
+TASK_UNINTERRUPTIBLE，称为D状态，该种状态下进程不接收信号，只能通过wake_up唤醒。 
+例如mutex锁就可能会设置进程于该状态，有时候进程在等待某种IO资源就绪时 (wait_event机制)会设置进程进入该状态。
+
+R状态死锁-softlockup和hardlockup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. https://www.kernel.org/doc/Documentation/lockup-watchdogs.txt
+
+机制
+^^^^^^
+1. lockup detector机制：在中断上下文中发生死锁时，nmi(不可屏蔽的中断)处理也可正常进入，因此可用来监测中断中的死锁。
+
+2. 优先级关系：进程上下文 < 中断 < nmi中断。
+
+3. 代码路径：kernel/watchdog.c
+
+
+- softlockup：20s。
+- hardlockup:HARDLOCKUP_DETECTOR需要nmi中断的支持。10s
+
+
+.. figure:: ../images/lockup_detector.jpg
+   :scale: 80%
+
+   lockup_detector
+
