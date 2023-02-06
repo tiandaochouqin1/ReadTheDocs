@@ -2,6 +2,11 @@
 Computer Network
 ================
 
+常用报文头
+==============
+1. `Huawei Info+ - 报文格式查询 - Info Finder(企业网) - Huawei` <https://info.support.huawei.com/network/infofinder/openPacketFormatPage?domain=0&module=6&lang=zh>`__
+
+
 
 第一章 计算机网络和因特网
 =========================

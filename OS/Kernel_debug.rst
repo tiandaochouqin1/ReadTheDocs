@@ -702,6 +702,7 @@ TASK_UNINTERRUPTIBLE，称为D状态，该种状态下进程不接收信号，�
 R状态死锁-softlockup和hardlockup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. https://www.kernel.org/doc/Documentation/lockup-watchdogs.txt
+2. `Real-Time进程会导致系统lockup吗？ | Linux Performance` <http://linuxperf.com/?p=197>`__
 
 机制
 ^^^^^^
@@ -720,4 +721,65 @@ R状态死锁-softlockup和hardlockup
    :scale: 80%
 
    lockup_detector
+
+
+waitqueue
+--------------
+1. `源码解读Linux等待队列 - Gityuan博客 | 袁辉辉的技术博客` <http://gityuan.com/2018/12/02/linux-wait-queue/>`__
+2. `Linux等待队列（Wait Queue） - huey_x - 博客园` <https://www.cnblogs.com/hueyxu/p/13745029.html>`__
+
+
+一种重要的数据结构(链表实现)，和进程调度机制紧密相关。可以用于同步对系统资源的访问(互斥锁)、异步事件通知、跨进程通信等。
+
+休眠与唤醒过程：
+
+1. A: wait_event(wq,condition)向队列头添加等待队列项，记录当前进程+唤醒回调，然后schedule；
+2. B: wake_up(wq)遍历wq中每一项并try_to_wake_up(),将对应进程加入rq队列，设置为TASK_RUNNING;
+3. A: 被唤醒后继续执行(处于wait_event中)，判断是否跳出或继续schedule.
+
+::
+
+   ___wait_event(wq, condition, state, exclusive, ret, cmd){  
+      wait_queue_t __wait;                    
+      INIT_LIST_HEAD(&__wait.task_list);                
+      for (;;) {
+         //当检测进程是否有待处理信号则返回值__int不为0，【见3.1.1】
+         long __int = prepare_to_wait_event(&wq, &__wait, state);
+         if (condition)  //当满足条件，则跳出循环                    
+               break;                        
+                                       
+         //当有待处理信号且进程处于可中断状态(TASK_INTERRUPTIBLE或TASK_KILLABLE))，则跳出循环
+         if (___wait_is_interruptible(state) && __int) {        
+               __ret = __int;                    
+               break;                      
+         }                            
+         cmd; //schedule()，进入睡眠，从进程就绪队列选择一个高优先级进程来代替当前进程运行                       
+      }                                
+      finish_wait(&wq, &__wait);  //如果__wait还位于队列wq，则将__wait从wq中移除              
+   }
+
+
+
+might_sleep
+~~~~~~~~~~~~~
+1. `关于might_sleep的一点说明-MagicBoy2010-ChinaUnix博客` <http://blog.chinaunix.net/uid-23769728-id-3157536.html>`__
+
+仅提醒函数会sleep
+
+::
+
+   /**
+   * might_sleep - annotation for functions that can sleep
+   *
+   * this macro will print a stack trace if it is executed in an atomic
+   * context (spinlock, irq-handler, ...). Additional sections where blocking is
+   * not allowed can be annotated with non_block_start() and non_block_end()
+   * pairs.
+   *
+   * This is a useful debugging help to be able to catch problems early and not
+   * be bitten later when the calling function happens to sleep when it is not
+   * supposed to.
+   */
+   # define might_sleep() \
+      do { __might_sleep(__FILE__, __LINE__); might_resched(); } while (0)
 
