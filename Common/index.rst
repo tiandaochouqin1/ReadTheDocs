@@ -10,13 +10,12 @@ Basics
    :numbered: 4
    
 
+   C.rst
    vim.rst
    Git.rst
    regex.rst
    Linux_cmd.rst
    Blog.rst
-   Learn.rst
-   CleanArchiechture.rst
 
 
 

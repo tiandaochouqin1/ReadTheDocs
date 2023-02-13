@@ -5,7 +5,7 @@ Clean Architecture
 :Date:   2022-07-02 14:39:00
 
 
-:download:`Clean Architecture <../files/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
+:download:`Clean Architecture </files/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
 
 
 概述与编程范式
@@ -82,13 +82,13 @@ ISP
 
 User1虽然不需要调用op2、op3，但是在源代码层次上形成了依赖关系。若op2修改，则User1也需要重新编译和部署（针对静态语言）。
 
-.. figure:: ../images/solid_isp_1.jpg
+.. figure:: /images/solid_isp_1.jpg
    :scale: 50%
 
    solid_isp_1
 
 
-.. figure:: ../images/solid_isp_2.jpg
+.. figure:: /images/solid_isp_2.jpg
    :scale: 60%
 
    solid_isp_2
@@ -115,7 +115,7 @@ DIP
 组件聚合
 -----------
 
-.. figure:: ../images/Cohesion_principle_tension_diagram.jpg
+.. figure:: /images/Cohesion_principle_tension_diagram.jpg
    :scale: 100%
 
    Cohesion_principle_tension_diagram
@@ -216,7 +216,7 @@ Stable Abstraction Principle
 
 稳定性I/抽象化A 序列
 
-.. figure:: ../images/abstract_independence.jpg
+.. figure:: /images/abstract_independence.jpg
    :scale: 100%
 
    abstract_independence
