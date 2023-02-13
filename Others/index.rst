@@ -7,6 +7,7 @@ Accumulation
 
    Book/index
    LearningPlan.rst
+   EOS_concept.rst
    2022.rst
    DP.rst
    
