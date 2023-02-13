@@ -7,10 +7,9 @@ Basics
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 4
    
 
-   C.rst
+   C/index
    vim.rst
    Git.rst
    regex.rst
