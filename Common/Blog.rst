@@ -213,6 +213,8 @@ rst语法
 
    `reStructuredText解释文本角色 — docutils 1.0 文档  <https://docutils-zh-cn.readthedocs.io/zh_CN/latest/ref/rst/roles.html>`__
 
+4. `reStructuredText 入门 — Sphinx 1.3.1 documentation` <https://sphinx-doc-zh.readthedocs.io/en/latest/rest.html>`__
+
 
 常用语法
 ----------
@@ -260,6 +262,15 @@ rst语法
 ::
 
    .. 注释以两个点和一个空格开始。可以接除了脚注、超链接、指令或替代定义之外的任何东西
+
+   .. This is a comment.
+   可以用缩进文本来进行多行注释:
+
+   ..
+      This whole indented block
+      is a comment.
+
+      Still in the comment.
 
 
 Section

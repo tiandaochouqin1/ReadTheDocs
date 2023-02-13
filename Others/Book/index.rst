@@ -6,6 +6,7 @@ Book
    :maxdepth: 2
    :numbered: 4
 
+   TomatoTech.rst
    CleanArchiechture.rst
    MySQL.rst
    CoolShell.rst

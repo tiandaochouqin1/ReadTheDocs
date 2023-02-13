@@ -5,6 +5,8 @@ Accumulation
 .. toctree::
    :maxdepth: 2
 
+   Book/index
    LearningPlan.rst
    2022.rst
-   Book/index
+   DP.rst
+   
