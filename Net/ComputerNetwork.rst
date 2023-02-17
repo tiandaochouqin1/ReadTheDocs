@@ -7,6 +7,103 @@ Computer Network
 1. `Huawei Info+ - 报文格式查询 - Info Finder(企业网) - Huawei` <https://info.support.huawei.com/network/infofinder/openPacketFormatPage?domain=0&module=6&lang=zh>`__
 
 
+::
+
+	A. Ethernet II
+		
+		+----+----+------+------+-----+
+		| DA | SA | Type | Data | FCS |
+		+----+----+------+------+-----+
+	  
+		DA      Destination MAC Address (6 bytes)
+		SA      Source MAC Address      (6 bytes)
+		Type    Protocol Type           (2 bytes)
+		Data    Protocol Data           (46 - 1500 bytes)
+		FCS     Frame Checksum          (4 bytes)   
+
+
+
+
+
+   Ipv4
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |Version|  IHL  |Type of Service|          Total Length         |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |         Identification        |Flags|      Fragment Offset    |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |  Time to Live |    Protocol   |         Header Checksum       |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                       Source Address                          |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                    Destination Address                        |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                    Options                    |    Padding    |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+      Identification:  16 bits
+         An identifying value assigned by the sender to aid in assembling the
+         fragments of a datagram.
+
+      Flags:  3 bits
+         Bit 0: reserved, must be zero
+         Bit 1: (DF) 0 = May Fragment,  1 = Don't Fragment.
+         Bit 2: (MF) 0 = Last Fragment, 1 = More Fragments.
+
+      Fragment Offset:  13 bits
+         This field indicates where in the datagram this fragment belongs.
+      
+      Header Checksum: 校验伪首部
+
+
+   udp
+
+      0      7 8     15 16    23 24    31
+      +--------+--------+--------+--------+
+      |     Source      |   Destination   |
+      |      Port       |      Port       |
+      +--------+--------+--------+--------+
+      |                 |                 |
+      |     Length      |    Checksum     |
+      +--------+--------+--------+--------+
+      |
+      |          data octets ...
+      +---------------- ...
+
+         User Datagram Header Format
+
+
+   tcp
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |          Source Port          |       Destination Port        |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                        Sequence Number                        |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                    Acknowledgment Number                      |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |  Data |           |U|A|P|R|S|F|                               |
+      | Offset| Reserved  |R|C|S|S|Y|I|            Window             |
+      |       |           |G|K|H|T|N|N|                               |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |           Checksum            |         Urgent Pointer        |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                    Options                    |    Padding    |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |                             data                              |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   1. 序号：报文的首字节的字节流编号，初始为随机生成，两端各有一个。
+   2. 确认号：期望收到的下一字节的序号。
+   3. 接收窗口：指示接收方愿意接收的字节数量，用于流量控制。
+   4. 6比特标识字段：ACK、RST、SYN、FIN、PSH、URG。
+   5. tcp、udp的checksum校验首部+数据
+
+
 
 第一章 计算机网络和因特网
 =========================
