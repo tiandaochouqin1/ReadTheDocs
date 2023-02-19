@@ -226,6 +226,12 @@ rst语法
 
 **rst表格需要严格对齐，但是有中文时显示是不对齐的。**\ 在线生成：https://truben.no/table/
 
+markdown转rst表格:
+1. 只能使用pandoc转换
+2. 不好用  `在线表格转换工具 <https://tableconvert.com/zh-cn/markdown-to-restructuredtext>`__
+
+
+
 缩进
 ~~~~~
 ``Literal block expected; none found.restructuredtext``：各行缩进要统一（Tab/Space）。
