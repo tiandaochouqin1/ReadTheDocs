@@ -14,7 +14,7 @@ Fundamentals of Armv8
 
 1. ☆ 两百多页，先看完这个再说 arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
 
-   :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
+   :download:`ARMv8-A-Programmer-Guide </files/arm/ARMv8-A-Programmer-Guide.pdf>`
 
 2. ☆☆ 很好，部分收费 `[目录]-博客笔记导读目录(全部)_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/107037145>`__
     `付费专栏-付费课程-【购买须知】 - 非广告_代码改变世界ctw的博客-CSDN博客_csdn付费专栏  <https://blog.csdn.net/weixin_42135087/article/details/124890300>`__
@@ -34,7 +34,7 @@ To Learn
 
 Exception Level
 
-.. figure:: ../images/aarch64_exception_levels_2.png
+.. figure:: /images/aarch64_exception_levels_2.png
    :scale: 60%
 
    aarch64_exception_levels_2
@@ -60,7 +60,7 @@ Exception Level
 2. aarch32状态： A32指令集，32位，trusted OS在EL3。
 
 
-.. figure:: ../images/mov_betw_aarch64_aarch32.png
+.. figure:: /images/mov_betw_aarch64_aarch32.png
    :scale: 60%
 
    mov_betw_aarch64_aarch32
@@ -80,7 +80,7 @@ cache shareable domain
 
 ``Memory caching`` can be separately controlled through inner and outer attributes, for multiple levels of cache. 
 
-.. figure:: ../images/Cache_Sharable_Domain.png
+.. figure:: /images/Cache_Sharable_Domain.png
    :scale: 50%
    
    Cache_Sharable_Domain
@@ -142,11 +142,11 @@ MMU根据传入的虚拟地址来选择使用TTBR0还是TTBR1寄存器。
 
 2 stages
 ~~~~~~~~~~~
-.. figure:: ../images/Address_spaces_in_Armv8-A.jpg
+.. figure:: /images/Address_spaces_in_Armv8-A.jpg
    
    Address_spaces_in_Armv8-A
 
-.. figure:: ../images/va-to-ipa-to-pa-address-translation.jpg
+.. figure:: /images/va-to-ipa-to-pa-address-translation.jpg
    :scale: 60%
    
    va-to-ipa-to-pa-address-translation
@@ -235,7 +235,7 @@ armv8支持的memory types：Normal memory和Device memory
 
 
 
-.. figure:: ../images/Memory_Ordering_Arch.png
+.. figure:: /images/Memory_Ordering_Arch.png
    
    Memory_Ordering_Arch
 
@@ -350,7 +350,7 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 2. Load-Acquire：基本指令后面加上A；STLR
 
 
-.. figure:: ../images/LDAR_STLR.png
+.. figure:: /images/LDAR_STLR.png
    :scale: 60%
 
    LDAR_STLR
@@ -366,7 +366,7 @@ The Translation Lookaside Buffer (TLB) is a cache of recently accessed page tran
 
 The **hypervisor** must perform some extra translation steps in a two stage process to share the physical memory system between the different guest operating systems.
 
-.. figure:: ../images/two_stage_translation_process.png
+.. figure:: /images/two_stage_translation_process.png
    :scale: 60%
 
    two_stage_translation_process
@@ -376,11 +376,11 @@ SMMU
 --------
 1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
 2. `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
-3. :download:`smmu v3 <../files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
+3. :download:`smmu v3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
 
 SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
 
-.. figure:: ../images/smmu.png
+.. figure:: /images/smmu.png
    :scale: 60%
 
    System Memory Management Unit
@@ -392,7 +392,7 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
 
 因此，为了支持I/O透传机制中的DMA设备传输，而引入了IOMMU技术（ARM称作SMMU）。
 
-.. figure:: ../images/dma_smmu.png
+.. figure:: /images/dma_smmu.png
 
    虚拟化+DMA -> SMMU
 
@@ -442,7 +442,7 @@ Trusted Firmware-A implements various Arm interface standards, such as:
 A **System Control Processor (SCP)** is a processor-based capability that provides a flexible and extensible platform 
 for provision of **power management** functions and services. 
 
-.. figure:: ../images/ATF_Scp.png
+.. figure:: /images/ATF_Scp.png
    :scale: 60%
 
    ATF_Scp
@@ -451,13 +451,13 @@ for provision of **power management** functions and services.
 ATF冷启动
 -------------
 
-.. figure:: ../images/ATF_Boot.png
+.. figure:: /images/ATF_Boot.png
 
    ATF_Boot
 
 
 
-.. figure:: ../images/ATF_Cold_Boot.png
+.. figure:: /images/ATF_Cold_Boot.png
 
    ATF_Cold_Boot
 
@@ -590,6 +590,8 @@ irq domain 内部维护了一个 hwirq,可能会显示在 触发方式(Edge/Leve
 GIC v3
 --------
 1. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
+2. `Learn the architecture - Arm Generic Interrupt Controller v3 and v4` <https://developer.arm.com/documentation/198123/0302/Arm-GIC-fundamentals?lang=en>`__
+
 
 GICv3控制器组成和路由
 ~~~~~~~~~~~~~~~~~~~~~
@@ -597,14 +599,14 @@ GICv3控制器组成和路由
 1. distributor： SPI中断的管理，将中断发送给redistributor. (包括 enable/disable、priority、level/edge、group 等配置。distributor和redistributor功能实际很类似)
 2. redistributor： PPI，SGI，LPI中断的管理，将中断发送给cpu interface
 3. cpu interface： 传输中断给core
+4. ITS： Interrupt Translation Service, 用来解析LPI中断
 
-
-.. figure:: ../images/GIC_v3.png
+.. figure:: /images/GIC_v3.png
 
    GIC_v3
 
    
-.. figure:: ../images/GIC_v3_controller.png
+.. figure:: /images/GIC_v3_controller.png
 
    GIC_v3_controller
 
@@ -617,10 +619,13 @@ GICv3定义了以下中断类型：
       
    SPI (Shared Peripheral Interrupt)
    公用的外部设备中断，也定义为共享中断。可以多个Cpu或者说Core处理，不限定特定的Cpu。比如按键触发一个中断，手机触摸屏触发的中断。
+
    PPI (Private Peripheral Interrupt)
    私有外设中断。这是每个核心私有的中断。PPI会送达到指定的CPU上，应用场景有CPU本地时钟。
+
    SGI (Software Generated Interrupt)
    软件触发的中断。软件可以通过写GICD_SGIR寄存器来触发一个中断事件，一般用于核间通信。
+
    LPI (Locality-specific Peripheral Interrupt)
    LPI是GICv3中的新特性，它们在很多方面与其他类型的中断不同。LPI始终是基于消息的中断，它们的配置保存在表中而不是寄存器。比如PCIe的MSI/MSI-x中断。
 
@@ -634,16 +639,24 @@ GICv3定义了以下中断类型：
 5. 处理器接收该异常，并且软件处理该中断
 
 
-.. figure:: ../images/intr_state.png
+.. figure:: /images/intr_state.png
    :scale: 80%
 
    intr_state
 
 
+.. figure:: /images/Gic-600_interconnect.jpg
+   :scale: 80%
+
+   Gic-600_interconnect
+
+distributor也可不直接连接interconnnect或its。见  `Arm CoreLink GIC-600 Generic Interrupt Controller Technical Reference Manual r1p6` <https://developer.arm.com/documentation/100336/0106/introduction/components>`__
+
+
 ITS
 ~~~~~
 
-.. figure:: ../images/Gicv3_ITS.png
+.. figure:: /images/Gicv3_ITS.png
    :scale: 80%
 
    Gicv3_ITS
@@ -654,7 +667,7 @@ amba
 1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/What-is-AMBA--and-why-use-it-?lang=en>`__
 
 
-.. figure:: ../images/amba.png
+.. figure:: /images/amba.png
 
    amba
 
@@ -664,22 +677,22 @@ axi
 1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/AXI-protocol-overview?lang=en>`__
 
 
-.. figure:: ../images/axi_components.jpg
+.. figure:: /images/axi_components.jpg
    :scale: 80%
 
    axi_components
 
 
-.. figure:: ../images/axi_interconnect.jpg
+.. figure:: /images/axi_interconnect.jpg
 
    axi_interconnect
 
    
-.. figure:: ../images/axi_channels.jpg
+.. figure:: /images/axi_channels.jpg
 
    axi_channels
 
-.. figure:: ../images/axi_write_transaction.jpg
+.. figure:: /images/axi_write_transaction.jpg
    :scale: 50%
 
    axi_write_transaction
@@ -692,7 +705,7 @@ chi
 
 Coherent Hub Interface (CHI) is an evolution of the AXI Coherency Extensions (ACE) protocol. 
 
-.. figure:: ../images/chi_topologies.jpg
+.. figure:: /images/chi_topologies.jpg
    :scale: 80%
 
    chi_topologies
@@ -708,9 +721,17 @@ The Arm CoreLink CMN-600 Coherent Mesh Network is designed for intelligent conne
 
 AMBA 5 CHI
 
-.. figure:: ../images/corelink_cmn-600_scaleable_mesh_network.png
+.. figure:: /images/corelink_cmn-600_scaleable_mesh_network.png
    :scale: 25%
 
    cmn-600
+
+
+Cmn600节点：HN、RN、SN
+
+.. figure:: /images/CHI_Nodes.png
+   :scale: 70%
+
+   CHI_Nodes
 
 
