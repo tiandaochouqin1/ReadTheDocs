@@ -650,7 +650,7 @@ GICv3定义了以下中断类型：
 
    Gic-600_interconnect
 
-distributor也可不直接连接interconnnect或its。见  `Arm CoreLink GIC-600 Generic Interrupt Controller Technical Reference Manual r1p6` <https://developer.arm.com/documentation/100336/0106/introduction/components>`__
+distributor也可不直接连接interconnnect或its。见  `Arm CoreLink GIC-600 Generic Interrupt Controller Technical Reference Manual r1p6 <https://developer.arm.com/documentation/100336/0106/introduction/components>`__
 
 
 ITS
@@ -676,12 +676,18 @@ axi
 ------
 1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/AXI-protocol-overview?lang=en>`__
 
+Advanced eXtensible Interface
+
+
+axi定义了ip核的接口，而不是互联模块
 
 .. figure:: /images/axi_components.jpg
    :scale: 80%
 
    axi_components
 
+
+两种axi接口: manager和subordinate。所有互联均由这两个接口连接
 
 .. figure:: /images/axi_interconnect.jpg
 
@@ -692,24 +698,52 @@ axi
 
    axi_channels
 
+
+特点:
+
+1. 通道读写分离
+2. 支持多个未决地址(并行)
+3. 寻址和数据握作不需要严格
+4. 支持非对齐数据传输(transfer)
+5. 支持事务乱序(transaction)
+6. Burst transactions based on start address:
+
+
+1. A **transfer** is a single exchange of information, with one VALID and READY handshake.
+2. A **transaction** is an entire burst of transfers, containing an address transfer, one or more data transfers, and, for write sequences, a response transfer.
+
+
 .. figure:: /images/axi_write_transaction.jpg
    :scale: 50%
 
    axi_write_transaction
 
 
-
 chi
 ----
-`Learn the architecture - Introducing AMBA CHI  <https://developer.arm.com/documentation/102407/0100/Introduction-to-CHI?lang=en>`__
+1. `Learn the architecture - Introducing AMBA CHI  <https://developer.arm.com/documentation/102407/0100/Introduction-to-CHI?lang=en>`__
+2. `ARM系列 -- CHI（一）` <https://mp.weixin.qq.com/s/FAluxBZac4V1TNyWETdOHQ>`__
 
 Coherent Hub Interface (CHI) is an evolution of the AXI Coherency Extensions (ACE) protocol. 
+
+CHI接口和ACE、AXI完全不一样：
+
+- 独立分层实现：协议层、网络层、链路层
+- 基于包传输
+- CHI在写一次规定了各种transactioni；在网络层定义了packet；具体的信号在链路层
+
+.. figure:: /images/chi_protocol.png
+   :scale: 110%
+
+   chi_protocol
+
+
+三种拓扑：
 
 .. figure:: /images/chi_topologies.jpg
    :scale: 80%
 
    chi_topologies
-
 
 cmn-600
 ~~~~~~~~~~~~~
@@ -727,11 +761,44 @@ AMBA 5 CHI
    cmn-600
 
 
-Cmn600节点：HN、RN、SN
+- HN-主节点，处理request
+- RN-请求节点，产生request/transaction
+- SN-normal memory从节点，处理请求
+- XP:crosspoint，交换/路由模块
+
+
 
 .. figure:: /images/CHI_Nodes.png
-   :scale: 70%
+   :scale: 60%
 
    CHI_Nodes
 
+
+Generic Timer
+==================
+1. `Learn the architecture - Generic Timer` <https://developer.arm.com/documentation/102379/0101/What-is-the-Generic-Timer-?lang=en>`__
+
+
+generic timer属于核内部结构，rtc属于soc。
+
+定时器框架包括两部分：a system counter + a set of per-core timers
+
+1. system counter: 56-64 bitwidth,累加器，1G Hz，broadcast。软件可使用 system counter + timestamp 的值作为时间。
+2. timer：comparator比较器，与systemcounter 比较，达到设定的值时产生interrupts(非ipi)或events。
+
+
+.. figure:: /images/System-counter-block-diagram.png
+   :scale: 60%
+
+   System-counter-block-diagram
+
+
+CoreSight
+============
+1. `Learn the architecture - Introducing CoreSight debug and trace` <https://developer.arm.com/documentation/102520/latest/>`__
+2. `Learn the architecture - Debugger usage on Armv8-A` <https://developer.arm.com/documentation/102140/latest/>`__
+3. `Learn the architecture - AArch64 self-hosted debug` <https://developer.arm.com/documentation/102120/0100/Introduction-to-debug>`__
+
+external debug
+-------------------
 
