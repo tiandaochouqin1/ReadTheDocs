@@ -53,3 +53,20 @@ applet如何添加
     #include "libbb.h"
     #include <syslog.h>
     #include <sys/un.h>
+
+
+sshfs
+---------
+1. `Releases · libfuse/sshfs` <https://github.com/libfuse/sshfs/releases>`__  sshfs已于202205停止维护。 
+
+
+编译：<=3.20使用autotool,后续使用meson。依赖libfuse3。
+
+性能
+~~~~~~~~
+1. `NAS Performance: NFS vs. SMB vs. SSHFS | Jake’s Blog` <https://blog.ja-ke.tech/2019/08/27/nas-performance-sshfs-nfs-smb.html>`__
+
+sshfs基于ssh，默认aes加密。
+
+1. mixed read sshfs比nfs(plain)差38%；mixed write sshfs差11%;
+2. mixed read/write sshfs 比 nfs(aes)稍强;

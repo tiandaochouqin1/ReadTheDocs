@@ -78,6 +78,9 @@ ftrace
 `Part2 <https://lwn.net/Articles/366796/>`__ lwn的教程。
 
 5. `Linux使用 ftrace 来跟踪内核函数调用_SweeNeil的博客-CSDN博客  <https://blog.csdn.net/SweeNeil/article/details/90038286>`__
+6. `问题排查利器：Linux 原生跟踪工具 Ftrace 必知必会` <https://mp.weixin.qq.com/s/ZepMzfxJ0aESvXYWUuCTPg>`__
+7. `Ftrace function graph原理及性能瓶颈的分析` <https://mp.weixin.qq.com/s/LrRwjkyfO1fi56QgUNlGaQ>`__
+
 
 used for debugging or analyzing latencies and performance issues that take place outside of user-space.
 

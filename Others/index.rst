@@ -4,6 +4,7 @@ Accumulation
 
 .. toctree::
    :maxdepth: 2
+   :numbered: 4
 
    Book/index
    LearningPlan.rst
