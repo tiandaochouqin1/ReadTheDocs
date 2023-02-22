@@ -150,6 +150,8 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 _schedule上下文切换
 ~~~~~~~~~~~~~~~~~~~~
+.. important:: 上下文切换的具体过程？
+
 
 .. figure:: /images/context_switch.jpg
 
@@ -159,6 +161,10 @@ _schedule上下文切换
 中断为什么不能睡眠/调度
 ------------------------
 1. `为什么Linux不能在中断中睡眠 - schips - 博客园  <https://www.cnblogs.com/schips/p/why_isr_can_not_schedule_in_linux.html>`__
+
+.. important:: 中断为什么不能休眠？
+
+
 
 中断只能被其他中断中止、抢占，进程不能中止、抢占中断。
 

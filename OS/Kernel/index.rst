@@ -14,6 +14,7 @@ Linux内核专题。
    Preemption.rst
    Signal.rst
    Time_system.rst
+   Virtual_memory.rst
 
 
 

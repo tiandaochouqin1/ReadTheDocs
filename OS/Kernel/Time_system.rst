@@ -7,8 +7,11 @@
 4. `An overview on hardware clock and system timer circuits <https://access.redhat.com/solutions/18627>`__
 5. `Linux时间子系统之一：clock source（时钟源）_DroidPhone的博客-CSDN博客_clock source` <https://blog.csdn.net/DroidPhone/article/details/7975694>`__
 
+.. important:: RTC时钟和中断时钟在进程调度中的作用？vruntime更新使用哪个时间？ 
 
-概念：
+
+概念
+------
 
 1. clocksource: 查看当前时间。x86基本都是tsc。
 2. clockevents: 定时器，在特定时间点触发事件。hpet、pic、apci_pm都有，这几个精度差别在一个数量级内。
