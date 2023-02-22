@@ -20,7 +20,7 @@ References
 基本语法
 ========
 
-.. figure:: ../images/regex.png
+.. figure:: /images/regex.png
    :alt: Regex
 
    Regex
@@ -211,7 +211,7 @@ Deterministic finite automata, DFA
 `Regex 正则表达式与
 DFA <http://houbb.github.io/2020/01/07/regex-and-dfa#>`__\ 这一系列文章对FA算法原理研究比较深。
 
-.. figure:: ../images/FiniteAutomation.png
+.. figure:: /images/FiniteAutomation.png
    :alt: FiniteAutomation
 
    FiniteAutomation
@@ -241,9 +241,9 @@ RegexBuddy分析与调试
 正则表达式学习、分析及调试工具。支持 C++、Java、JavaScript、Python
 等十几种主流编程语言。通过 RegexBuddy，能看到正则一步步执行匹配的过程。
 
-:download:`RegexBuddy.4.10.rar <../files/RegexBuddy.4.10.rar>`
+:download:`RegexBuddy.4.10.rar </files/RegexBuddy.4.10.rar>`
 
-.. figure:: ../images/RegexBuddy.jpg
+.. figure:: /images/RegexBuddy.jpg
    :alt: RegexBuddy
 
    RegexBuddy
@@ -278,7 +278,7 @@ RegexBuddy分析与调试
    grep -P 'ftp|http|https' b.txt #PCRE
 
 
-.. figure:: ../images/regex_comparation.png
+.. figure:: /images/regex_comparation.png
 
    PCRE、GNU BRE、GNU ERE 对比
 

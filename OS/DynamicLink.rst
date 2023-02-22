@@ -268,7 +268,7 @@ _dl_runtime_resolve
 5. `深入了解GOT,PLT和动态链接 <https://evilpan.com/2018/04/09/about-got-plt/#return-to-dlresolve>`__
 
 
-.. figure:: ../images/dl_runtime_resolve.png
+.. figure:: /images/dl_runtime_resolve.png
    :scale: 50%
    
    .rel.plt->.dynsym/.syntab->.dynstr

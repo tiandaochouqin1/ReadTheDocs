@@ -32,7 +32,7 @@ LearningPlan
 1. `Linux工具快速教程 <https://github.com/me115/linuxtools_rst>`__ 
 2. `网络基本功 <https://www.bookstack.cn/read/network-basic/0.md>`__ ;
    `原帖(排版较差) <https://www.dell.com/community/%E7%BB%BC%E5%90%88%E8%AE%A8%E8%AE%BA%E5%8C%BA/%E7%BD%91%E7%BB%9C%E5%9F%BA%E6%9C%AC%E5%8A%9F%E7%B3%BB%E5%88%97-%E7%BB%86%E8%AF%B4%E7%BD%91%E7%BB%9C%E9%82%A3%E4%BA%9B%E4%BA%8B%E5%84%BF-3%E6%9C%8826%E6%97%A5%E6%9B%B4%E6%96%B0/m-p/7045185>`_;
-   :download:`网络基本功 <../files/NetworkBasics.pdf>`
+   :download:`网络基本功 </files/NetworkBasics.pdf>`
 3. `linux-inside <https://0xax.gitbooks.io/linux-insides/content/>`__ or 
    `linux-inside-zh <https://github.com/MintCN/linux-insides-zh>`__
 4. https://blog.csdn.net/dog250 ,网络、TCP
@@ -53,7 +53,7 @@ LearningPlan
 嵌入式
 ------
 
-.. figure:: ../images/emmbed.jpg
+.. figure:: /images/emmbed.jpg
    :alt: 嵌入式学习
 
    嵌入式学习
@@ -86,7 +86,7 @@ tk模型
 托马斯——齐曼（TK）模型
 
 
-.. figure:: ../images/tk_model.jpg
+.. figure:: /images/tk_model.jpg
    :scale: 100%
 
    tk_model
@@ -103,7 +103,7 @@ tk模型
 `自学计算机科学 <https://github.com/keithnull/TeachYourselfCS-CN/blob/master/TeachYourselfCS-CN.md>`__\ ：
 列出了9门科目并分析了一些学习方法，其中 `CSAPP和DDIA` 回报率最高。
 
-:download:`csapp 英文版 <../books/Computer-Systems-A-Programmers-Perspective-3rd.pdf>` 
+:download:`csapp 英文版 </books/Computer-Systems-A-Programmers-Perspective-3rd.pdf>` 
 
 
 中文版pdf：https://github.com/bumzy/book  
@@ -216,7 +216,7 @@ tk模型
 6. Effective c++
 7. 计算机软件的构造与解释
 
-8. 架构整洁之道。  :download:`Clean Architecture <../files/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
+8. 架构整洁之道。  :download:`Clean Architecture </files/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
 
 
 编程实践
@@ -248,21 +248,21 @@ Linux内核
 -  30天自制操作系统:动手实践
 -  专栏-趣谈Linux操作系统。基础理论
 
-.. figure:: ../images/LinuxPath.jpg
+.. figure:: /images/LinuxPath.jpg
    :alt: 嵌入式学习
 
 Linux编程
 ------------
-1. Unix环境高级编程 :download:`UNIX环境高级编程 第三版 <../books/UNIX环境高级编程 第三版.pdf>`  :download:`apue <../books/APUE-3rd.pdf>`  
+1. Unix环境高级编程 :download:`UNIX环境高级编程 第三版 </books/UNIX环境高级编程 第三版.pdf>`  :download:`apue </books/APUE-3rd.pdf>`  
 2. Linux/UNIX系统编程手册
-   :download:`TLPI <../books/The Linux Programming Interface.pdf>` 
+   :download:`TLPI </books/The Linux Programming Interface.pdf>` 
    
-   :download:`Linux-UNIX系统编程手册（上、下册）.pdf <../books/Linux-UNIX系统编程手册（上、下册）.pdf>` 
+   :download:`Linux-UNIX系统编程手册（上、下册）.pdf </books/Linux-UNIX系统编程手册（上、下册）.pdf>` 
 
-   :download:`Linux-UNIX系统编程手册_上册 <../books/Linux-UNIX系统编程手册_上册.pdf>` 
-   :download:`Linux-UNIX系统编程手册_下册 <../books/Linux-UNIX系统编程手册_下册.pdf>`
+   :download:`Linux-UNIX系统编程手册_上册 </books/Linux-UNIX系统编程手册_上册.pdf>` 
+   :download:`Linux-UNIX系统编程手册_下册 </books/Linux-UNIX系统编程手册_下册.pdf>`
 
-3. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) <../books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
+3. :download:`Linux环境编程：从应用到内核 (Linux-Unix技术丛书) </books/Linux环境编程：从应用到内核 (Linux-Unix技术丛书).pdf>` 
 4. Unix网络编程
 
 
@@ -272,7 +272,7 @@ Linux编程
 
 1. BPF Performance Tools，
 2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
-3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
+3. :download:`Linux Performance Tools (Velocity 2015) </files/Velocity2015_LinuxPerfTools.pdf>`
    `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
 
 `作者主页 <http://www.brendangregg.com/linuxperf.html>`__
@@ -281,7 +281,7 @@ Linux编程
 
 5. https://lrita.github.io/wiki/books/
 
-.. figure:: ../images/linux_observability_tools.png
+.. figure:: /images/linux_observability_tools.png
 
    linux_observability_tools
 

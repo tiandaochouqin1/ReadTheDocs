@@ -23,7 +23,7 @@ Tutor&CheetSheet
 1. `CheetSheet <https://vim.rtorr.com/lang/zh_cn>`__
 2. vimtutor 进入教程
 
-.. figure:: ../images/vim_cheetsheet.png
+.. figure:: /images/vim_cheetsheet.png
 
             vim_cheetsheet
 
@@ -392,7 +392,7 @@ doxygen和graphviz ?
 
 calltree
 ~~~~~~~~~~~~
-:download:`calltree-2.3.tar.bz2 <../files/calltree-2.3.tar.bz2>` 
+:download:`calltree-2.3.tar.bz2 </files/calltree-2.3.tar.bz2>` 
 
 
 2004年的软件,需要 `修改编译选项 <https://www.jianshu.com/p/da5086f9f91d>`__ 。

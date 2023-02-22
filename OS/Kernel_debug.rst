@@ -663,7 +663,7 @@ sudo执行。-p pid
 
 
 
-.. figure:: ../images/perf_events_map.png
+.. figure:: /images/perf_events_map.png
 
    
 
@@ -720,7 +720,7 @@ R状态死锁-softlockup和hardlockup
 - hardlockup:HARDLOCKUP_DETECTOR需要nmi中断的支持。10s
 
 
-.. figure:: ../images/lockup_detector.jpg
+.. figure:: /images/lockup_detector.jpg
    :scale: 80%
 
    lockup_detector

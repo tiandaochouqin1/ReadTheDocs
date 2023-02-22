@@ -271,7 +271,7 @@ semphore
    };
 
 
-.. figure:: ../images/semaphore.png
+.. figure:: /images/semaphore.png
 
    semaphore
 
@@ -419,7 +419,7 @@ RCU, Read-Copy-Update，是Linux内核中的一种同步机制。
 
 RCU常被描述为读写锁的替代品，特点是 **读者并不需要直接与写者进行同步**，读写能并发的执行。最大程度来减少 ``读者`` 侧的开销.
 
-.. figure:: ../images/rcu.png
+.. figure:: /images/rcu.png
 
 
 volatile与sequence point
@@ -472,7 +472,7 @@ asm volatile("" ::: "memory");
 
 
 
-.. figure:: ../images/SignalHandler.png
+.. figure:: /images/SignalHandler.png
 
    信号处理器
 

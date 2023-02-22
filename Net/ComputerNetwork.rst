@@ -577,12 +577,12 @@ TCP拥塞控制
 
 超时丢包：
 
-.. figure:: ../images/tcp_cwnd1.png
+.. figure:: /images/tcp_cwnd1.png
 
 
 快速重传：
 
-.. figure:: ../images/tcp_cwnd2.png
+.. figure:: /images/tcp_cwnd2.png
 
 
 拥塞控制原理
@@ -600,7 +600,7 @@ RTT(Round Trip Time)：一个连接的往返时间，即数据发送时刻到接
 
 MTU和MSS
 ~~~~~~~~~~~
-.. figure:: ../images/MTU_MSS.png
+.. figure:: /images/MTU_MSS.png
 
 
 - MTU（Maximum Transmission Unit）：最大传输单元，MSS+头部40字节=1500字节。MTU的限制来源于NIC，而IP层进行分片动作。 
@@ -1080,7 +1080,7 @@ SNMP代理向管理服务器发送一种陷阱报文以通知一种异常情况�
 链路层帧格式
 --------------
 
-.. figure:: ../images/EthernetFormat.png
+.. figure:: /images/EthernetFormat.png
 
 
 ::
@@ -1138,7 +1138,7 @@ MAC地址包含两部分：前24比特是组织唯一标识符（OUI，Organizat
 
 mac地址
 
-.. figure:: ../images/mac_addr.png
+.. figure:: /images/mac_addr.png
 
     mac_addr
 
@@ -1150,7 +1150,7 @@ The second bit ：0表示全球唯一地址，1表示本地唯一地址。
 ~~~~~~~~~~~~~~~~~~~~~~~
 组播：
 
-.. figure:: ../images/multicast_mac_ip.png
+.. figure:: /images/multicast_mac_ip.png
 
     multicast_mac_ip
 
@@ -1202,7 +1202,7 @@ Error-Correcting Code.
 4. 若所有bit校验正确，则只能确定除bit0外数据均正确，此时无法确定bit0是否错误，因此bit0不用于存放有效数据，而是作为数据整体的奇偶校验位，并能够判断是否出现了2个错误(bit0校验通过，而剩余n bit中有一个校验失败)。
 
 
-.. figure:: ../images/HammingCode.png
+.. figure:: /images/HammingCode.png
 
    HammingCode两种理解角度: 奇偶和异或
 
@@ -1580,11 +1580,11 @@ Wireshark LAB
 OpenFlow协议
 ============
 
-.. figure:: ../images/traditional_switch.png
+.. figure:: /images/traditional_switch.png
 
 traditional_switch
 
-.. figure:: ../images/open_flow.png
+.. figure:: /images/open_flow.png
 
            OpenFlow
 

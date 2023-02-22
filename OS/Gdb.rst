@@ -12,7 +12,7 @@ GDB
 2. `100个gdb小技巧 <https://wizardforcel.gitbooks.io/100-gdb-tips>`__
 3. `GDB调试入门指南 <https://zhuanlan.zhihu.com/p/74897601>`__
 4. `GDB中应该知道的几个调试方法 | 酷 壳 - CoolShell  <https://coolshell.cn/articles/3643.html>`__
-5. :download:`gdb_slides <../files/gdb_slides.pdf>`
+5. :download:`gdb_slides </files/gdb_slides.pdf>`
 6. `GDB配置与.gdbinit的编写 <https://blog.csdn.net/hexrain/article/details/12429267>`__
 
 基本命令

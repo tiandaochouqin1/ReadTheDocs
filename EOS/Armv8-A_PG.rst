@@ -101,14 +101,10 @@ MESI cache一致性协议
 
 
 
-Arm address space
--------------------
-1. `(Address-spaces) Learn the architecture: AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/Address-spaces?lang=en>`__
-2. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
-
 Memory Layout
-~~~~~~~~~~~~~~~~~
+----------------
 1. `Memory Layout on AArch64 Linux — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/arm64/memory.html>`__
+2. `(Address-spaces) Learn the architecture: AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/Address-spaces?lang=en>`__
 
 
 arm64上linux进程用户地址空间和内核地址空间都是256TB.
@@ -139,31 +135,6 @@ MMU根据传入的虚拟地址来选择使用TTBR0还是TTBR1寄存器。
     fffffbffff800000      fffffbffffffffff           8MB          [guard region]
     fffffc0000000000      fffffdffffffffff           2TB          vmemmap
     fffffe0000000000      ffffffffffffffff           2TB          [guard region]
-
-2 stages
-~~~~~~~~~~~
-.. figure:: /images/Address_spaces_in_Armv8-A.jpg
-   
-   Address_spaces_in_Armv8-A
-
-.. figure:: /images/va-to-ipa-to-pa-address-translation.jpg
-   :scale: 60%
-   
-   va-to-ipa-to-pa-address-translation
-
-
-1. Stage 1 translation: OS，通过traslation table将虚拟地址空间转换为IPA(Intermediate Physical Address Space)。
-2. Stage 2 translation: hyperviosr控制对应vm级别可使用的内存。ensure that a VM can only see the resources that are allocated to it
-
-vmid和ASID
-~~~~~~~~~~~~~~~
-VMID与VM关联，ASID与Appliation关联。
-
-TLB entries can also be tagged with an Address Space Identifier (ASID). 
-An application is assigned an ASID by the OS, and all the TLB entries in that application are tagged with that ASID.
-
-Each VM is assigned a virtual machine identifier (VMID). 
-The VMID is used to tag translation lookaside buffer (TLB) entries, to identify which VM each entry belongs to. 
 
 
 Memory Order & Barrier
@@ -355,10 +326,15 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 
    LDAR_STLR
 
+
+MMU核SMMU
+============
+
 arm mmu
 ------------------
 1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
 2. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
+3. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
 
 enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
 
@@ -370,6 +346,33 @@ The **hypervisor** must perform some extra translation steps in a two stage proc
    :scale: 60%
 
    two_stage_translation_process
+
+
+
+2 stages
+~~~~~~~~~~~
+.. figure:: /images/Address_spaces_in_Armv8-A.jpg
+   
+   Address_spaces_in_Armv8-A
+
+.. figure:: /images/va-to-ipa-to-pa-address-translation.jpg
+   :scale: 60%
+   
+   va-to-ipa-to-pa-address-translation
+
+
+1. Stage 1 translation: OS，通过traslation table将虚拟地址空间转换为IPA(Intermediate Physical Address Space)。
+2. Stage 2 translation: hyperviosr控制对应vm级别可使用的内存。ensure that a VM can only see the resources that are allocated to it
+
+vmid和ASID
+~~~~~~~~~~~~~~~
+VMID与VM关联，ASID与Appliation关联。
+
+TLB entries can also be tagged with an Address Space Identifier (ASID). 
+An application is assigned an ASID by the OS, and all the TLB entries in that application are tagged with that ASID.
+
+Each VM is assigned a virtual machine identifier (VMID). 
+The VMID is used to tag translation lookaside buffer (TLB) entries, to identify which VM each entry belongs to. 
 
 
 SMMU

@@ -144,7 +144,7 @@ POSIX与System V IPC
 
 三种类别：通信、同步、信号。
 
-.. figure:: ../images/SystemV_IPC.png
+.. figure:: /images/SystemV_IPC.png
    :scale: 70%
 
    IPC

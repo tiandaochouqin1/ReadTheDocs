@@ -5,9 +5,9 @@
 
 参考文档
 ===========
-1. :download:`IEEE802.3-2018 <../files/8023/IEEE802.3-2018.rar>`
+1. :download:`IEEE802.3-2018 </files/8023/IEEE802.3-2018.rar>`
 2. xlinx的手册
-3. 以太网权威指南(第二版)/ :download:`Ethernet: The Definitive Guide 2nd <../books/Ethernet The Definitive Guide, 2nd Edition.pdf>`
+3. 以太网权威指南(第二版)/ :download:`Ethernet: The Definitive Guide 2nd </books/Ethernet The Definitive Guide, 2nd Edition.pdf>`
 
 LLC子层的服务与服务在IEEE 802.2 LAN协议中有所定义，MAC层的主要功能作用则在IEEE 802.3中定义，并采用CSMA/CD访问控制方式.
 
@@ -233,7 +233,7 @@ FLP
 33个脉冲位置，其中17个奇数位置固定为时钟脉冲，16个偶数位置为可能的数据脉冲(有脉冲代表1，无代表0)，从而能表示16bit的协商base page。
 
 
-.. figure:: ../images/FLP_Burst.png
+.. figure:: /images/FLP_Burst.png
 
    FLP脉冲时间
 
@@ -248,7 +248,7 @@ Clause 37: 1000base-x
 4. http://xilinx.eetrend.com/content/2020/100049032.html
 5. https://www.cnblogs.com/justin-y-lin/p/12144713.html
 6. `Clause_37_Auto-Negotiation <https://www.iol.unh.edu/sites/default/files/knowledgebase/ge/Clause_37_Auto-Negotiation.pdf>`__
-   :download:`Clause_37_Auto-Negotiation.pdf <../files/Clause_37_Auto-Negotiation.pdf>`
+   :download:`Clause_37_Auto-Negotiation.pdf </files/Clause_37_Auto-Negotiation.pdf>`
 
 
 PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。1000base-t在clause40，使用了next page。
@@ -260,7 +260,7 @@ PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。100
 状态机
 ~~~~~~~~~~
 
-.. figure:: ../images/AN_state_diagram.jpg
+.. figure:: /images/AN_state_diagram.jpg
 
 1. 配置adv_ability，使能an，会等待link_time;
 2. adv_ability会赋值给tx_config_Reg(ack bit=0)并发送（C码）；
@@ -286,7 +286,7 @@ PHY寄存器在IEEE802.3标准的 22.2.4 Management functions 节有介绍。100
 sgmii an
 ---------------
 
-1. :download:`Serial-GMII Specification <../files/8023/SGMII.pdf>`
+1. :download:`Serial-GMII Specification </files/8023/SGMII.pdf>`
 
 This is achieved by using the Auto-Negotiation
 functionality defined in Clause 37 of the IEEE Specification 802.3z. 
@@ -300,7 +300,7 @@ MAC acknowledges the update of the control information by asserting bit 14 of it
 tx_config_reg{15:0] as specified in Table 1.
 
 
-.. figure:: ../images/Sgmii.png
+.. figure:: /images/Sgmii.png
 
    sgmii接口：PHY和MAC
 
@@ -312,7 +312,7 @@ tx_config_reg{15:0] as specified in Table 1.
 2. `从物理层到应用层，车载以太网协议簇泛读 <https://www.ednchina.com/technews/12860.html>`__
 
 
-.. figure:: ../images/ethernet_bus.jpg
+.. figure:: /images/ethernet_bus.jpg
 
    车载以太网架构
 

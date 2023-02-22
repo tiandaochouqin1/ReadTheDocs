@@ -579,9 +579,9 @@ github图床
 
    ::
 
-      ![](../images/boot.jpg)
+      ![](/images/boot.jpg)
       或
-      <img  src="../images/boot.jpg" alt=" "width=900   align=center>
+      <img  src="/images/boot.jpg" alt=" "width=900   align=center>
 
    也可放置其它较小的附件等。
 

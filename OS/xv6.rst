@@ -37,7 +37,7 @@ xv6的主要特征：
 
 LAB1
 ===========
-:download:`xv6 code-lab1 <../files/xv6.zip>`
+:download:`xv6 code-lab1 </files/xv6.zip>`
    
 1. `80386 Programmer's Reference Manual <https://pdos.csail.mit.edu/6.828/2018/readings/i386/toc.htm>`__
 2. PC Assembly Language 

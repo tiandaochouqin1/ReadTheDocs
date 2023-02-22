@@ -12,7 +12,7 @@ Performance
 
 1. BPF Performance Tools，
 2. Systems Performance ——《性能之巅：洞悉系统、企业与云计算》
-3. :download:`Linux Performance Tools (Velocity 2015) <../files/Velocity2015_LinuxPerfTools.pdf>`
+3. :download:`Linux Performance Tools (Velocity 2015) </files/Velocity2015_LinuxPerfTools.pdf>`
    `video <https://www.youtube.com/watch?v=FJW8nGV4jxY&list=PLhhdIMVi0o5RNrf8E2dUijvGpqKLB9TCR>`__
 
 
@@ -21,7 +21,7 @@ Performance
 
 1. `brendangregg <http://www.brendangregg.com/linuxperf.html>`__
 
-.. figure:: ../images/linux_observability_tools.png
+.. figure:: /images/linux_observability_tools.png
 
    linux_observability_tools
 
@@ -88,7 +88,7 @@ NAPI
 `Linux NAPI机制分析 <https://www.codenong.com/cs106952430/>`__
 
 
-.. figure:: ../images/NAPI.png
+.. figure:: /images/NAPI.png
 
    NAPI机制
 

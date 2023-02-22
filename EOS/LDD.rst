@@ -32,7 +32,7 @@ driver & device注册过程
 
 kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一个ktype关联(定义了默认的特性/属性)。
 
-.. figure:: ../images/bus_device_drive.png
+.. figure:: /images/bus_device_drive.png
    :scale: 70 %
 
    bus_device_drive
@@ -228,7 +228,7 @@ pci总线地址空间
 1. x86 CPU可以直接访问memory空间和I/O空间，而配置空间则不能直接访问；
 2. 配置空间中有个寄存器：Base Address Register，也就是BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间，这个空间就是BAR空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
 
-.. figure:: ../images/PCIE_reg_conf.png
+.. figure:: /images/PCIE_reg_conf.png
    :scale: 50 %
    :alt: alternate text
 
@@ -237,7 +237,7 @@ pci总线地址空间
 假设某个设备要对另一个设备进行读取数据的操作，首先这个设备（称之为Requester）需要向另一个设备发送一个Request，
 然后另一个设备（称之为Completer）通过Completion Packet返回数据或者错误信息。
 
-.. figure:: ../images/PCIE_tlp.png
+.. figure:: /images/PCIE_tlp.png
    :scale: 70 %
 
    PCIE_tlp
@@ -250,7 +250,7 @@ PCIE架构和分层
 
 pcie架构
 ~~~~~~~~~~~~~~
-.. figure:: ../images/PCIE_structure.png
+.. figure:: /images/PCIE_structure.png
    :scale: 70 %
 
    PCIE_structure
@@ -265,7 +265,7 @@ pcie分层
 1. 与PCI总线不同（PCI设备共享总线），PCIe总线使用端到端的连接方式，互为接收端和发送端，全双工，基于数据包的传输；
 2. 物理底层采用差分信号（PCI链路采用并行总线，而PCIe链路采用串行总线），一条Lane中有两组差分信号，共四根信号线，而PCIe Link可以由多条Lane组成(1/2/4/8/12/16/32)；
 
-.. figure:: ../images/PCIE_layer.png
+.. figure:: /images/PCIE_layer.png
 
    PCIE_layer
 
@@ -498,7 +498,7 @@ read或write的数据都要被内核缓冲.
 Macvlan
 --------
 
-.. figure:: ../images/macvlan.jpg
+.. figure:: /images/macvlan.jpg
    :scale: 70%
 
    macvlan

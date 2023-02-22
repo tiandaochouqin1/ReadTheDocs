@@ -11,7 +11,7 @@ arm汇编
 aarch64状态
 ------------
 
-1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly <../files/arm/syshella_arm-assembly.pdf>`
+1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly </files/arm/syshella_arm-assembly.pdf>`
 2. ☆ 栈回溯 `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
 3. ☆指令大全 `ARMv8 A64 Quick Reference <https://courses.cs.washington.edu/courses/cse469/19wi/arm64.pdf>`__
 4. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
@@ -55,7 +55,7 @@ arm64常用寄存器
 -----------------
 > 9.1.1 Parameters in general-purpose registers
   arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
-  :download:`ARMv8-A-Programmer-Guide <../files/arm/ARMv8-A-Programmer-Guide.pdf>`
+  :download:`ARMv8-A-Programmer-Guide </files/arm/ARMv8-A-Programmer-Guide.pdf>`
 
 1. x0–x7: function arguments, ``scratch`` (x0 is also function return value)
 2. x8–x18: ``scratch`` (x8 is syscall number, x16–x18 sometimes reserved)
@@ -69,7 +69,7 @@ arm64常用寄存器
    W   hen used as the zero register, you refer to it as WZR in a 32-bit context or XZR in a 64-bit context.
 
 
-.. figure:: ../images/abi_general_purpose_registers.png
+.. figure:: /images/abi_general_purpose_registers.png
       :alt: abi_general_purpose_registers
 
 
@@ -101,7 +101,7 @@ arm32汇编和寄存器
 
 
 
-.. figure:: ../images/arm_asm.png
+.. figure:: /images/arm_asm.png
       :alt: asm cheetsheet
 
 

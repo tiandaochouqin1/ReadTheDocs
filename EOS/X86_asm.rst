@@ -21,7 +21,7 @@ x86 Assembly
 6. `Intel格式和AT&T格式汇编区别 <https://www.cnblogs.com/hdk1993/p/4820353.html>`__
 
 
-.. figure:: ../images/x86-registers.png
+.. figure:: /images/x86-registers.png
    :scale: 70%
 
    Registers
@@ -52,7 +52,7 @@ calling convention
    registers (rAX, rCX, rDX) 的值需要保存到栈。
 5. Integers返回到rax or rdx:rax,浮点值返回到xmm0 or xmm1:xmm0.
 
-.. figure:: ../images/stack-convention.png
+.. figure:: /images/stack-convention.png
    :alt: 栈帧
 
    栈帧
@@ -92,7 +92,7 @@ x86简介
 1. `64位汇编参数传递 - kk Blog —— 通用基础  <https://abcdxyzk.github.io/blog/2012/11/23/assembly-args/>`__
 
 
-.. figure:: ../images/x86_64_regs.png
+.. figure:: /images/x86_64_regs.png
    :alt: x86_64_regs
 
    x86_64_regs
@@ -224,7 +224,7 @@ C 和 C++
 语言层次
 --------
 
-.. figure:: ../images/VmLayers.jpg
+.. figure:: /images/VmLayers.jpg
    :alt: 虚拟机层次结构
 
 
@@ -241,7 +241,7 @@ C 和 C++
    C++
    编译器生成的列表文件输出，就可以看到这样的翻译。汇编语言代码由编译器自动汇编为机器语言。
 
-.. figure:: ../images/ASCII.png
+.. figure:: /images/ASCII.png
    :alt: ASCII表
 
    ASCII表
@@ -252,7 +252,7 @@ x86架构
 基本微机设计
 ~~~~~~~~~~~~
 
-.. figure:: ../images/BasicComputerStruct.jpg
+.. figure:: /images/BasicComputerStruct.jpg
    :alt: 基本微机设计
 
    基本微机设计
@@ -271,7 +271,7 @@ x86架构
 
 执行一条机器指令至少需要一个时钟周期；由于CPU、系统总线和内存电路之间存在差异，访问内存的指令常常需要空时钟周期(等待状态)。
 
-.. figure:: ../images/CpuInstructionExcution.jpg
+.. figure:: /images/CpuInstructionExcution.jpg
    :alt: CPU指令执行周期
 
    CPU指令执行周期
@@ -736,11 +736,11 @@ IA
 =====
 1. Intel® 64 and IA-32 Architectures Software Developer’s Manual 
    
-   :download:`SDM Volume2_Instruction <../files/SDM_Vol2_Instruction.pdf>` 
+   :download:`SDM Volume2_Instruction </files/SDM_Vol2_Instruction.pdf>` 
 
-   :download:`Sdm Volume3a system program guide part1 <../files/SDM_Vol3a_SPG_p1.pdf>` 
+   :download:`Sdm Volume3a system program guide part1 </files/SDM_Vol3a_SPG_p1.pdf>` 
 
-2. :download:`SDM all in one <../files/SDM_Combined.pdf>` ; `intel sdm <https://software.intel.com/content/www/cn/zh/develop/articles/intel-sdm.html>`__
+2. :download:`SDM all in one </files/SDM_Combined.pdf>` ; `intel sdm <https://software.intel.com/content/www/cn/zh/develop/articles/intel-sdm.html>`__
 3. `IA64 opcode速查 <http://ref.x86asm.net/coder64.html>`__
 
 
@@ -754,7 +754,7 @@ opcode
 1. 格式： V2 2.1
 2. 汇编指令形式： V2 3.1.1.1 ，比如opcode尾部是否包含3bits reg 等。
 
-.. figure:: ../images/opcode_x86.png
+.. figure:: /images/opcode_x86.png
 
 
 ModR/M & SIB

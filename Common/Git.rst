@@ -22,7 +22,7 @@ Git
 三个区域
 --------
 
-.. figure:: ../images/reset_workflow.png
+.. figure:: /images/reset_workflow.png
    :scale: 70%
    :alt: workflow
 
@@ -71,19 +71,19 @@ stash             stash 区
 基本命令图解
 ------------
 
-.. figure:: ../images/git_basic.jpg
+.. figure:: /images/git_basic.jpg
    :alt: git_basic
 
    git_basic
 
-.. .. figure:: ../images/Git.jpg
+.. .. figure:: /images/Git.jpg
 ..    :alt: git_basic2
 
 ..    git_basic2
 
 git技术栈。阅读方向：右上 -> 右下 -> 左下 -> 左上
 
-.. figure:: ../images/git.png
+.. figure:: /images/git.png
    :scale: 80%
    :alt: git_stack
 

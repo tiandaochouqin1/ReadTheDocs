@@ -7,7 +7,7 @@ DynamicProgramming
 
 
 `动态规划 <http://cppblog.com/menjitianya/archive/2015/10/23/212084.html>`__
-:download:`PDF版 <../files/DynamicProgramming.pdf>`
+:download:`PDF版 </files/DynamicProgramming.pdf>`
 
 概念
 =====
