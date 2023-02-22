@@ -15,6 +15,8 @@ Linux内核专题。
    Signal.rst
    Time_system.rst
    Virtual_memory.rst
+   Kernel_compilation.rst
+   Kernel_debug.rst
 
 
 

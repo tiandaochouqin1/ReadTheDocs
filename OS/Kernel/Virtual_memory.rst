@@ -15,6 +15,8 @@ Linux采用伙伴系统解决外部碎片的问题，采用slab解决内部碎�
 1. `Linux内核缺页中断处理 - 知乎  <https://zhuanlan.zhihu.com/p/488042885>`__
 2. `Linux虚拟内存和缺页中断  <https://cloud.tencent.com/developer/article/1688625>`__
 
+.. Note:: 所有物理页都是缺页换进来的。包括 .text、.data等
+
 
 缺页本身是一种中断，与一般的中断处理步骤相同
 
@@ -218,4 +220,9 @@ kmalloc建立而在slab层之上，对应一组高速缓存组。slab状态：�
 
 slub cache
 ---------------
-`图解slub  <http://www.wowotech.net/memory_management/426.html>`__
+1. ☆ `图解slub  <http://www.wowotech.net/memory_management/426.html>`__
+2. `linux 内核 内存管理 slub算法 （一） 原理_lukuen的博客-CSDN博客_linux slub  <https://blog.csdn.net/lukuen/article/details/6935068>`__
+
+slub系统运行在伙伴系统之上，为内核提供小内存管理的功能。
+
+slub把内存分组管理kmalloc_caches，每个组分别包含2^3、2^4、...2^11个字节
