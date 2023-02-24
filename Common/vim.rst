@@ -918,12 +918,40 @@ https://github.com/jarun/nnn
 
 问题
 =========
-E212
--------
-E212：无法打开并写入文件 的错误提示。
+E212无sudo权限
+----------------
+`vim切换权限用root保存文件 | crackfree  <https://crackfree.github.io/2016/05/15/vim-save-root-file-with-non-root-user/>`__
+
+
+
+
+E212：无法打开并写入文件 的错误提示。两个方法：
 
 1. 保存到临时文件 ``:wq ! ~/tmp`` ，更改属主后覆盖原文件。
 2. sudo保存 ``: w ! sudo tee %``。
+
+::
+
+
+        :w !sudo tee %
+        或
+        :w !sudo sh -c "cat > %"
+
+        命令详解：
+
+        w: 将所有行输出
+        !:vim里执行命令
+        sudo：切换成root执行
+        tee：重定向输出多个文件
+        %：vim里表示当前文件
+        
+        可以添加下面其中一条到/etc/vim/vimrc ，之后vim里直接用w!!即可切换成root保存了
+        cmap w!! w !sudo tee > /dev/null %
+        或
+        cmap w!! w !sudo sh -c "cat > %"
+        或
+        command -nargs=? w!! :w !sudo tee %
+
 
 Shell Pattern Matching
 ===========================
