@@ -6,6 +6,31 @@ cjson
 --------
 待总结。
 
+cjson实际为 词法分析器+语法分析器+语义分析器
+
+编译器
+~~~~~~~
+1. `编译原理一：想初步了解编译原理？看这篇文章就够了 - 掘金  <https://juejin.cn/post/6938703901449256997>`__
+2. `Create Your Own Compiler - Caught in the Web  <https://citw.dev/tutorial/create-your-own-compiler?p=1>`__
+
+步骤：
+
+1. 词法分析：扫描字符串，识别单词/关键字,得到token序列；
+2. 语法分析：从token序列识别出各类短语，构造语法分析树(描述句子的语法结构);
+3. 语义分析：收集标识符的各类属性(类型、作用域、值、参数等),语义检查(变量声明、操作符与操作数类型检查等);
+4. 中间代码生成：通常和语义分析一起实现。对语法分析识别出的各类语法范畴，分析其含义，进行初步翻译。如三地址码、语法书、逆波兰式；
+5. 代码优化：等价变换。包括公共子表达式提取、合并已知量、循环优化、删除无用语句；
+6. 目标代码生成：分配寄存器，输出目标代码(绝对指令代码、可重定位指令代码、汇编指令代码);
+
+编译器可识别语法、语义错误并报告。多遍扫描可节省内存空间、提高代码质量。
+
+
+.. figure:: /images/Compiler.jpg
+   :scale: 35%
+
+
+
+
 coreutils
 -----------
 1. `Decoded: GNU coreutils – MaiZure's Projects  <http://www.maizure.org/projects/decoded-gnu-coreutils/index.html>`__
