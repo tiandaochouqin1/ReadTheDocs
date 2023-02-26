@@ -225,14 +225,26 @@ PCIE
 
 pci总线地址空间
 ----------------
-1. x86 CPU可以直接访问memory空间和I/O空间，而配置空间则不能直接访问；
-2. 配置空间中有个寄存器：Base Address Register，也就是BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间，这个空间就是BAR空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
+1. x86 CPU可以直接访问memory空间和I/O空间;
+2. x86 CPU无法直接访问配置空间，通过IO映射的数据端口和地址端口间接访问PCI的配置空间；
+3. Bridge或Device类型的PCIE设备拥有不同的配置空间header。其中的Base Address Register BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间即bar空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
 
 .. figure:: /images/PCIE_reg_conf.png
    :scale: 50 %
-   :alt: alternate text
+
+   io映射的地址端口
 
 
+.. figure:: /images/pcie_cfg_space.png
+   :scale: 80 %
+
+   pcie配置空间
+
+
+
+
+tlp
+~~~~~~
 
 假设某个设备要对另一个设备进行读取数据的操作，首先这个设备（称之为Requester）需要向另一个设备发送一个Request，
 然后另一个设备（称之为Completer）通过Completion Packet返回数据或者错误信息。
@@ -243,7 +255,6 @@ pci总线地址空间
    PCIE_tlp
 
 Header中包含了地址信息，各种tlp类型header、寻址方式不同。
-
 
 PCIE架构和分层
 ------------------
@@ -256,8 +267,33 @@ pcie架构
    PCIE_structure
 
 
-Root Complex：CPU和PCIe总线之间的接口可能会包含几个模块（处理器接口、DRAM接口等），甚至可能还会包含芯片，这个集合就称为Root Complex，
-   它作为PCIe架构的根， **代表CPU与系统其它部分进行交互**。将CPU的request转换成PCIe的4种不同的请求（Configuration、Memory、I/O、Message）；
+Root Complex
+~~~~~~~~~~~~~~~~~~
+
+PCIe架构的根， **代表CPU与系统其它部分进行交互**。将CPU的request转换成PCIe的4种不同的请求（Configuration、Memory、I/O、Message）；
+
+
+CPU前端总线和PCIe总线之间的接口,可能会包含处理器接口、DRAM接口、甚至芯片.
+   
+
+inbound outbound
+~~~~~~~~~~~~~~~~~~~~~
+1. `pcie inbound、outbound及EP、RC间的互相訪问 - blfshiye - 博客园  <https://www.cnblogs.com/blfshiye/p/4377496.html>`__
+
+
+.. figure:: /images/pcie_outbound_inbound.png
+   :scale: 70 %
+
+   inbound outbound
+
+
+
+1. Inbound:PCI域訪问存储器域
+2. Outbound:存储器域訪问PCI域
+
+1. RC訪问EP: RC存储器域->outbound->RC PCI域->EP PCI域->inbound->EP存储器域
+2. EP訪问RC：EP存储器域->outbound->EP PCI域->RC PCI域->inbound->RC存储器域
+
 
 
 pcie分层
@@ -285,7 +321,7 @@ net_device
 
 net_device_ops
 ~~~~~~~~~~~~~~~~~~~
-include\linux\netdevice.h
+``include\linux\netdevice.h``
 
 ::
     
@@ -502,4 +538,22 @@ Macvlan
    :scale: 70%
 
    macvlan
+
+
+
+RDMA
+======
+1. `【RDMA】技术详解（一）：RDMA概述_bandaoyu的博客-CSDN博客_rdma  <https://blog.csdn.net/bandaoyu/article/details/112859853>`__
+
+.. figure:: /images/rdma.png
+   :scale: 80%
+
+   RDMA
+
+
+sr-iov
+--------
+SR-IOV 标准允许在虚拟机之间高效共享 PCIe
+
+VF 与网络适配器上的 PCIe 物理 (PF) 相关联，表示网络适配器的虚拟化实例。 每个 VF 都有其自己的 PCI 配置空间。 每个 VF 还与 PF 和其他 VF 共享网络适配器上的一个或多个物理资源，例如外部网络端口。
 
