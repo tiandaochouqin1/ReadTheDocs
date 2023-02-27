@@ -12,10 +12,11 @@ Docs
 
 1. `VimDoc <https://yianwillis.github.io/vimcdoc/doc/help.html>`__
 2. help usr_03.txt 等
-3. 《Vim - Vi Improved》 - by Steve Oualline
-4. 《VIM实用技巧第2版》
+3. book《Vim - Vi Improved》 - by Steve Oualline
+4. book《VIM实用技巧第2版》
 5. `Vim 从入门到精通 <https://github.com/wsdjeg/vim-galore-zh_cn>`__ 
 6. `vi/vim使用进阶: 目录 <https://blog.easwy.com/archives/advanced-vim-skills-catalog/>`__
+7. ☆ `Vim 多文件编辑：缓冲区 | Harttle Land  <https://harttle.land/2015/11/17/vim-buffer.html>`__
 
 
 Tutor&CheetSheet
@@ -91,12 +92,12 @@ Tutor&CheetSheet
 +----------------------------------+----------------------------------+
 
 
-两种运⾏模式
+两种运行模式
 -------------
 
-两种运⾏模式：
+两种运行模式：
 
-1.  compatible: Vim使⽤ vi 的默认设置.
+1.  compatible: Vim使用 vi 的默认设置.
 2.  nocompatible： 需要新建⼀个⽤户的 vimrc 或者使⽤ vim -N 命令启动Vim。
 
 
@@ -153,7 +154,7 @@ https://yianwillis.github.io/vimcdoc/doc/change.html
 
 行内定位
 ----------
-[motion]
+行内[motion]
 
 ``w/b/e``
 
@@ -164,6 +165,7 @@ https://yianwillis.github.io/vimcdoc/doc/change.html
 ``t/T + char``：移动到下/上一个char的前一个位置。
 
 ``s``: 删除字符并插入
+
 ``c{motion}`` : 将 {motion} 跨过的文本删除，并插入
 
 
@@ -256,8 +258,9 @@ visual mode
 
 ``@+reg``：应用宏。
 
-外部命令
---------
+
+执行外部命令
+-------------
 
 ::
 
@@ -290,22 +293,30 @@ visual mode
 
 ``mksession name.session``：保存会话。
 
-Buffer
----------
+
+一个标签可对应多个窗口；一个窗口对应一个缓冲区buffer。
+
+Buffer缓冲区
+---------------
 ``vim a.txt b.txt``、``:E`` 浏览打开的文件都在Buffer里面。
 
 ::
 
     :ls
-    :buffer 4    :b4
+    :buffer 4/b4
     :buffer name
-    :bnext      缩写 :bn
-    :bprevious   缩写 :bp
-    :blast  缩写 :bl
-    :bfirst 缩写 :bf
+    :bnext/bn
+    :bprevious/bp
+    :blast/bl
+    :bfirst/bf
+        
+    支持补全和通配符
+    :b [tab]
+    :b .c[tab]
+    :b *a[tab] 
 
 
-标签
+标签tab
 --------
 
 ``vim -p file1 file2``：多标签打开。
@@ -314,11 +325,11 @@ Buffer
 
 ``:tabe file``：
 
-``:tabn/tabp``or``g/Gt``：移动到下/上一个标签
+``:tabn/tabp``：移动到下/上一个标签
+``[num] g/Gt``: 移动到第num个标签
 
-``:tabs``：
 
-``:tabc``：
+``:tabc/tabclose``: 
 
 
 分屏

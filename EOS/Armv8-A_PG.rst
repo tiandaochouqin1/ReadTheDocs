@@ -327,7 +327,7 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
    LDAR_STLR
 
 
-MMU核SMMU
+MMU和SMMU
 ============
 
 arm mmu
@@ -335,6 +335,7 @@ arm mmu
 1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
 2. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
 3. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
+4. `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
 
 enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
 
@@ -343,7 +344,7 @@ The Translation Lookaside Buffer (TLB) is a cache of recently accessed page tran
 The **hypervisor** must perform some extra translation steps in a two stage process to share the physical memory system between the different guest operating systems.
 
 .. figure:: /images/two_stage_translation_process.png
-   :scale: 60%
+   :scale: 100%
 
    two_stage_translation_process
 
@@ -416,6 +417,19 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
 
    vector_entry sync_exception_sp_elx  //异常处理函数返回到x30的地址，继续之星
       ret
+
+tlb
+--------
+translation lookaside buffer
+
+
+.. figure:: /images/arm_smmu_2stage_translation.png
+   :scale: 60%
+
+   arm_smmu_2stage_tran
+
+
+
 
 TrustZone
 ============
@@ -791,7 +805,7 @@ generic timer属于核内部结构，rtc属于soc。
 
 
 .. figure:: /images/System-counter-block-diagram.png
-   :scale: 60%
+   :scale: 100%
 
    System-counter-block-diagram
 
