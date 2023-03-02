@@ -350,9 +350,19 @@ MMU和SMMU
 
 arm mmu
 ------------------
-1. arm mmu  `The-Memory-Management-Unit    <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
-2. `Translations-at-EL2-and-EL3 Co <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
+1. arm mmu  `The-Memory-Management-Unit - PG   <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
+2. `Translations-at-EL2-and-EL3 - PG <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
 3. mmu和smmu 好像没什么区别？ `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation>`__
+4. figuire 4-1 `Learn the architecture - AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/The-Memory-Management-Unit--MMU-?lang=en>`__
+
+
+.. figure:: /images/arm_mmu.png
+   :scale: 60%
+
+   arm_mmu
+
+
+
 
 enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
 
@@ -420,8 +430,11 @@ SMMU
 ~~~~~~~~~
 1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
 2. `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
-3. :download:`smmu v3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
-4. 虚拟化和smmuv3 `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
+3. :download:`Arm System Memory Management Unit Architecture Specification v3.3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
+4. :download:`corelink_mmu700_system_memory_management_unit_technical_reference_manual </files/arm/corelink_mmu700_system_memory_management_unit_technical_reference_manual_101542_0001_04_en.pdf>`
+    The MMU-700 is a System-level Memory Management Unit (SMMU) 
+
+5. 虚拟化和smmuv3 `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
 
 
 .. important:: arm中smmu和mmu架构差异？
