@@ -330,34 +330,55 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 MMU和SMMU
 ============
 
+.. figure:: /images/smmu.png
+   :scale: 60%
+
+   System Memory Management Unit
+
+
+页表
+----------
+1. `操作系统中的多级页表到底是为了解决什么问题？ - 知乎  <https://www.zhihu.com/question/63375062>`__
+
+
+对于每次转换，MMU首先在TLB中检查现有的缓存。如果没有命中，根据CR3寄存器，Table Walk Unit将从内存中的页表查询。
+
+页表分级
+
+1. 次级页表可按需创建，节省内存；
+2. 次级页表可以不在内存，按需换页；
+
 arm mmu
 ------------------
-1. arm mmu  `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
-2. `ARM Cortex-A Series Programmer's Guide for ARMv8-A  <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
-3. `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation#:~:text=The%20address%20space%20that%20the,Physical%20Address%20(IPA)%20space.>`__
-4. `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
+1. arm mmu  `The-Memory-Management-Unit    <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit>`__
+2. `Translations-at-EL2-and-EL3 Co <https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translations-at-EL2-and-EL3>`__
+3. mmu和smmu 好像没什么区别？ `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation>`__
 
 enable the system to run multiple tasks, as independent programs running in their own private virtual memory space.
-
-The Translation Lookaside Buffer (TLB) is a cache of recently accessed page translations in the MMU. 
 
 The **hypervisor** must perform some extra translation steps in a two stage process to share the physical memory system between the different guest operating systems.
 
 .. figure:: /images/two_stage_translation_process.png
-   :scale: 100%
+   :scale: 50%
 
    two_stage_translation_process
 
 
 
 2 stages
-~~~~~~~~~~~
+~~~~~~~~~~
+**Stage 2** translation allows a hypervisor to control a view of memory in a Virtual Machine (VM). Specifically, it allows the hypervisor to control which memory-mapped system resources a VM can access, and where those resources appear in the address space of the VM.
+
+This ability to control memory access is important for isolation and sandboxing
+
+
 .. figure:: /images/Address_spaces_in_Armv8-A.jpg
+   :scale: 120%
    
    Address_spaces_in_Armv8-A
 
 .. figure:: /images/va-to-ipa-to-pa-address-translation.jpg
-   :scale: 60%
+   :scale: 50%
    
    va-to-ipa-to-pa-address-translation
 
@@ -374,31 +395,6 @@ An application is assigned an ASID by the OS, and all the TLB entries in that ap
 
 Each VM is assigned a virtual machine identifier (VMID). 
 The VMID is used to tag translation lookaside buffer (TLB) entries, to identify which VM each entry belongs to. 
-
-
-SMMU
---------
-1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
-2. `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
-3. :download:`smmu v3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
-
-SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
-
-.. figure:: /images/smmu.png
-   :scale: 60%
-
-   System Memory Management Unit
-
-
-1. DMA需要连续的地址.
-2. 虚拟化： 在虚拟化场景， 所有的VM都运行在中间层hypervisor上，每一个VM独立运行自己的OS（guest OS）,Hypervisor完成硬件资源的共享, 隔离和切换。
-    但guest VM使用的物理地址是GPA, 看到的内存并非实际的物理地址HPA，因此Guest OS无法正常的将连续的物理地址分给DMA硬件。
-
-因此，为了支持I/O透传机制中的DMA设备传输，而引入了IOMMU技术（ARM称作SMMU）。
-
-.. figure:: /images/dma_smmu.png
-
-   虚拟化+DMA -> SMMU
 
 
 程序运行过程中打开mmu
@@ -418,13 +414,55 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
    vector_entry sync_exception_sp_elx  //异常处理函数返回到x30的地址，继续之星
       ret
 
+he Translation Lookaside Buffer (TLB) is a cache of recently accessed page translations in the MMU. 
+
+SMMU
+~~~~~~~~~
+1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
+2. `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
+3. :download:`smmu v3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
+4. 虚拟化和smmuv3 `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
+
+
+.. important:: arm中smmu和mmu架构差异？
+
+
+SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
+
+
+1. DMA需要连续的地址.
+2. 虚拟化： 在虚拟化场景， 所有的VM都运行在中间层hypervisor上，每一个VM独立运行自己的OS（guest OS）,Hypervisor完成硬件资源的共享, 隔离和切换。
+    但guest VM使用的物理地址是GPA, 看到的内存并非实际的物理地址HPA，因此Guest OS无法正常的将连续的物理地址分给DMA硬件。
+
+因此，为了支持I/O透传机制中的DMA设备传输，而引入了IOMMU技术（ARM称作SMMU）。
+
+.. figure:: /images/dma_smmu.png
+   :scale: 80%
+
+   虚拟化+DMA -> SMMU
+
+
+
 tlb
 --------
 translation lookaside buffer
 
 
+micro tlb main tlb
+~~~~~~~~~~~~~~~~~~~~~
+`ARM Cortex-A53 MPCore Processor Technical Reference Manual r0p3  <https://developer.arm.com/documentation/ddi0500/e/memory-management-unit/about-the-mmu>`__
+
+1. micro tlb:全相联，data和instruction各一个。作为main tlb的cache。
+2. main tlb：一般是多路组相联。
+
+
+
+
+2stage
+~~~~~~~~~~~
+
 .. figure:: /images/arm_smmu_2stage_translation.png
-   :scale: 60%
+   :scale: 80%
 
    arm_smmu_2stage_tran
 
