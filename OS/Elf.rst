@@ -77,7 +77,7 @@ ELF结构
 
 
 
-Section Header
+ELF Header
 ----------------
 
 ::
@@ -432,5 +432,27 @@ ld链接脚本：控制输入段如何变成输出段。ld使用默认链接脚�
 
 指定段：在全局变量或函数前加上 `__attribute__((section("name")))`
 
+最小Elf文件
+===============
+1. `A Whirlwind Tutorial on Creating Really Teensy ELF Executables for Linux  <https://www.muppetlabs.com/~breadbox/software/tiny/teensy.html>`__
+
+
+在32位x86系统中，得到最小可执行程序为45B(仅实现返回值的函数功能)。
+
+减小elf体积的思路如下：
+
+1. gcc优化选项，如 O3
+
+2. 去除符号表和字符串表，strip -s/gcc -s
+
+3. 自定义_start替换,--nostartfiles
+
+4. int80直接系统调用替换库函数ret/_exit
+
+5. 关闭位置无关选项--no-pie,可减少很多section
+
+6. 使用最小elf:elf header + program header + 自定义.text。52+32+x
+
+7. 识别ehdr、phdr中未使用字段，将.text、phdr重叠到ehdr
 
 
