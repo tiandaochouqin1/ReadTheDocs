@@ -25,6 +25,7 @@ Fundamentals of Armv8
 To Learn
 ~~~~~~~~~~~~~~~
 1. `Learn the architecture - TrustZone for AArch64  <https://developer.arm.com/documentation/102418/0101/TrustZone-in-the-processor>`__
+2. `Learn the architecture - AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/The-Memory-Management-Unit--MMU-?lang=en>`__
 
 
 异常级别EL
@@ -437,7 +438,6 @@ SMMU
 5. 虚拟化和smmuv3 `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
 
 
-.. important:: arm中smmu和mmu架构差异？
 
 
 SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
@@ -455,6 +455,14 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
    虚拟化+DMA -> SMMU
 
 
+smmu vs mmu
+~~~~~~~~~~~~~~~~~~
+.. important:: arm中smmu和mmu架构差异？
+
+1. `SMMU跟TrustZone啥关系？ - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000123590>`__
+
+SMMU跟MMU非常相似，主要给其他Master来使用，连 **页表格式也是一样的**，只是编程方式不同，理论上可以让CPU的MMU和SMMU可以使用同一套页表。
+增加SMMU后， **其他Master也相当于有了MMU的功能**。
 
 tlb
 --------
