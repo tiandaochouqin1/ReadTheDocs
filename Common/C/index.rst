@@ -10,6 +10,8 @@ C
    
 
    Glibc.rst
+   main.rst
+   asm_practice.rst
    C_Language.rst
    Coverage&Mock.rst
    C_Project.rst
