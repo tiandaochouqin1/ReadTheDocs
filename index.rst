@@ -20,7 +20,7 @@ My NoteBook
    :maxdepth: 3
 
    
-   Common/index
+   Misc/index
    OS/index
    Net/index
    EOS/index
