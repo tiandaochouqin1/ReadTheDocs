@@ -17,7 +17,7 @@ My NoteBook
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    
    Misc/index

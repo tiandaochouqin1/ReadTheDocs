@@ -96,6 +96,7 @@ MyPlate Plan
 
 `Your MyPlate Plan - 2600 Calories, Ages 14+ Years | MyPlate  <https://www.myplate.gov/myplate-plan/results/2600-calories-ages-14-plus>`__
 
+非定制化,只关注目标能量摄入,未考虑个体差异.
 
 .. figure:: /images/Nutrition_MyPlatePlan.jpg
    :scale: 100%
@@ -115,6 +116,10 @@ MyPlate Plan
 1. 碳水化合物：谷物、(水果、蔬菜热量、脂肪低)
 2. 蛋白质：肉(比蛋高一点)、蛋、奶、豆
 3. 脂肪：
+
+
+
+
 
 每日营养统计
 ~~~~~~~~~~~~
