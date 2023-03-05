@@ -10,5 +10,6 @@ Book
    LearningPlan.rst
    EOS_concept.rst
    2022.rst
-   DP.rst
+.. Misc_Notes.rst
+.. DP.rst
    

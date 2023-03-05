@@ -419,8 +419,10 @@ leetcode
 7. 两个栈实现队列：U形，一个作为队首，用于删除；一个站作为队尾用于插入。
 
 
-英语
-======
-1. coca 12000, 生词本。
-2. news + book
-3. movies words(MuJing)
+.. 英语
+.. ======
+.. 1. coca 12000, 生词本。
+.. 2. news + book
+.. 3. movies words(MuJing)
+
+

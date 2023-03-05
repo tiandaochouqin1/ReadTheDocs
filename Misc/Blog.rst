@@ -231,11 +231,11 @@ rst语法
 表格
 ~~~~
 
-**rst表格需要严格对齐，但是有中文时显示是不对齐的。**\ 在线生成：https://truben.no/table/
+**rst表格需要严格对齐，但是有中文时显示是不对齐的。**
 
 markdown转rst表格:
 1. 只能使用pandoc转换
-2. 不好用  `在线表格转换工具 <https://tableconvert.com/zh-cn/markdown-to-restructuredtext>`__
+2. 基本能用  `在线表格转换工具 <https://tableconvert.com/zh-cn/markdown-to-restructuredtext>`__
 
 
 
@@ -270,7 +270,19 @@ markdown转rst表格:
 
 注释
 ~~~~~~~
-页面不可见。可从html查看。
+页面不可见。本环境上，注释在html中不可见(实际可能呈现为html注释)。
+
+.. 注释以两个点和一个空格开始。可以接除了脚注、超链接、指令或替代定义之外的任何东西
+
+.. This is a comment.
+
+..
+   This whole indented block
+   is a comment.
+
+   Still in the comment.
+
+
 
 ::
 
