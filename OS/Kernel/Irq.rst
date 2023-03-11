@@ -266,6 +266,49 @@ request_irq
 =================
 request_irq参数
 -----------------
+`Linux(内核剖析):20---中断之中断处理程序（request_irq、free_irq）  <https://blog.csdn.net/qq_41453285/article/details/103945123>`__
+handler：发生中断时首先要执行的硬，也可
+
+返回IRQ_HANDLE不执行中断线程
+
+thread_fn : 中断线程，类似于中断下半部
+::
+
+   /**
+   * request_irq - Add a handler for an interrupt line
+   * @irq:	The interrupt line to allocate //逻辑中断号，/proc。可以预设固定、可以动态编程、可以探测获取。
+   * @handler:	Function to be called when the IRQ occurs.  // irqreturn_t irq_handler_t(int irq, void *dev) 被调用时irq和dev来源于request_irq
+   *		Primary handler for threaded interrupts
+   *		If NULL, the default primary handler is installed
+   * @flags:	Handling flags   //中断属性等。共享、关其它终端、上升沿
+   * @name:	Name of the device generating this interrupt
+   * @dev:	A cookie passed to the handler function
+   *
+   * This call allocates an interrupt and establishes a handler; see
+   * the documentation for request_threaded_irq() for details.
+   */
+   static inline int __must_check
+   request_irq(unsigned int irq, irq_handler_t handler, unsigned long flags,
+         const char *name, void *dev)
+   {
+      return request_threaded_irq(irq, handler, NULL, flags, name, dev);
+   }
+
+   int request_threaded_irq(unsigned int irq, irq_handler_t handler,
+            irq_handler_t thread_fn, unsigned long irqflags,
+            const char *devname, void *dev_id)
+   {
+   .............
+
+      desc = irq_to_desc(irq);
+
+      action->handler = handler;
+      action->thread_fn = thread_fn;
+      action->flags = irqflags;
+      action->name = devname;
+      action->dev_id = dev_id;
+   ..............
+   // handler中断处理函数，可以通过返回 IRQ_WAKE_THREADED唤醒中断线程thread_fn
 
 
     
@@ -289,6 +332,21 @@ request_irq参数
 3. 大多数情况  -> tasklet
 
 这里的软中断与系统调用使用的软件中断不同。
+
+
+
+可延时函数与工作队列
+-----------------------
+1. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
+2. `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
+
+1. 可延时函数：由软中断或tasklet实现。运行在中断上下文(如do_IRQ退出时即为一个软中断检查点)，不能睡眠、阻塞。
+2. 工作队列：运行在进程上下文，可阻塞。
+3. 中断线程化：wakeup_softirqd唤醒内核线程来执行，该线程和其它线程一样需要调度。 耗时较长、实时性不高的场景，避免影响用户线程的实时性。
+4. 非线程化中断：调用__do_softirq函数来处理。Bottom-half Enable 和 do_IRQ退出 时检查执行。
+
+
+
 
 软中断
 ----------
