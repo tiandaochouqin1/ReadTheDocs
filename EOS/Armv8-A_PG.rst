@@ -21,6 +21,7 @@ Fundamentals of Armv8
 
 3. 单篇介绍各个概念的短文,基本都是2020年以后发布的 `Documentation – Arm Developer  <https://developer.arm.com/documentation/#&cf[navigationhierarchiesproducts]=%20Architectures,Learn%20the%20architecture>`__
 
+4. ☆ `《TrustZone for Armv8-A》阅读笔记 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/13993375.html>`__
 
 To Learn
 ~~~~~~~~~~~~~~~
@@ -704,6 +705,76 @@ GICv3定义了以下中断类型：
 
    LPI (Locality-specific Peripheral Interrupt)
    LPI是GICv3中的新特性，它们在很多方面与其他类型的中断不同。LPI始终是基于消息的中断，它们的配置保存在表中而不是寄存器。比如PCIe的MSI/MSI-x中断。
+
+
+
+.. figure:: /images/gic_interrupt_type.jpg
+
+   gic_interrupt_type
+
+
+irq 管理数据结构
+~~~~~~~~~~~~~~~~~~~~
+
+`Linux 中断 —— GIC (数据结构 irq_domain/irq_desc/irq_data/irq_chip/irqaction)_irq domain和irq chip_爱洋葱的博客-CSDN博客  <https://blog.csdn.net/zhoutaopower/article/details/90648475>`__
+
+
+.. figure:: /images/irq_manage_struct.png
+
+   irq_manage_struct
+
+
+GICv3 与domain
+~~~~~~~~~~~~~~~~~~~
+::
+
+   static int gic_irq_domain_translate(struct irq_domain *d,
+                  struct irq_fwspec *fwspec,
+                  unsigned long *hwirq,
+                  unsigned int *type)
+   {
+      if (fwspec->param_count == 1 && fwspec->param[0] < 16) {
+         *hwirq = fwspec->param[0];
+         *type = IRQ_TYPE_EDGE_RISING;
+         return 0;
+      }
+
+      if (is_of_node(fwspec->fwnode)) {
+         if (fwspec->param_count < 3)
+            return -EINVAL;
+
+         switch (fwspec->param[0]) {
+         case 0:			/* SPI */
+            *hwirq = fwspec->param[1] + 32;
+            break;
+         case 1:			/* PPI */
+            *hwirq = fwspec->param[1] + 16;
+            break;
+         case 2:			/* ESPI */
+            *hwirq = fwspec->param[1] + ESPI_BASE_INTID;
+            break;
+         case 3:			/* EPPI */
+            *hwirq = fwspec->param[1] + EPPI_BASE_INTID;
+            break;
+         case GIC_IRQ_TYPE_LPI:	/* LPI */
+            *hwirq = fwspec->param[1];
+            break;
+         case GIC_IRQ_TYPE_PARTITION:
+            *hwirq = fwspec->param[1];
+            if (fwspec->param[1] >= 16)
+               *hwirq += EPPI_BASE_INTID - 16;
+            else
+               *hwirq += 16;
+            break;
+         default:
+            return -EINVAL;
+         }
+
+         *type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+
+   .................
+
+   }
 
 
 中断处理流程

@@ -11,6 +11,8 @@ Linux内核专题。
    :maxdepth: 2
    
 
+   Irq.rst
+   Syscall.rst
    Preemption.rst
    Signal.rst
    Time_system.rst
