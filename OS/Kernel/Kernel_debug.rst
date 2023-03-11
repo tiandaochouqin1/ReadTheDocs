@@ -227,15 +227,32 @@ printk
 1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去 **调用console输出可能还产生中断**。
 2. ring buffer只有1K。
 
+dmesg时间戳
+~~~~~~~~~~~~
+dmesg时间为系统启动的时间Δ。
+
+1. `[转载]date命令时间转换 - 苏小北1024 - 博客园  <https://www.cnblogs.com/muahao/p/6098675.html>`__
+
+::
+      
+   date -d @12345  //即 date -d "1970-01-01 UTC 12345 seconds"
+
+
+   dmesg log实际时间=格林威治1970-01-01+(date当前时间秒数 - uptime系统启动至今的秒数 + dmesg打印的log时间)
+
+   date -d "1970-01-01 UTC `echo "$(date +%s)-$(cat /proc/uptime|cut -f 1 -d' ')+12288812.926194"|bc ` seconds"
+
+
+
 printk等级
 ~~~~~~~~~~~~
 1. `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
 
 1. All printk() messages are printed to the kernel log buffer, which is a ring buffer exported to userspace through /dev/kmsg。
-2. 打印等级只是控制是否输出到console。message loglevel <= console_loglevel 则输出到console。
+2. printk的打印等级只是控制是否输出到console。 **message loglevel <= console_loglevel** 则输出到console。可增大console_loglevel来查看更多打印。
 3. 4.9版本开始，printk默认会换行。不换行需使用pr_cont(KERN_CONT)。 `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
 
-console level查看：
+**console level** 查看：
 
 ::
       
@@ -243,7 +260,7 @@ console level查看：
 
    $ cat /proc/sys/kernel/printk
    4        4        1        7
-   The result shows the current, default, minimum and boot-time-default log levels.
+   current, default, minimum and boot-time-default log levels.
 
 
 boot(内核启动)可指定loglevel值、quiet(loglevel=4)。 https://www.kernel.org/doc/html/v4.14/admin-guide/kernel-parameters.html

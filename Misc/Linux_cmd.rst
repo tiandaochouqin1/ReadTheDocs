@@ -11,7 +11,10 @@ Linux Cmd
 1. `Linux工具快速教程 <https://linuxtools-rst.readthedocs.io/zh_CN/latest/index.html>`__
 
 2. Linux Command搜索引擎： https://github.com/jaywcjlove/linux-command
+
    https://wangchujiang.com/linux-command/ https://tldr.ostera.io/
+
+    `Linux Man Pages -- Dash Dash  <https://dashdash.io/>`__
 
 
 进程
