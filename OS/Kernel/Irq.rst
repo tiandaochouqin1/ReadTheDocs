@@ -104,47 +104,6 @@ arch/x86/include/asm/irq_vectors.h：
 
 
 
-x86 系统调用
---------------
-
-int 0x80和syscall/sysenter的区别: 
-
-`Linux Systemcall Int0x80方式、Sysenter/Sysexit Difference Comparation - 郑瀚Andrew - 博客园  <https://www.cnblogs.com/LittleHann/p/4111692.html>`__
-
-1. 通过INT 0x80中断方式。
-   
-   * 在 2.6以前的 Linux 2.4 内核中，用户态 Ring3 代码请求内核态 Ring0 代码完成某些功能是通过系统调用完成的，而系统调用的是通过软中断指令(int 0x80) 实现的。在 x86 保护模式中，处理 INT 中断指令时
-   * 在发生系统调用，由 Ring3 进入 Ring0 的这个过程浪费了不少的 CPU 周期，例如，系统调用必然需要由 Ring3 进入 Ring0，权限提升之前和之后的级别是固定的。
-      
-   1) CPU 首先从中断描述表 IDT 取出对应的门描述符
-   2) 判断门描述符的种类
-   3) 检查门描述符的级别 DPL 和 INT 指令调用者的级别 CPL，当 CPL<=DPL 也就是说 INT 调用者级别高于描述符指定级别时，才能成功调用
-   4) 根据描述符的内容，进行压栈、跳转、权限级别提升
-   5) 内核代码执行完毕之后，调用 IRET 指令返回，IRET 指令恢复用户栈，并跳转会低级别的代码 .
-    
-2. 通过sysenter指令方式。
-
-sysenter 指令用于由 Ring3 进入 Ring0，SYSEXIT 指令用于由 Ring0 返回 Ring3。由于没有特权级别检查的处理，也没有压栈的操作，所以执行速度比 INT n/IRET 快了不少。
-   sysenter和sysexit都是CPU原生支持的指令集
-
-
-
-
-_kernel_vsyscall
-~~~~~~~~~~~~~~~~~~~~~~~~
-内核函数 __kernel_vsyscall 封装了 sysenter 调用约定（calling convention）,
-应该使用 __kernel_vsyscall而不是手动实现调用sysenter。
-
-它在内核实现，但每个用户进程启动的时候它会映射到用户进程。
-
-**程序如何找到调用的地址？**
-
-__kernel_vsyscall 的地址写入了 ELF auxiliary vector （辅助功能矢量），
-用户程序能（典型情况下通过 glibc）找到后者并使用它。寻找 ELF auxiliary vector 有多种方式：
-
-1. 通过 getauxval，带 AT_SYSINFO 参数
-2. 遍历环境变量，从内存解析
-
 
 
 arm64中断
@@ -247,18 +206,29 @@ el1_sync，el1_irq，el0_sync，el0_irq在开始时会调用kernel_entry，在�
 4. **el0_iqr**：当前处于用户态时，发生了硬件中断。
 
 
+异常类别
+~~~~~~~~~~~
+
+
+系统调用指令异常
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+SVC/HVC/SMC
+
+
+1. svc:supervisor call 应用程序调用kernel（el0-》el1）功能
+2. hvc：hypervisor call，os 调用hypervisor（EL2）
+3. smc secure monitor call ，os or ypervisor 调用 secure monitor （El3）
 
 SVC系统调用约定
 ~~~~~~~~~~~~~~~~~
 
-SVC指令在ARMv8体系中被归于异常处理类指令,ESR为SVC使用的立即数
+SVC指令在ARMv8体系中为异常处理类指令
 
+用 **SVC指令触发系统调用** 的约定如下：
 
-用SVC指令触发系统调用的约定如下[2]：
-
-1. 64位用户程序使用寄存器x8传递系统调用号，32位用户程序使用寄存器x7传递系统调用号；
+1. 64位用户程序使用寄存器 **x8传递系统调用号**，32位用户程序使用寄存器x7传递系统调用号；
 2. 使用寄存器x0-x6传递系统调用所需参数，最多可传递7个参数；
-3. 系统调用执行完后，用寄存器x0存放返回值。
+3. 系统调用执行完后，用寄存器 **x0存放返回值**。
 
 
 
@@ -282,7 +252,7 @@ thread_fn : 中断线程，类似于中断下半部
    *		If NULL, the default primary handler is installed
    * @flags:	Handling flags   //中断属性等。共享、关其它终端、上升沿
    * @name:	Name of the device generating this interrupt
-   * @dev:	A cookie passed to the handler function
+   * @dev:	A cookie passed to the handler function //用于区分共享中断，也可传递其它结构
    *
    * This call allocates an interrupt and establishes a handler; see
    * the documentation for request_threaded_irq() for details.

@@ -12,7 +12,7 @@ Linux内核专题。
    
 
    Irq.rst
-   Syscall.rst
+   Process_scheduler.rst
    Preemption.rst
    Signal.rst
    Time_system.rst

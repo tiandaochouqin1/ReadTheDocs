@@ -5,7 +5,7 @@ Kernel Debug & Trace
 
 :Date:   2021-07-18 18:52:25
 
-
+.. important:: 如何使用qemu
 
 内核调试手段
 ===============

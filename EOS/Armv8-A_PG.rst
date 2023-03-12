@@ -637,15 +637,13 @@ arch/arm64/kernel/vmlinux.lds.S
 1. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
 2. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
 3. `7_Linux硬件中断处理 - 最后一只晴天小猪的博客  <https://santapasserby.com/2021/07/06/ldd/7_Linux%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/>`__
-4. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
-5. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
-6. ☆ 从硬件到软件，系列4篇 `【原创】Linux中断子系统（一）-中断控制器及驱动分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12996812.html>`__
+4. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
+5. ☆ 从硬件到软件，系列4篇 `【原创】Linux中断子系统（一）-中断控制器及驱动分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12996812.html>`__
 
 GIC v3
 --------
 1. `ARM GICv3中断控制器_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/86708769>`__
 2. `Learn the architecture - Arm Generic Interrupt Controller v3 and v4` <https://developer.arm.com/documentation/198123/0302/Arm-GIC-fundamentals?lang=en>`__
-3. `第五章 ARM的中断处理 | Linux内核与嵌入式开发  <https://wugaosheng.gitbooks.io/linux-arm/content/di-wu-zhang-arm-de-zhong-duan-chu-li.html>`__
 
 GICv3控制器组成和路由
 ~~~~~~~~~~~~~~~~~~~~~
@@ -745,7 +743,7 @@ GICv3 初始化
 1. `GICv3驱动初始化_Loopers的博客-CSDN博客  <https://blog.csdn.net/longwang155069/article/details/105275286>`__
 2. ☆☆ `Linux中断管理 (1)Linux中断管理机制 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8659981.html>`__
 3. `Linux kernel的中断子系统之（二）：IRQ Domain介绍  <http://www.wowotech.net/irq_subsystem/irq-domain.html>`__
-
+4. `第五章 ARM的中断处理 | Linux内核与嵌入式开发  <https://wugaosheng.gitbooks.io/linux-arm/content/di-wu-zhang-arm-de-zhong-duan-chu-li.html>`__
 
 
 ::
