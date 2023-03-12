@@ -6,6 +6,7 @@ Armv8
    :maxdepth: 2
 
    SMMU.rst
+   GICv3.rst
 
    
    
