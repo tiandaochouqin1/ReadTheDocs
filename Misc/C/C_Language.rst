@@ -12,7 +12,8 @@ C语法知识
 3. `用C语言实现面向对象编程OOP <https://mp.weixin.qq.com/s/Vj31M2q0H5eeJwMhvDyt6A>`__
 4. `C语言实现面向对象的原理 <https://mp.weixin.qq.com/s/b9IXQ8Hbh-8ejmU010sWiA>`__
 
-The C Programming Language 2ed.pdf
+- The C Programming Language 2ed.pdf
+- `gnu-c-language-manual Richard Stallman <https://github.com/VernonGrant/gnu-c-language-manual>`__
 
 声明与定义
 ---------------

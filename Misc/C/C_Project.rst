@@ -1,6 +1,33 @@
 
 优秀项目学习
 =================
+动手项目
+----------
+`小白自制Linux开发板(F1C200s)整理系列，持续更新中 / 全志 SOC / WhyCan Forum(哇酷开发者社区)  <https://whycan.com/t_7275.html>`__
+
+`小白自制Linux开发板 一. 瞎抄原理图与乱画PCB - 淡墨青云 - 博客园  <https://www.cnblogs.com/twzy/p/14714651.html>`__
+
+`My Business Card Runs Linux • &> /dev/null  <https://www.thirtythreeforty.net/posts/2019/12/my-business-card-runs-linux/>`__
+
+`自制超迷你的Linux卡片电脑_哔哩哔哩_bilibili  <https://www.bilibili.com/video/av65365123/?vd_source=9d49fa1e041dad3abcfb9134ffc49432>`__
+
+
+todo
+-----------
+
+coreutils
+~~~~~~~~~~~~~~~~~
+1. `Decoded: GNU coreutils – MaiZure's Projects  <http://www.maizure.org/projects/decoded-gnu-coreutils/index.html>`__
+
+This resource is for novice programmers exploring the design of command-line utilities.
+
+ahttpd
+~~~~~~~~~~~~
+https://sqlite.org/althttpd/doc/trunk/althttpd.md
+
+EasyLogger
+~~~~~~~~~~~~~
+`armink/EasyLogger: An ultra-lightweight(ROM<1.6K, RAM<0.3k), high-performance C/C++ log library. | 一款超轻量级(ROM<1.6K, RAM<0.3k)、高性能的 C/C++ 日志库  <https://github.com/armink/EasyLogger>`__
 
 cjson
 --------
@@ -30,16 +57,6 @@ cjson实际为 词法分析器+语法分析器+语义分析器
 
 
 
-
-coreutils
------------
-1. `Decoded: GNU coreutils – MaiZure's Projects  <http://www.maizure.org/projects/decoded-gnu-coreutils/index.html>`__
-
-This resource is for novice programmers exploring the design of command-line utilities.
-
-ahttpd
---------
-https://sqlite.org/althttpd/doc/trunk/althttpd.md
 
 busybox
 -----------

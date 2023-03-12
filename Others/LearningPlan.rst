@@ -421,8 +421,10 @@ leetcode
 
 .. 英语
 .. ======
-.. 1. coca 12000, 生词本。
-.. 2. news + book
+.. 1. coca 12000。
+.. 2. book
 .. 3. movies words(MuJing)
+.. 4. word power made easy 和 merriam web vocabulary builder
+.. 5. News: Bypass Paywalls插件 https://www.economist.com/
 
 
