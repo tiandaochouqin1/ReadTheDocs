@@ -5,54 +5,26 @@ Arm Assembly
 :Date:   2021-09-29 19:28:27
 
 
-arm汇编
-=============
-
-aarch64状态
-------------
-
 1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly </files/arm/syshella_arm-assembly.pdf>`
 2. ☆ 栈回溯 `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__
 3. ☆指令大全 `ARMv8 A64 Quick Reference <https://courses.cs.washington.edu/courses/cse469/19wi/arm64.pdf>`__
 4. https://developer.arm.com/documentation/dui0801/a/Overview-of-AArch64-state/Registers-in-AArch64-state
 
-In AArch64 state, the following registers are available:
 
-1. 31 64-bit general-purpose registers X0-X30, the bottom halves of which are accessible as W0-W30.
-2. 4 stack pointer registers SP_EL0, SP_EL1, SP_EL2, SP_EL3.
-3. 3 exception link registers ELR_EL1, ELR_EL2, ELR_EL3.
-4. 3 saved program status registers SPSR_EL1, SPSR_EL2, SPSR_EL3.
-5. 1 program counter.
 
-arm64指令格式
---------------
-``指令方向： 从右向左``
-
-::
-
-   MNEMON­IC{­S}{­con­dition} {Rd}, Operand1, Operand2
-   
-
-   MNEMONIC   Descri­ption
-   {S}
-   An optional suffix. If S is specified, the condition flags are updated on the result of the operation
-   
-   {condi­tion}
-   Condition that is needed to be met in order for the instru­ction to be executed
-   
-   {Rd}
-   Register destin­ation for storing the result of the instru­ction
-   
-   Operand1
-   First operand. Either a register or an inmediate value
-   
-   Operand2
-   Second (flexible) operand. Either an inmediate value (number) or a register with an optional shift
-   
-   {} - Optional
-
-arm64常用寄存器
+arm寄存器
+============
+arm64寄存器
 -----------------
+
+.. figure:: /images/armv8_regs.png
+   :scale: 70%
+
+   armv8_regs
+
+
+通用寄存器
+~~~~~~~~~~~~~~~
 > 9.1.1 Parameters in general-purpose registers
   arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
   :download:`ARMv8-A-Programmer-Guide </files/arm/ARMv8-A-Programmer-Guide.pdf>`
@@ -70,7 +42,8 @@ arm64常用寄存器
 
 
 .. figure:: /images/abi_general_purpose_registers.png
-      :alt: abi_general_purpose_registers
+   :scale: 80%
+   :alt: abi_general_purpose_registers
 
 
 
@@ -135,6 +108,48 @@ accessible in any privilege mode: r0-15.
 
 
 CPSR: 对应x86的EFLAGS
+
+arm汇编
+=============
+
+aarch64状态与寄存器组
+---------------------
+
+
+In AArch64 state, the following registers are available:
+
+1. 31 64-bit general-purpose registers X0-X30, the bottom halves of which are accessible as W0-W30.
+2. 4 stack pointer registers SP_EL0, SP_EL1, SP_EL2, SP_EL3.
+3. 3 exception link registers ELR_EL1, ELR_EL2, ELR_EL3.
+4. 3 saved program status registers SPSR_EL1, SPSR_EL2, SPSR_EL3.
+5. 1 program counter.
+
+arm64指令格式
+--------------
+``指令方向： 从右向左``
+
+::
+
+   MNEMON­IC{­S}{­con­dition} {Rd}, Operand1, Operand2
+   
+
+   MNEMONIC   Descri­ption
+   {S}
+   An optional suffix. If S is specified, the condition flags are updated on the result of the operation
+   
+   {condi­tion}
+   Condition that is needed to be met in order for the instru­ction to be executed
+   
+   {Rd}
+   Register destin­ation for storing the result of the instru­ction
+   
+   Operand1
+   First operand. Either a register or an inmediate value
+   
+   Operand2
+   Second (flexible) operand. Either an inmediate value (number) or a register with an optional shift
+   
+   {} - Optional
 
 
 寻址模式和偏移模式

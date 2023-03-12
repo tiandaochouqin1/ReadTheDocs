@@ -4,7 +4,7 @@ Syscall
 1. `the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
    `系统调用权威指南 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
 
-2. `Linux syscall过程 —— 栈切换等 <https://cloud.tencent.com/developer/article/1492374>`__
+2. `Linux syscall过程分析  <https://cloud.tencent.com/developer/article/1492374>`__
 
 概念
 ------
@@ -75,14 +75,12 @@ x86 系统调用
 
 
 3. 64位快速系统调用：Syscall
-   sysenter 和 syscall 是为了加速系统调用所引入的新指令，通过引入新的 MSR 来存放内核态的代码和栈的段号和偏移量，从而实现快速跳转：
+   
+  **sysenter 和 syscall 是为了加速系统调用所引入的新指令，通过引入新的 MSR 来存放内核态的代码和栈的段号和偏移量，从而实现快速跳转：**
 
    syscall 调用约定（convention）： 用户空间程序将系统调用编号放到 rax 寄存器，参数放到通用寄存器。
 
    要使内核接收系统调用请求，必须将对应的回调函数地址写到 IA32_LSTAR MSR 
-
-
-
 
 
 
@@ -98,9 +96,9 @@ Linux系统调用的实现
 
 syscall方式的实现
 ~~~~~~~~~~~~~~~~~~
-1. 内核编译期间使用脚本从arch/x86/syscalls/syscall_64.tbl 生成 asm/syscalls_64.h(舒徐)
+1. 内核编译期间使用脚本从arch/x86/syscalls/syscall_64.tbl 生成 asm/syscalls_64.h(数组)
 2. syscall_init将system_call 函数的地址写到了 **LSTAR MSR** （回调）
-2. system_call调用sys_call_table中的函数
+2. 用户syscall->内核system_call->sys_call_table中的函数
 
 
 ::
