@@ -92,6 +92,11 @@ smmu vs mmu
 
 1. `SMMU跟TrustZone啥关系？ - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000123590>`__
 2. 没有区分mmu和smmu  `(Stage 2 translation) Learn the architecture: AArch64 Virtualization  <https://developer.arm.com/documentation/102142/0100/Stage-2-translation>`__
+3. `SMMU学习这一篇就够了(软件硬件原理/模型导读) - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000383898#item-3-4>`__
+
+- MMU 只能给 一个core用。而SMMU想给多个master用，多个master又对应不同的表。所以就搞了个STE。
+- 每一个STE entry里，都可以指向多个context descriptor，然后每一个context descriptor 就相当于 MMU的TTBRx + TCR寄存器。
+- context Descriptor之后，就和普通的MMU一样
 
 
 SMMU跟MMU非常相似，主要给其他Master来使用，连 **页表格式也是一样的**，只是编程方式不同，理论上可以让CPU的MMU和SMMU可以使用同一套页表。
@@ -111,6 +116,7 @@ MMU-700
 ============
 1. :download:`corelink_mmu700_system_memory_management_unit_technical_reference_manual </files/arm/corelink_mmu700_system_memory_management_unit_technical_reference_manual_101542_0001_04_en.pdf>`
     The MMU-700 is a System-level Memory Management Unit (SMMU) 
+2. `ARM系列 -- MMU-700 - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000318128>`__
 
 .. figure:: /images/armv8_mmu700.png
    :scale: 70%
@@ -124,21 +130,35 @@ MMU-700
 
 TBU
 -------
-1. ACE‑Lite TBU
-2. Local Translation Interface (LTI) TBU
+1. ACE‑Lite TBU:For the TBS and TBM interfaces.
+2. Local Translation Interface (LTI) TBU:For the LTI( point-to-point protocol between an I/O device and the TLBU).
+
+
+::
+
+   TBU内部的模块包括：
+
+   Master and slave接口模块，上面已经讲过了
+   Micro TLB，提供从输入地址到输出地址的端到端转换
+   Main TLB，缓存TLB条目
+   Translation manager，管理控制地址转换请求
+   PMU，记录性能相关的事件数量
+   Clock and power control，控制TBU的电源和时钟
+   DTI接口模块
+   Transaction tracker，管理超发（outstanding）的读/写事务
 
 
 .. figure:: /images/arm_mmu700_tbu_ace-lite.png
    :scale: 100%
 
-   arm_mmu700_tcu
+   arm_mmu700_tbu
 
 
 
 .. figure:: /images/arm_mmu700_tbu_lti.png
    :scale: 100%
 
-   arm_mmu700_tcu
+   arm_mmu700_tbu
 
 
 TCU
@@ -149,6 +169,23 @@ TCU
 - Performs configuration table walks
 - Implements backup caching structures
 - Implements the SMMU programmers model
+
+
+::
+
+   TCU内部的模块包括：
+
+   Walk cache，可配置bank和way的组相联缓存，记录translation table walks（不知道怎么翻译了）的结果
+   Configuration cache，4路组相联的缓存，用于存储配置信息
+   Translation manager，管理正在进行中的地址转换请求
+   Translation request buffer，当Translation manager填满时，这个buffer存储来自TBU的地址转换请求，可防止请求过多导致DTI接口被阻塞
+   PMU，记录性能相关的事件数量
+   Clock and power control，电源和时钟管理
+   Queue manager，管理SMMU的队列
+   QTW/DVM interface
+   Register file，SMMU的内部寄存器
+   DTI interface，与DTI相连接
+
 
 .. figure:: /images/arm_mmu700_tcu.png
    :scale: 100%
@@ -176,8 +213,7 @@ The TBU compares incoming transactions with translations that are cached in the 
 页表
 ========
 1. `操作系统中的多级页表到底是为了解决什么问题？ - 知乎  <https://www.zhihu.com/question/63375062>`__
-2.  ☆☆ `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
-3. `[mmu/cache]-ARM MMU/TLB的学习笔记和总结_arm tlb_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/109575691>`__
+2. `[mmu/cache]-ARM MMU/TLB的学习笔记和总结_arm tlb_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/109575691>`__
 
 对于每次转换，MMU首先在TLB中检查现有的缓存。如果没有命中，根据CR3寄存器，Table Walk Unit将从内存中的页表查询。
 
@@ -205,10 +241,34 @@ The TBU compares incoming transactions with translations that are cached in the 
 
 STE
 -----------------------
+1.  ☆☆ `ARM SMMU学习笔记_Hober_yao的博客-CSDN博客_smmu  <https://blog.csdn.net/yhb1047818384/article/details/103329324>`__
+
+1. SMMU根据寄存器配置的STRTAB_BASE地址找到STE， STRTAB_BASE定义了STE的基地值， Stream id定义了STE的偏移。
+2. STE指明了CD数据结构在DDR中的基地址S1ContextPTR, SSID(substream id)指明了CD数据结构的偏移，
+3. cd表中信息包含memory属性，翻译控制信息，异常控制信息以及Page table walk(PTW)的起始地址TTB0, TTB1， 找到TTBx后，就可以PTW了。
+
+.. figure:: /images/smmu_ste_cd.png
+   :scale: 100%
+
+   smmu_ste_cd
+
+
+
+
 .. figure:: /images/stream_table_entry.png
-   :scale: 60%
+   :scale: 80%
 
    stream_table_entry
+
+
+
+
+.. figure:: /images/smmu_context_descriptor.png
+   :scale: 80%
+
+   smmu_context_descriptor
+
+
 
 vmid和ASID
 -------------

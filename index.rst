@@ -12,7 +12,7 @@ My NoteBook
 
 .. note::
    
-   系统归纳，时常翻阅。
+   Conclude systematicly、record fluently and review constantly。
 
 
 
