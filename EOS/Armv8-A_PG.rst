@@ -99,8 +99,25 @@ cache shareable domain
 MESI cache一致性协议
 ---------------------
 1. `并发研究之CPU缓存一致性协议(MESI) - 枫飘雪落 - 博客园  <https://www.cnblogs.com/yanlong300/p/8986041.html>`__
+2. `高速缓存一致性协议MESI与内存屏障 - 小熊餐馆 - 博客园  <https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html#_label1_0>`__
+3. `arm64 cache机制分析  <https://mp.weixin.qq.com/s/NlWvs_fjWSSvW2S1FcpgkQ>`__
 
 
+跟踪cache行的状态，ARM采用MESI协议.
+
+
+MESI协议依赖 **总线侦听** 机制，在某个核心发生本地写事件时，
+为了保证全局只能有一份缓存数据，要求其它核对应的缓存行统统设置为 **Invalid** 无效状态。
+
+为了确保总线写事务的强一致性，发生本地写的高速缓存需要等到远端的所有核心都处理完对应的失效缓存行，
+返回Ack确认消息后才能继续执行下面的内存寻址指令(阻塞)。
+
+MESI协议的名字来源于cache line的四个状态：
+
+1. Modified（M）：cache line数据有效，cache line数据被修改，与内存中的数据不一致，修改的数据只存在本cache中；
+2. Exclusive（E）：cache line数据有效，cache line数据和内存中一致，数据只存在本cache中；
+3. Shared（S）：cache line数据有效，cache line数据和内存中一致，数据存在于多个cache中；
+4. Invalid（I）：cache line数据无效；
 
 
 Memory Layout

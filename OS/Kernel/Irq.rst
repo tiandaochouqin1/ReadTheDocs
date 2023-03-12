@@ -114,7 +114,8 @@ arm64中断
 
 arm64系统调用
 --------------
-1. `armv8/arm64 中断/系统调用流程 <https://cloud.tencent.com/developer/article/1413292>`__
+1. `armv8/arm64 中断/系统调用流程 <https://cloud.tencent.com/developer/article/1413292>`__  
+   `arm64系统调用分析 - tycoon3 - 博客园  <https://www.cnblogs.com/dream397/p/15993907.html>`__
 2. ☆ `Linux Kernel 5.14 arm64异常向量表解读-中断处理解读  <https://blog.csdn.net/weixin_42135087/article/details/120232101>`__
 
 

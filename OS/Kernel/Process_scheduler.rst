@@ -1,13 +1,16 @@
-
+=====
 进程
 =====
+进程管理与生命周期
+===================
+
 进程管理
 ---------
 * 进程：处于执行期的程序以及相关资源的总称。
 * 程序：存放在存储介质上的。
 
-管理结构：
-
+管理结构
+~~~~~~~~~~~~~~
 1. 任务队列：task_struct双向循环列表。
 2. 进程描述符（task_struct）中保存了能完整描述一个正在执行的程序的左右数据。1.7KB(32位机器)。
 3. 使用slab分配器分配，实现对象复用和缓存着色。
@@ -191,7 +194,7 @@ exit() -> do_exit()
 
 
 进程调度
------------
+==============
 
 Linux提供抢占式多任务模式（preemptive multitaking）。
 
@@ -201,19 +204,6 @@ Linux提供抢占式多任务模式（preemptive multitaking）。
 调度策略的平衡： 优先调度IO消耗型以保证短的响应时间，或优先调度CPU消耗型以保证高吞吐量。
 
 Linux更倾向于 ``优先调度IO消耗型进程``，以保证响应时间（交互式应用和桌面系统等）。
-
-
-O(1)调度
-~~~~~~~~~
-
-1. 140个成员的array,各成员各对应一个FIFO队列；
-2. 使用位图来各队列是否为空；
-3. 调度时间复杂度为 O(1).
-
-.. figure:: /images/O(1)_schedule.jpg
-   :scale: 50%
-
-   Linux2.6.23以前的O(1)调度
 
 
 
@@ -277,67 +267,6 @@ RT进程和普通进程之间有一个分配带宽的比例，默认情况是 RT
 通过/proc/sys/kernel/sched_rt_period_us和/proc/sys/kernel/sched_rt_runtime_us来设置。
 
 
-CFS调度
---------
-
-`CFS调度器（2）-源码解析 <http://www.wowotech.net/process_management/448.html>`__
-
-1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
-2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
-3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
-
-
-时间片与nice
-~~~~~~~~~~~~
-1. 时间片：进程在被抢占之前能够运行的时间，预先分配的。
-2. nice：决定处理器的使用比例。
-
-采用固定时间片则会引发固定的切换频率，会影响公平性。
-
-1. 若将nice映射到绝对的时间片，则进程切换无法最优化进行。如高nice值的进程切换会更频繁；同时nice值±1的效果取决于nice本身初始值。
-2. 基于优先级的调度器为了优化交互任务，需要提升刚唤醒的进程的优先级，这样的优先级提升实际上是不公平的。
-3. 时间片会随着定时器节拍改变，即最小时间片必须是定时器节拍的整数倍。
-
-调度延时
-~~~~~~~~~
-又被称为调度周期，即该时间内所有任务均会被运行一次。
-
-当进程数 < sched_nr_latency(默认为为8)时，值固定的为sysctl_sched_latency(6 ms)
-
-当进程数 > sched_nr_latency(8)时,为进程数乘以sched_min_granularity_ns(0.75ms)
-
-**sysctl_sched_latency  =   cat /proc/sys/kernel/sched_latency_ns**
-
-`[scheduler] 调度时延，调度最小抢占粒度，调度唤醒抢占粒度详解 <https://blog.csdn.net/wukongmingjing/article/details/105433479>`__
-
-调度的实现
-------------
-
-时间记账vruntime
-~~~~~~~~~~~~~~~~~
-CFS使用调度器实体结构来维护每个进程运行的时间记张。（linux/sched.h -> struct_sched_entity）
-
-
-vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加权计算结果。单位ns，与定时器节拍不相关。
-
-``虚拟运行时间 vruntime += 实际运行时间 delta_exec * NICE_0_LOAD/ 权重``
-
-系统定时器周期性调用 update_curr()，以更新所有进程的vruntime(包括可运行和阻塞态的所有进程)。
-
-针对刚创建的进程会进行一定的惩罚，将虚拟时间加上一个值。
-
-
-进程选择
-~~~~~~~~~~~~
-选择具有最小vruntime的任务。
-
-使用红黑树rbtree来组织可运行的进程队列，节点键值即vruntime。
-
-
-1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。此处不需要遍历树来查找最左节点，因为 ``最左节点已经被缓存起来`` （在更新rbtree时缓存的）。
-2. 在rbtree插入进程： ``进程被唤醒或fork()创建进程时``。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
-3. 删除进程：进程阻塞或终止时。dequeue_entity()。
-
 大小核与HFI
 ~~~~~~~~~~~~~~~~
 1. `14. Hardware-Feedback Interface for scheduling on Intel Hardware — The Linux Kernel documentation  <https://docs.kernel.org/x86/intel-hfi.html#implementation-details-for-linux>`__
@@ -362,9 +291,22 @@ Higher values indicate higher capability. Energy efficiency and performance are 
 调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
 
 .. figure:: /images/sched.jpg
-   :scale: 70%
+   :scale: 30%
 
    调度过程
+
+
+O(1)调度
+~~~~~~~~~
+
+1. 140个成员的array,各成员各对应一个FIFO队列；
+2. 使用位图来各队列是否为空；
+3. 调度时间复杂度为 O(1).
+
+.. figure:: /images/O(1)_schedule.jpg
+   :scale: 50%
+
+   Linux2.6.23以前的O(1)调度
 
 
 休眠与唤醒
@@ -397,41 +339,74 @@ wake_up
 1. 分支1：cpus_share_cache判断如果目标CPU与当前CPU **不共享LLC**（即L3 cache），则将该线程加到目标cpu的wake_list后，向目标CPU发送 **IPI中断**。
 2. 分支2：(同Cluster，非IPI形式)try_to_wake_up() 调用 ttwu_queue() 将这个唤醒的任务添加到队列当中。ttwu_queue() 再调用 ttwu_do_activate() 激活这个任务。ttwu_do_activate() 调用 ttwu_do_wakeup()
 
-内核栈
-----------
-
-当系统因为系统调用（软中断）或硬件中断，CPU切换到特权工作模式，进程陷入内核态，进程使用的栈也要从用户栈转向系统栈。
-
-从用户态到内核态要两步骤，首先是将用户堆栈地址保存到内核堆栈中，然后将CPU堆栈指针寄存器指向内核堆栈。
-
-当由内核态转向用户态，步骤首先是将内核堆栈中得用户堆栈地址恢复到CPU堆栈指针寄存器中。
 
 
+CFS调度
+=========
 
+`CFS调度器（2）-源码解析 <http://www.wowotech.net/process_management/448.html>`__
 
-- 用户空间的堆栈，task_struct->mm->vm_area，属于进程虚拟地址空间。
-
-- 内核态的栈，tsak_struct->stack(其 ``底部是thread_info对象``，thread_info可以用来快速获取task_struct对象)。
-  整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
+1. CFS调度完全摒弃时间片的分配方法，而是给进程分配处理器的使用比例，确保了进程调度中有恒定的公平性，而切换频率则是不断变化的。
+2. CFS有一个分配时间的最小粒度，默认1ms，在可运行进程数量较多时，可将切换消耗限制在一定范围。
+3. 进程获得的处理器时间由自己和其它所有可运行进程的nice值的差值决定，nice相差1则相差1.25倍时间。
 
 
 
-https://zhuanlan.zhihu.com/p/296750228
+cfs调度的实现
+---------------
 
-.. figure:: /images/kernel_stack.png
-   :scale: 70%
-
-
-- x86: 上图，采用了每cpu变量current_task来保存当前运行进程的task_struct
-- arm: 使用current宏，arm32使用栈偏移量、arm64使用专门的寄存器 来找到进程描述符。
-
-为什么需要内核栈？
-
-1. 内核的代码和数据是为所有的进程共享的
-2. 安全
+时间记账vruntime
+~~~~~~~~~~~~~~~~~
+CFS使用调度器实体结构来维护每个进程运行的时间记张。（linux/sched.h -> struct_sched_entity）
 
 
-进程优先级
+vruntime存放进程的虚拟运行时间，是所有可运行进程总数的加权计算结果。单位ns，与定时器节拍不相关。
+
+``虚拟运行时间 vruntime += 实际运行时间 delta_exec * NICE_0_LOAD/ 权重``
+
+系统定时器周期性调用 update_curr()，以更新所有进程的vruntime(包括可运行和阻塞态的所有进程)。
+
+针对刚创建的进程会进行一定的惩罚，将虚拟时间加上一个值。
+
+调度延时
+~~~~~~~~~
+又被称为调度周期，即该时间内所有任务均会被运行一次。
+
+当进程数 < sched_nr_latency(默认为为8)时，值固定的为sysctl_sched_latency(6 ms)
+
+当进程数 > sched_nr_latency(8)时,为进程数乘以sched_min_granularity_ns(0.75ms)
+
+**sysctl_sched_latency  =   cat /proc/sys/kernel/sched_latency_ns**
+
+`[scheduler] 调度时延，调度最小抢占粒度，调度唤醒抢占粒度详解 <https://blog.csdn.net/wukongmingjing/article/details/105433479>`__
+
+
+进程选择
+~~~~~~~~~~~~
+选择具有最小vruntime的任务。
+
+使用红黑树rbtree来组织可运行的进程队列，节点键值即vruntime。
+
+
+1. 选择下一个任务：pick_next_entity()，运行rbtree最左节点对应的进程。此处不需要遍历树来查找最左节点，因为 ``最左节点已经被缓存起来`` （在更新rbtree时缓存的）。
+2. 在rbtree插入进程： ``进程被唤醒或fork()创建进程时``。enqueue_entity()更新当前任务的统计数据，并插入调度实体，并更新最左节点的缓存。
+3. 删除进程：进程阻塞或终止时。dequeue_entity()。
+
+
+
+时间片与nice
+------------
+1. 时间片：进程在被抢占之前能够运行的时间，预先分配的。
+2. nice：决定处理器的使用比例。
+
+采用固定时间片则会引发固定的切换频率，会影响公平性。
+
+1. 若将nice映射到绝对的时间片，则进程切换无法最优化进行。如高nice值的进程切换会更频繁；同时nice值±1的效果取决于nice本身初始值。
+2. 基于优先级的调度器为了优化交互任务，需要提升刚唤醒的进程的优先级，这样的优先级提升实际上是不公平的。
+3. 时间片会随着定时器节拍改变，即最小时间片必须是定时器节拍的整数倍。
+
+
+进程优先级的表示
 -----------------
 1. `关于Linux进程优先级数字混乱的彻底澄清 <https://mp.weixin.qq.com/s/44Gamu17Vkl77OGV2KkRmQ>`__
 2. `proc(5) - Linux manual page  <https://man7.org/linux/man-pages/man5/proc.5.html>`__
@@ -456,3 +431,4 @@ normal = 120 + nice
 **top命令：**
 ~~~~~~~~~~~~~~~
 /proc/pid/stat 字段 **18**. top_prio = -1 - sched_priority
+
