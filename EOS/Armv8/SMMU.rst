@@ -40,8 +40,8 @@ arm mmu
 
 
 
-2 stages
-~~~~~~~~~~~~
+mmu 2 stages
+---------------
 **Stage 2** translation allows a hypervisor to control a view of memory in a Virtual Machine (VM). Specifically, it allows the hypervisor to control which memory-mapped system resources a VM can access, and where those resources appear in the address space of the VM.
 
 This ability to control memory access is important for isolation and sandboxing
@@ -62,8 +62,8 @@ This ability to control memory access is important for isolation and sandboxing
 2. Stage 2 translation: hyperviosr控制对应vm级别可使用的内存。ensure that a VM can only see the resources that are allocated to it
 
 
-SMMU
----------------
+arm SMMU
+============
 1. `ARM SMMU的原理与IOMMU   <https://blog.51cto.com/u_15155099/2767161>`__
 2. 虚拟化和smmuv3 `ARMv8 Virtualization Overview · kernelgo  <https://kernelgo.org/armv8-virt-guide.html>`__
 
@@ -71,14 +71,13 @@ SMMU
 
 
 
-SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
+SMMU（IOMMU）和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转换（IPA->PA）,或者stage1 + stage2转换（VA->IPA->PA）的灵活配置。
 
 
 1. DMA需要连续的地址.
 2. 虚拟化： 在虚拟化场景， 所有的VM都运行在中间层hypervisor上，每一个VM独立运行自己的OS（guest OS）,Hypervisor完成硬件资源的共享, 隔离和切换。
     但guest VM使用的物理地址是GPA, 看到的内存并非实际的物理地址HPA，因此Guest OS无法正常的将连续的物理地址分给DMA硬件。
 
-因此，为了支持I/O透传机制中的DMA设备传输，而引入了IOMMU技术（ARM称作SMMU）。
 
 .. figure:: /images/dma_smmu.png
    :scale: 80%
@@ -87,7 +86,7 @@ SMMU可以为ARM架构下实现虚拟化扩展提供支持。它可以和MMU一�
 
 
 smmu vs mmu
-~~~~~~~~~~~~~~~~~~
+-------------
 .. important:: arm中smmu和mmu架构差异？
 
 1. `SMMU跟TrustZone啥关系？ - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000123590>`__
@@ -102,13 +101,27 @@ smmu vs mmu
 SMMU跟MMU非常相似，主要给其他Master来使用，连 **页表格式也是一样的**，只是编程方式不同，理论上可以让CPU的MMU和SMMU可以使用同一套页表。
 增加SMMU后， **其他Master也相当于有了MMU的功能**。
 
-2stages
-~~~~~~~~~~~
+smmu 2 stages
+----------------
+`iommu分析之---smmu v3的实现 - _备忘录 - 博客园  <https://www.cnblogs.com/10087622blog/p/15479476.html>`__
+
+1. SID (arm smmu) <-> RequestID(x86 PCI): 区分设备
+2. SSID(arm smmu) <-> PASID(x86 PCI):区分进程
+
 
 .. figure:: /images/arm_smmu_2stage_translation.png
    :scale: 100%
 
    arm_smmu_2stage_tran
+
+
+::
+
+   Guest驱动发起DMA请求，这个DMA请求包含VA + SID前缀
+   DMA请求到达SMMU，SMMU提取DMA请求中的SID就知道这个请求是哪个设备发来的，然后去StreamTable索引对应的STE
+   从对应的STE表中查找到对应的CD，然后用ssid到CD中进行索引找到对应的S1 Page Table
+   IOMMU进行S1 Page Table Walk，将VA翻译成IPA并作为S2的输入
+   IOMMU执行S2 Page Table Walk，将IPA翻译成PA，地址转化结束。
 
 
 
@@ -210,8 +223,8 @@ The TBU compares incoming transactions with translations that are cached in the 
 
 
 
-页表
-========
+PageTable
+===========
 1. `操作系统中的多级页表到底是为了解决什么问题？ - 知乎  <https://www.zhihu.com/question/63375062>`__
 2. `[mmu/cache]-ARM MMU/TLB的学习笔记和总结_arm tlb_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/109575691>`__
 
@@ -285,8 +298,8 @@ The VMID is used to tag translation lookaside buffer (TLB) entries, to identify 
 `Cache memory 、VA to PA、MMU 和 SMMU 总结 - 知乎  <https://zhuanlan.zhihu.com/p/436719684?utm_id=0>`__
 
 
-Linux mmu驱动
-===============
+Linux SMMU Driver
+====================
 SMMUV3驱动以platform device驱动加载，而SMMU设备为platform device
 
 1. `IOMMU/SMMUV3代码分析（1）SMMU设备的分配_acpi iort_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122442735>`__
