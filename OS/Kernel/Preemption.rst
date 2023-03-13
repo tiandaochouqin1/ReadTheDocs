@@ -193,7 +193,7 @@ ISR例程不能调用的函数
 中断睡眠后会发什么
 ~~~~~~~~~~~~~~~~~~
 
-内核会刷屏以下两个打印：
+内核会刷屏以下打印：
 
 ::
 
@@ -205,7 +205,7 @@ ISR例程不能调用的函数
    huh, entered softirq 2 NET_TX ffffffff81613740 preempt_count 00000101, exited with 7ffffffe?
    
 
-均来自于schedule:
+由于在3个不同地方检查了preempt_count值：
 
 1. 中断与进程共享栈，如果idle进程中发生的中断进行睡眠，则内核会有警告。
 
@@ -246,7 +246,8 @@ ISR例程不能调用的函数
 
 ::
 
-   __schedule -> schedule_debug -> __schedule_bug
+   //__schedule -> schedule_debug -> __schedule_bug
+
 
    /*
    * Various schedule()-time debugging checks and statistics:
@@ -276,6 +277,7 @@ ISR例程不能调用的函数
       dump_stack();
       add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
    }
+
 
 3. preempt count
 
@@ -314,6 +316,7 @@ preempt_count
 3. `进程切换分析（3）：同步处理  <http://www.wowotech.net/process_management/scheudle-sync.html>`__
 4. `Linux进程核心调度器之主调度器schedule--Linux进程的管理与调度(十九） - 腾讯云开发者社区-腾讯云  <https://cloud.tencent.com/developer/article/1367956>`__
 
+变量在struct thread_info中
 
 .. figure:: /images/preempt_count.png
 

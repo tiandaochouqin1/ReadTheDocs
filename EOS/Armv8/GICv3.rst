@@ -111,6 +111,7 @@ GICv3 初始化
 2. ☆☆ `Linux中断管理 (1)Linux中断管理机制 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8659981.html>`__
 3. `Linux kernel的中断子系统之（二）：IRQ Domain介绍  <http://www.wowotech.net/irq_subsystem/irq-domain.html>`__
 4. `第五章 ARM的中断处理 | Linux内核与嵌入式开发  <https://wugaosheng.gitbooks.io/linux-arm/content/di-wu-zhang-arm-de-zhong-duan-chu-li.html>`__
+5. ☆ 系列文章 `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
 
 
 ::
@@ -122,31 +123,46 @@ GICv3 初始化
 
 
 
-这里就从irq_handler开始分析流程：
+一个中断的生命周期：
 
 ::
 
-   irq_handler()
+   vector_irq()->vector_irq()->__irq_svc()
 
-   ->handle_arch_irq()->gic_handle_irq()
+   ->svc_entry()--------------------------------------------------------------------------保护中断现场
 
-      ->handle_domain_irq()->__handle_domain_irq()-------------读取IAR寄存器，响应中断，获取硬件中断号
+   ->irq_handler()->gic_handle_irq()------------------------------------------------具体到GIC中断控制器对应的就是gic_handle_irq()，此处从架构相关进入了GIC相关处理。
 
-         ->irq_find_mapping()------------------------------------------------将硬件中断号转变成Linux中断号
+      ->GIC_CPU_INTACK--------------------------------------------------------------读取IAR寄存器，响应中断。
 
-         ->generic_handle_irq()---------------------------------------------之后的操作都是Linux中断号
+      ->handle_domain_irq()
 
-         ->handle_percpu_devid_irq()-----------------------------------SGI/PPI类型中断处理
+         ->irq_enter()------------------------------------------------------------------------进入硬中断上下文
 
-         ->handle_fasteoi_irq()--------------------------------------------SPI类型中断处理
+         ->generic_handle_irq()
 
-            ->handle_irq_event()->handle_irq_event_percpu()------执行中断处理核心函数
+         ->generic_handle_irq_desc()->handle_fasteoi_irq()--------------------根据中断号分辨不同类型的中断，对应不同处理函数，这里中断号取大于等于32。
 
-               ->action->handler-----------------------------------------------执行primary handler。
+            ->handle_irq_event()->handle_irq_event_percpu()
 
-               ->__irq_wake_thread()----------------------------------------根据需要唤醒中断内核线程
+               ->action->handler()-----------------------------------------------------------对应到特定中断的处理函数，即上半部。
 
-               
+               ->__irq_wake_thread()-----------------------------------------------------如果中断函数处理返回IRQ_WAKE_THREAD，则唤醒中断线程进行处理，但不是立即执行中断线程。
+
+         ->irq_exit()---------------------------------------------------------------------------退出硬中断上下文。视情况处理软中断。
+
+         ->invoke_softirq()-----------------------------------------------------------------处理软中断，超出一定条件任务就会交给软中断线程处理。
+
+      ->GIC_CPU_EOI--------------------------------------------------------------------写EOI寄存器，表示结束中断。至此GIC才会接收新的硬件中断，此前一直是屏蔽硬件中断的。
+
+   ->svc_exit-------------------------------------------------------------------------------恢复中断现场
+
+
+
+1. 中断上半部是关硬件中断的，直到写EOI之后。
+2. 不是所有软中断都运行于软中断上下文中，部分软中断任务可能会交给ksoftirqd线程处理。
+
+
 ::
 
    /**

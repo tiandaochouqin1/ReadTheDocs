@@ -1,6 +1,10 @@
 ============
 中断 
 ============
+
+1. ☆☆ `Linux中断管理 (1)Linux中断管理机制 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8659981.html>`__
+2. ☆ 系列文章 `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
+
 硬件中断架构、内核中断子系统、中断处理流程、软中断
 
 
@@ -238,11 +242,11 @@ request_irq
 request_irq参数
 -----------------
 `Linux(内核剖析):20---中断之中断处理程序（request_irq、free_irq）  <https://blog.csdn.net/qq_41453285/article/details/103945123>`__
-handler：发生中断时首先要执行的硬，也可
 
-返回IRQ_HANDLE不执行中断线程
+handler：发生中断时首先要执行的硬，也可返回IRQ_HANDLE不执行中断线程
 
 thread_fn : 中断线程，类似于中断下半部
+
 ::
 
    /**
@@ -308,8 +312,8 @@ thread_fn : 中断线程，类似于中断下半部
 
 可延时函数与工作队列
 -----------------------
-1. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
-2. `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
+2. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
+
 
 1. 可延时函数：由软中断或tasklet实现。运行在中断上下文(如do_IRQ退出时即为一个软中断检查点)，不能睡眠、阻塞。
 2. 工作队列：运行在进程上下文，可阻塞。
