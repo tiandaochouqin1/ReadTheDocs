@@ -300,10 +300,6 @@ The VMID is used to tag translation lookaside buffer (TLB) entries, to identify 
 
 Linux SMMU Driver
 ====================
-SMMUV3驱动以platform device驱动加载，而SMMU设备为platform device
-
-1. `IOMMU/SMMUV3代码分析（1）SMMU设备的分配_acpi iort_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122442735>`__
-2. `IOMMU/SMMUV3代码分析（1）SMMU设备的分配_acpi iort_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122442735>`__
 
 
 
@@ -322,13 +318,41 @@ SMMUV3驱动以platform device驱动加载，而SMMU设备为platform device
 4. SMMU硬件通过EVENTQ通知驱动有事件需要处理（如设备缺页等） 软件/驱动建立和维护内存中的配置和页表；
 
 
-smmu设备驱动
--------------
+smmu设备分配
+------------------
+1. `IOMMU/SMMUV3代码分析（1）SMMU设备的分配_acpi iort_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122442735>`__
+
+
+1. SMMUV3驱动以platform device驱动加载，而SMMU设备为platform device，匹配时会触发驱动的probe函数
+2. SMMU设备在IORT表中被定义，它定义了SMMU设备的资源、特性以及SPI中断等。
+
+
+::
+
+   acpi_iort_init -> acpi_get_table    //获取iort表
+                  -> iort_init_platform_devices // 根据iort表初始化platform设备
+                                             -> ops=iort_get_dev_cfg   //获取dev cfg
+                                             -> fwnode=acpi_allocl_fwnode_static //分配fwnode_handle
+                                             -> iort_set_fwnode(iort_node,fwnode) 
+                                             -> iort_add_platform_device(iort_node,ops) //分配并设置paltform device
+
+
+         
+.. figure:: /images/iort_add_platform_device.png
+   :scale: 80%
+
+   iort_add_platform_device
+
+
+smmu驱动初始化
+----------------
+1. `IOMMU/SMMUV3代码分析（2）SMMUV3驱动初始化1_smmu驱动_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122463386>`__
+
+         
 .. figure:: /images/arm_smmu_device_probe.png
    :scale: 80%
 
    arm_smmu_device_probe
-
 
 程序运行过程中打开mmu
 ------------------------
