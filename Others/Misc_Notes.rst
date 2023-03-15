@@ -9,6 +9,8 @@ Misc Note
 
 1. `健康的体重、营养和身体活动 | 健康的体重、营养和身体活动 | CDC  <https://www.cdc.gov/healthyweight/index.html>`__
 2. `碳水化合物、蛋白质和脂肪 - 营养障碍 - 《默克诊疗手册家庭版》  <https://www.msdmanuals.com/home/disorders-of-nutrition/overview-of-nutrition/carbohydrates,-proteins,-and-fats>`__
+3. `ExRx.net : 饮食发展  <https://exrx.net/Nutrition/DietDevelopment>`__
+
 
 建议
 ------

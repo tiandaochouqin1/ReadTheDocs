@@ -4,6 +4,7 @@
 
 1. ☆☆ `Linux中断管理 (1)Linux中断管理机制 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8659981.html>`__
 2. ☆ 系列文章 `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
+3. `Linux kernel的中断子系统之（二）：IRQ Domain介绍  <http://www.wowotech.net/irq_subsystem/irq-domain.html>`__
 
 硬件中断架构、内核中断子系统、中断处理流程、软中断
 
@@ -298,6 +299,26 @@ thread_fn : 中断线程，类似于中断下半部
 上半部执行具有严格时限的工作，运行时可禁止所有其它中断（大部分不会），
 同时在其它处理器上禁止同一中断线，即同一中断处理程序不会被同时调用以处理嵌套的中断，即无需重入。
 
+中断栈
+----------
+
+中断栈的创建：内核启动时中会去为每个cpu创建一个per cpu的中断栈：start_kernel->init_IRQ->init_irq_stacks
+中断栈的使用：中断发生和退出的时候调用irq_stack_entry和irq_stack_exit来进入和退出中断栈。
+
+
+新内核中一般独立于线程栈,都是16K。栈溢出？
+
+用户态线程栈：8M
+
+::
+
+   #define IRQ_STACK_SIZE   THREAD_SIZE
+
+   thread_info.h中定义了大小。
+
+   define THREAD_SIZE  16384     //也就是irq栈的大小大概15k
+
+
 中断下半部
 ===============
 下半部：所有用于实现将工作推后执行的内核机制。
@@ -325,6 +346,13 @@ thread_fn : 中断线程，类似于中断下半部
 
 软中断
 ----------
+1. `Linux内核软中断softirq和小任务tasklet分析（六）_软中断在什么时候执行_业余程序员plus的博客-CSDN博客  <https://blog.csdn.net/u011037593/article/details/114795032>`__
+
+- Linux中没有实现中断优先级，即不支持真正意义的中断嵌套。
+- 硬中断处理时会停止响应其它中断，并且屏蔽本类型中断(丢失)。
+- 软中断处理可能处于硬中断上下文(所以不能睡眠)，这时会打开本地中断，关闭软中断，处理完后在关闭本地中断。可能会发生中断处理函数嵌套()。
+- Gicv3实现了 抢占+响应优先级，即中断嵌套
+
 1. 对性能要求非常高的场景（如网络、SCSI）。编译时静态注册。
 2. 
 
