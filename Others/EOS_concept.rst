@@ -173,18 +173,6 @@ POSIX与System V IPC
 
 网络相关
 ==============
-bootp与dhcp
-------------
-1. `【TCP/IP详解】BOOTP：引导程序协议 - Chen沉尘 - 博客园  <https://www.cnblogs.com/chen-cs/p/12898864.html>`__
-
-
-DHCP 是 Dynamic Host Configuration Protocol( **动态** 主机分配协议)缩写，它的前身是 BOOTP。
-
-
-1. bootp 中ip与mac静态绑定，需要预先配置。
-2. dhcp则具有动态性，包括动态ip、保留ip、租约等功能。
-3. dhcp server可兼容bootp client。
-4. rarp仅可获取ip地址，链路层广播，无法路由转发。
 
 工具使用
 ==========
