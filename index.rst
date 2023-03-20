@@ -20,11 +20,11 @@ My NoteBook
    :maxdepth: 2
 
    
-   Misc/index
+   Basic/index
    OS/index
    Net/index
    EOS/index
-   Others/index
+   Misc/index
 
 
 

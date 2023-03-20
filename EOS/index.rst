@@ -13,6 +13,7 @@ C语言、汇编、MySQL、算法等。
    Arm_asm.rst
    X86_asm.rst
    LDD.rst
+   EOS_concept.rst
    Concurrncy.rst
    
    
