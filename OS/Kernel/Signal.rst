@@ -204,3 +204,10 @@ context使得linux程序可以在用户态执行上下文切换，从而避免�
 
 
 
+常见信号
+-----------
+sigsegv vs sigbus
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- sigsegv: sig11, attempt to access a valid memory address in a way that is **contrary to its protection**. writing to read-only memory
+- sigbus: sig7, attempting to access an address that is **invalid**. improperly aligned address or an address that is not mapped 

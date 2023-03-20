@@ -27,8 +27,9 @@ driver & device注册过程
 -------------------------
 
 1. bus(bus_register)维护注册进来的devcie 与 driver (各一个链表)，每注册(device_register/driver_register)一个device/driver 都会调用 **Bus->match** 函数(定义了Device和Driver绑定时的规则)，将device 与 driver 进行配对，并将它们加入链表.
-2. 如果配对成功，调用Bus->probe或者driver->probe函数， 调用 kobject_uevent 函数设置环境变量，mdev进行创建 **设备节点** 等操作。
-3. 总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
+2. 如果配对成功，调用 **Bus->probe/driver->probe**函数(在probe函数中实现 **设备的初始化**、各种配置以及生成用户空间的文件接口) 
+3. kobject_uevent 函数设置环境变量，mdev进行创建 **设备节点** 等操作。
+4. 总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
 
 kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一个ktype关联(定义了默认的特性/属性)。
 
@@ -46,11 +47,13 @@ Linux 称platform总线为虚拟总线，所有直接通过内存寻址的设备
 
 match的规则
 ~~~~~~~~~~~~
-BUS上实现的.match()函数，定义了Device和Driver绑定时的规则。
+1. BUS上实现的.match()函数，定义了Device和Driver绑定时的规则。
+   如果BUS的match()函数没实现，认为BUS上的所有的Device和Driver都是match的，具体后续过程要看probe()的实现了。
+
+2. probe规则：Probe的规则是：如果BUS上实现了probe就用BUS的probe；否则才会用driver的pro
 
 
-
-基本上有四种方式
+match的四种方式
 
 1. 调用of_driver_match_device()函数；(为了支持dts)
 2. ACPI系统专用方法；

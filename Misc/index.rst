@@ -9,6 +9,7 @@ Misc
    Book/index
    LearningPlan.rst
    2022.rst
-.. Misc_Notes.rst
+   Diet_and_nutrition.rst
+.. Notes.rst
 .. DP.rst
    
