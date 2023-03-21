@@ -11,9 +11,8 @@ Linux Drive Develop
 
 1. ☆ `Linux 设备总线驱动模型_Linux学习之路的博客-CSDN博客_linux总线设备驱动  <https://blog.csdn.net/lizuobin2/article/details/51570196>`__
 2. ☆ `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
-3. `Linux Device和Driver注册过程，以及Probe的时机_thl789的博客-CSDN博客  <https://blog.csdn.net/thl789/article/details/6723350>`__
-4. `Linux设备模型(5)_device和device driver  <http://www.wowotech.net/linux_kenrel/device_and_driver.html>`__
-5. `Linux设备和驱动的匹配过程_qwaszx523的博客-CSDN博客_linux设备和驱动的匹配  <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
+3. `Linux设备模型(5)_device和device driver  <http://www.wowotech.net/linux_kenrel/device_and_driver.html>`__
+4. `Linux设备和驱动的匹配过程_qwaszx523的博客-CSDN博客_linux设备和驱动的匹配  <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
 
 
 设备树
@@ -47,6 +46,10 @@ Linux 称platform总线为虚拟总线，所有直接通过内存寻址的设备
 
 match的规则
 ~~~~~~~~~~~~
+1. `Linux Device和Driver注册过程，以及Probe的时机_thl789的博客-CSDN博客  <https://blog.csdn.net/thl789/article/details/6723350>`__
+
+
+
 1. BUS上实现的.match()函数，定义了Device和Driver绑定时的规则。
    如果BUS的match()函数没实现，认为BUS上的所有的Device和Driver都是match的，具体后续过程要看probe()的实现了。
 

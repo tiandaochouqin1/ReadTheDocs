@@ -215,7 +215,7 @@ uart i2c spi
 2. `SPI,UART,I2C都有什么区别，及其各自的特点 - Luckyer - 博客园  <https://www.cnblogs.com/lucky-apple/archive/2008/07/03/1234581.html>`__
 3. `一文搞懂UART通信协议-云社区-华为云  <https://bbs.huaweicloud.com/blogs/372189>`__
 
-
+uart i2c spi 都是串行
 
 
 
@@ -232,3 +232,16 @@ UART TXD/RXD      异步     全双工 小端     baud rate: 9600/115200
 I2C  SCL/SDA      同步     半双工 大端     100kbps/400kbps/3.4Mbps
 SPI  MOSI/MISO/SS 同步     全双工 小端     比I2C快
 ==== ============ ======== ====== ======== =======================
+
+串行总线和并行总线
+------------------
+并行总线：
+
+.. math::
+  
+  x(t)=\sum_{n=1}a_n p(t-nT)\cos(2 \pi f t) 
+
+
+serdes
+~~~~~~~~~~
+串行解串
