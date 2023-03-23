@@ -29,14 +29,91 @@ EasyLogger
 ~~~~~~~~~~~~~
 `armink/EasyLogger: An ultra-lightweight(ROM<1.6K, RAM<0.3k), high-performance C/C++ log library. | 一款超轻量级(ROM<1.6K, RAM<0.3k)、高性能的 C/C++ 日志库  <https://github.com/armink/EasyLogger>`__
 
-cjson
---------
-待总结。
+序列化工具
+-----------
+序列化和反序列化 用于解决数据一致性问题(输入数据与输出数据一致)，即 输入数据->网络传输/持久化存储 -> 输出数据。常用于 远程网络传输或持久化存储。
 
-cjson实际为 词法分析器+语法分析器+语义分析器
+c语言序列化工具：
+
+1. 直接写入文件：使用fwrite/fread
+2. 使用xmal或json：将数据结构转换为xml或json格式，然后读写文件；
+3. 使用序列化库：protobuf、thrift等
+
+`protobuf-c/protobuf-c: Protocol Buffers implementation in C  <https://github.com/protobuf-c/protobuf-c>`__
+
+cjson
+~~~~~~~~~
+1. 看源码的api `cJSON/cJSON.c at master · DaveGamble/cJSON  <https://github.com/DaveGamble/cJSON/blob/master/cJSON.c>`__
+2. `cJSON 如何遍历所有对象，获取到未知键名的内容  <https://blog.csdn.net/u011983700/article/details/125334512>`__
+
+cjson实现的内容： AddItem、GetItem、Print
+
+1. 反序列化GetItem：实际为 词法分析器+语法分析器+语义分析器。 cJSON_GetArrayItem、cJSON_GetObjectItem
+2. 序列化AddItem：
+
+::
+
+    #include <stdio.h>
+    #include "cJSON.h"
+
+    int main() {
+        // create a cJSON object
+        cJSON *root = cJSON_CreateObject();
+
+        // add some key-value pairs to the object
+        cJSON_AddStringToObject(root, "name", "Alice");
+        cJSON_AddNumberToObject(root, "age", 25);
+        cJSON_AddTrueToObject(root, "is_student");
+
+        // encode the object into a JSON string
+        char *json_str = cJSON_Print(root);
+
+        // print the JSON string
+        printf("%s\n", json_str);
+
+        // free the cJSON object and the JSON string
+        cJSON_Delete(root);
+        free(json_str);
+
+        return 0;
+    }
+
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "cJSON.h"
+
+    int main(int argc, char const *argv[])
+    {
+        char *json_string = "{\"name\": \"John Doe\", \"age\": 32, \"isMarried\": true}";
+
+        cJSON *root = cJSON_Parse(json_string);
+
+        cJSON *name = cJSON_GetObjectItem(root, "name");
+        cJSON *age = cJSON_GetObjectItem(root, "age");
+        cJSON *is_married = cJSON_GetObjectItem(root, "isMarried");
+
+        printf("Name: %s", name->valuestring);
+        printf("Age: %d", age->valueint);
+        printf("Is Married: %s", is_married->valueint ? "true" : "false");
+
+        cJSON_Delete(root);
+
+        return 0;
+    }
+
+
+protobuf
+~~~~~~~~~~~
+1. https://github.com/protocolbuffers/protobuf 语言无关、平台无关、可扩展的序列化结构数据的方法
+2. `protobuf-c的学习总结 - Rabbit_Dale - 博客园  <https://www.cnblogs.com/anker/p/3416541.html>`__
+
+
+相对xml、json，protobuf的使用多了安装编译程序，从proto配置生成对应语言代码的步骤。 **proto配置定义了结构体信息**。
+
 
 编译器
-~~~~~~~
+----------
 1. `编译原理一：想初步了解编译原理？看这篇文章就够了 - 掘金  <https://juejin.cn/post/6938703901449256997>`__
 2. `Create Your Own Compiler - Caught in the Web  <https://citw.dev/tutorial/create-your-own-compiler?p=1>`__
 
