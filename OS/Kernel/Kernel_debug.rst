@@ -38,9 +38,10 @@ taskstats
 
 1. `Per-task statistics interface — The Linux Kernel documentation  <https://docs.kernel.org/accounting/taskstats.html>`__
 
-
+proc debugfs seq_file
+========================
 debugfs
-===============
+-----------
 https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
 
 **Debugfs** exists as a simple way for kernel developers to make information available to user space. 
@@ -49,7 +50,7 @@ or sysfs, which has strict one-value-per-file rules, debugfs has no rules at all
 Developers can put any information they want there. 
 
 挂载
------------
+~~~~~~~~~~~~
 ::
 
    打开内核编译选项
@@ -65,7 +66,13 @@ Developers can put any information they want there.
 `CONFIG_GENERIC_IRQ_DEBUGFS <https://www.kernel.org/doc/html/latest/core-api/irq/irq-domain.html>`__
 
 使用debugfs api
-----------------
+~~~~~~~~~~~~~~~~~~~
+
+proc
+-----------
+
+seq_file
+---------------
 
 
 
@@ -215,336 +222,6 @@ https://www.kernel.org/doc/Documentation/kprobes.txt
 动态地跟踪内核的行为、收集debug信息和性能信息。可以跟踪内核几乎所有的代码地址
 
 
-syslog & printk
-====================
-
-syslog
-----------------
-`内核日志及printk结构分析 <https://www.cnblogs.com/aaronLinux/p/6843131.html>`__
-
-1. /proc/sys/kern/printk_ratelimit :监测周期，在这个周期内只能发出下面的控制量的信息).
-2. /proc/sys/kernel/printk_ratelimit_burst :周期内的最大消息数.
-
-
-printk
----------
-1. 效率很低：做字符拷贝时一次只拷贝一个字节，且去 **调用console输出可能还产生中断**。
-2. ring buffer只有1K。
-
-dmesg时间戳
-~~~~~~~~~~~~
-dmesg时间为系统启动的时间Δ。
-
-1. `[转载]date命令时间转换 - 苏小北1024 - 博客园  <https://www.cnblogs.com/muahao/p/6098675.html>`__
-
-::
-      
-   date -d @12345  //即 date -d "1970-01-01 UTC 12345 seconds"
-
-
-   dmesg log实际时间=格林威治1970-01-01+(date当前时间秒数 - uptime系统启动至今的秒数 + dmesg打印的log时间)
-
-   date -d "1970-01-01 UTC `echo "$(date +%s)-$(cat /proc/uptime|cut -f 1 -d' ')+12288812.926194"|bc ` seconds"
-
-
-
-printk等级
-~~~~~~~~~~~~
-1. `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
-
-1. All printk() messages are printed to the kernel log buffer, which is a ring buffer exported to userspace through /dev/kmsg。
-2. printk的打印等级只是控制是否输出到console。 **message loglevel <= console_loglevel** 则输出到console。可增大console_loglevel来查看更多打印。
-3. 4.9版本开始，printk默认会换行。不换行需使用pr_cont(KERN_CONT)。 `Message logging with printk — The Linux Kernel documentation  <https://www.kernel.org/doc/html/latest/core-api/printk-basics.html>`__
-
-**console level** 查看：
-
-::
-      
-   You can check the current console_loglevel with:
-
-   $ cat /proc/sys/kernel/printk
-   4        4        1        7
-   current, default, minimum and boot-time-default log levels.
-
-
-boot(内核启动)可指定loglevel值、quiet(loglevel=4)。 https://www.kernel.org/doc/html/v4.14/admin-guide/kernel-parameters.html
-
-
-
-
-printk源码
-~~~~~~~~~~~~~
-https://elixir.bootlin.com/linux/v4.4.157/source/kernel/printk/printk.c#L1659
-
-printk ->  vprintk_default -> **vprintk_emit** -> console_unlock -> call_console_drivers 
-
-会遍历所有console。
-
-printk可以在任何上下文使用，由于 **要获取logbug_lock保护环形缓冲区,所以需要禁止本地中断，防止死锁.**
-
-
-☆ `Printk实现流程 <https://blog.csdn.net/wdjjwb/article/details/88577419>`__
-
-1. 如何把字符串放到缓存，如何从缓存写到串口。 **整个过程都处于关中断状态** 
-   
-   先关中断，保持 **logbuf_lock自旋锁** 的情况下，将数据格式化，放到printk_buf缓冲区，其大小为1K，然后再复制到log_buf缓冲区。
-   
-   获取console_sem信号量(如串口)，暂时放开自旋锁，所以在SMP下，其他CPU可能继续向log_buf中存放数据，并由本次printk的release_console_sem循环检查并输出。
-   
-
-2. 串口驱动输出采用轮询。输出时会 **关抢占，关中断**。
-   serial8250_console_write 轮询。
-
-
-::
-
-   asmlinkage int vprintk_emit(int facility, int level,
-               const char *dict, size_t dictlen,
-               const char *fmt, va_list args)
-   {
-      static char textbuf[LOG_LINE_MAX];
-      char *text = textbuf;
-      size_t text_len = 0;
-
-      0. 加锁
-      
-      /* This stops the holder of console_sem just where we want him */
-      local_irq_save(flags);
-      raw_spin_lock(&logbuf_lock);
-
-      1. 格式化字符串
-
-      /*
-      * The printf needs to come first; we need the syslog
-      * prefix which might be passed-in as a parameter.
-      */
-      text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
-
-
-      2. 解析打印等级
-
-      /* strip kernel syslog prefix and extract log level or control flags */
-      if (facility == 0) {
-         int kern_level = printk_get_level(text);
-         .....
-         					level = kern_level - '0';
-         .....
-            text_len -= end_of_header - text;
-            text = (char *)end_of_header;
-      }
-
-      3. 若cont且和其它cpu无冲突，则cont_add缓存；否则cont_flush
-
-      if (!(lflags & LOG_NEWLINE)) {
-         /*
-         * Flush the conflicting buffer. An earlier newline was missing,
-         * or another task also prints continuation lines.
-         */
-         if (cont.len && (lflags & LOG_PREFIX || cont.owner != current))
-            cont_flush(LOG_NEWLINE);
-
-         /* buffer line if possible, otherwise store it right away */
-         if (cont_add(facility, level, text, text_len))
-            printed_len += text_len;
-         else
-            printed_len += log_store(facility, level,
-                     lflags | LOG_CONT, 0,
-                     dict, dictlen, text, text_len);
-      } else {
-         bool stored = false;
-
-         /*
-         * If an earlier newline was missing and it was the same task,
-         * either merge it with the current buffer and flush, or if
-         * there was a race with interrupts (prefix == true) then just
-         * flush it out and store this line separately.
-         * If the preceding printk was from a different task and missed
-         * a newline, flush and append the newline.
-         */
-         if (cont.len) {
-            if (cont.owner == current && !(lflags & LOG_PREFIX))
-               stored = cont_add(facility, level, text,
-                     text_len);
-            cont_flush(LOG_NEWLINE);
-         }
-
-         if (stored)
-            printed_len += text_len;
-         else
-            printed_len += log_store(facility, level, lflags, 0,
-                     dict, dictlen, text, text_len);
-      }
-
-
-      4. 放开logbuf_lock,开中断
-
-      logbuf_cpu = UINT_MAX;
-      raw_spin_unlock(&logbuf_lock);
-      lockdep_on();
-      local_irq_restore(flags);
-
-
-      5. 关抢占，获取consle semaphore，console_unlock输出
-   
-      /* If called from the scheduler, we can not call up(). */
-      if (!in_sched) {
-         lockdep_off();
-         /*
-         * Disable preemption to avoid being preempted while holding
-         * console_sem which would prevent anyone from printing to
-         * console
-         */
-         preempt_disable();
-
-         /*
-         * Try to acquire and then immediately release the console
-         * semaphore.  The release will print out buffers and wake up
-         * /dev/kmsg and syslog() users.
-         */
-         if (console_trylock_for_printk())
-            console_unlock();
-         preempt_enable();
-         lockdep_on();
-      }
-
-      return printed_len;
-   }
-
-
-串口驱动
-~~~~~~~~~~~
-call_console_drivers调用时也会 **关中断**。
-
-univ8250_console_write -> serial8250_console_write -> uart_console_write -> 
-serial8250_console_putchar -> wait_for_xmitr(此处最长循环等待10ms) -> io_serial_in
-
-https://elixir.bootlin.com/linux/v4.4.157/source/drivers/tty/serial/8250/8250_port.c#L1711
-
-::
-
-   /*
-   *	Wait for transmitter & holding register to empty
-   */
-   static void wait_for_xmitr(struct uart_8250_port *up, int bits)
-   {
-      unsigned int status, tmout = 10000;
-
-      /* Wait up to 10ms for the character(s) to be sent. */
-      for (;;) {
-         status = serial_in(up, UART_LSR);
-
-         up->lsr_saved_flags |= status & LSR_SAVE_FLAGS;
-
-         if ((status & bits) == bits)
-            break;
-         if (--tmout == 0)
-            break;
-         udelay(1);
-      }
-
-      /* Wait up to 1s for flow control if necessary */
-      if (up->port.flags & UPF_CONS_FLOW) {
-         unsigned int tmout;
-         for (tmout = 1000000; tmout; tmout--) {
-            unsigned int msr = serial_in(up, UART_MSR);
-            up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
-            if (msr & UART_MSR_CTS)
-               break;
-            udelay(1);
-            touch_nmi_watchdog();
-         }
-      }
-   }
-
-
-
-
-
-irq处理流程
--------------------
-`中断处理流程 <https://peiyake.com/2020/09/16/kernel/linux%E4%B8%AD%E6%96%AD%E5%AD%90%E7%B3%BB%E7%BB%9F---%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B/>`__
-
-http://www.wowotech.net/sort/irq_subsystem
-
-local_irq_save()/local_irq_restore() 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/irqflags.h
-
-These routines disable hard interrupts on the local CPU, and restore them. 
-
-They are **reentrant**; saving the previous state in their one unsigned long flags argument. 
-
-若当前开关状态已知，则可直接使用 local_irq_disable() and local_irq_enable().
-
-
-No irq handler
-~~~~~~~~~~~~~~~~~~~~~
-do_IRQ: 1.55 No irq handler for vector
-
-
-**可能的原因**：  https://ilinuxkernel.com/?p=1192
-
-驱动卸载时，调用free_irq（）释放中断资源，但仍需调用pci_disable_device（）来关闭PCI设备。
-
-若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系可能不会被解除。
-
-于是当再次加载该PCI设备驱动后，PCI设备发出中断，内核仍然会以旧的中断向量vector来解析中断号。
-
-而驱动卸载调用free_irq（）将vector与物理中断号irq对应关系解除。
-
-
-**调试方法**：https://unix.stackexchange.com/questions/535199/how-to-deduce-the-nature-of-an-interrupt-from-its-number
-
-If your current kernel has debugfs support and **CONFIG_GENERIC_IRQ_DEBUGFS** kernel option enabled,
- you might get a lot of information on the state of IRQ vector 55 with the following commands as root:
-
-::
-
-   mount -t debugfs none /sys/kernel/debug
-   grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
-
-
-
-do_IRQ
-~~~~~~~
-
-
-https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
-
-::
-
-   __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
-   {
-      struct pt_regs *old_regs = set_irq_regs(regs);
-      struct irq_desc * desc;
-      /* high bit used in ret_from_ code  */
-      unsigned vector = ~regs->orig_ax;
-
-
-      entering_irq();
-
-      /* entering_irq() tells RCU that we're not quiescent.  Check it. */
-      RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
-
-      desc = __this_cpu_read(vector_irq[vector]);
-
-      if (!handle_irq(desc, regs)) {
-         ack_APIC_irq();
-
-         if (desc != VECTOR_RETRIGGERED) {
-            pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
-                     __func__, smp_processor_id(),
-                     vector);
-         } else {
-            __this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-         }
-      }
-
-      exiting_irq();
-
-      set_irq_regs(old_regs);
-      return 1;
-   }
 
 
 
@@ -658,51 +335,6 @@ the kernel will respond to regardless of whatever else it is doing, unless it is
 
    
 
-perf性能优化
-=============
-主要为用户态，也有内核。
-
-1. `☆ perf examples <https://www.brendangregg.com/perf.html>`__ :详细介绍了events
-2. `flamegraphs <https://www.brendangregg.com/flamegraphs.html>`__
-3. https://perf.wiki.kernel.org/index.php/Tutorial
-4. `系统级性能分析工具perf的介绍与使用 <https://www.cnblogs.com/arnoldlu/p/6241297.html>`__
-5. `Linux性能优化全景指南 <https://mp.weixin.qq.com/s/dcE5TZ9lBOpZdRDeHsHUYQ>`__
-
-sudo执行。-p pid
-
-- perf top：实时性能
-- perf stat：统计信息
-- perf record + report：精确分析，函数级别
-- perf annotate: 源码级别
-- perf bench: 性能bennchmark
-- 
-
-   
-::
-
-   perf record -vv -e sched:sched_stat_sleep -e sched:sched_switch -e sched:sched_process_exit -gP
-
-
-
-.. figure:: /images/perf_events_map.png
-
-   
-
-perf events
---------------
-
-The types of events are:
-
-::
-
-
-  Hardware Events: CPU performance monitoring counters.
-  Software Events: These are low level events based on kernel counters. For example, CPU migrations, minor faults, major faults, etc.
-  Kernel Tracepoint Events: This are static kernel-level instrumentation points that are hardcoded in interesting and logical places in the kernel.
-  User Statically-Defined Tracing (USDT): These are static tracepoints for user-level programs and applications.
-  Dynamic Tracing: Software can be dynamically instrumented, creating events in any location. For kernel software, this uses the kprobes framework. For user-level software, uprobes.
-  Timed Profiling: Snapshots can be collected at an arbitrary frequency, using perf record -FHz. This is commonly used for CPU usage profiling, and works by creating custom timed interrupt events.
-
 
 典型故障
 ==========
@@ -747,63 +379,48 @@ R状态死锁-softlockup和hardlockup
    lockup_detector
 
 
-waitqueue
+
+perf性能优化
+=============
+主要为用户态，也有内核。
+
+1. `☆ perf examples <https://www.brendangregg.com/perf.html>`__ :详细介绍了events
+2. `flamegraphs <https://www.brendangregg.com/flamegraphs.html>`__
+3. https://perf.wiki.kernel.org/index.php/Tutorial
+4. `系统级性能分析工具perf的介绍与使用 <https://www.cnblogs.com/arnoldlu/p/6241297.html>`__
+5. `Linux性能优化全景指南 <https://mp.weixin.qq.com/s/dcE5TZ9lBOpZdRDeHsHUYQ>`__
+
+sudo执行。-p pid
+
+- perf top：实时性能
+- perf stat：统计信息
+- perf record + report：精确分析，函数级别
+- perf annotate: 源码级别
+- perf bench: 性能bennchmark
+- 
+
+   
+::
+
+   perf record -vv -e sched:sched_stat_sleep -e sched:sched_switch -e sched:sched_process_exit -gP
+
+
+
+.. figure:: /images/perf_events_map.png
+
+   
+
+perf events
 --------------
-1. `源码解读Linux等待队列 - Gityuan博客 | 袁辉辉的技术博客` <http://gityuan.com/2018/12/02/linux-wait-queue/>`__
-2. `Linux等待队列（Wait Queue） - huey_x - 博客园` <https://www.cnblogs.com/hueyxu/p/13745029.html>`__
 
-
-一种重要的数据结构(链表实现)，和进程调度机制紧密相关。可以用于同步对系统资源的访问(互斥锁)、异步事件通知、跨进程通信等。
-
-休眠与唤醒过程：
-
-1. A: wait_event(wq,condition)向队列头添加等待队列项，记录当前进程+唤醒回调，然后schedule；
-2. B: wake_up(wq)遍历wq中每一项并try_to_wake_up(),将对应进程加入rq队列，设置为TASK_RUNNING;
-3. A: 被唤醒后继续执行(处于wait_event中)，判断是否跳出或继续schedule.
+The types of events are:
 
 ::
 
-   ___wait_event(wq, condition, state, exclusive, ret, cmd){  
-      wait_queue_t __wait;                    
-      INIT_LIST_HEAD(&__wait.task_list);                
-      for (;;) {
-         //当检测进程是否有待处理信号则返回值__int不为0，【见3.1.1】
-         long __int = prepare_to_wait_event(&wq, &__wait, state);
-         if (condition)  //当满足条件，则跳出循环                    
-               break;                        
-                                       
-         //当有待处理信号且进程处于可中断状态(TASK_INTERRUPTIBLE或TASK_KILLABLE))，则跳出循环
-         if (___wait_is_interruptible(state) && __int) {        
-               __ret = __int;                    
-               break;                      
-         }                            
-         cmd; //schedule()，进入睡眠，从进程就绪队列选择一个高优先级进程来代替当前进程运行                       
-      }                                
-      finish_wait(&wq, &__wait);  //如果__wait还位于队列wq，则将__wait从wq中移除              
-   }
 
-
-
-might_sleep
-~~~~~~~~~~~~~
-1. `关于might_sleep的一点说明-MagicBoy2010-ChinaUnix博客` <http://blog.chinaunix.net/uid-23769728-id-3157536.html>`__
-
-仅提醒函数会sleep
-
-::
-
-   /**
-   * might_sleep - annotation for functions that can sleep
-   *
-   * this macro will print a stack trace if it is executed in an atomic
-   * context (spinlock, irq-handler, ...). Additional sections where blocking is
-   * not allowed can be annotated with non_block_start() and non_block_end()
-   * pairs.
-   *
-   * This is a useful debugging help to be able to catch problems early and not
-   * be bitten later when the calling function happens to sleep when it is not
-   * supposed to.
-   */
-   # define might_sleep() \
-      do { __might_sleep(__FILE__, __LINE__); might_resched(); } while (0)
-
+  Hardware Events: CPU performance monitoring counters.
+  Software Events: These are low level events based on kernel counters. For example, CPU migrations, minor faults, major faults, etc.
+  Kernel Tracepoint Events: This are static kernel-level instrumentation points that are hardcoded in interesting and logical places in the kernel.
+  User Statically-Defined Tracing (USDT): These are static tracepoints for user-level programs and applications.
+  Dynamic Tracing: Software can be dynamically instrumented, creating events in any location. For kernel software, this uses the kprobes framework. For user-level software, uprobes.
+  Timed Profiling: Snapshots can be collected at an arbitrary frequency, using perf record -FHz. This is commonly used for CPU usage profiling, and works by creating custom timed interrupt events.

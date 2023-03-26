@@ -318,6 +318,17 @@ thread_fn : 中断线程，类似于中断下半部
 
    define THREAD_SIZE  16384     //也就是irq栈的大小大概15k
 
+local_irq
+------------------------------------------
+local_irq_save()/local_irq_restore() 
+include/linux/irqflags.h
+
+These routines disable hard interrupts on the local CPU, and restore them. 
+
+They are **reentrant**; saving the previous state in their one unsigned long flags argument. 
+
+若当前开关状态已知，则可直接使用 local_irq_disable() and local_irq_enable().
+
 
 中断下半部
 ===============
@@ -390,4 +401,76 @@ tasklet
 
 
 
+
+
+
+
+No irq handler
+------------------
+do_IRQ: 1.55 No irq handler for vector
+
+
+**可能的原因**：  https://ilinuxkernel.com/?p=1192
+
+驱动卸载时，调用free_irq（）释放中断资源，但仍需调用pci_disable_device（）来关闭PCI设备。
+
+若不调用pci_disable_device（），则request_irq（）中申请到的中断向量vector与该PCI设备对应关系可能不会被解除。
+
+于是当再次加载该PCI设备驱动后，PCI设备发出中断，内核仍然会以旧的中断向量vector来解析中断号。
+
+而驱动卸载调用free_irq（）将vector与物理中断号irq对应关系解除。
+
+
+**调试方法**：https://unix.stackexchange.com/questions/535199/how-to-deduce-the-nature-of-an-interrupt-from-its-number
+
+If your current kernel has debugfs support and **CONFIG_GENERIC_IRQ_DEBUGFS** kernel option enabled,
+ you might get a lot of information on the state of IRQ vector 55 with the following commands as root:
+
+::
+
+   mount -t debugfs none /sys/kernel/debug
+   grep "Vector.*55" /sys/kernel/debug/irq/irqs/*
+
+
+
+do_IRQ
+~~~~~~~
+
+
+https://elixir.bootlin.com/linux/v4.4.157/source/arch/x86/kernel/irq.c#L213
+
+::
+
+   __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+   {
+      struct pt_regs *old_regs = set_irq_regs(regs);
+      struct irq_desc * desc;
+      /* high bit used in ret_from_ code  */
+      unsigned vector = ~regs->orig_ax;
+
+
+      entering_irq();
+
+      /* entering_irq() tells RCU that we're not quiescent.  Check it. */
+      RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
+
+      desc = __this_cpu_read(vector_irq[vector]);
+
+      if (!handle_irq(desc, regs)) {
+         ack_APIC_irq();
+
+         if (desc != VECTOR_RETRIGGERED) {
+            pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
+                     __func__, smp_processor_id(),
+                     vector);
+         } else {
+            __this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+         }
+      }
+
+      exiting_irq();
+
+      set_irq_regs(old_regs);
+      return 1;
+   }
 

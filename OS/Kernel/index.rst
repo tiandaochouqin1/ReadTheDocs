@@ -12,6 +12,7 @@ Linux内核专题。
    
 
    Irq.rst
+   printk.rst
    Process_scheduler.rst
    Preemption.rst
    Signal.rst
