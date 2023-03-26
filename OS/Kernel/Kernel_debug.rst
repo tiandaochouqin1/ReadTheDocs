@@ -33,16 +33,27 @@ Kernel Debug & Trace
 
 
 taskstats
-==========
+-------------
 统计任务的调度、内存使用、I/O信息、系统调用的信息，基于netlink套接字，从内核向用户空间提供任务/进程的统计信息。
 
 1. `Per-task statistics interface — The Linux Kernel documentation  <https://docs.kernel.org/accounting/taskstats.html>`__
 
-proc debugfs seq_file
-========================
+虚拟文件virtual file
+==================================
+proc debugfs seq_file 都创建虚拟文件。
+
+procfs
+-----------
+处理>4K的文件时比较麻烦。 
+
+实际编码与debugfs类似。
+
+
 debugfs
 -----------
-https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
+1. https://www.kernel.org/doc/html/latest/filesystems/debugfs.html
+2. `[Linux]使用debugfs文件系统_debugfs_create_file_Oscar_O的博客-CSDN博客  <https://blog.csdn.net/ai126323/article/details/120937866>`__
+
 
 **Debugfs** exists as a simple way for kernel developers to make information available to user space. 
 Unlike /proc, which is only meant for information about a process, 
@@ -67,153 +78,88 @@ Developers can put any information they want there.
 
 使用debugfs api
 ~~~~~~~~~~~~~~~~~~~
+1. 可直接使用已经封装好的整数、字符串、数组、寄存器列表等api，不需要实现file_operations
+2. debugfs_create_file需自己实现file_operations(read/write等，通常使用到copy_to/from_user)
 
-proc
------------
+::
+
+   struct dentry *debugfs_create_dir(const char *name, struct dentry *parent);
+      
+   void debugfs_create_u32_array(const char *name, umode_t mode,
+                     struct dentry *parent,
+                     struct debugfs_u32_array *array);
+
+   void debugfs_create_u64(const char *name, umode_t mode,
+                           struct dentry *parent, u64 *value);
+
+   struct dentry *debugfs_create_file(const char *name, umode_t mode,
+                                    struct dentry *parent, void *data,
+                                    const struct file_operations *fops);
+
+   debugfs_create_regset32(const char *name, umode_t mode,
+                           struct dentry *parent,
+                           struct debugfs_regset32 *regset);
+
 
 seq_file
 ---------------
+1. https://www.kernel.org/doc/html/latest/filesystems/seq_file.html
+2. `内核proc文件系统与seq接口（4）---seq_file接口编程浅析_seq_write  <https://blog.csdn.net/weixin_39094034/article/details/110529178>`__
+3. `seq_file工作机制实例_koson_L的博客-CSDN博客  <https://blog.csdn.net/liaokesen168/article/details/49183703>`__
 
 
 
-ftrace
-============
+**创建字符串虚拟文件。封装了迭代器，便于使用。**
 
-1. https://www.kernel.org/doc/html/latest/trace/ftrace.html 官方示例。
-
-2. `Linux ftrace框架介绍及运用 <https://www.cnblogs.com/arnoldlu/p/7211249.html>`__
-
-3. `ftrace笔记 <https://www.cnblogs.com/hellokitty2/p/13978805.html>`__
-
-4. Debugging the kernel using Ftrace `Part 1 <https://lwn.net/Articles/365835/>`__ 
-`Part2 <https://lwn.net/Articles/366796/>`__ lwn的教程。
-
-5. `Linux使用 ftrace 来跟踪内核函数调用_SweeNeil的博客-CSDN博客  <https://blog.csdn.net/SweeNeil/article/details/90038286>`__
-6. `问题排查利器：Linux 原生跟踪工具 Ftrace 必知必会` <https://mp.weixin.qq.com/s/ZepMzfxJ0aESvXYWUuCTPg>`__
-7. `Ftrace function graph原理及性能瓶颈的分析` <https://mp.weixin.qq.com/s/LrRwjkyfO1fi56QgUNlGaQ>`__
-
-
-used for debugging or analyzing latencies and performance issues that take place outside of user-space.
-
-a framework of several assorted tracing utilities. 
-There’s latency tracing to examine what occurs between interrupts disabled and enabled, 
-as well as for preemption and from a time a task is woken to the task is actually scheduled in.
-
-挂载debugfs
----------------
-依赖debugfs.
-
-挂载Debugfs
+组成与使用
+~~~~~~~~~~~~~~
+1. seq_operations: **迭代器** 接口，位于file_operations的 .open成员中。
+2. seq_printf等：格式化函数，无缓冲区问题。通常在迭代器接口实现中使用(如.show)
+3. file_operations : 虚拟文件需要的操作
 
 ::
-
-   CONFIG_IRQSOFF_TRACER=y
-
-   mount -t tracefs nodev /sys/kernel/tracing
-
-   the tracefs file system will be automatically mounted at:
-   /sys/kernel/debug/tracing # 默认位置
-
-   ln -s /sys/kernel/tracing /tracing
+      
+   struct seq_operations {
+      void * (*start) (struct seq_file *m, loff_t *pos);
+      void (*stop) (struct seq_file *m, void *v);
+      void * (*next) (struct seq_file *m, void *v, loff_t *pos);
+      int (*show) (struct seq_file *m, void *v);
+   };
 
 
+   file_operations的.open成员即由seq_operations实现：
 
-不同linux版本路径可能不同。
-
-后续操作均在文件夹  `/sys/kernel/debug/tracing` 中。
-
-per cpu
-~~~~~~~~~~~~~~~
-每个核均有独自的：per_cpu/cpu0/trace 、per_cpu/cpu0/stats
-
-
-
-irqsoff tracer
--------------------
-“irqsoff”：Traces the areas that disable interrupts and saves the trace with the longest max latency。
-
-ftrace的时间都是ms。
-
-在内核源码根目录文件 .config 中搜索 IRQSOFF，看到 # CONFIG_IRQSOFF_TRACER is not set (即默认不开启)。
-在menuconfig中开启或直接修改.config即可。
-
-使用方法：
-
-::
-
-   # echo 0 > options/function-trace
-   # echo irqsoff > current_tracer
-   # echo 1 > tracing_on
-   # echo 0 > tracing_max_latency //每次trace均需要执行一次才能生效
-   # echo 0 > tracing_on
-   # cat trace
-
-   #echo nop > current_tracer
+   static const struct file_operations ct_file_ops = {
+         .owner   = THIS_MODULE,
+         .open    = ct_open,
+         .read    = seq_read,
+         .llseek  = seq_lseek,
+         .release = seq_release
+   };   
 
 
-trace-cmd
-----------------
-1. `ftrace利器之trace-cmd和kernelshark <https://www.cnblogs.com/arnoldlu/p/9014365.html>`__
-
-2. `trace-cmd - command line reader for ftrace <https://lwn.net/Articles/341902/>`__
-
-3. `ftrace和trace-cmd：跟踪内核函数的利器 <https://blog.csdn.net/weixin_44410537/article/details/103587609>`__
-
-https://man7.org/linux/man-pages/man1/trace-cmd-record.1.html
-
-
-trace-cmd作为ftrace的前端，对ftrace的各种设置进行包装，同时能对结果进行处理，极大地提高了ftrace的使用效率。
-
-kernelshark作为trace-cmd的前端，借助图形化，灵活的filter，缩放功能，能更有效的帮助分析，高效的得到结果。
+seq_file结构体
+~~~~~~~~~~~~~~~~~~~~
+1. `linux内核seq_file接口 - yuxi_o - 博客园  <https://www.cnblogs.com/embedded-linux/p/9751995.html>`__
 
 
 ::
 
-    sudo trace-cmd record -p irqsoff 
-    sudo trace-cmd record -p function -P pid -l do_page_fault
-    sudo trace-cmd report |less
-
-
-graph function 
--------------------
-::
-
-   echo function_graph > current_tracer
-   echo do_IRQ > set_graph_function
-   echo 1 > tracing_cpumask
-   echo 1 >tracing_on && sleep 1 && echo 0 > tracing_on
-
-
-options选项功能
------------------
-
-
-stack trace
---------------
-
-“function”:Function call tracer to trace all kernel functions.
-
-stack tracer有点特殊，需要在/proc 开启关闭：
-
-::
-
-
-   echo 1  >  /proc/sys/kernel/stack_tracer_enabled
-   echo 0 >  /proc/sys/kernel/stack_tracer_enabled
-
-   stack trace的信息输出通过如下的节点上送给用户态：
-
-   /sys/kernel/debug/tracing/stack_max_size
-   /sys/kernel/debug/tracing/stack_trace 
-   /sys/kernel/debug/tracing/stack_trace_filter
-
-   指定pid
-   echo pid > /sys/kernel/debug/tracing/set_ftrace_pid
-   
-   指定核
-   echo 4 >tracing_cpumask
-
-
+   struct seq_file {
+      char *buf;  //序列文件对应的数据缓冲区，要导出的数据是首先打印到这个缓冲区，然后才被拷贝到指定的用户缓冲区。
+      size_t size;  //缓冲区大小，默认为1个页面大小，随着需求会动态以2的级数倍扩张，4k,8k,16k...
+      size_t from;  //没有拷贝到用户空间的数据在buf中的起始偏移量
+      size_t count; //buf中没有拷贝到用户空间的数据的字节数，调用seq_printf()等函数向buf写数据的同时相应增加m->count
+      size_t pad_until; 
+      loff_t index;  //正在或即将读取的数据项索引，和seq_operations中的start、next操作中的pos项一致，一条记录为一个索引
+      loff_t read_pos;  //当前读取数据（file）的偏移量，字节为单位
+      u64 version;  //文件的版本
+      struct mutex lock;  //序列化对这个文件的并行操作
+      const struct seq_operations *op;  //指向seq_operations
+      int poll_event; 
+      const struct file *file; // seq_file相关的proc或其他文件
+      void *private;  //指向文件的私有数据
+   };
 
 kprobe
 ==========

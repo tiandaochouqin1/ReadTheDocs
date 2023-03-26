@@ -12,14 +12,15 @@ Linux内核专题。
    
 
    Irq.rst
-   printk.rst
    Process_scheduler.rst
    Preemption.rst
    Signal.rst
    Time_system.rst
    Virtual_memory.rst
-   Kernel_compilation.rst
+   printk.rst
+   ftrace.rst
    Kernel_debug.rst
+   Kernel_compilation.rst
 
 
 
