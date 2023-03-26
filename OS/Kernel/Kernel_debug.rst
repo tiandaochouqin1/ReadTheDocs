@@ -64,6 +64,10 @@ Developers can put any information they want there.
 
 `CONFIG_GENERIC_IRQ_DEBUGFS <https://www.kernel.org/doc/html/latest/core-api/irq/irq-domain.html>`__
 
+使用debugfs api
+----------------
+
+
 
 ftrace
 ============

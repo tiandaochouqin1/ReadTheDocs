@@ -13,6 +13,7 @@ C
    main.rst
    asm_practice.rst
    C_Language.rst
+   serialization_and_formation.rst
    Coverage&Mock.rst
    C_Project.rst
 

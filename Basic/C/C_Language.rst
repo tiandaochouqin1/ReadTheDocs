@@ -292,6 +292,16 @@ size_t类型
  - ptrdiff_t is the type of the result of an expression where one pointer is subtracted from the other (ptr1-ptr2)
  - ptrdiff_t type is usually used for loop counters, array indexing, size storage, and address arithmetic.
 
+换行、字符串结束符、EOF
+------------------------
+::
+        
+    文件标记,Ascii,含义
+    ‘’\n’,10,换行
+    ‘\0’,0,c语言中表示字符串结束符
+    EOT,4,传输结束符
+    EOF,-1,文件/流结束符
+    
 
 CERT C
 =======

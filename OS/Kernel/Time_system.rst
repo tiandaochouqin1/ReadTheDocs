@@ -54,3 +54,20 @@ include\asm-generic\param.h
    #endif /* __ASM_GENERIC_PARAM_H */
 
 
+timekeeping api
+-----------------
+1. `ktime accessors — The Linux Kernel documentation  <https://docs.kernel.org/core-api/timekeeping.html>`__
+
+应使用ktime_get系列api，可在中断上下文使用。
+
+1. 时钟源：CLOCK_MONOTONIC、CLOCK_MONOTONIC_RAW、CLOCK_TAI、CLOCK_REALTIME、CLOCK_BOOTTIME
+2. 返回值类型：nanosecond, timespec64, and second output
+3. 快速调用: Coarse and fast_ns access
+
+::
+
+
+   ktime_t ktime_get_coarse(void)
+   void ktime_get_coarse_ts64(struct timespec64*)
+
+

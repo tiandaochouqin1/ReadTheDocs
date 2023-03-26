@@ -581,6 +581,11 @@ HALO
 一套独立的博客系统。 Java环境，使用自带的 H2 Database或MYSQL。
 https://docs.halo.run/zh/install/config
 
+
+caddy渲染Markdown
+~~~~~~~~~~~~~~~~~~~
+打开caddy markdown支持，访问时动态生成md。
+
 Github Pages 使用
 =================
 
