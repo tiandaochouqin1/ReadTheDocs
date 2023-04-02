@@ -418,13 +418,3 @@ leetcode
 6. 二叉树中后序遍历(非递归)、层序遍历
 7. 两个栈实现队列：U形，一个作为队首，用于删除；一个站作为队尾用于插入。
 
-
-.. 英语
-.. ======
-.. 1. coca 12000。
-.. 2. book
-.. 3. movies words(MuJing)
-.. 4. word power made easy 和 merriam web vocabulary builder
-.. 5. News: Bypass Paywalls插件 https://www.economist.com/
-
-

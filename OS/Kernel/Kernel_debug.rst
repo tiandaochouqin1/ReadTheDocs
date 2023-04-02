@@ -107,7 +107,7 @@ seq_file
 2. `内核proc文件系统与seq接口（4）---seq_file接口编程浅析_seq_write  <https://blog.csdn.net/weixin_39094034/article/details/110529178>`__
 3. `seq_file工作机制实例_koson_L的博客-CSDN博客  <https://blog.csdn.net/liaokesen168/article/details/49183703>`__
 
-
+sdddsd
 
 **创建字符串虚拟文件。封装了迭代器，便于使用。**
 
