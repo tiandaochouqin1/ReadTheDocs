@@ -138,6 +138,12 @@ pci_driver示例
    };
 
 
+platform_set_drvdata
+~~~~~~~~~~~~~~~~~~~~~~~~
+`linux驱动platform_set_drvdata 和 platform_get_drvdata这两个函数_落叶逆风的博客-CSDN博客  <https://blog.csdn.net/lhl161123/article/details/53264314>`__
+
+一般在probe()函数中动态申请设备结构体，并初始化它，然后使用platform_set_drvdata（）将其保存到platform_device中
+
 driver
 --------
 
@@ -222,6 +228,20 @@ device
                            drv->probe(dev);
                         probe_failed:
                            dev->-driver = NULL;
+
+
+
+
+驱动初始化的时机
+-----------------
+1. `Linux 内核：initcall机制与module_init - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_kernel_initcall_and_module_init.html>`__
+2. `Linux内核启动流程与模块机制 - zhuqingzhu - 博客园  <https://www.cnblogs.com/nju347/p/7586792.html>`__
+
+do_initcalls()把.initcallxx.init段中的函数按顺序都执行一遍。
+
+1. module_platform_driver: paltform设备初始化(注册)使用arch_initcall()调用，level为3；
+2. module_init:驱动初测使用module_init()，即device_initcall()，level为6.
+
 
 
 PCIE
@@ -532,6 +552,7 @@ IO缓冲
 read或write的数据都要被内核缓冲.
 
 不带缓冲的I/O指的是在用户的进程中对这两个函数不会自动缓冲， **每次read或write就要进行一次系统调用**。
+
 
 虚拟网卡
 ============

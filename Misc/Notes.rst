@@ -12,6 +12,10 @@ AI
 
 我们不能像ChatGPT一样，只是说出最普通、最自然的的句子，应该想到那些没有人想到过的句子才对。
 
+
+.. important:: AI 让人思考得更快而不是更聪明。如同计算器
+
+
 1. 外语
 2. 教育
 3. 画图
@@ -54,8 +58,10 @@ Book
 
 阅读体系构建
 -------------
+1. `把阅读作为方法：从选书到笔记的经验分享 - 少数派  <https://sspai.com/post/78133>`__
 
 .. important:: 兴趣书单->围绕主题制定年度阅读计划->阅读笔记->管理
+
 
 1. 从pdf导出comments等 https://github.com/0xabu/pdfannots
 2. kindle笔记也很容易导出
@@ -92,7 +98,7 @@ https://page.838281.xyz/NoteApps/
 
 软件:
 
-1. notion
+1. notion:
 2. obsidian
 3. onenote
 4. joplin

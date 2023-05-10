@@ -74,7 +74,7 @@ at&t和intel风格
 =================
 intel风格常在DOS和windows上使用(masm/nasm)，AT&T在Unix类操作系统使用(gcc)。
 
-汇编风格：gcc（at&t）下，mov/add等指令。arm 从右往左，x86从左往右。 
+汇编风格：gcc（at&t）下，mov/add等指令。arm 从右往左，x86从左往右。 （store则相反）
 
 x86简介
 ==========

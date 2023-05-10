@@ -5,8 +5,8 @@ Book
 .. toctree::
    :maxdepth: 2
 
-   TomatoTech.rst
-   Communicate_confidently.rst
    CleanArchiechture.rst
    MySQL.rst
    CoolShell.rst
+.. TomatoTech.rst notion
+.. Communicate_confidently.rst notion
