@@ -17,16 +17,20 @@ Linux Drive Develop
 
 设备树
 ---------
+1. `Device Tree（三）：代码分析  <http://www.wowotech.net/device_model/dt-code-analysis.html>`__
+2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
+
 dts是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
 
 dtb 是 dts 与 dtsi 编译的二进制文件。
 
+of_driver_match_device -> of_match_device -> __of_device_is_compatible
 
 driver & device注册过程
 -------------------------
 
 1. bus(bus_register)维护注册进来的devcie 与 driver (各一个链表)，每注册(device_register/driver_register)一个device/driver 都会调用 **Bus->match** 函数(定义了Device和Driver绑定时的规则)，将device 与 driver 进行配对，并将它们加入链表.
-2. 如果配对成功，调用 **Bus->probe/driver->probe**函数(在probe函数中实现 **设备的初始化**、各种配置以及生成用户空间的文件接口) 
+2. 如果配对成功，调用 **bus->probe/driver->probe**函数(在probe函数中实现 **设备的初始化**、各种配置以及生成用户空间的文件接口) 
 3. kobject_uevent 函数设置环境变量，mdev进行创建 **设备节点** 等操作。
 4. 总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
 
@@ -40,25 +44,37 @@ kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一
 
 总线
 --------
+内核里有各种各样的总线，如 usb_bus_type、spi_bus_type、pci_bus_type、platform_bus_type、i2c_bus_type 等，内核通过总线将设备与驱动分离。
 
-Linux 称platform总线为虚拟总线，所有直接通过内存寻址的设备都映射到这条总线上。让设备属性和驱动行为更好的分离。
+platform总线为虚拟总线，所有直接通过 **内存寻址的设备** 都映射到这条总线上。让设备属性和驱动行为更好的分离。
 
 
-match的规则
-~~~~~~~~~~~~
+platform_bus虚拟总线
+~~~~~~~~~~~~~~~~~~~~~~
+1. `platform_bus、device及driver 注册及介绍_禾仔仔的博客-CSDN博客  <https://blog.csdn.net/weixin_43083491/article/details/119457618>`__
+
+platform bus也是驱动框架下的一个子系统，是构建在linux驱动框架bus，device，driver这种模型之上的
+
+linux启动时，根据dts节点创建sturct platform_device实例,并且把dts节点reg（dts描述：控制器，寄存器地址，memery地址）,interrupts属性翻译成struct resource类型结构体存放.
+
+
+
+bus match的规则
+~~~~~~~~~~~~~~~~~~~
 1. `Linux Device和Driver注册过程，以及Probe的时机_thl789的博客-CSDN博客  <https://blog.csdn.net/thl789/article/details/6723350>`__
 
 
 
-1. BUS上实现的.match()函数，定义了Device和Driver绑定时的规则。
-   如果BUS的match()函数没实现，认为BUS上的所有的Device和Driver都是match的，具体后续过程要看probe()的实现了。
+match 和probe流程：
 
-2. probe规则：Probe的规则是：如果BUS上实现了probe就用BUS的probe；否则才会用driver的pro
+1. bus上实现的.match()函数，定义了Device和Driver绑定时的规则。 如果bus->match()函数没实现，认为Bus上的所有的Device和Driver都是match的，具体后续过程要看probe()的实现了。
+
+2. probe规则：优先使用bus->probe；未实现bus->probe才会用 driver->probe.
 
 
-match的四种方式
+match的判断规则：
 
-1. 调用of_driver_match_device()函数；(为了支持dts)
+1. 调用of_driver_match_device()函数；(为了支持设备树dts。OpenFirmware)
 2. ACPI系统专用方法；
 3. driver的id_table；
 4. 设备的名称或别名和驱动的名称进行匹配的。
@@ -95,16 +111,7 @@ Platform实现的就是先比较id_table，然后比较name的规则。
 
 
 
-platform_bus虚拟总线
-~~~~~~~~~~~~~~~~~~~~~~
-1. `platform_bus、device及driver 注册及介绍_禾仔仔的博客-CSDN博客  <https://blog.csdn.net/weixin_43083491/article/details/119457618>`__
-2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
 
-
-linux开机时，根据dts节点创建sturct platform_device实例,并且把dts节点reg（dts描述：控制器，寄存器地址，memery地址）,interrupts属性翻译成struct resource类型结构体存放.
-
-
-内核解析dtb文件创建platform设备时，大部分platform设备是没有名字的，大部分是通过 ``compatible`` 这个属性匹配成功的（这个compatible也对应dts里的compatible字符串）。
 
 
 of_driver_match_device
@@ -113,7 +120,7 @@ of_driver_match_device
 2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
 
 
-为了支持dtb新添加的match函数。
+内核解析dtb文件创建platform设备时，大部分platform设备是没有名字的，大部分是通过 ``compatible`` 这个属性匹配成功的（这个compatible也对应dts里的compatible字符串）。
 
 调用到__of_match_node（）函数，把 device_driver的of_match_table（ **of_device_id** 结构体的数组）和device里的of_node（ **device_node** 结构体）进行匹配。
 （比较两者的name、type、和compatible字符串，三者要同时相同。name、type通常为null。比较compatible是直接compare整个字符串，不管字符串里的逗号)
@@ -144,21 +151,56 @@ platform_set_drvdata
 
 一般在probe()函数中动态申请设备结构体，并初始化它，然后使用platform_set_drvdata（）将其保存到platform_device中
 
-driver
---------
 
+
+device_register和driver_register
+-------------------------------------------
 device_attach与driver_attach
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-大部分内容一样；
+大部分内容一样。区别 ``device_attach`` 调用driver_match_device匹配设备和驱动，成功就结束循环退出（而不是执行完循环）
 
 一个驱动可以支持多个设备；一个设备只能绑定一个驱动。
 
-区别： ``device_attach`` 调用driver_match_device匹配设备和驱动，成功就结束循环退出（而不是执行完循环）
 
 
-整体流程
-~~~~~~~~~~~~~
+device_register
+~~~~~~~~~~~~~~~~~~~~~
+Device一般是先于Driver注册
+
+::
+   
+   device_register(dev)[core.c]
+      device_initialize()            // 1. 初始化设备结构
+
+      device_add(dev) [core.c]      // 2. add device to device hierarchy.
+         bus_add_device(dev)        // 2.1 add device to bus
+         bus_probe_device(dev) [bus.c]   // 2.2 probe drivers for a new device
+            if (dev->bus && dev->bus-op->drivers_autoprobe)
+            device_attach(dev) [dd.c]
+               if (dev->driver)          // 2.2 设备已有驱动
+                  device_bind_driver(dev)
+               else       // 从这里开始，与driver_attach一样
+               
+                  bus_for_each_dev(dev->bus, NULL, drv,__driver_attach)
+                  __driver_attach(dev, drv) [dd.c]
+                     driver_match_device(drv, dev) [base.h]
+                        drv->bus->match ? drv->bus-amatch(dev, drv) : 1
+                        if false, return;
+                     driver_probe_device(drv, dev) [dd.c]
+                        really_probe(dev, drv) [dd.c]
+                        dev-driver = drv;
+                        if (dev-bus->probe)
+                           dev->bus->probe(dev);
+                        else if (drv->probe)
+                           drv->probe(dev);
+                        probe_failed:
+                           dev->-driver = NULL;
+
+
+
+driver_register
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
       
@@ -195,45 +237,11 @@ device_attach与driver_attach
 
 
 
-device
----------
-整体流程
-~~~~~~~~~~~~~
-
-::
-   
-   device_register(dev)[core.c]
-      device_initialize()            // 1. 初始化设备结构
-
-      device_add(dev) [core.c]      // 2. add device to device hierarchy.
-         bus_add_device(dev)        // 2.1 add device to bus
-         bus_probe_device(dev) [bus.c]   // 2.2 probe drivers for a new device
-            if (dev->bus && dev->bus-op->drivers_autoprobe)
-            device_attach(dev) [dd.c]
-               if (dev->driver)          // 2.2 设备已有驱动
-                  device_bind_driver(dev)
-               else       // 从这里开始，与driver_attach一样
-               
-                  bus_for_each_dev(dev->bus, NULL, drv,__driver_attach)
-                  __driver_attach(dev, drv) [dd.c]
-                     driver_match_device(drv, dev) [base.h]
-                        drv->bus->match ? drv->bus-amatch(dev, drv) : 1
-                        if false, return;
-                     driver_probe_device(drv, dev) [dd.c]
-                        really_probe(dev, drv) [dd.c]
-                        dev-driver = drv;
-                        if (dev-bus->probe)
-                           dev->bus->probe(dev);
-                        else if (drv->probe)
-                           drv->probe(dev);
-                        probe_failed:
-                           dev->-driver = NULL;
 
 
 
-
-驱动初始化的时机
------------------
+设备驱动初始化的时机
+---------------------
 1. `Linux 内核：initcall机制与module_init - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_kernel_initcall_and_module_init.html>`__
 2. `Linux内核启动流程与模块机制 - zhuqingzhu - 博客园  <https://www.cnblogs.com/nju347/p/7586792.html>`__
 
@@ -241,6 +249,44 @@ do_initcalls()把.initcallxx.init段中的函数按顺序都执行一遍。
 
 1. module_platform_driver: paltform设备初始化(注册)使用arch_initcall()调用，level为3；
 2. module_init:驱动初测使用module_init()，即device_initcall()，level为6.
+
+
+.. figure:: /images/do_initcalls.png
+
+   do_initcalls
+
+
+::
+
+   #define pure_initcall(fn)                __define_initcall("0",fn,1)
+
+   #define core_initcall(fn)                __define_initcall("1",fn,1)
+   #define core_initcall_sync(fn)          __define_initcall("1s",fn,1s)
+   #define postcore_initcall(fn)            __define_initcall("2",fn,2)
+   #define postcore_initcall_sync(fn)       __define_initcall("2s",fn,2s)
+   #define arch_initcall(fn)                __define_initcall("3",fn,3)
+   #define arch_initcall_sync(fn)          __define_initcall("3s",fn,3s)
+   #define subsys_initcall(fn)              __define_initcall("4",fn,4)
+   #define subsys_initcall_sync(fn)         __define_initcall("4s",fn,4s)
+   #define fs_initcall(fn)                    __define_initcall("5",fn,5)
+   #define fs_initcall_sync(fn)            __define_initcall("5s",fn,5s)
+   #define rootfs_initcall(fn)              __define_initcall("rootfs",fn,rootfs)
+   #define device_initcall(fn)              __define_initcall("6",fn,6)
+   #define device_initcall_sync(fn)        __define_initcall("6s",fn,6s)
+   #define late_initcall(fn)               __define_initcall("7",fn,7)
+   #define late_initcall_sync(fn)          __define_initcall("7s",fn,7s)
+
+
+   * module_init() will either be called during do_initcalls() (if
+   * builtin) or at module insertion time (if a module).  There can only
+   * be one per module.
+   */
+   #define module_init(x)  __initcall(x);
+
+
+   #define __define_initcall(fn, id) \
+                  static initcall_t __initcall_##fn##id __used \
+                  __attribute__((__section__(".initcall" #id ".init"))) = fn
 
 
 
