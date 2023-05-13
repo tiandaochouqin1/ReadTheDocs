@@ -19,12 +19,15 @@ Linux Drive Develop
 ---------
 1. `Device Tree（三）：代码分析  <http://www.wowotech.net/device_model/dt-code-analysis.html>`__
 2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
+3. `Linux dts 设备树详解(一) 基础知识 - 小麦大叔 - 博客园  <https://www.cnblogs.com/unclemac/p/12783391.html>`__
 
-dts是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
+x86 架构 的个人计算机通常不使用设备树，而是依靠各种自动配置协议ACPI和BIOS来识别硬件。
 
-dtb 是 dts 与 dtsi 编译的二进制文件。
 
-of_driver_match_device -> of_match_device -> __of_device_is_compatible
+1. dts(device tree source)是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
+2. dtb(device tree blob) 是 dts 与 dtsi(device tree source include，公共抽象部分) 经dtc(device tree compiler)编译的二进制文件。
+3. dtb可以存储在ROM中或在引导的早期阶段中生成，然后U-Boot和kexec在启动新os时传递dtb；
+4. dtb的解析of_driver_match_device -> of_match_device -> __of_device_is_compatible
 
 driver & device注册过程
 -------------------------
