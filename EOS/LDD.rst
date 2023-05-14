@@ -9,10 +9,10 @@ Linux Drive Develop
 总线设备驱动模型
 ===================
 
-1. ☆ `Linux 设备总线驱动模型_Linux学习之路的博客-CSDN博客_linux总线设备驱动  <https://blog.csdn.net/lizuobin2/article/details/51570196>`__
-2. ☆ `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
+1. ☆ `Linux 设备总线驱动模型   <https://blog.csdn.net/lizuobin2/article/details/51570196>`__
+2. ☆ 详细 `Linux 内核：设备驱动模型（2）driver-bus-device与probe - schips - 博客园  <https://www.cnblogs.com/schips/p/linux_device_model_2.html>`__
 3. `Linux设备模型(5)_device和device driver  <http://www.wowotech.net/linux_kenrel/device_and_driver.html>`__
-4. `Linux设备和驱动的匹配过程_qwaszx523的博客-CSDN博客_linux设备和驱动的匹配  <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
+4. `Linux设备和驱动的匹配过程   <https://blog.csdn.net/qwaszx523/article/details/65635071>`__
 
 
 设备树
@@ -21,7 +21,8 @@ Linux Drive Develop
 2. `Linux驱动之platform_bus、platform_device、platform_driver_eZiMu的博客-CSDN博客  <https://blog.csdn.net/eZiMu/article/details/85198617>`__
 3. `Linux dts 设备树详解(一) 基础知识 - 小麦大叔 - 博客园  <https://www.cnblogs.com/unclemac/p/12783391.html>`__
 
-x86 架构 的个人计算机通常不使用设备树，而是依靠各种自动配置协议ACPI和BIOS来识别硬件。
+- x86 通常不使用设备树，而是依靠ACPI/UEFI(BIOS中，)、pcie自动枚举来识别硬件。
+- arm不使用bios(即固件)，故对应功能需要在linux实现，这里是使用设备树，也支持acpi了。
 
 
 1. dts(device tree source)是一种描述设备的语法，kernel在启动的时候会把dts的描述转换为实际的 ``device``。
@@ -38,6 +39,16 @@ driver & device注册过程
 4. 总线相应的结构体为struct bus_type，相应的设备为platform_device(链表)，相应的驱动为platform_drvier(链表)。
 
 kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一个ktype关联(定义了默认的特性/属性)。
+
+
+`一文搞懂驱动的platform分层分离 - 掘金  <https://juejin.cn/post/7087463596082331656>`__
+
+.. figure:: /images/platform_drv_dev.png
+   :scale: 70 %
+
+   platform_drv_dev
+
+
 
 .. figure:: /images/bus_device_drive.png
    :scale: 70 %
@@ -291,6 +302,49 @@ do_initcalls()把.initcallxx.init段中的函数按顺序都执行一遍。
                   static initcall_t __initcall_##fn##id __used \
                   __attribute__((__section__(".initcall" #id ".init"))) = fn
 
+
+
+Linux设备
+================
+块设备
+-----------
+文件系统使用。
+
+misc和char dev
+-------------------
+1. `Linux中MISC驱动简介及其简单使用   <https://blog.csdn.net/weixin_45309916/article/details/118636702>`__
+2. `001_Linux内核驱动之杂项设备（miscellaneous device)的misc.c源码解析  <https://blog.csdn.net/zhanghui962623727/article/details/117754604>`__
+
+
+misc是主设备号为10的chrdev，可自动生成设备节点。
+
+1. 节省了Linux 主设备号，不需要每次开发都申请主设备号，使用不同的从设备号即可(/proc/misc可以看)；
+2. 便于使用，封装了chrdev的操作。如下
+
+::
+
+   alloc_chrdev_rgion // 申请设备号
+   cdev_init     //初始化cdev
+   cdev_add   //添加cdev
+   class_create //创建类
+   device_create //创建设备
+
+
+miscdevice结构体
+
+::
+
+   struct miscdevice  {
+      int minor;										/* 子设备号 */						
+      const char *name;								/* 设备名字 */
+      const struct file_operations *fops;				/* 设备操作集 */
+      struct list_head list;
+      struct device *parent;
+      struct device *this_device;
+      const struct attribute_group **groups;
+      const char *nodename;
+      umode_t mode;
+   };
 
 
 PCIE
