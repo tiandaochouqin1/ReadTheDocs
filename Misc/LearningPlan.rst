@@ -291,10 +291,13 @@ arm
 
 
 1. **开发者指南(Armv8-A)**: Cortex-A Series Programmer’s Guide for Armv8-A，强烈推荐，每个章节都值得细读，适合入门者。
+   `Arm Architecture Reference Manual for A-profile architecture  <https://developer.arm.com/documentation/ddi0487/latest/>`__ 很大，一万多页。
+   
 
 2. Armv8-A Instruction Set Architecture.pdf 学习CPU架构、内存及系统架构的不二之选。
+
 3. TRM 文档、软件优化指南，可以从 https://developer.arm.com/ip-products/processors/cortex-a 页面点击 “Read more” 入口，包括：
-   Technical Reference Manual和 Software Optimization Guide
+   Technical 具体型号如A77的 Technical Reference Manual和 Software Optimization Guide
 
 4. 其它参考：
    Arm C/C++ Compiler reference guide 和

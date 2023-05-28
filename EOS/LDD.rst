@@ -351,9 +351,12 @@ PCIE
 ======
 1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
 2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__
+3. `apachecn-linux-zh/11.md at master · apachecn/apachecn-linux-zh · GitHub  <https://github.com/apachecn/apachecn-linux-zh/blob/master/docs/master-linux-device-driver-dev/11.md>`__
 
 pci总线地址空间
 ----------------
+配置空间、存储器空间、IO空间。
+
 1. x86 CPU可以直接访问memory空间和I/O空间;
 2. x86 CPU无法直接访问配置空间，通过IO映射的数据端口和地址端口间接访问PCI的配置空间；
 3. Bridge或Device类型的PCIE设备拥有不同的配置空间header。其中的Base Address Register BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间即bar空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
@@ -442,6 +445,12 @@ pcie分层
 TLP事务层
 ~~~~~~~~~~~~
 1. `PCIe扫盲——一个Memory Read操作的例子  <http://blog.chinaaet.com/justlxy/p/5100053263>`__
+
+
+基于消息的msi-x中断
+-----------------------
+
+
 
 网络设备驱动
 ============

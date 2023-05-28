@@ -628,3 +628,20 @@ CoreSight
 external debug
 -------------------
 
+
+Microarchitecture
+====================
+1. `Cortex-A77 - Microarchitectures - ARM - WikiChip  <https://en.wikichip.org/wiki/arm_holdings/microarchitectures/cortex-a77>`__
+2. `从A76到A78——在变化中学习ARM微架构  <https://mp.weixin.qq.com/s/hFK3qDxXpgs2J1C7TlYYAQ>`__
+3. `ARM 之十五 扫盲 ARM 架构、指令集、ARM IP、授权方式_arm架构_ZC·Shou的博客-CSDN博客  <https://blog.csdn.net/ZCShouCSDN/article/details/120351435>`__
+
+概念
+--------
+1. ARM 架构：通常是指 ARM 指令集架构，指定了处理器的行为方式，例如，它有什么指令以及指令做什么；
+2. 微架构：处理器的构建和设计称，介绍了特定处理器的工作方式。微架构就是对于 ARM 架构的进一步的实现
+3. ARM 系统架构定义了相关组件和接口，使硬件和软件更容易进行互操作。
+
+.. figure:: /images/A77_microarchitecture.png
+   :scale: 100%
+
+   A77_microarchitecture
