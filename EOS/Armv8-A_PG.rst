@@ -629,19 +629,43 @@ external debug
 -------------------
 
 
-Microarchitecture
+Micro-Architecture
 ====================
 1. `Cortex-A77 - Microarchitectures - ARM - WikiChip  <https://en.wikichip.org/wiki/arm_holdings/microarchitectures/cortex-a77>`__
 2. `从A76到A78——在变化中学习ARM微架构  <https://mp.weixin.qq.com/s/hFK3qDxXpgs2J1C7TlYYAQ>`__
+    `Arm微架构之Armv9时代-电子工程专辑  <https://www.eet-china.com/mp/a193253.html>`__
+    
 3. `ARM 之十五 扫盲 ARM 架构、指令集、ARM IP、授权方式_arm架构_ZC·Shou的博客-CSDN博客  <https://blog.csdn.net/ZCShouCSDN/article/details/120351435>`__
 
 概念
 --------
-1. ARM 架构：通常是指 ARM 指令集架构，指定了处理器的行为方式，例如，它有什么指令以及指令做什么；
-2. 微架构：处理器的构建和设计称，介绍了特定处理器的工作方式。微架构就是对于 ARM 架构的进一步的实现
-3. ARM 系统架构定义了相关组件和接口，使硬件和软件更容易进行互操作。
+1. ARM 架构：通常是指 ARM **指令集架构**，指定了处理器的行为方式.包括 指令集、寄存器组、异常模型、内存模型、 调试跟踪和分析。
+2. 微架构：处理器的 **构建和设计**，介绍了特定处理器的工作方式。微架构就是对于 ARM 架构的进一步的实现。
+3. ARM 系统架构定义了 **相关组件和接口**，使硬件和软件更容易进行互操作。
+
+系统架构的整体框图如下图所示：
+
+.. figure:: /images/arm_system_structure.png
+   :scale: 70%
+
+   arm_system_structure
+
+
+A77微架构
+-------------
 
 .. figure:: /images/A77_microarchitecture.png
    :scale: 100%
 
    A77_microarchitecture
+
+
+1. BPU 分支预测单元：与指令fetch单元独立
+2. 前端提供多路decoder
+3. ROB(ReOrder-Buffer)：128 entries，指令重排，以尽可能填满流水线。带有MOP cache，
+    Instruction -> MOP(Macro-Operation) -> uOP(Micro-Operation,处理器执行的基础指令)
+
+4. 执行单元(Exection Engine): Dispatch将uOP发射到执行单元(Issue，具有120 entries)，
+   执行单元包括 整型(里面包括分支单元)、浮点和读写。A77将发射列队（issue queue）统一成三个，整型、浮点和读写发射列队。
+
+5. LSU(Load Store Unit)设计：LSU模块和执行单元的2个AGU相连接，同时连接64KB的L1数据缓存（DCache），并提供2个16B/cycle的load端口和1个32B/cycle的store端口
