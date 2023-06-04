@@ -16,7 +16,7 @@ what:
 
 how:
 
-1. visual(55%) > vocal(38%) > verbal(7%)
+1. **visual(55%) > vocal(38%) > verbal(7%)**
 2. low your expectations, and no need for perfection. because your're not as important as you think.
 3. slow down your words,and sync your brain and tone. Quick thinking is not the only thing matters
 4. one word one thought, use short sentences 
