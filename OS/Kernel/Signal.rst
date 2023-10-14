@@ -208,6 +208,7 @@ context使得linux程序可以在用户态执行上下文切换，从而避免�
 -----------
 sigsegv vs sigbus
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+`Program Error Signals (The GNU C Library)  <https://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#:~:text=The%20difference%20between%20the%20two,address%20not%20divisible%20by%20four.>`__
 
-- sigsegv: sig11, attempt to access a valid memory address in a way that is **contrary to its protection**. writing to read-only memory
-- sigbus: sig7, attempting to access an address that is **invalid**. improperly aligned address or an address that is not mapped 
+- sigsegv: sig11, 访问无权限的地址和写只读地址。attempt to access a valid memory address in a way that is **contrary to its protection**. writing to read-only memory
+- sigbus: sig7, 访问无效地址（未对齐地址或未映射地址）。attempting to access an address that is **invalid**. improperly aligned address or an address that is not mapped 

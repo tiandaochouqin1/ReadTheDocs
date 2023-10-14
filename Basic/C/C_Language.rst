@@ -9,8 +9,7 @@ C语法知识
 ---------
 1. 在线gdb：https://www.onlinegdb.com/myfiles
 2. 在线汇编：https://godbolt.org/
-3. `用C语言实现面向对象编程OOP <https://mp.weixin.qq.com/s/Vj31M2q0H5eeJwMhvDyt6A>`__
-4. `C语言实现面向对象的原理 <https://mp.weixin.qq.com/s/b9IXQ8Hbh-8ejmU010sWiA>`__
+
 
 - The C Programming Language 2ed.pdf
 - `gnu-c-language-manual Richard Stallman <https://github.com/VernonGrant/gnu-c-language-manual>`__
@@ -221,7 +220,7 @@ https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
 
 位域结构体顺序
 ~~~~~~~~~~~~~~~~
-位域在大端和小端系统上的定义顺序需要相反，这样无论在大小端系统，按bitfield保存值后，按整体读出来的值是一样的。。(见iphdr)
+位域在大端和小端系统上的定义顺序需要相反，这样无论在大小端系统，按bitfield保存值后，按整体读出来的值是一样的。(见iphdr)
 
 
 `Linux v5.17-rc8 - include/uapi/linux/ip.h  <https://sbexr.rabexc.org/latest/sources/c7/124a3bc7fedb4c.html#000560010006a001>`__
@@ -251,8 +250,8 @@ https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
    };
 
 
-部分初始化
-~~~~~~~~~~~~
+aggretate类型部分初始化
+~~~~~~~~~~~~~~~~~~~~~~~~
 1. `ARR02-C. Explicitly specify array bounds, even if implicitly defined by an initializer - SEI CERT C Coding Standard - Confluence  <https://wiki.sei.cmu.edu/confluence/display/c/ARR02-C.+Explicitly+specify+array+bounds%2C+even+if+implicitly+defined+by+an+initializer>`__
 2. K&R A.8.7 Initialization
 
@@ -263,6 +262,35 @@ or fewer characters in a string literal used to initialize an array of known siz
 the remainder of the aggregate shall be initialized implicitly the same as objects that have ``static storage duration``.
 
 If an array of unknown size is initialized, its size is determined by the largest indexed element with an explicit initializer. The array type is completed at the end of its initializer list.
+
+联合体union
+~~~~~~~~~~~~~
+1. union固定首地址
+2. union按最大需求开辟一段内存空间
+
+::
+
+    union U
+    {
+        char c;
+        int i;
+    }u;//联合体变量创建方法类比结构体
+    int main()
+    {
+        u.i = 1;
+        //0x 00 00 00 01
+        //低地址-------->高地址
+        //01 00 00 00 小端存储 低位放低地址
+        //00 00 00 01 大端存储 低位放高地址
+        if (u.c == 1)
+        {
+            printf("小端");
+        }
+        else
+        {
+            printf("大端");
+        }
+    }
 
 
 size_t类型
@@ -302,6 +330,35 @@ size_t类型
     EOT,4,传输结束符
     EOF,-1,文件/流结束符
     
+
+C与OOP
+===========
+1. `用C语言实现面向对象编程OOP <https://mp.weixin.qq.com/s/Vj31M2q0H5eeJwMhvDyt6A>`__
+2. `C语言实现面向对象的原理 <https://mp.weixin.qq.com/s/b9IXQ8Hbh-8ejmU010sWiA>`__
+3. `Akagi201/lw_oopc: modified from http://sourceforge.net/projects/lwoopc/  <https://github.com/Akagi201/lw_oopc>`__
+
+面向对象是一种编程方法，并不局限于某种语言。
+
+C与OOP的三大特征
+----------------
+1. 封装：把数据和函数打包到一个类里面。调用者使用方法，不关心属性。
+2. 继承：新的结构体定义包含旧的结构体。
+3. 多态：C++ 语言实现多态就是使用虚函数，子类会继承父类的虚表（包含所有虚指针），然后重载虚指针。c则用函数指针实现。
+
+
+w_oopc仅用了2个文件，.h及.c文件就实现了面向对象的三大因素。使用20+个宏以支持优美的实现OOP编程。宏样例如下
+
+::
+
+    #define CLASS(type)                 \
+    typedef struct type type;           \
+    type* type##_new(lw_oopc_file_line_params); \
+    void type##_ctor(type* t);          \
+    int type##_dtor(type* t);           \
+    void type##_delete(type* t);        \
+    struct type
+
+
 
 CERT C
 =======

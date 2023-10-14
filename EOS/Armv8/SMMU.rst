@@ -378,17 +378,18 @@ iommu框架
 ---------------
 
 
-cache原理
-==========
+通用cache原理
+==============
 `Cache的基本原理 - 知乎  <https://zhuanlan.zhihu.com/p/102293437>`__
 
-直接映射/组相联/全相联缓存、
+直接映射/组相联/全相联缓存
 
 
-cache组相联是为了解决cache颠簸。
+**cache组相联是为了解决cache颠簸。**
 
 cache的查找过程
 ---------------
+先使用index/set找到对应的一个或多个cache条目，然后比较tag是否一致(这一步通常是tcam实现)，若一致则使用offset拿到具体地址的值。
 
 512 Bytes cache size，64 Bytes cache line size。
 

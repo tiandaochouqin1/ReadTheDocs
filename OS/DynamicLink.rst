@@ -510,6 +510,15 @@ visibility
    any symbols marked local in the version script will not be exported.
 
 
+visibility的功能
+~~~~~~~~~~~~~~~~~~~~~~
+`Visibility - GCC Wiki  <https://gcc.gnu.org/wiki/Visibility>`__
+
+1. 减少dso（dynamic share object）体积5%-20%。减少导出的符号表。
+2. 提升load时间。
+3. 代码运行更快。减少PLT重定向（pic使用got）
+4. 减少库之间的符号冲突
+
 so内部未定符号
 ----------------
 1. `Liunx下解决动态链接库符号未定义问题_Toudsour的博客-CSDN博客  <https://blog.csdn.net/toudsour/article/details/52370795>`__

@@ -144,22 +144,6 @@ _syscalln() -> K_INLINE_SYSCALL : 内联汇编
 2. 使用文件描述符来表示。
 
 
-虚拟系统调用vDSO和ASLR
-----------------------
-不进入内核即可执行系统调用，例如gettimeofday。
-
-
-The Linux vDSO is a set of code that is part of the kernel.
-
-The "vDSO" (virtual dynamic shared object) is a small shared  library that the kernel automatically maps into the address space   of all user-space applications.
-
-地址随机(安全)
-~~~~~~~~~~~~~~~~
-Due to ASLR `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
-the vDSO will be loaded at a random address when a program is started.
-
-每次运行都会有不同的地址。程序代码、库代码、栈、全局变量和堆数据。
-
 
 
 syscall_wrapper x86
@@ -220,3 +204,49 @@ use syscall from glibc to call exit with exit status of 42:
       : /* registers that we are "clobbering", unneeded since we are calling exit */
          "rax", "rdi");
    }
+
+
+系统调用的性能
+------------------
+`为什么系统调用会消耗较多资源 - 面向信仰编程  <https://draveness.me/whys-the-design-syscall-overhead/>`__
+
+1. 软件中断触发的系统调用需要保存堆栈和返回地址等信息，还要在中断描述表中查找系统调用的响应函数
+2. 使 SYSCALL / SYSENTER 是作为专门为系统调用打造的指令，省去了 保存堆栈和返回地址、查找中断描述表的过程。
+3. 使用 vSDO 执行系统调用是最快路径，开销与函数调用拉平
+
+
+虚拟系统调用vDSO和ASLR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://man7.org/linux/man-pages/man7/vdso.7.html
+
+不进入内核即可执行系统调用，内核将不涉及安全的系统调用以库的形式映射到所有用户程序的地址空间。
+
+The "vDSO" (virtual dynamic shared object) is a small shared  library that the kernel automatically maps into the address space   of all user-space applications.
+
+vDso各架构支持的函数不一，一般不超过10个：
+
+::
+
+      symbol                 version
+   ─────────────────────────────────
+   __vdso_clock_gettime   LINUX_2.6
+   __vdso_getcpu          LINUX_2.6
+   __vdso_gettimeofday    LINUX_2.6
+   __vdso_time            LINUX_2.6
+
+
+      symbol                   version
+   ──────────────────────────────────────
+   __kernel_rt_sigreturn    LINUX_2.6.39
+   __kernel_gettimeofday    LINUX_2.6.39
+   __kernel_clock_gettime   LINUX_2.6.39
+   __kernel_clock_getres    LINUX_2.6.39
+
+
+
+ASLR地址随机(安全)
+~~~~~~~~~~~~~~~~
+Due to ASLR `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
+the vDSO will be loaded at a random address when a program is started.
+
+每次运行都会有不同的地址。程序代码、库代码、栈、全局变量和堆数据。
