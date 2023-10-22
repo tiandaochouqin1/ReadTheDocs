@@ -96,9 +96,9 @@ Linux系统调用的实现
 
 syscall方式的实现
 ~~~~~~~~~~~~~~~~~~
-1. 内核编译期间使用脚本从arch/x86/syscalls/syscall_64.tbl 生成 asm/syscalls_64.h(数组)
-2. syscall_init将system_call 函数的地址写到了 **LSTAR MSR** （回调）
-2. 用户syscall->内核system_call->sys_call_table中的函数
+1. 内核编译期间使用脚本从arch/x86/syscalls/syscall_64.tbl 生成 asm/syscalls_64.h(数组);
+2. syscall_init将system_call 函数的地址写到了 **LSTAR MSR** (回调);
+3. 用户syscall->内核system_call->sys_call_table中的函数.
 
 
 ::
@@ -245,7 +245,7 @@ vDso各架构支持的函数不一，一般不超过10个：
 
 
 ASLR地址随机(安全)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 Due to ASLR `address space layout randomization <https://en.wikipedia.org/wiki/Address_space_layout_randomization>`__
 the vDSO will be loaded at a random address when a program is started.
 

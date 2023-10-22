@@ -244,6 +244,13 @@ ABA问题
 使用double-CAS解决。
 
 
+指令集与性能
+============
+1. armv8.1 lse扩展将原先的原先的LL+SC（load link、store conditional）两条指令和为一条，同时效率更高。
+2. gcc中原来的_sync_系列指令不在推荐，现使用_atomic(如_atomic_add_fetch),指令内部实现与架构相关，如armv8.1则使用lxadd。
+
+
+x86?
 
 锁
 ==========
