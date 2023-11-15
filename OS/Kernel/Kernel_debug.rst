@@ -305,18 +305,17 @@ R状态死锁-softlockup和hardlockup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. https://www.kernel.org/doc/Documentation/lockup-watchdogs.txt
 2. `Real-Time进程会导致系统lockup吗？ | Linux Performance` <http://linuxperf.com/?p=197>`__
+3. `linux kernel soft lockup/hard lockup简介及其解决思路_hard lockup如何解决-CSDN博客  <https://blog.csdn.net/wukongmingjing/article/details/82870807>`__
 
 机制
 ^^^^^^
-1. lockup detector机制：在中断上下文中发生死锁时，nmi(不可屏蔽的中断)处理也可正常进入，因此可用来监测中断中的死锁。
+1. 优先级关系： **进程上下文 < 中断 < nmi中断**。
 
-2. 优先级关系：进程上下文 < 中断 < nmi中断。
-
-3. 代码路径：kernel/watchdog.c
+2. 代码路径：kernel/watchdog.c
 
 
-- softlockup：20s。
-- hardlockup:HARDLOCKUP_DETECTOR需要nmi中断的支持。10s
+- softlockup：20s。hrtimer中断(watchdog_timer_fn)检测高优先级watchdog线程是否更新时间戳watchdog_touch_ts。
+- hardlockup:10s。nmi事件检测hrtimer是否更新中断计数器hrtimer_interrupts。在中断上下文中发生死锁时，nmi(不可屏蔽的中断)处理也可正常进入，因此可用来监测中断中的死锁。
 
 
 .. figure:: /images/lockup_detector.jpg
@@ -325,6 +324,33 @@ R状态死锁-softlockup和hardlockup
    lockup_detector
 
 
+
+::
+
+      
+   static int is_softlockup(unsigned long touch_ts)
+   {
+      unsigned long now = get_timestamp();
+
+      if ((watchdog_enabled & SOFT_WATCHDOG_ENABLED) && watchdog_thresh){
+         /* Warn about unreasonable delays. */
+         if (time_after(now, touch_ts + get_softlockup_thresh()))
+            return now - touch_ts;
+      }
+      return 0;
+   }
+
+   /* watchdog detector functions */
+   bool is_hardlockup(void)
+   {
+      unsigned long hrint = __this_cpu_read(hrtimer_interrupts);
+
+      if (__this_cpu_read(hrtimer_interrupts_saved) == hrint)
+         return true;
+
+      __this_cpu_write(hrtimer_interrupts_saved, hrint);
+      return false;
+   }
 
 perf性能优化
 =============
