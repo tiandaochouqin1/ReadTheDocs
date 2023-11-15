@@ -5,9 +5,7 @@
 
 
 
-Linux内核内存管理的一项重要工作就是如何在频繁申请释放内存的情况下，避免碎片的产生。
 
-Linux采用伙伴系统解决外部碎片的问题，采用slab解决内部碎片的问题。
 
 
 
@@ -110,12 +108,6 @@ TLB：translate lookaside buffer,翻译后缓冲器。虚拟地址到物理地�
 
 
 
-kmalloc
-~~~~~~~~~~~~~~
-kmalloc与用户空间的malloc函数类似，以字节为单位获取内核内存。分配的内存在物理上连续。
-
-kfree：释放kmalloc分配的内存。
-
 
 gfp_mask分配器标志
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -165,7 +157,6 @@ percpu数据
 ------------
 1. `Linux伙伴系统(一)--伙伴系统的概述_橙色逆流的博客-CSDN博客_伙伴系统  <https://blog.csdn.net/vanbreaker/article/details/7605367>`__
 
-伙伴系统的宗旨就是用最小的内存块来满足内核的对于内存的请求。
 
 **zone->free_area** 描述该管理区伙伴系统的空闲内存块:
 
@@ -192,9 +183,17 @@ percpu数据
 分配与回收
 ~~~~~~~~~~~   
 
+伙伴系统与slub
+~~~~~~~~~~~~~~~~~~~
+Linux采用伙伴系统解决外部碎片的问题，采用slab解决内部碎片的问题。
+
+1. 伙伴系统：物理页帧。负责多页组成的连续内存块的拆分与合并。
+2. slab分配器：处理小块内存的分配，并提供用户层malloc的内核等价物。在伙伴系统之上。允许分配任意用途的小内存，还可以对常用数据结构创建缓存。
+
 slab分配器
 ---------------------
 1. `图解slub  <http://www.wowotech.net/memory_management/426.html>`__
+2. `Linux Slob分配器(一)--概述-CSDN博客  <https://blog.csdn.net/peijian1998/article/details/30040139>`__
 
 .. figure:: /images/mem_manage.png
    :scale: 30%
@@ -202,29 +201,94 @@ slab分配器
    内存管理
 
 
-1. 伙伴系统：物理页帧的管理。负责多页组成的连续内存块的拆分与合并。
-2. slab分配器：处理小块内存的分配，并提供用户层malloc的内核等价物。在伙伴系统之上。允许分配任意用途的小内存，还可以对常用数据结构创建缓存。
 
-3. slab, slub和slob仅仅是分配内存策略不同。有时候用slab来统称slab, slub和slob。
+slab, slub和slob
+~~~~~~~~~~~~~~~~~
+1. 仅仅是分配内存策略不同。有时候用slab来统称slab, slub和slob。
+2. slub用于替代slab，效率更高。
+3. slob比较轻量，用于嵌入式系统。仅维护了3个不同size的缓存组。
 
 
-slab层把不同的对象划分为高速缓存组，每个高速缓存组存放不同类型的对象（task_struct、inode）。slab由一个或多个物理连续的页组成。
+slab层把不同的对象划分为高速缓存组，每个高速缓存组存放不同类型的对象（task_struct、inode等）。slab由一个或多个物理连续的页组成。
 
 
-kmalloc建立而在slab层之上，对应一组高速缓存组。slab状态：满、部分满和空。
+slab状态：满、部分满和空。
+
+
+一下两个接口slab/slub通用：
 
 1. kmem_cache_creat：创建高速缓存。
-
 2. kmem_cache_alloc：从高速缓存分配结构。
 
-slub cache
----------------
-1. ☆ `图解slub  <http://www.wowotech.net/memory_management/426.html>`__
-2. `linux 内核 内存管理 slub算法 （一） 原理_lukuen的博客-CSDN博客_linux slub  <https://blog.csdn.net/lukuen/article/details/6935068>`__
+kmalloc_caches
+~~~~~~~~~~~~~~~~~~
+1. ☆ `linux 内核 内存管理 slub算法 （一） 原理_slub算法原理-CSDN博客  <https://blog.csdn.net/bin_linux96/article/details/52980643>`__
 
-slub系统运行在伙伴系统之上，为内核提供小内存管理的功能。
 
-slub把内存分组管理kmalloc_caches，每个组分别包含2^3、2^4、...2^11个字节
+.. figure:: /images/kmalloc_caches.png
+   :scale: 90%
+
+   kmalloc_caches
+
+
+slub把内存分组管理kmalloc_caches，每个组分别包含2^3、2^4、...2^11个字节。
+
+::
+
+   struct kmem_cache kmalloc_caches[PAGE_SHIFT] __cacheline_aligned;
+
+kmalloc_caches中有两个成员：
+
+1. kmem_cache_cpu: cpu本地缓冲
+2. kmem_cache_node: slab节点
+
+.. figure:: /images/slab_caches.png
+   :scale: 80%
+
+   slab_caches
+
+
+kmalloc与slab
+~~~~~~~~~~~~~~~~~~~
+`【精选】Linux内存管理(八): slub分配器和kmalloc_linux内存管理hober_Hober_yao的博客-CSDN博客  <https://blog.csdn.net/yhb1047818384/article/details/115604800>`__
+
+
+kmalloc：通过size找到对应e的index，然后按index去申请对应cache。
+
+::
+
+   struct kmem_cache * kmalloc_caches[NR_KMALLOC_TYPES][KMALLOC_SHIFT_HIGH + 1];
+
+   enum kmalloc_cache_type {
+      KMALLOC_NORMAL = 0,
+      KMALLOC_RECLAIM,
+   #ifdef CONFIG_ZONE_DMA
+      KMALLOC_DMA,
+   #endif
+      NR_KMALLOC_TYPES
+   };
+
+   static __always_inline void *kmalloc(size_t size, gfp_t flags)
+   {
+      if (__builtin_constant_p(size)) {
+   #ifndef CONFIG_SLOB
+         unsigned int index;
+   #endif
+         if (size > KMALLOC_MAX_CACHE_SIZE)
+            return kmalloc_large(size, flags);
+   #ifndef CONFIG_SLOB
+         index = kmalloc_index(size);
+
+         if (!index)
+            return ZERO_SIZE_PTR;
+
+         return kmem_cache_alloc_trace(
+               kmalloc_caches[kmalloc_type(flags)][index],
+               flags, size);
+   #endif
+      }
+      return __kmalloc(size, flags);
+   }
 
 
 
