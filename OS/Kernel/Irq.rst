@@ -294,7 +294,6 @@ thread_fn : 中断线程，类似于中断下半部
 中断上半部
 =============
 
-即中断处理程序。运行于中断上下文中，不可阻塞。
 
 上半部执行具有严格时限的工作，运行时可禁止所有其它中断（大部分不会），
 同时在其它处理器上禁止同一中断线，即同一中断处理程序不会被同时调用以处理嵌套的中断，即无需重入。
@@ -302,8 +301,8 @@ thread_fn : 中断线程，类似于中断下半部
 中断栈
 ----------
 
-中断栈的创建：内核启动时中会去为每个cpu创建一个per cpu的中断栈：start_kernel->init_IRQ->init_irq_stacks
-中断栈的使用：中断发生和退出的时候调用irq_stack_entry和irq_stack_exit来进入和退出中断栈。
+1. 中断栈的创建：内核启动时中会去为每个cpu创建一个 **per cpu的中断栈**：start_kernel->init_IRQ->init_irq_stacks
+2. 中断栈的使用：中断发生和退出的时候调用irq_stack_entry和irq_stack_exit来进入和退出中断栈。
 
 
 新内核中一般独立于线程栈,都是16K。栈溢出？
@@ -318,21 +317,63 @@ thread_fn : 中断线程，类似于中断下半部
 
    define THREAD_SIZE  16384     //也就是irq栈的大小大概15k
 
-local_irq
+内核栈vs中断栈？
+~~~~~~~~~~~~~~~~~
+
+内核栈
+~~~~~~~~~~~
+
+当系统因为系统调用（软件中断）或硬件中断，CPU切换到特权工作模式，进程陷入内核态，进程使用的栈也要从用户栈转向系统栈。
+
+从用户态到内核态要两步骤，首先是将用户堆栈地址保存到内核堆栈中，然后将CPU堆栈指针寄存器指向内核堆栈。
+
+当由内核态转向用户态，步骤首先是将内核堆栈中得用户堆栈地址恢复到CPU堆栈指针寄存器中。
+
+
+
+
+- 用户空间的堆栈，task_struct->mm->vm_area，属于进程虚拟地址空间。
+
+- 内核态的栈，tsak_struct->stack(其 ``底部是thread_info对象``，thread_info可以用来快速获取task_struct对象)。
+  整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
+
+
+
+https://zhuanlan.zhihu.com/p/296750228
+
+.. figure:: /images/kernel_stack.png
+   :scale: 70%
+
+
+- x86: 上图，采用了每cpu变量current_task来保存当前运行进程的task_struct
+- arm: 使用current宏，arm32使用栈偏移量、arm64使用专门的寄存器 来找到进程描述符。
+
+为什么需要内核栈？
+
+1. 内核的代码和数据是为所有的进程共享的
+2. 安全
+
+
+禁止硬中断
 ------------------------------------------
-local_irq_save()/local_irq_restore() 
-include/linux/irqflags.h
+1. local_irq_save()/local_irq_restore() 
 
-These routines disable hard interrupts on the local CPU, and restore them. 
+::
 
-They are **reentrant**; saving the previous state in their one unsigned long flags argument. 
+   include/linux/irqflags.h
 
-若当前开关状态已知，则可直接使用 local_irq_disable() and local_irq_enable().
+   These routines disable hard interrupts on the local CPU, and restore them. 
+
+   They are **reentrant**; saving the previous state in their one unsigned long flags argument. 
+
+
+2. 若当前开关状态已知，则可直接使用 local_irq_disable() and local_irq_enable().
 
 
 中断下半部
 ===============
-下半部：所有用于实现将工作推后执行的内核机制。
+2. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
+
 
 1. 可调度/休眠 -> 工作队列
 2. 性能要求高  -> 软中断
@@ -342,27 +383,32 @@ They are **reentrant**; saving the previous state in their one unsigned long fla
 
 
 
-可延时函数与工作队列
------------------------
-2. `《深入理解Linux内核》软中断/tasklet/工作队列 - only_eVonne - 博客园  <https://www.cnblogs.com/li-hao/archive/2012/01/12/2321084.html>`__
-
+概念辨析
+--------------
 
 1. 可延时函数：由软中断或tasklet实现。运行在中断上下文(如do_IRQ退出时即为一个软中断检查点)，不能睡眠、阻塞。
 2. 工作队列：运行在进程上下文，可阻塞。
 3. 中断线程化：wakeup_softirqd唤醒内核线程来执行，该线程和其它线程一样需要调度。 耗时较长、实时性不高的场景，避免影响用户线程的实时性。
 4. 非线程化中断：调用__do_softirq函数来处理。Bottom-half Enable 和 do_IRQ退出 时检查执行。
 
+上半部vs下半部
+~~~~~~~~~~~~~~~~~~
+1. 即中断处理程序。运行于中断上下文中，不可阻塞。
+2. 下半部：所有用于实现将工作推后执行的内核机制。
 
+软中断vs硬中断
+~~~~~~~~~~~~~~~~~
+- Linux中没有实现中断优先级，即不支持真正意义的中断嵌套。
+- Gicv3实现了 抢占+响应优先级，即中断嵌套。
+
+- 硬中断处理时会停止响应其它中断，并且屏蔽本类型中断(丢失)。
+- 软中断处理可能处于硬中断上下文(所以不能睡眠)，这时会打开本地硬件中断，关闭本类型软中断，处理完后在关闭本地硬件中断。可能会发生中断处理函数嵌套(软中断)。
 
 
 软中断
 ----------
 1. `Linux内核软中断softirq和小任务tasklet分析（六）_软中断在什么时候执行_业余程序员plus的博客-CSDN博客  <https://blog.csdn.net/u011037593/article/details/114795032>`__
 
-- Linux中没有实现中断优先级，即不支持真正意义的中断嵌套。
-- 硬中断处理时会停止响应其它中断，并且屏蔽本类型中断(丢失)。
-- 软中断处理可能处于硬中断上下文(所以不能睡眠)，这时会打开本地中断，关闭软中断，处理完后在关闭本地中断。可能会发生中断处理函数嵌套()。
-- Gicv3实现了 抢占+响应优先级，即中断嵌套
 
 1. 对性能要求非常高的场景（如网络、SCSI）。编译时静态注册。
 2. 
@@ -375,7 +421,8 @@ tasklet
 1. 适用大部分下半部处理。使用软中断实现。也可动态注册。
 2. 两个不同类型的tasklet可以在不同处理器上同时执行，但两个相同类型的tasklet不能同时执行 。
 
-
+禁止软中断
+------------------------------------------
 
 
 工作队列

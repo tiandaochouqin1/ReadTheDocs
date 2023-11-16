@@ -113,3 +113,32 @@ https://page.838281.xyz/NoteApps/
 5. News: Bypass Paywalls插件 https://www.economist.com/
 
 
+概念
+========
+Fiber Chanel
+----------------
+FC是一套复杂的网络协议，定义了一套完整的网络传输体系。
+
+FC协议的物理层到传输层的逻辑大部分运行在FC适配卡的芯片中，只有小部分关于上层API的逻辑运行与操作系统FC卡驱动程序中。
+
+效率高于Internet协议（tcp/ip以及网卡都跑在cpu上）
+
+
+时序数据库
+--------------
+1. `什么是时序数据库？我们为什么需要时序数据库？｜时序数据库 - TDengine - 涛思数据  <https://www.taosdata.com/tdengine/time-series-database/what-is-a-time-series-database>`__
+
+时序数据的特征：
+
+1. 带时间戳
+2. 结构化，如日志
+3. 流量平稳可预测
+4. 不变性，一般是append-only
+
+
+时序数据库的特征：
+
+1. 支持巨量数据
+2. 可实时分析
+3. 时间范围查询较多
+4. 数据的变化比单点数据更重要

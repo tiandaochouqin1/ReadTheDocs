@@ -211,6 +211,7 @@ ISR例程不能调用的函数
 
    为什么do_idle -> schedule_idle不会走到这个分支: 因为执行了preempt_set_need_resched设置了preempt_count为可抢占？
 
+
 ::
 
    schedule -> __schedule -> deactivate_task -> dequeue_task_idle
@@ -242,7 +243,7 @@ ISR例程不能调用的函数
    }
 
 
-2. atomic
+2. atomic上下文中schedule
 
 ::
 
@@ -279,7 +280,7 @@ ISR例程不能调用的函数
    }
 
 
-3. preempt count
+3. softirq中调度
 
 ::
 
@@ -310,7 +311,7 @@ ISR例程不能调用的函数
 	}
 
 preempt_count
-~~~~~~~~~~~~~~~~~~~
+---------------
 1. `调度器17—preempt_count和各种上下文 - Hello-World3 - 博客园  <https://www.cnblogs.com/hellokitty2/p/15652312.html>`__
 2. `LWN：关于preempt_count()的四个小讨论！_LinuxNews搬运工的博客-CSDN博客  <https://blog.csdn.net/Linux_Everything/article/details/109088796>`__  https://lwn.net/Articles/831678/
 3. `进程切换分析（3）：同步处理  <http://www.wowotech.net/process_management/scheudle-sync.html>`__
@@ -323,7 +324,8 @@ preempt_count
    preempt_count
 
 
-
+preempt_count定义
+~~~~~~~~~~~~~~~~~~~~~~~
 include/preempt.h
 
 ::
@@ -349,6 +351,9 @@ include/preempt.h
    */
 
 
+
+软中断与preempt_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 每次加1，schedule后不会回来继续执行，可能溢出到其它bit：
 
@@ -388,35 +393,3 @@ softirq: __local_bh_disable_ip
    }
 
 
-内核栈
-----------
-
-当系统因为系统调用（软中断）或硬件中断，CPU切换到特权工作模式，进程陷入内核态，进程使用的栈也要从用户栈转向系统栈。
-
-从用户态到内核态要两步骤，首先是将用户堆栈地址保存到内核堆栈中，然后将CPU堆栈指针寄存器指向内核堆栈。
-
-当由内核态转向用户态，步骤首先是将内核堆栈中得用户堆栈地址恢复到CPU堆栈指针寄存器中。
-
-
-
-
-- 用户空间的堆栈，task_struct->mm->vm_area，属于进程虚拟地址空间。
-
-- 内核态的栈，tsak_struct->stack(其 ``底部是thread_info对象``，thread_info可以用来快速获取task_struct对象)。
-  整个stack区域一般只有一个内存页(可配置)，32位机器也就是4KB。也是进程私有的。
-
-
-
-https://zhuanlan.zhihu.com/p/296750228
-
-.. figure:: /images/kernel_stack.png
-   :scale: 70%
-
-
-- x86: 上图，采用了每cpu变量current_task来保存当前运行进程的task_struct
-- arm: 使用current宏，arm32使用栈偏移量、arm64使用专门的寄存器 来找到进程描述符。
-
-为什么需要内核栈？
-
-1. 内核的代码和数据是为所有的进程共享的
-2. 安全
