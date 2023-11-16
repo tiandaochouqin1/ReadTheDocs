@@ -7,6 +7,7 @@ Armv8 Architecture
 
    SMMU.rst
    GICv3.rst
+   TrustZone.rst
 
    
    
