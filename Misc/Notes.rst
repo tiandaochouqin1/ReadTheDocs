@@ -36,6 +36,48 @@ OpenAi API
 1. `Models - OpenAI API  <https://platform.openai.com/docs/models>`__
 2. `Examples - OpenAI API  <https://platform.openai.com/examples>`__
 
+搭建gpt网站
+--------------
+
+1. 购买api。https://nbfaka.com/ds/
+   gpt3.5的api可以直接用；gpt4则需要去第三方网站兑换api，并且使用时要通过第三方网站访问。
+
+2. 创建网页
+https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web
+
+
+::
+
+    docker run -d -p 4000:3000 \
+    -e OPENAI_API_KEY=sxxx \
+    -e CODE=xxx \
+    -e BASE_URL=https://kkkc.net/ \
+    yidadaa/chatgpt-next-web   
+
+
+
+3. 配置域名。先在cloudflare配置dns，然后使用nginx-proxy-manager容器配置代理
+https://github.com/NginxProxyManager/nginx-proxy-manager
+
+docker-compose.yml
+
+::
+
+    version: '3.8'
+    services:
+    app:
+        image: 'jc21/nginx-proxy-manager:latest'
+        restart: unless-stopped
+        ports:
+        - '80:80'
+        - '81:81'
+        - '443:443'
+        volumes:
+        - ./data:/data
+        - ./letsencrypt:/etc/letsencrypt
+
+4. 访问网站。
+两种选择：a. 填写访问密码后，可使用配置好的api；b. 填写自定义网址和api，以使用 自己的ap i或 第三方网站和api
 
 code copilot
 ----------------
@@ -142,3 +184,12 @@ FC协议的物理层到传输层的逻辑大部分运行在FC适配卡的芯片�
 2. 可实时分析
 3. 时间范围查询较多
 4. 数据的变化比单点数据更重要
+
+TIPC协议
+-----------
+1. https://docs.kernel.org/networking/tipc.html
+2. `TIPC协议和实现解析_tipc原理-CSDN博客  <https://blog.csdn.net/sy_123a/article/details/107692721>`__
+
+透明进程间通信协议
+
+TIPC针对可信网络环境，减少了建立通信连接的步骤和寻址目标地址的操作 (在TCP/IP协议里, 完成这些操作节点间最少也需要9次包交换, 而使用TIPC则可以减少到2次)。这可以提高节点间信息交换的频率以及减少节点间等待的时间
