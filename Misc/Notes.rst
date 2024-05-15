@@ -55,8 +55,37 @@ https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web
     yidadaa/chatgpt-next-web   
 
 
+..
+    仅支持3.5
+    sess-lGD0yl7s8G5U0zERAu7h4q2id44T2XGAtfrqnTcX
 
-3. 配置域名。先在cloudflare配置dns，然后使用nginx-proxy-manager容器配置代理
+    https://kkkc.net/
+    27ab5585c8c24d7a84d66ea364d2b612 
+    sk-HxGpHZOSq8mf4oaW013805E07b6740489d9a17CeDe18F20c
+
+    https://api.keya.pw/
+    0cb1cc52544345eda173ca066cd595fb
+    sk-59xejqqGlW1hOhzx00E8Ac3dD7A94eB49b71646d1307F7A4
+
+
+    docker run -d -p 5000:3000 \
+    -e OPENAI_API_KEY=sk-HxGpHZOSq8mf4oaW013805E07b6740489d9a17CeDe18F20c \
+    -e CODE=10287087 \
+    -e BASE_URL=https://kkkc.net/ \
+    -e CUSTOM_MODELS=-gpt-4-32k,-gpt-4-32k-0314,-gpt-4-32k-0613\
+    yidadaa/chatgpt-next-web
+
+    docker run -d -p 5000:3000 \
+    -e OPENAI_API_KEY=sk-59xejqqGlW1hOhzx00E8Ac3dD7A94eB49b71646d1307F7A4 \
+    -e CODE=10287087 \
+    -e BASE_URL=https://api.keya.pw/ \
+    -e CUSTOM_MODELS=-gpt-4-32k,-gpt-4-32k-0314,-gpt-4-32k-0613\
+    yidadaa/chatgpt-next-web
+
+
+
+
+3. 配置域名。先在cloudflare配置dns，然后使用nginx-proxy-manager容器配置代理（能一键配置ssl）
 https://github.com/NginxProxyManager/nginx-proxy-manager
 
 docker-compose.yml
@@ -78,6 +107,15 @@ docker-compose.yml
 
 4. 访问网站。
 两种选择：a. 填写访问密码后，可使用配置好的api；b. 填写自定义网址和api，以使用 自己的ap i或 第三方网站和api
+
+
+问gpt4的几个问题
+~~~~~~~~~~~~~~~~~
+1. 鲁迅为什么暴打周树人？
+2. 树上9只鸟，打掉1只，还剩几只？
+3. 孙悟空的妈妈是谁
+4. 昨天的当天是明天的什么？
+
 
 code copilot
 ----------------

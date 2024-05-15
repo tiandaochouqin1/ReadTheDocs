@@ -229,6 +229,8 @@ kmalloc_caches中有两个成员：
 1. kmem_cache_cpu: cpu本地缓冲
 2. kmem_cache_node: slab节点
 
+首先从cpu 本地缓存池分配，如果freelist不存在，就会转向per cpu partial分配，如果per cpu partial也没有可用对象，继续查看per node partial，如果很不幸也不没有可用对象的话，就只能从伙伴系统分配一个slab了，并挂入per cpu freelist。
+
 .. figure:: /images/slab_caches.png
    :scale: 80%
 
