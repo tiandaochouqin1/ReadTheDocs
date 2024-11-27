@@ -347,110 +347,6 @@ miscdevice结构体
    };
 
 
-PCIE
-======
-1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
-2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__
-3. `apachecn-linux-zh/11.md at master · apachecn/apachecn-linux-zh · GitHub  <https://github.com/apachecn/apachecn-linux-zh/blob/master/docs/master-linux-device-driver-dev/11.md>`__
-
-pci总线地址空间
-----------------
-配置空间、存储器空间、IO空间。
-
-1. x86 CPU可以直接访问memory空间和I/O空间;
-2. x86 CPU无法直接访问配置空间，通过IO映射的数据端口和地址端口间接访问PCI的配置空间；
-3. Bridge或Device类型的PCIE设备拥有不同的配置空间header。其中的Base Address Register BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间即bar空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
-
-.. figure:: /images/PCIE_reg_conf.png
-   :scale: 50 %
-
-   io映射的地址端口
-
-
-.. figure:: /images/pcie_cfg_space.png
-   :scale: 80 %
-
-   pcie配置空间
-
-
-
-
-tlp
-~~~~~~
-
-假设某个设备要对另一个设备进行读取数据的操作，首先这个设备（称之为Requester）需要向另一个设备发送一个Request，
-然后另一个设备（称之为Completer）通过Completion Packet返回数据或者错误信息。
-
-.. figure:: /images/PCIE_tlp.png
-   :scale: 70 %
-
-   PCIE_tlp
-
-Header中包含了地址信息，各种tlp类型header、寻址方式不同。
-
-PCIE架构和分层
-------------------
-
-pcie架构
-~~~~~~~~~~~~~~
-.. figure:: /images/PCIE_structure.png
-   :scale: 70 %
-
-   PCIE_structure
-
-
-Root Complex
-~~~~~~~~~~~~~~~~~~
-
-PCIe架构的根， **代表CPU与系统其它部分进行交互**。将CPU的request转换成PCIe的4种不同的请求（Configuration、Memory、I/O、Message）；
-
-
-CPU前端总线和PCIe总线之间的接口,可能会包含处理器接口、DRAM接口、甚至芯片.
-   
-
-inbound outbound
-~~~~~~~~~~~~~~~~~~~~~
-1. `pcie inbound、outbound及EP、RC间的互相訪问 - blfshiye - 博客园  <https://www.cnblogs.com/blfshiye/p/4377496.html>`__
-
-
-.. figure:: /images/pcie_outbound_inbound.png
-   :scale: 70 %
-
-   inbound outbound
-
-
-
-1. Inbound:PCI域訪问存储器域
-2. Outbound:存储器域訪问PCI域
-
-1. RC訪问EP: RC存储器域->outbound->RC PCI域->EP PCI域->inbound->EP存储器域
-2. EP訪问RC：EP存储器域->outbound->EP PCI域->RC PCI域->inbound->RC存储器域
-
-
-
-pcie分层
-~~~~~~~~~~~~~~~
-1. 与PCI总线不同（PCI设备共享总线），PCIe总线使用端到端的连接方式，互为接收端和发送端，全双工，基于数据包的传输；
-2. 物理底层采用差分信号（PCI链路采用并行总线，而PCIe链路采用串行总线），一条Lane中有两组差分信号，共四根信号线，而PCIe Link可以由多条Lane组成(1/2/4/8/12/16/32)；
-
-.. figure:: /images/PCIE_layer.png
-
-   PCIE_layer
-
-
-1. Transaction层: 负责TLP包（Transaction Layer Packet）的封装与解封装，此外还负责QoS，流控、排序等功能；
-2. Data Link层:负责DLLP包（Data Link Layer Packet）的封装与解封装，此外还负责链接错误检测和校正，使用Ack/Nak协议来确保传输可靠；
-3. Physical层:负责Ordered-Set包的封装与解封装，物理层处理TLPs、DLLPs、Ordered-Set三种类型的包传输；
-
-TLP事务层
-~~~~~~~~~~~~
-1. `PCIe扫盲——一个Memory Read操作的例子  <http://blog.chinaaet.com/justlxy/p/5100053263>`__
-
-
-基于消息的msi-x中断
------------------------
-
-
 
 网络设备驱动
 ============
@@ -695,4 +591,28 @@ sr-iov
 SR-IOV 标准允许在虚拟机之间高效共享 PCIe
 
 VF 与网络适配器上的 PCIe 物理 (PF) 相关联，表示网络适配器的虚拟化实例。 每个 VF 都有其自己的 PCI 配置空间。 每个 VF 还与 PF 和其他 VF 共享网络适配器上的一个或多个物理资源，例如外部网络端口。
+
+
+
+用户态驱动与内核驱动
+=========================
+
+内核驱动通常有着稳定、效率高、标准化、可复用等特性，因此在重构时领导喜好“将驱动下沉到内核”。
+
+然而这是因果倒置的，因为驱动只有具有这些特性才适合放到内核。可以现在用户态开发，待稳定后移植到内核。
+
+
+用户态驱动的特点：
+
+1. 可以使用C库，带来便利性的同时也引入了依赖；
+2. 可以使用浮点数计算；
+3. 方便调试；
+4. 可以使用闭源的驱动程序（内核代码则需要符合GPL协议）；
+5. 代码出问题时影响范围小,内核驱动出问题常会导致整个系统死掉；
+
+内核态驱动的特点：
+
+1. 直接支持中断（用户态可以使用UIO支持）；
+2. 代码性能高，无系统调用开销；
+3. 有标准的驱动框架；
 

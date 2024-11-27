@@ -245,3 +245,21 @@ SPI  MOSI/MISO/SS 同步     全双工 小端     比I2C快
 serdes
 ~~~~~~~~~~
 串行解串
+
+
+`SerDes基础知识总结 - 知乎  <https://zhuanlan.zhihu.com/p/423321485>`__
+
+802.3那一篇文章中也提到了serdes。
+
+
+pll锁定：
+
+发送端使用8b/10b对比特流进行扰码，减少连续的0/1便于时钟恢复。
+
+接收端将收到的比特流的时序或相位域pll时钟对比，调整pll时钟频率使得一致，此时即得到随路时钟。然后使用该时钟来锁存比特流。
+
+
+.. figure:: /images/pcie_pll_diagram.jpg
+   :scale: 100%
+
+   pcie_pll_diagram
