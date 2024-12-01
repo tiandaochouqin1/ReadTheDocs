@@ -2,6 +2,21 @@
 syslog & printk
 ====================
 
+`内核printk原理介绍 - 知乎  <https://zhuanlan.zhihu.com/p/521094976?utm_id=0>`__
+
+核心是一个叫做log buffer的循环缓冲区，printk作为生产者将消息存入该缓冲区，右边的log服务模块作为消费者可从log buffer中读取消息。
+
+.. figure:: /images/printk_frame.png
+   :scale: 60%
+
+   printk_frame
+
+
+log buffer的实现
+-------------------
+TODO
+
+
 syslog
 ----------------
 `内核日志及printk结构分析 <https://www.cnblogs.com/aaronLinux/p/6843131.html>`__

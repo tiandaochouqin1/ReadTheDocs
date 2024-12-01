@@ -8,6 +8,7 @@ Misc Note
 ===========
 1. 在线ps https://www.photopea.com/
 2. https://www.16personalities.com/intj-personality
+3. `WaytoAGI-通往AGI之路，最好的 AI 知识库和工具站  <https://www.waytoagi.com/>`__
 
 AI
 ========
