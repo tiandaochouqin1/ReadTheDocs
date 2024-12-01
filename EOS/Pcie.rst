@@ -1,11 +1,15 @@
 
 PCIE
 ======
+驱动：
 1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
 2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__
-3. `apachecn-linux-zh/11.md at master · apachecn/apachecn-linux-zh · GitHub  <https://github.com/apachecn/apachecn-linux-zh/blob/master/docs/master-linux-device-driver-dev/11.md>`__
-4. ☆ `GitHub - ljgibbslf/Chinese-Translation-of-PCI-Express-Technology-  <https://github.com/ljgibbslf/Chinese-Translation-of-PCI-Express-Technology->`__
-   `PCIe扫盲——一个Memory Read操作的例子   <https://blog.chinaaet.com/justlxy/p/5100053263>`__
+
+硬件：
+1. `PCIE手札 - 者旨於陽 - 博客园  <https://www.cnblogs.com/justin-y-lin/p/10036801.html>`__
+2. `apachecn-linux-zh/11.md at master · apachecn/apachecn-linux-zh · GitHub  <https://github.com/apachecn/apachecn-linux-zh/blob/master/docs/master-linux-device-driver-dev/11.md>`__
+3. ☆ `GitHub - ljgibbslf/Chinese-Translation-of-PCI-Express-Technology-  <https://github.com/ljgibbslf/Chinese-Translation-of-PCI-Express-Technology->`__
+4. `PCIe扫盲——一个Memory Read操作的例子   <https://blog.chinaaet.com/justlxy/p/5100053263>`__
 
 
 PCIE拓扑
@@ -159,12 +163,18 @@ pci配置空间和配置请求
 inbound outbound
 ~~~~~~~~~~~~~~~~~~~~~
 1. `pcie inbound、outbound及EP、RC间的互相訪问 - blfshiye - 博客园  <https://www.cnblogs.com/blfshiye/p/4377496.html>`__
-
+2. `PCIe总线-存储器域和PCIe总线域访问流程分析（二）_pcie atu-CSDN博客  <https://blog.csdn.net/u011037593/article/details/137697527>`__
 
 .. figure:: /images/pcie_outbound_inbound.png
    :scale: 70 %
 
    inbound outbound
+
+
+.. figure:: /images/pcie_atu_outbound_inbound.png
+   :scale: 100 %
+
+   pcie_atu_outbound_inbound
 
 
 
@@ -286,3 +296,27 @@ https://www.uciexpress.org/
 - 提供不同制造商的chiplet之间的互操作性，在封装级别建立通用互联。
 - 混合、配合来自多供应商的chiplet组件，以构建较大的芯片。
 - 简历封装级别的通用互联，覆盖die to die I/O物理层，die to die协议层和软件栈（支持pcie、cxl行业标准）。
+
+chiplet
+~~~~~~~~~~
+小die，降低成本，设计灵活，设计难度低，周期短。
+
+需要多种die to die之间的互联协议。
+
+
+协议层
+~~~~~~~~~~~
+1. 支持pcie、cxl等业界协议
+2. 协议层吧数据包转成filter包传输。通过ucie适配层和ucie phy层替换pcie/xcl的phy和link功能，以实现更低的功耗、更高的性能的die to die接口。
+
+适配层
+~~~~~~~~
+1. ARB/MUX可选择仲裁多个协议
+2. 提供CRC/Retry功能
+3. link状态管理、参数协商等功能
+
+物理层
+~~~~~~~~~
+1. 串并转换。使用并行传输。
+2. sideband/link training等功能。
+

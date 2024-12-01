@@ -8,6 +8,7 @@ Armv8 Architecture
    SMMU.rst
    GICv3.rst
    TrustZone.rst
+   Arm_Tech_Symposia_2024.rst
 
    
    

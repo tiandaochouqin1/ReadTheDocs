@@ -4,8 +4,15 @@ Misc Note
 .. important:: 让工具成为思想的延伸。
 
 
+工具网站
+===========
+1. 在线ps https://www.photopea.com/
+2. https://www.16personalities.com/intj-personality
+
 AI
 ========
+
+
 相关行业
 -------------
 
