@@ -8,6 +8,7 @@ Protocols
    
 
    arp.rst
+   virtio.rst
    pxe_dhcp.rst
 
 

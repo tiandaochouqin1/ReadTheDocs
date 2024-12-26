@@ -29,6 +29,14 @@ AI
 3. 画图
 4. 编程
 
+ai agent
+-------------
+Devin.
+
+cursor是ide里面包了ai，而Devin是ai里面用到了ide。
+
+
+
 ChatGPT
 -----------
 插件：
