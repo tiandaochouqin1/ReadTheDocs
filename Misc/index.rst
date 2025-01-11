@@ -10,6 +10,7 @@ Misc
    LearningPlan.rst
    ICT.rst
    2022.rst
+   AI.rst
 .. Diet_and_nutrition.rst notion
 .. Notes.rst
 .. DP.rst
