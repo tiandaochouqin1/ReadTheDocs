@@ -136,8 +136,8 @@ pci配置空间和配置请求
 原生pcie ep是内存映射设备，传统pcie ep才支持io空间。
 
 
-枚举过程
-~~~~~~~~
+枚举规则和过程
+~~~~~~~~~~~~~~~~~~~~
 深度优先.
 
 - 软件唯一知道的就是拓扑中有一个Host/PCI Bridge以及这个Bridge的次级总线Bus 0。通过读取整个系统中的Bus—Device—Function这三者所有组合中的Vendor ID寄存器，枚举软件可以搜索遍整个拓扑，并得知有哪些设备存在。
@@ -147,8 +147,9 @@ pci配置空间和配置请求
 - Header类型寄存器（Header Type Register，位于配置空间Header的偏移地址0Eh）的低7bit用于标识这个Function的基本种类
 
 
-1. 配置软件分配总线号的过程中，首先从Bus 0/Device 0/Function 0开始搜索其他的Bridges。当找到一个Bridge之后，软件就给这个Bridge产生的新总线分配一个与上一级总线的总线号不同的、数字更大的编号。一旦新总线被分配了一个总线号之后，软件就会从新总线继续搜索更新的Bridges，而不是在上一级总线上继续搜索。
+枚举过程
 
+1. 配置软件分配总线号的过程中，首先从Bus 0/Device 0/Function 0开始搜索其他的Bridges。当找到一个Bridge之后，软件就给这个Bridge产生的新总线分配一个与上一级总线的总线号不同的、数字更大的编号。一旦新总线被分配了一个总线号之后，软件就会从新总线继续搜索更新的Bridges，而不是在上一级总线上继续搜索。
 2. 从Device 0开始，枚举软件将会尝试去读取Bus 0上的32个可能存在的Device，读取的内容为它们各自的Function中的Vendor ID。如果Bus 0—Device 0—Function 0返回了一个有效的Vendor ID，那么就认为这个设备存在并至少含有一个Function。
 若Bus 0—Device 0—Function 0没有返回一个有效的Vendor ID，则继续去探测Bus 0—Device 1—Function 0。
 
@@ -257,6 +258,7 @@ tlp类型
 仅tlp需要路由，dllp和ordered-set不需要
 
 三种路由方法：
+
 1. address 路由：Header中的Address字段来执行路由检查。Address字段可以是32bit也可以是64bit的。
 2. ID(BDF)路由：ep-据自己的BDF来检查TLP Header中的ID字段。switch/bridge-检查这个TLP的预期目的地是不是端口自身，查看TLP的目标总线号是否在Switch端口下方的从属总线范围内（包括范围边界）
 3. 隐式路由。减少边带信号，减少pin脚。message使用

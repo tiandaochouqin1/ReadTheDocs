@@ -18,10 +18,16 @@ virtio的框架
 1. virtio为半虚拟化提供了一系列通用设备仿真的接口。支持块设备、网络设备、pcie设备、balloon设备、终端设备。
 2. 包括前端驱动（在guest os中）、和后端驱动（在hypervisor中），以及联结前后端的虚拟队列（vq）。
 
+
+- 在全虚拟化中，客户操作系统在hypervisor上运行，相当于运行于裸机一般。
+   客户机不知道它在虚拟机还是物理机中运行，不需要修改操作系统就可以直接运行。
+- 在半虚拟化中，客户机操作系统不仅能够知道其运行于虚拟机之上，也必须包含与hypervisor进行交互的代码。
+   但是能够在客户机和hypervisor的切换中，带来更高的效率
+
 通过总线特定的方法发现和识别一个virtio设备(见总线特定部分：4.1通过PCI总线，4.2通过MMIO和4.3通过通道I/O)
 
 .. figure:: /images/virtio_framwork.jpg
-   :scale: 60%
+   :scale: 40%
 
    virtio_framwork.jpg
 
@@ -36,12 +42,12 @@ virtio设备
 1. `Virtio devices and drivers overview: Who is who  <https://www.redhat.com/en/blog/virtio-devices-and-drivers-overview-headjack-and-phone>`__
 
 virtio设备和驱动很灵活，可支持多种不同的架构、场景。包括：
+
 1. virtio-net：device在host kernel
 2. virtio-user:device 在host user
 3. virtio-user with userland driver: device 在host user + driver在guest user。
 
 .. figure:: /images/virtio-net.png
-   :scale: 60%
 
    virtio-net
 
@@ -143,12 +149,14 @@ packed queue
 
 split vq结构的三个部分在内存中是分散存储的，无法有效利用到cpu的cache机制，每次处理一个描述符需要多次pci的数据传输。所以将三环合一。
 
-1. driver和device都分别维护一个翻转计数器（avail_wc、used_wc，初始值为1）、表示下一个描述符位置的计数器（avail_idx、used_idx）。
+1. driver和device都分别维护一个翻转计数器（avail_wc、used_wc，初始值为1。wrap_counter的作用主要是为了解决desc ring回绕问题。）、表示下一个描述符位置的计数器（avail_idx、used_idx）。
 2. driver和device按顺序使用描述符，当到达数组的最后一个时，则自己的翻转计数器进行翻转——效果就是无效了之前依据翻转计数器设置的描述符BIT位。
 3. 队列flag字段有两个bit位：AVAIL-可用时，driver会将其置为与avail_wc一样；USED-使用完时device会将其置为与used_wc一致。
 
-AVAIL == USED - 已使用，可以标志为可用——即 avail_wc = AVAIL = !USED;
-AVAIL == !USED - 可用，使用完标志为已用—— AVAIL== USED = used_wc
+
+
+- AVAIL == USED - 已使用，可以标志为可用——即 avail_wc = AVAIL = !USED;
+- AVAIL == !USED - 可用，使用完标志为已用—— AVAIL== USED = used_wc
 
 
 
