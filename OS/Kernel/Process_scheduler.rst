@@ -87,7 +87,7 @@ fork vfork clone比较
 ~~~~~~~~~~~~~~~~~~~~~
 
 1. clone比fork提供更多选项控制父子进程共享的执行上下文；
-2. vfork(与fork相比)calling 挂起，且共享所有memory(包括stack)，直到child结束或执行execv；vfork共享vm，不复制页表.
+2. vfork是给会马上执行exec的子进程使用的。(与fork相比)父进程会挂起，直到子进程结束exit或执行execv；vfork共享所有虚拟内存（包括栈），不复制页表.
 
        it is used to create new
        processes without copying the page tables of the parent process.
