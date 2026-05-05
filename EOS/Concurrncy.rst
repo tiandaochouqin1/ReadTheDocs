@@ -5,6 +5,11 @@ Concurrency
 
 :Date:   2021-07-31 13:37:13
 
+
+todo read:
+:download:`xv6 code-lab1 </files/concurrency-primer.pdf>`
+
+
 并发编程
 ===========
 1. 并发:系统支持两个或多个动作同时存在,不一定要同时执行。可以是多线程或单线程。

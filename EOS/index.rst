@@ -16,6 +16,9 @@ C语言、汇编、MySQL、算法等。
    EOS_concept.rst
    Concurrncy.rst
    Cache.rst
+   BootLoader.rst
+   RTOS.rst
+   Motor_control.rst
    Pcie.rst
    
    

@@ -156,11 +156,19 @@ delay ack:
 开关： TCP_NODELAY
 
 
+
+.. figure:: /images/nagle-algorithm-delay-ack.jpg
+   :scale: 60%
+
+   nagle-algorithm-delay-ack
+
+
+
 selective ack
 ~~~~~~~~~~~~~~~~~
 快速重传：采用累积确认，即确认收到的完整序列的最大编号。
 
-选择确认：允许携带4个不连续序号，告诉发送方哪些报文丢失了。
+选择确认：允许携带4个组已接收的序号范围，告诉发送方哪些报文丢失了。
 
 发送方收到了三次同样的 ACK 确认报文，于是就会触发快速重发机制，实现只重传丢失的报文。
 
