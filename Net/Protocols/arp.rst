@@ -19,14 +19,14 @@ ARP地址解析协议
 
 nud状态转换
 ~~~~~~~~~~~~~
-.. figure:: /images/nud_states_transmitions.png
+.. figure:: /images/arp/nud_states_transmitions.png
    :scale: 80%
 
    nud状态转换
 
    
 
-.. figure:: /images/nud_states_transition_2.png
+.. figure:: /images/arp/nud_states_transition_2.png
    :scale: 60%
 
    nud状态转换-简化版

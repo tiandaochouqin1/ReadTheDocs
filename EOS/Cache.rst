@@ -18,19 +18,19 @@ cache的查找过程
 
 地址划分方法：offset、index和tag分别使用6 bits、3 bits和39 bits。如下图所示。
 
-.. figure:: /images/cache_direct_mapped_cache.png
+.. figure:: /images/Cache/cache_direct_mapped_cache.png
    :scale: 90%
 
    cache_direct_mapped_cache
 
    
-.. figure:: /images/cache_2way_set_assosiative_cache.png
+.. figure:: /images/Cache/cache_2way_set_assosiative_cache.png
    :scale: 100%
 
    cache_2way_set_assosiative_cache
 
    
-.. figure:: /images/cache_4way_set_assosiative_cache.png
+.. figure:: /images/Cache/cache_4way_set_assosiative_cache.png
    :scale: 100%
 
    cache_4way_set_assosiative_cache
@@ -63,7 +63,7 @@ cache乒乓
 多线程并行运行在不同cpu上，频繁修改同一个变量，变量被修改后会置另一个线程cpu上变量对应的cache为无效(cache一致性)，
 这使得维护cache和从内存读取的开销占了主导（当然也未利用到cache的优势）。
 
-.. figure:: /images/cache_pingpong.png
+.. figure:: /images/Cache/cache_pingpong.png
    :scale: 70%
 
    cache_pingpong

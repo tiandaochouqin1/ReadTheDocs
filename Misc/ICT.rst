@@ -45,7 +45,7 @@ Internet Engineering Task Force (IETF) 只有 IETF 的发布流才表示 IETF
 
 从2G到4G，移动通信用户对网络传输速率和稳定性的要求越来越高，由此引发的信息结构变化和容量大幅增长是推动传输网不断演进发展的动力所在。
 
-.. figure:: /images/CommunicationTech.jpg
+.. figure:: /images/ICT/CommunicationTech.jpg
    :scale: 70%
    
    CommunicationTech
@@ -63,13 +63,13 @@ Internet Engineering Task Force (IETF) 只有 IETF 的发布流才表示 IETF
 
 在传输网进入光传输时代后，传输技术经历了准同步数字体系(PDH)、同步数字体系(SDH)、多业务传输平台(MSTP)、分组传送网(PTN)、无线接入网IP化（IP RAN）、波分复用(WDM)和光传送网(OTN)的演进。
 
-.. figure:: /images/TransmissionTech.jpg
+.. figure:: /images/ICT/TransmissionTech.jpg
    :scale: 70%
 
    TransmissionTech
 
 
-.. figure:: /images/TransmissionTech2.jpg
+.. figure:: /images/ICT/TransmissionTech2.jpg
 
    传输技术演进图
 
@@ -89,7 +89,7 @@ Internet Engineering Task Force (IETF) 只有 IETF 的发布流才表示 IETF
 
 **信源编码：**\ 通过基带中的AD数模转换电路，完成采样、量化、编码，变成数字信号。信源编码还需要进行尽可能地压缩，以便减少“体积”。
 
-.. figure:: /images/SourceCoding.jpg
+.. figure:: /images/ICT/SourceCoding.jpg
    :scale: 70%
    
    SourceCoding
@@ -115,7 +115,7 @@ Internet Engineering Task Force (IETF) 只有 IETF 的发布流才表示 IETF
 
 基站天线收到无线信号之后，采取的是前面过程的逆过程—— **滤波，放大，解调，解码**。处理之后的数据，会通过承载网送到核心网，完成后面的数据传递和处理。
 
-.. figure:: /images/BBUandFR.jpg
+.. figure:: /images/ICT/BBUandFR.jpg
    :scale: 70%
 
    基带与射频
@@ -199,7 +199,7 @@ https://zhuanlan.zhihu.com/p/53760015
 
 傅里叶变换与复平面绕圆波形的关系（实数部分）
 
-.. figure:: /images/visualfourie.png
+.. figure:: /images/ICT/visualfourie.png
    :scale: 50%
 
    visualfourie
@@ -216,14 +216,14 @@ https://zhuanlan.zhihu.com/p/53760015
 
 `傅里叶分析 <https://zhuanlan.zhihu.com/p/19763358>`__
 
-.. figure:: /images/fourie.jpg
+.. figure:: /images/ICT/fourie.jpg
    :scale: 100%
 
    频域时域相位
 
 非周期函数=周期无限大的函数。
 
-.. figure:: /images/fourietransform.jpg
+.. figure:: /images/ICT/fourietransform.jpg
    :scale: 100%
 
    fourietransform
@@ -257,7 +257,7 @@ f(10)因为是刚输入的，其输出结果是f(10)g(0)，而时刻t=9的输入
 
 这些对应点相乘然后累加，就是T=10时刻的输出信号值，这个结果也是f和g两个函数在T=10时刻的卷积值。
 
-.. figure:: /images/convolution.jpg
+.. figure:: /images/ICT/convolution.jpg
    :scale: 70%
 
    卷积

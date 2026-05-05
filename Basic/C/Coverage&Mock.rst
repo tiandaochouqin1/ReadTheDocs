@@ -14,7 +14,7 @@ gcov原理
 
 
 
-.. figure:: /images/gcov.png
+.. figure:: /images/Coverage&Mock/gcov.png
 
     gcov原理
 
@@ -39,11 +39,11 @@ gcc生成的汇编文件中，供编译器使用。不出现在在最终可执�
 3. 程序流图：BB为节点，ARC即弧/有向边。只需要知道部分BB和ARC的执行次数，即可推断出所有语句和分支的执行次数。
 
 
-.. figure:: /images/gcov_arc_bb.png
+.. figure:: /images/Coverage&Mock/gcov_arc_bb.png
 
     gcov程序流图
 
-.. figure:: /images/gcov_stub.png
+.. figure:: /images/Coverage&Mock/gcov_stub.png
 
     gcov汇编插桩
 
@@ -130,7 +130,7 @@ the unit testing is still valid since its goal is to test the logic of a code mo
 cmockery
 ----------
   
-1. https://github.com/google/cmockery   :download:`cmockery-0.1.2.zip </files/code/cmockery-0.1.2.zip>`
+1. https://github.com/google/cmockery   :download:`cmockery-0.1.2.zip </files/Coverage&Mock/cmockery-0.1.2.zip>`
 2. `cmockery/user_guide.md at master · google/cmockery  <https://github.com/google/cmockery/blob/master/docs/user_guide.md#MockFunctions>`__
 
 特性： ``异常处理fail、断言assert、条件检查expect/check、动态内存分配管理test_free、mock函数、入参检查、符号/列表管理list。``

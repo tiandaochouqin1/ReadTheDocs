@@ -25,7 +25,7 @@ InnoDB，它是 MySQL5.5 版本之后默认的存储引擎。
 MySQL指令执行过程
 -----------------
 
-.. figure:: /images/SQL_Process.png
+.. figure:: /images/MySQL/SQL_Process.png
    :alt: SQL_Process
 
    SQL_Process
@@ -51,7 +51,7 @@ MySQL指令执行过程
 6. 执行器：当有了解析树和执行计划之后，就知道了 SQL
    该怎么被执行，这样就可以在执行器中执行语句了。
 
-.. figure:: /images/MySQL_CS.png
+.. figure:: /images/MySQL/MySQL_CS.png
    :alt: MySQL_CS
 
    MySQL_CS

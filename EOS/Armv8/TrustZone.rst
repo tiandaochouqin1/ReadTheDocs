@@ -33,7 +33,7 @@ Trusted Firmware-A implements various Arm interface standards, such as:
 A **System Control Processor (SCP)** is a processor-based capability that provides a flexible and extensible platform 
 for provision of **power management** functions and services. 
 
-.. figure:: /images/ATF_Scp.png
+.. figure:: /images/TrustZone/ATF_Scp.png
    :scale: 60%
 
    ATF_Scp
@@ -42,13 +42,13 @@ for provision of **power management** functions and services.
 ATF冷启动
 -------------
 
-.. figure:: /images/ATF_Boot.png
+.. figure:: /images/TrustZone/ATF_Boot.png
 
    ATF_Boot
 
 
 
-.. figure:: /images/ATF_Cold_Boot.png
+.. figure:: /images/TrustZone/ATF_Cold_Boot.png
 
    ATF_Cold_Boot
 

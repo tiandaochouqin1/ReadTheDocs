@@ -26,7 +26,7 @@
 4. __TASK_TRACED: 被其他进程跟踪，如ptrace。
 5. __TASK_STOPPED: 停止执行，进程没有投入运行也不能投入运行。通常发生在接收SIGSTOP、SIGTSTP、SIGTTIN、SIGTTOU等信号时。
 
-.. figure:: /images/task_status.png
+.. figure:: /images/Process_scheduler/task_status.png
    :scale: 50%
 
    任务状态
@@ -290,7 +290,7 @@ Higher values indicate higher capability. Energy efficiency and performance are 
 
 调用路径pick_next_task_fair -> pick_next_entity -> __pick_first_entity。
 
-.. figure:: /images/sched.jpg
+.. figure:: /images/Process_scheduler/sched.jpg
    :scale: 30%
 
    调度过程
@@ -303,7 +303,7 @@ O(1)调度
 2. 使用位图来各队列是否为空；
 3. 调度时间复杂度为 O(1).
 
-.. figure:: /images/O(1)_schedule.jpg
+.. figure:: /images/Process_scheduler/O(1)_schedule.jpg
    :scale: 50%
 
    Linux2.6.23以前的O(1)调度

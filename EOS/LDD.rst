@@ -43,14 +43,14 @@ kset是相关的kobject的集合，在sysfs中处于同一目录。kobject与一
 
 `一文搞懂驱动的platform分层分离 - 掘金  <https://juejin.cn/post/7087463596082331656>`__
 
-.. figure:: /images/platform_drv_dev.png
+.. figure:: /images/LDD/platform_drv_dev.png
    :scale: 70 %
 
    platform_drv_dev
 
 
 
-.. figure:: /images/bus_device_drive.png
+.. figure:: /images/LDD/bus_device_drive.png
    :scale: 70 %
 
    bus_device_drive
@@ -265,7 +265,7 @@ do_initcalls()把.initcallxx.init段中的函数按顺序都执行一遍。
 2. module_init:驱动初测使用module_init()，即device_initcall()，level为6.
 
 
-.. figure:: /images/do_initcalls.png
+.. figure:: /images/LDD/do_initcalls.png
 
    do_initcalls
 
@@ -569,7 +569,7 @@ read或write的数据都要被内核缓冲.
 Macvlan
 --------
 
-.. figure:: /images/macvlan.jpg
+.. figure:: /images/LDD/macvlan.jpg
    :scale: 70%
 
    macvlan
@@ -580,7 +580,7 @@ RDMA
 ======
 1. `【RDMA】技术详解（一）：RDMA概述_bandaoyu的博客-CSDN博客_rdma  <https://blog.csdn.net/bandaoyu/article/details/112859853>`__
 
-.. figure:: /images/rdma.png
+.. figure:: /images/LDD/rdma.png
    :scale: 80%
 
    RDMA

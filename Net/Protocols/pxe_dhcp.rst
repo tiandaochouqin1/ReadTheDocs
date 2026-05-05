@@ -10,7 +10,7 @@ DHCP:Dynamic Host Configuration Protocol, 是 BOOTP的扩展(bootp的选项里�
 
 **DHCP消息格式的定义采用扩展BOOTP的方式**
 
-.. figure:: /images/dhcp_bootp_header.png
+.. figure:: /images/pxe_dhcp/dhcp_bootp_header.png
 
    dhcp_bootp_header
 
@@ -33,11 +33,11 @@ Preboot eXecution Environment：基于dhcp、tftp实现的无盘启动。
 
 bios ->pxe ->dhcp ->tftp ->pxelinux.0 ->pxlinux.cfg ->image+initramfs ->init
 
-.. figure:: /images/pxe.png
+.. figure:: /images/pxe_dhcp/pxe.png
 
    pxe
 
-.. figure:: /images/pxe_boot.png
+.. figure:: /images/pxe_dhcp/pxe_boot.png
 
    pxe_boot
 

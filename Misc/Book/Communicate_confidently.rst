@@ -2,7 +2,7 @@ Communicate with confidence
 ================================
 visual(55%) > vocal(38%) > verbal(7%)
 
-.. figure:: /images/Communicate_with_confidence.png
+.. figure:: /images/Communicate_confidently/Communicate_with_confidence.png
    :scale: 45%
 
    Communicate_with_confidences

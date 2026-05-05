@@ -54,15 +54,15 @@ linux、glibc、gcc等。
 
 1. Linux Kernel Development， V2.6.34
 2. Linux Devices Driver， V2.6.10
-   :download:`ldd3 </books/ldd3.pdf>` 
+   :download:`ldd3 </books/Linux_kernel/ldd3.pdf>` 
 3. Proffesional Linux Kernel Architecture， V2.6.24 
-   :download:`深入Linux内核架构 </books/深入Linux内核架构.pdf>` 
+   :download:`深入Linux内核架构 </books/Linux_kernel/深入Linux内核架构.pdf>` 
 
-   :download:`PLKA </books/Professional_Linux_Kernel_Architecture.pdf>` 
+   :download:`PLKA </books/Linux_kernel/Professional_Linux_Kernel_Architecture.pdf>` 
 
 4. Understanding The Linux Kernel，  V2.6.11 
-   :download:`ulk3 </books/ulk3.pdf>` 
-   :download:`深入理解linux内核中文第三版 </books/深入理解linux内核中文第三版.pdf>` 
+   :download:`ulk3 </books/Linux_kernel/ulk3.pdf>` 
+   :download:`深入理解linux内核中文第三版 </books/Linux_kernel/深入理解linux内核中文第三版.pdf>` 
 
 5. 奔跑吧Linux内核：几个重点模块讲解较仔细。
 
@@ -96,7 +96,7 @@ Linux采用GPLv2。
 应用程序通过库函数或系统调用让内核代替完成各种任务。
 库函数不仅是对系统调用的打包，它也实现了系统调用不具备的功能，如strcpy。
 
-.. figure:: /images/SyscallAndLibc.png
+.. figure:: /images/Linux_kernel/SyscallAndLibc.png
    :alt: 库函数和系统调用
 
    库函数和系统调用

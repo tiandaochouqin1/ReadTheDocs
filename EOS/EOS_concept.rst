@@ -144,7 +144,7 @@ POSIX与System V IPC
 
 三种类别：通信、同步、信号。
 
-.. figure:: /images/SystemV_IPC.png
+.. figure:: /images/EOS_concept/SystemV_IPC.png
    :scale: 70%
 
    IPC
@@ -219,7 +219,7 @@ uart i2c spi 都是串行
 
 
 
-.. figure:: /images/bus_protocols.jpg
+.. figure:: /images/EOS_concept/bus_protocols.jpg
    :scale: 100%
 
    bus_protocols
@@ -259,7 +259,7 @@ pll锁定：
 接收端将收到的比特流的时序或相位域pll时钟对比，调整pll时钟频率使得一致，此时即得到随路时钟。然后使用该时钟来锁存比特流。
 
 
-.. figure:: /images/pcie_pll_diagram.jpg
+.. figure:: /images/EOS_concept/pcie_pll_diagram.jpg
    :scale: 100%
 
    pcie_pll_diagram

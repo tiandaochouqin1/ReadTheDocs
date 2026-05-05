@@ -14,7 +14,7 @@ Fundamentals of Armv8
 
 1. ☆ 两百多页，先看完这个再说 arm-pg `Cortex-A Series Programmer's Guide for ARMv8-A <https://developer.arm.com/documentation/den0024/a>`__
 
-   :download:`ARMv8-A-Programmer-Guide </files/arm/ARMv8-A-Programmer-Guide.pdf>`
+   :download:`ARMv8-A-Programmer-Guide </files/Armv8-A_PG/ARMv8-A-Programmer-Guide.pdf>`
 
 2. ☆☆ 很好，部分收费 `[目录]-博客笔记导读目录(全部)_代码改变世界ctw的博客-CSDN博客  <https://blog.csdn.net/weixin_42135087/article/details/107037145>`__
     `付费专栏-付费课程-【购买须知】 - 非广告_代码改变世界ctw的博客-CSDN博客_csdn付费专栏  <https://blog.csdn.net/weixin_42135087/article/details/124890300>`__
@@ -36,7 +36,7 @@ To Learn
 
 Exception Level
 
-.. figure:: /images/aarch64_exception_levels_2.png
+.. figure:: /images/Armv8-A_PG/aarch64_exception_levels_2.png
    :scale: 60%
 
    aarch64_exception_levels_2
@@ -62,7 +62,7 @@ Exception Level
 2. aarch32状态： A32指令集，32位，trusted OS在EL3。
 
 
-.. figure:: /images/mov_betw_aarch64_aarch32.png
+.. figure:: /images/Armv8-A_PG/mov_betw_aarch64_aarch32.png
    :scale: 60%
 
    mov_betw_aarch64_aarch32
@@ -82,7 +82,7 @@ cache shareable domain
 
 ``Memory caching`` can be separately controlled through inner and outer attributes, for multiple levels of cache. 
 
-.. figure:: /images/Cache_Sharable_Domain.png
+.. figure:: /images/Armv8-A_PG/Cache_Sharable_Domain.png
    :scale: 50%
    
    Cache_Sharable_Domain
@@ -225,7 +225,7 @@ armv8支持的memory types：Normal memory和Device memory
 
 
 
-.. figure:: /images/Memory_Ordering_Arch.png
+.. figure:: /images/Armv8-A_PG/Memory_Ordering_Arch.png
    
    Memory_Ordering_Arch
 
@@ -340,7 +340,7 @@ ARMv8.1还提供了带Load-Acquire或Store-Release单向内存屏障语义的指
 2. Load-Acquire：基本指令后面加上A；STLR
 
 
-.. figure:: /images/LDAR_STLR.png
+.. figure:: /images/Armv8-A_PG/LDAR_STLR.png
    :scale: 60%
 
    LDAR_STLR
@@ -354,7 +354,7 @@ amba
 1. `Learn the architecture - An introduction to AMBA AXI  <https://developer.arm.com/documentation/102202/0300/What-is-AMBA--and-why-use-it-?lang=en>`__
 
 
-.. figure:: /images/amba.png
+.. figure:: /images/Armv8-A_PG/amba.png
 
    amba
 
@@ -368,7 +368,7 @@ Advanced eXtensible Interface
 
 axi定义了ip核的接口，而不是互联模块
 
-.. figure:: /images/axi_components.jpg
+.. figure:: /images/Armv8-A_PG/axi_components.jpg
    :scale: 80%
 
    axi_components
@@ -376,12 +376,12 @@ axi定义了ip核的接口，而不是互联模块
 
 两种axi接口: manager和subordinate。所有互联均由这两个接口连接
 
-.. figure:: /images/axi_interconnect.jpg
+.. figure:: /images/Armv8-A_PG/axi_interconnect.jpg
 
    axi_interconnect
 
    
-.. figure:: /images/axi_channels.jpg
+.. figure:: /images/Armv8-A_PG/axi_channels.jpg
 
    axi_channels
 
@@ -400,7 +400,7 @@ axi定义了ip核的接口，而不是互联模块
 2. A **transaction** is an entire burst of transfers, containing an address transfer, one or more data transfers, and, for write sequences, a response transfer.
 
 
-.. figure:: /images/axi_write_transaction.jpg
+.. figure:: /images/Armv8-A_PG/axi_write_transaction.jpg
    :scale: 50%
 
    axi_write_transaction
@@ -419,7 +419,7 @@ CHI接口和ACE、AXI完全不一样：
 - 基于包传输
 - CHI在写一次规定了各种transactioni；在网络层定义了packet；具体的信号在链路层
 
-.. figure:: /images/chi_protocol.png
+.. figure:: /images/Armv8-A_PG/chi_protocol.png
    :scale: 110%
 
    chi_protocol
@@ -427,7 +427,7 @@ CHI接口和ACE、AXI完全不一样：
 
 三种拓扑：
 
-.. figure:: /images/chi_topologies.jpg
+.. figure:: /images/Armv8-A_PG/chi_topologies.jpg
    :scale: 80%
 
    chi_topologies
@@ -442,7 +442,7 @@ The Arm CoreLink CMN-600 Coherent Mesh Network is designed for intelligent conne
 
 AMBA 5 CHI
 
-.. figure:: /images/corelink_cmn-600_scaleable_mesh_network.png
+.. figure:: /images/Armv8-A_PG/corelink_cmn-600_scaleable_mesh_network.png
    :scale: 25%
 
    cmn-600
@@ -455,7 +455,7 @@ AMBA 5 CHI
 
 
 
-.. figure:: /images/CHI_Nodes.png
+.. figure:: /images/Armv8-A_PG/CHI_Nodes.png
    :scale: 60%
 
    CHI_Nodes
@@ -474,7 +474,7 @@ generic timer属于核内部结构，rtc属于soc。
 2. timer：comparator比较器，与systemcounter 比较，达到设定的值时产生interrupts(非ipi)或events。
 
 
-.. figure:: /images/System-counter-block-diagram.png
+.. figure:: /images/Armv8-A_PG/System-counter-block-diagram.png
    :scale: 100%
 
    System-counter-block-diagram
@@ -506,7 +506,7 @@ Micro-Architecture
 
 系统架构的整体框图如下图所示：
 
-.. figure:: /images/arm_system_structure.png
+.. figure:: /images/Armv8-A_PG/arm_system_structure.png
    :scale: 70%
 
    arm_system_structure
@@ -515,7 +515,7 @@ Micro-Architecture
 A77微架构
 -------------
 
-.. figure:: /images/A77_microarchitecture.png
+.. figure:: /images/Armv8-A_PG/A77_microarchitecture.png
    :scale: 100%
 
    A77_microarchitecture

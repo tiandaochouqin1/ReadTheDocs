@@ -8,12 +8,12 @@
 =================
 
 
- :download:`中国历代政治得失 </images/zzds.svg>`
+ :download:`中国历代政治得失 </images/2022/zzds.svg>`
 
 `胡适与钱穆的文化智慧  <https://news.pku.edu.cn/bdrw/137-173350.htm>`__
 
 
-.. figure:: /images/zzds.svg
+.. figure:: /images/2022/zzds.svg
 
 
    思维导图

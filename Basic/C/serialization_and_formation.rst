@@ -110,13 +110,13 @@ sprintf和sscanf：用户态和内核通用。
     而snprintf()和vsnprintf()返回的是格式化之后得到字符的长度（可能比size要大）
 
 
-.. figure:: /images/format_printf.png
+.. figure:: /images/serialization_and_formation/format_printf.png
    :scale: 100%
 
    printf格式化
 
 
-.. figure:: /images/format_printf.png
+.. figure:: /images/serialization_and_formation/format_printf.png
    :scale: 100%
 
    scanf格式化

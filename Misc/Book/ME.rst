@@ -15,7 +15,7 @@ Fec与热处理
 2. 不能反映实际组织状态。只给出了相的成分和相对量，不能给出其形状、大小、分布等信息。
 3. 相的形状、大小、分布 形成组织。
 
-.. figure:: /images/FeC.png
+.. figure:: /images/ME/FeC.png
    :scale: 80%
 
    

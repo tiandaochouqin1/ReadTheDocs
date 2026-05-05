@@ -47,7 +47,7 @@ EasyLogger
 编译器可识别语法、语义错误并报告。多遍扫描可节省内存空间、提高代码质量。
 
 
-.. figure:: /images/Compiler.jpg
+.. figure:: /images/C_Project/Compiler.jpg
    :scale: 35%
 
 

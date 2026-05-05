@@ -161,7 +161,7 @@ percpu数据
    };
 
 
-.. figure:: /images/mem_zone.jpg
+.. figure:: /images/Virtual_memory/mem_zone.jpg
    :scale: 30%
 
    zone和伙伴系统
@@ -182,7 +182,7 @@ slab分配器
 1. `图解slub  <http://www.wowotech.net/memory_management/426.html>`__
 2. `Linux Slob分配器(一)--概述-CSDN博客  <https://blog.csdn.net/peijian1998/article/details/30040139>`__
 
-.. figure:: /images/mem_manage.png
+.. figure:: /images/Virtual_memory/mem_manage.png
    :scale: 30%
 
    内存管理
@@ -212,7 +212,7 @@ kmalloc_caches
 1. ☆ `linux 内核 内存管理 slub算法 （一） 原理_slub算法原理-CSDN博客  <https://blog.csdn.net/bin_linux96/article/details/52980643>`__
 
 
-.. figure:: /images/kmalloc_caches.png
+.. figure:: /images/Virtual_memory/kmalloc_caches.png
    :scale: 90%
 
    kmalloc_caches
@@ -231,7 +231,7 @@ kmalloc_caches中有两个成员：
 
 首先从cpu 本地缓存池分配，如果freelist不存在，就会转向per cpu partial分配，如果per cpu partial也没有可用对象，继续查看per node partial，如果很不幸也不没有可用对象的话，就只能从伙伴系统分配一个slab了，并挂入per cpu freelist。
 
-.. figure:: /images/slab_caches.png
+.. figure:: /images/Virtual_memory/slab_caches.png
    :scale: 80%
 
    slab_caches
@@ -316,7 +316,7 @@ gfp_mask分配器标志
 
 缺页中断详细处理流程：
 
-.. figure:: /images/do_page_fault.jpg
+.. figure:: /images/Virtual_memory/do_page_fault.jpg
    :scale: 100%
 
    do_page_fault

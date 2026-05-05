@@ -24,7 +24,7 @@ Diet and Nutrition
 膳食营养素参考摄入量
 ~~~~~~~~~~~~~~~~~~~~~~
 1. ☆ WS/T 578.1—2017  `中国居民膳食营养素参考摄入量 第1部分 - 宏量营养素  国家卫生健康委员会  <http://www.nhc.gov.cn/wjw/yingyang/201710/fdade20feb8144ba921b412944ffb779/files/0fa10dfb812a48b483d931972df1ccb8.pdf>`__
-   :download:`中国居民膳食营养素参考摄入量 第 1 部分：宏量营养素 </files/Nutrition_dietary_reference_intakes.pdf>` 
+   :download:`中国居民膳食营养素参考摄入量 第 1 部分：宏量营养素 </files/Diet_and_nutrition/Nutrition_dietary_reference_intakes.pdf>` 
 
 
 
@@ -34,7 +34,7 @@ Diet and Nutrition
 
 三种营养素的具体分类见标准。
 
-.. figure:: /images/Nutrition_ERR.jpg
+.. figure:: /images/Diet_and_nutrition/Nutrition_ERR.jpg
    :scale: 100%
 
    Nutrition_ERR
@@ -50,7 +50,7 @@ Nutrition_NRV
 1. 《GB 28050—2011 预包装食品营养标签通则》  NRV定义
 
 
-.. figure:: /images/Nutrition_NRV.jpg
+.. figure:: /images/Diet_and_nutrition/Nutrition_NRV.jpg
    :scale: 100%
 
    NRV
@@ -97,7 +97,7 @@ MyPlate Plan
 
 非定制化,只关注目标能量摄入,未考虑个体差异.
 
-.. figure:: /images/Nutrition_MyPlatePlan.jpg
+.. figure:: /images/Diet_and_nutrition/Nutrition_MyPlatePlan.jpg
    :scale: 100%
 
    Nutrition_MyPlatePlan

@@ -1,13 +1,13 @@
 ============
 MMU和SMMU
 ============
-1. :download:`Arm System Memory Management Unit Architecture Specification v3.3 </files/arm/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
+1. :download:`Arm System Memory Management Unit Architecture Specification v3.3 </files/SMMU/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
 
 
 
 
 
-.. figure:: /images/smmu.png
+.. figure:: /images/SMMU/smmu.png
    :scale: 60%
 
    System Memory Management Unit
@@ -26,7 +26,7 @@ arm mmu
 3. figuire 4-1 `Learn the architecture - AArch64 memory management  <https://developer.arm.com/documentation/101811/0102/The-Memory-Management-Unit--MMU-?lang=en>`__
 
 
-.. figure:: /images/arm_mmu.png
+.. figure:: /images/SMMU/arm_mmu.png
    :scale: 60%
 
    arm_mmu
@@ -60,7 +60,7 @@ TCR（Translation Control Register）寄存器用于控制地址转换的行为�
 
 在不同Guest OS间共享物理内存。
 
-.. figure:: /images/two_stage_translation_process.png
+.. figure:: /images/SMMU/two_stage_translation_process.png
    :scale: 50%
 
    two_stage_translation_process
@@ -75,12 +75,12 @@ VMID ASID - 2 stages
 This ability to control memory access is important for isolation and sandboxing
 
 
-.. figure:: /images/Address_spaces_in_Armv8-A.jpg
+.. figure:: /images/SMMU/Address_spaces_in_Armv8-A.jpg
    :scale: 120%
    
    Address_spaces_in_Armv8-A
 
-.. figure:: /images/va-to-ipa-to-pa-address-translation.jpg
+.. figure:: /images/SMMU/va-to-ipa-to-pa-address-translation.jpg
    :scale: 50%
    
    va-to-ipa-to-pa-address-translation
@@ -146,7 +146,7 @@ SMMU（IOMMU）和MMU一样，提供stage1转换（VA->IPA）, 或者stage2转�
     但guest VM使用的物理地址是GPA, 看到的内存并非实际的物理地址HPA，因此Guest OS无法正常的将连续的物理地址分给DMA硬件。
 
 
-.. figure:: /images/dma_smmu.png
+.. figure:: /images/SMMU/dma_smmu.png
    :scale: 80%
 
    虚拟化+DMA -> SMMU
@@ -176,7 +176,7 @@ smmu
 2. SSID(arm smmu) <-> PASID(x86 PCI):区分进程
 
 
-.. figure:: /images/arm_smmu_2stage_translation.png
+.. figure:: /images/SMMU/arm_smmu_2stage_translation.png
    :scale: 100%
 
    arm_smmu_2stage_tran
@@ -206,7 +206,7 @@ smmu
 1. 次级页表可按需创建，节省内存；
 2. 次级页表可以不在内存，按需换页；(一般要求一级页表在内存)
 
-.. figure:: /images/arm_3level_pt.png
+.. figure:: /images/SMMU/arm_3level_pt.png
    :scale: 90%
 
    arm_3level_pt
@@ -246,7 +246,7 @@ STE-SMMU
 2. STE指明了CD数据结构在DDR中的基地址S1ContextPTR, SSID(substream id)指明了CD数据结构的偏移，
 3. cd表中信息包含memory属性，翻译控制信息，异常控制信息以及Page table walk(PTW)的起始地址TTB0, TTB1， 找到TTBx后，就可以PTW了。
 
-.. figure:: /images/smmu_ste_cd.png
+.. figure:: /images/SMMU/smmu_ste_cd.png
    :scale: 100%
 
    smmu_ste_cd
@@ -254,7 +254,7 @@ STE-SMMU
 
 
 
-.. figure:: /images/stream_table_entry.png
+.. figure:: /images/SMMU/stream_table_entry.png
    :scale: 80%
 
    stream_table_entry
@@ -262,7 +262,7 @@ STE-SMMU
 
 
 
-.. figure:: /images/smmu_context_descriptor.png
+.. figure:: /images/SMMU/smmu_context_descriptor.png
    :scale: 80%
 
    smmu_context_descriptor
@@ -276,7 +276,7 @@ Linux SMMU 软件驱动
 
 
 
-.. figure:: /images/software_smmu_driver.png
+.. figure:: /images/SMMU/software_smmu_driver.png
    :scale: 100%
 
    software_smmu_driver
@@ -310,7 +310,7 @@ smmu设备分配
 
 
          
-.. figure:: /images/iort_add_platform_device.png
+.. figure:: /images/SMMU/iort_add_platform_device.png
    :scale: 80%
 
    iort_add_platform_device
@@ -321,7 +321,7 @@ smmu驱动初始化
 1. `IOMMU/SMMUV3代码分析（2）SMMUV3驱动初始化1_smmu驱动_linux解码者的博客-CSDN博客  <https://blog.csdn.net/flyingnosky/article/details/122463386>`__
 
          
-.. figure:: /images/arm_smmu_device_probe.png
+.. figure:: /images/SMMU/arm_smmu_device_probe.png
    :scale: 80%
 
    arm_smmu_device_probe
@@ -352,11 +352,11 @@ iommu框架
 
 MMU-700 硬件架构
 =================
-1. :download:`corelink_mmu700_system_memory_management_unit_technical_reference_manual </files/arm/corelink_mmu700_system_memory_management_unit_technical_reference_manual_101542_0001_04_en.pdf>`
+1. :download:`corelink_mmu700_system_memory_management_unit_technical_reference_manual </files/SMMU/corelink_mmu700_system_memory_management_unit_technical_reference_manual_101542_0001_04_en.pdf>`
     The MMU-700 is a System-level Memory Management Unit (SMMU) 
 2. `ARM系列 -- MMU-700 - 极术社区 - 连接开发者与智能计算生态  <https://aijishu.com/a/1060000000318128>`__
 
-.. figure:: /images/armv8_mmu700.png
+.. figure:: /images/SMMU/armv8_mmu700.png
    :scale: 70%
 
    armv8_mmu700
@@ -386,14 +386,14 @@ TBU
    Transaction tracker，管理超发（outstanding）的读/写事务
 
 
-.. figure:: /images/arm_mmu700_tbu_ace-lite.png
+.. figure:: /images/SMMU/arm_mmu700_tbu_ace-lite.png
    :scale: 100%
 
    arm_mmu700_tbu
 
 
 
-.. figure:: /images/arm_mmu700_tbu_lti.png
+.. figure:: /images/SMMU/arm_mmu700_tbu_lti.png
    :scale: 100%
 
    arm_mmu700_tbu
@@ -425,7 +425,7 @@ TCU
    DTI interface，与DTI相连接
 
 
-.. figure:: /images/arm_mmu700_tcu.png
+.. figure:: /images/SMMU/arm_mmu700_tcu.png
    :scale: 100%
 
    arm_mmu700_tcu

@@ -6,7 +6,7 @@ syslog & printk
 
 核心是一个叫做log buffer的循环缓冲区，printk作为生产者将消息存入该缓冲区，右边的log服务模块作为消费者可从log buffer中读取消息。
 
-.. figure:: /images/printk_frame.png
+.. figure:: /images/printk/printk_frame.png
    :scale: 60%
 
    printk_frame

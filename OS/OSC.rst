@@ -18,7 +18,7 @@ Operating System Concept
 
 1. 推荐\ `Operating Systems: Three Easy  Pieces <https://pages.cs.wisc.edu/~remzi/OSTEP/>`__\ ：众多US高校的教材。
 
-   :download:`PDF </books/OperatingSystemThreePieces.pdf>`
+   :download:`PDF </books/OSC/OperatingSystemThreePieces.pdf>`
 
 2. 实践第一：\ `6.828   实现xv6 <https://pdos.csail.mit.edu/6.S081/2020/>`__
 
@@ -42,7 +42,7 @@ Operating System Concept
 
 包括一个或多个cpu和若干设备控制器，cpu与设备控制器可以并发执行，\ **通过总线竞争访问内存**\ ，因此需要内存控制器确保有序访问共享内存。
 
-.. figure:: /images/ModernComputerWorkingPrinceple.jpg
+.. figure:: /images/OSC/ModernComputerWorkingPrinceple.jpg
    :alt: 工作原理
 
 
@@ -166,7 +166,7 @@ IO子系统
 - 微内核：对内核进行模块化，删除不必要的部件，将这些部件当做系统级与用户级的程序来实现。其主要功能是为客户端程序和运行在用户空间中的各种服务提供通信。其优点是便于扩展操作系统。
 - 模块：可加载的内核模块。内核提供核心服务，而其他服务可在内核运行时动态实现。主模块只有核心功能，并知道如何加载模块和如何让模块进行通信。Linux也可使用可加载内核模块，主要用于设备驱动和文件系统。
 
-.. figure:: /images/MicroKernelStructure.jpg
+.. figure:: /images/OSC/MicroKernelStructure.jpg
    :alt: MicroKernelStructure
 
    MicroKernelStructure
@@ -252,12 +252,12 @@ insmod/rmmod：加载、卸载模块。 dmeg:查看内核日志缓冲区。 Make
 
 ``<linux/sched.h>中task_struct来描述进程。``
 
-.. figure:: /images/ProcessControlBlock.png
+.. figure:: /images/OSC/ProcessControlBlock.png
    :alt: ProcessControlBlock.png
 
    ProcessControlBlock.png
 
-.. figure:: /images/cpuswitch.png
+.. figure:: /images/OSC/cpuswitch.png
    :alt: 进程调度队列
 
    进程调度队列
@@ -280,7 +280,7 @@ insmod/rmmod：加载、卸载模块。 dmeg:查看内核日志缓冲区。 Make
 2. 短期调度程序（CPU调度程序）：从准备执行的进程中选择进程，并分配CPU。
 3. 中期调度程序：将进程从内存中移出swap，从而降低多道程序度（即内存中的进程数量）。之后程序可被重新调入内存，并从中断处继续执行。
 
-.. figure:: /images/scheduling.png
+.. figure:: /images/OSC/scheduling.png
    :alt: 进程调度队列图
 
    进程调度队列图
@@ -307,7 +307,7 @@ Linux
 UNIX通过系统调用fork()创建的新进程的地址空间复制原来进程的地址空间。这种机制允许父进程与子进程轻松通信。
 两个进程都继续执行系统调用fork()之后的命令,在系统调用fork()之后，有个进程调用exec()，以用新程序来取代进程的内存空间。
 
-.. figure:: /images/fork.jpg
+.. figure:: /images/OSC/fork.jpg
    :alt: fork命令
 
    fork命令
@@ -406,7 +406,7 @@ Windows进程创建采用WindowsAPI函数 **CreateProcess（）** ，类似于fo
    API：socket() 创建。bind() 关联套接字地址结构。close()
    释放分配的资源。listen、accept等。
 
-.. figure:: /images/SocketPrograming.jpg
+.. figure:: /images/OSC/SocketPrograming.jpg
    :alt: SocketPrograming
 
    SocketPrograming
@@ -472,7 +472,7 @@ CPU使用的一个基本单元。包括线程ID、程序计数器、寄存器组
 
 2. 并发性：并发系统支持多个任务，允许所有任务都取得进展。单核系统。
 
-.. figure:: /images/parallelism.png
+.. figure:: /images/OSC/parallelism.png
    :alt: 并行性与并发性
 
    并行性与并发性
@@ -642,7 +642,7 @@ CFS：基于vruntime(与nicevalue相关)，优先运行vruntime小的线程，�
 每个进程有一段代码，称为\ **临界区**\ ，进程在执行该区时可能修改公共变量、更新一个表、写一个文件等。
 临界区：禁止一个或多个进程在同一时刻对共享资源（包括共享内存、共享文件等）进行读写。
 
-.. image:: /images/critical.jpg
+.. image:: /images/OSC/critical.jpg
 
 临界区问题的解决方案应满足：\ **互斥、进步、有限等待。**
 
@@ -895,7 +895,7 @@ MMU：内存映射单元，从虚拟地址到物理地址的运行时映射。
 **转换表缓冲区TLB**\ ：Translation Look-aside
 Buffer,专用的、小的、查找快速的高速硬件缓冲，硬件功能。TLB是关联的高速内存。只包含少数的页表条目（键-值）。现代cpu可能有多级tlb,指令和数据tlb分开。
 
-.. figure:: /images/tlb.jpg
+.. figure:: /images/OSC/tlb.jpg
    :alt: 带TLB的分页硬件
 
    带TLB的分页硬件
@@ -920,12 +920,12 @@ Buffer,专用的、小的、查找快速的高速硬件缓冲，硬件功能。T
    x86-64架构：采用四级分页，支持48位虚拟地址。U
    采用的是\ ``内存分段 +  内存分页``\ 的管理方式，其中分页的意思是在由段式内存管理所映射而成的的地址上再加上一层地址映射。
 
-.. figure:: /images/ProcessOfReadingData.png
+.. figure:: /images/OSC/ProcessOfReadingData.png
    :alt: Cpu读取数据的过程
 
    Cpu读取数据的过程
 
-.. figure:: /images/Page&Segment.png
+.. figure:: /images/OSC/Page&Segment.png
    :alt: 段页式内存管理
 
    段页式内存管理
@@ -1034,7 +1034,7 @@ API通过文件的内存映射来实现共享内存。
 文件系统结构
 ------------
 
-.. figure:: /images/filesys.jpg
+.. figure:: /images/OSC/filesys.jpg
    :alt: 分层设计的文件系统
 
    分层设计的文件系统
@@ -1107,7 +1107,7 @@ API通过文件的内存映射来实现共享内存。
 每个文件都有自己的索引块，这是一个磁盘块地址的指针。目录则包含索引块的地址。
 索引表空间和文件索引时间开销大。
 
-.. figure:: /images/innode.jpg
+.. figure:: /images/OSC/innode.jpg
    :alt: Unix的innode
 
    Unix的innode
@@ -1202,7 +1202,7 @@ SSTF和LOOK是默认算法的合理选择。 -
 以Windows为例：引导首先运行驻留在系统ROM内存中的代码，从MBR中读取引导代码，找到引导分区，读取分区的第一个扇区（引导扇区）并继续加载各种子系统和系统服务。
 |Windows的磁盘引导|
 
-.. figure:: /images/LinuxInit.png
+.. figure:: /images/OSC/LinuxInit.png
    :alt: Linux 启动
 
    Linux 启动
@@ -1222,7 +1222,7 @@ Swap和RAID
 位级分条：将每个字节分散在多个磁盘上。
 块及分条：文件的块分散在多个磁盘上。
 
-.. figure:: /images/raid.jpg
+.. figure:: /images/OSC/raid.jpg
    :alt: RAID的级别
 
    RAID的级别
@@ -1238,7 +1238,7 @@ I/O设备的基本要素：总线、设备控制器和设备本身。
 
 **总线：**\ 是一组线路和通过线路传输信息的严格定义的一个协议。消息是通过施加线路的具有一定时序的电压模式来传递的。
 
-.. figure:: /images/bus.jpg
+.. figure:: /images/OSC/bus.jpg
    :alt: PC总线结构
 
    PC总线结构
@@ -1261,7 +1261,7 @@ I/O端口通常由四个寄存器组成，即状态寄存器、控制寄存器�
 
 4. 控制寄存器可由主机写入，以便启动命令或更改设备模式。
 
-.. figure:: /images/DeviceController.jpg
+.. figure:: /images/OSC/DeviceController.jpg
    :alt: DeviceController
 
    DeviceController
@@ -1285,12 +1285,12 @@ CPU 能向寄存器中写入或者读取数据，这些寄存器都应具有唯�
 
 设备控制器通过中断请求线发送信号而引起中断，CPU捕获中断并且分派到中断处理程序，中断处理程序通过处理设备来清除中断。中断处理程序确定中断原因，执行必要处理，执行状态恢复，并执行返回终端指令以便CPU回到中断前的执行状态。
 
-.. figure:: /images/interrupt.jpg
+.. figure:: /images/OSC/interrupt.jpg
    :alt: 基本中断处理机制
 
    基本中断处理机制
 
-.. figure:: /images/InterrupHandler.png
+.. figure:: /images/OSC/InterrupHandler.png
    :alt: InterrupHandler
 
    InterrupHandler
@@ -1299,7 +1299,7 @@ CPU 能向寄存器中写入或者读取数据，这些寄存器都应具有唯�
 
    参考\ 
    :download:`ARM System Developer’s Guide Designing and Optimizing System
-   Software </books/ARM_System_Developers_Guide-Designing_and_Optimizing_System_Software.pdf>`
+   Software </books/OSC/ARM_System_Developers_Guide-Designing_and_Optimizing_System_Software.pdf>`
 
 -  非屏蔽中断：保留用于诸如不可恢复的内存错误等事件。
 -  可屏蔽中断：在执行不得中断的关键指令序列之前，可由CPU关闭。
@@ -1318,7 +1318,7 @@ CPU 能向寄存器中写入或者读取数据，这些寄存器都应具有唯�
 
 DMA控制器和设备控制器之间的握手通过一对称为DMA请求和DMA确认的线路来进行。DMA占用内存总线时，cpu无法访问内存。
 
-.. figure:: /images/dma.png
+.. figure:: /images/OSC/dma.png
    :alt: DMA传输的步骤
 
    DMA传输的步骤
@@ -1378,7 +1378,7 @@ I/O设备的特点 |I/O设备的特点|
 **非阻塞与异步I/O** 阻塞系统调用：程序被挂起，直到调用完成。
 异步系统调用可替代非阻塞系统调用。
 
-.. figure:: /images/iomethods.png
+.. figure:: /images/OSC/iomethods.png
    :alt: 两种I/O方法
 
    两种I/O方法
@@ -1407,7 +1407,7 @@ I/O设备的特点 |I/O设备的特点|
 
 -  I/O保护：定义所有I/O指令为特权指令，防止用户执行非法I/O；保护任何内存映射和I/O端口内存位置以便阻止用户访问。
 
-.. figure:: /images/lifeofio.jpg
+.. figure:: /images/OSC/lifeofio.jpg
    :alt: I/O请求的生命周期
 
    I/O请求的生命周期
@@ -1419,7 +1419,7 @@ I/O设备的特点 |I/O设备的特点|
 
 物理设备和应用程序之间存在多个软件层，I/O系统调用消耗的CPU周期较多：穿过内核保护边界的上下文切换、I/O设备的信号和中断处理、内核缓冲和应用程序空间之间的数据复制所需的CPU和内存系统的负载。
 
-.. figure:: /images/intercomputer.jpg
+.. figure:: /images/OSC/intercomputer.jpg
    :alt: 计算计之间的通信
 
    计算计之间的通信
@@ -1530,26 +1530,26 @@ I/O设备的特点 |I/O设备的特点|
 
 预防或检测安全事故：入侵检测系统、防病毒软件、系统事件的审计和记录、系统软件更改的监控、系统调用监控和防火墙。
 
-.. figure:: /images/windows.jpg
+.. figure:: /images/OSC/windows.jpg
    :alt: Windows结构图
 
    Windows结构图
 
-.. |操作系统服务| image:: /images/OSSevice.jpg
-.. |进程的内存结构| image:: /images/processinmemory.png
-.. |ProcessStatus| image:: /images/ProcessStatus.png
-.. |高级本地程序调用ALPC| image:: /images/alpc.jpg
-.. |单线程与多线程比较| image:: /images/ResourcesOfThread&Process.png
-.. |Windows线程数据结构| image:: /images/threaddata.jpg
-.. |调度延迟| image:: /images/realtime.jpg
-.. |重定位和界限寄存器| image:: /images/hardware.jpg
-.. |虚拟文件系统示意图| image:: /images/vfs.jpg
-.. |磁盘的物理结构| image:: /images/harddisk.jpg
-.. |Windows的磁盘引导| image:: /images/boot.jpg
-.. |原始的读写方法| image:: /images/ZeroCopy1.jpg
-.. |mmap| image:: /images/ZeroCopy2.jpg
-.. |sendfile| image:: /images/ZeroCopy3.jpg
-.. |SG_DMA| image:: /images/ZeroCopy4.jpg
-.. |内核I/O结构| image:: /images/KernalIO.jpg
-.. |I/O设备的特点| image:: /images/iodevices.jpg
-.. |访问矩阵| image:: /images/matrix.jpg
+.. |操作系统服务| image:: /images/OSC/OSSevice.jpg
+.. |进程的内存结构| image:: /images/OSC/processinmemory.png
+.. |ProcessStatus| image:: /images/OSC/ProcessStatus.png
+.. |高级本地程序调用ALPC| image:: /images/OSC/alpc.jpg
+.. |单线程与多线程比较| image:: /images/OSC/ResourcesOfThread&Process.png
+.. |Windows线程数据结构| image:: /images/OSC/threaddata.jpg
+.. |调度延迟| image:: /images/OSC/realtime.jpg
+.. |重定位和界限寄存器| image:: /images/OSC/hardware.jpg
+.. |虚拟文件系统示意图| image:: /images/OSC/vfs.jpg
+.. |磁盘的物理结构| image:: /images/OSC/harddisk.jpg
+.. |Windows的磁盘引导| image:: /images/OSC/boot.jpg
+.. |原始的读写方法| image:: /images/OSC/ZeroCopy1.jpg
+.. |mmap| image:: /images/OSC/ZeroCopy2.jpg
+.. |sendfile| image:: /images/OSC/ZeroCopy3.jpg
+.. |SG_DMA| image:: /images/OSC/ZeroCopy4.jpg
+.. |内核I/O结构| image:: /images/OSC/KernalIO.jpg
+.. |I/O设备的特点| image:: /images/OSC/iodevices.jpg
+.. |访问矩阵| image:: /images/OSC/matrix.jpg

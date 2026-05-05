@@ -25,7 +25,7 @@ socket系统函数
 tcp socket过程
 ~~~~~~~~~~~~~~~~
 
-.. figure:: /images/socket_tcp_procedure.jpg
+.. figure:: /images/Socket/socket_tcp_procedure.jpg
    :scale: 70%
 
    socket_tcp_procedure
@@ -84,7 +84,7 @@ connect/accept完成三次握手后返回已连接套接字，并从监听套接
 
 tcp条件检测：
 
-.. figure:: /images/tcp_stat_check.jpg
+.. figure:: /images/Socket/tcp_stat_check.jpg
    :scale: 80%
 
    tcp_stat_check
@@ -99,7 +99,7 @@ shutdown和close: 半开连接
    close(int sockfd)  //尝试将sndbuf的数据发送，并立即返回。 SO_LINGER可改变此默认行为。
 
 
-.. figure:: /images/socket_shutdown_close.jpg
+.. figure:: /images/Socket/socket_shutdown_close.jpg
    :scale: 70%
 
    socket_shutdown_close
@@ -108,7 +108,7 @@ shutdown和close: 半开连接
 fcntl ioctl 描述符控制
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: /images/sockect_fd_property.jpg
+.. figure:: /images/Socket/sockect_fd_property.jpg
    :scale: 80%
 
    socket_protocol
@@ -119,7 +119,7 @@ socket()
 ~~~~~~~~~~~~~~~~~
 family+type -> protocol
 
-.. figure:: /images/socket_protocol.jpg
+.. figure:: /images/Socket/socket_protocol.jpg
    :scale: 80%
 
    socket_protocol
@@ -157,7 +157,7 @@ delay ack:
 
 
 
-.. figure:: /images/nagle-algorithm-delay-ack.jpg
+.. figure:: /images/Socket/nagle-algorithm-delay-ack.jpg
    :scale: 60%
 
    nagle-algorithm-delay-ack
@@ -194,7 +194,7 @@ io模型
 ~~~~~~~~~~~
 同步IO模型：其真正的IO操作会阻塞进程。包括阻塞式IO、非阻塞式IO、IO复用、信号驱动式IO。
 
-.. figure:: /images/IO_models.jpg
+.. figure:: /images/Socket/IO_models.jpg
    :scale: 70%
 
    IO_models
@@ -221,7 +221,7 @@ select
 
 select就绪条件：
 
-.. figure:: /images/select_ready_condition.jpg
+.. figure:: /images/Socket/select_ready_condition.jpg
 
    select_ready_condition
 
@@ -247,7 +247,7 @@ poll
 poll识别三类数据：normal、priority band、high priority，体现在event/revent中。
 
 
-.. figure:: /images/poll_events_revents.jpg
+.. figure:: /images/Socket/poll_events_revents.jpg
    :scale: 70%
 
    poll_events_revents
@@ -257,7 +257,7 @@ poll识别三类数据：normal、priority band、high priority，体现在event
 udp socket
 --------------
 
-.. figure:: /images/udp_exchg.jpg
+.. figure:: /images/Socket/udp_exchg.jpg
    :scale: 70%
 
    udp_exchg
@@ -283,7 +283,7 @@ udp套接字函数
 - 网卡混杂模式：网卡能够接收所有经过它的数据流，而不论其目的地址(mac)是否是它。
 
 
-.. figure:: /images/socket_datagram_info.jpg
+.. figure:: /images/Socket/socket_datagram_info.jpg
    :scale: 100%
 
    socket_datagram_info
@@ -300,7 +300,7 @@ connect后即为已连接socket。
 2. 选择了本地ip和路由。
 
 
-.. figure:: /images/udp_connected_socket.jpg
+.. figure:: /images/Socket/udp_connected_socket.jpg
    :scale: 80%
 
    udp_connected_socket
@@ -360,12 +360,12 @@ TCP报文段结构
 tcp状态转换和分组交换
 ------------------------
 
-.. figure:: /images/tcp_state_trans.jpg
+.. figure:: /images/Socket/tcp_state_trans.jpg
    :scale: 80%
 
    tcp_state_trans
 
-.. figure:: /images/tcp_seg_exchg.jpg
+.. figure:: /images/Socket/tcp_seg_exchg.jpg
    :scale: 70%
 
    tcp_seg_exchg

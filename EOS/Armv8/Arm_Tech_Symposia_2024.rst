@@ -49,7 +49,7 @@ Kleidi
 包括KleidiAI和KleidiCV,CV没怎提及。
 
 
-.. figure:: /images/arm_symposia_kleidi.jpg
+.. figure:: /images/Arm_Tech_Symposia_2024/arm_symposia_kleidi.jpg
 
 
    arm_symposia_kleidi.jpg

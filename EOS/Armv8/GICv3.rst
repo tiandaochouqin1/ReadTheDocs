@@ -20,12 +20,12 @@ GICv3控制器组成和路由
 3. cpu interface： 传输中断给core
 4. ITS： Interrupt Translation Service, 用来解析LPI中断
 
-.. figure:: /images/GIC_v3.png
+.. figure:: /images/GICv3/GIC_v3.png
 
    GIC_v3
 
    
-.. figure:: /images/GIC_v3_controller.png
+.. figure:: /images/GICv3/GIC_v3_controller.png
 
    GIC_v3_controller
 
@@ -50,7 +50,7 @@ GICv3定义了以下中断类型：
 
 
 
-.. figure:: /images/gic_interrupt_type.jpg
+.. figure:: /images/GICv3/gic_interrupt_type.jpg
 
    gic_interrupt_type
 
@@ -68,13 +68,13 @@ GICv3定义了以下中断类型：
 5. 处理器接收该异常，并且软件处理该中断
 
 
-.. figure:: /images/intr_state.png
+.. figure:: /images/GICv3/intr_state.png
    :scale: 80%
 
    intr_state
 
 
-.. figure:: /images/Gic-600_interconnect.jpg
+.. figure:: /images/GICv3/Gic-600_interconnect.jpg
    :scale: 80%
 
    Gic-600_interconnect
@@ -85,7 +85,7 @@ distributor也可不直接连接interconnnect或its。见  `Arm CoreLink GIC-600
 ITS
 ~~~~~
 
-.. figure:: /images/Gicv3_ITS.png
+.. figure:: /images/GICv3/Gicv3_ITS.png
    :scale: 80%
 
    Gicv3_ITS
@@ -100,7 +100,7 @@ irq 管理数据结构
 2. `linux IRQ Management（五）- irq_desc_Hacker_Albert的博客-CSDN博客  <https://blog.csdn.net/weixin_41028621/article/details/101753159>`__
 
 
-.. figure:: /images/irq_manage_struct.png
+.. figure:: /images/GICv3/irq_manage_struct.png
 
    irq_manage_struct
 

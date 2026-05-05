@@ -143,7 +143,7 @@ preempt_enable() 会调用 preempt_count_dec_and_test()，判断 preempt_count �
 
 如果可以，就调用 preempt_schedule->preempt_schedule_common->__schedule 进行调度。
 
-.. figure:: /images/schedule_and_preempt.png
+.. figure:: /images/Preemption/schedule_and_preempt.png
 
             抢占式调度
 
@@ -153,7 +153,7 @@ _schedule上下文切换
 .. important:: 上下文切换的具体过程？
 
 
-.. figure:: /images/context_switch.jpg
+.. figure:: /images/Preemption/context_switch.jpg
 
                context_switch
 
@@ -319,7 +319,7 @@ preempt_count
 
 变量在struct thread_info中
 
-.. figure:: /images/preempt_count.png
+.. figure:: /images/Preemption/preempt_count.png
 
    preempt_count
 

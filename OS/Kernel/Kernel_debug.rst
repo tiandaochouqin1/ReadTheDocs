@@ -318,7 +318,7 @@ R状态死锁-softlockup和hardlockup
 - hardlockup:10s。nmi事件检测hrtimer是否更新中断计数器hrtimer_interrupts。在中断上下文中发生死锁时，nmi(不可屏蔽的中断)处理也可正常进入，因此可用来监测中断中的死锁。
 
 
-.. figure:: /images/lockup_detector.jpg
+.. figure:: /images/Kernel_debug/lockup_detector.jpg
    :scale: 80%
 
    lockup_detector
@@ -378,7 +378,7 @@ sudo执行。-p pid
 
 
 
-.. figure:: /images/perf_events_map.png
+.. figure:: /images/Kernel_debug/perf_events_map.png
 
    
 

@@ -18,7 +18,7 @@ main之前
 ``execvp -> preinit -> _start -> __libc_start_main -> __libc_csu_init -> _init -> main -> exit -> atexit/fini/destructor``
 
 
-.. figure:: /images/main_call_graph.png
+.. figure:: /images/main/main_call_graph.png
    :scale: 80%
    :alt: main_call_graph
 
@@ -34,7 +34,7 @@ main之前
 4. init -> __libc_csu_init -> _init :  调用_do_global_ctors_aux-构造函数constructor; 调用C代码里的Initializer；
 5. exit :  先调用注册到atexit的函数，然后fini,最后destructor。
 
-.. figure:: /images/stack_main_start.png
+.. figure:: /images/main/stack_main_start.png
    :scale: 70%
 
    stack_main_start
@@ -44,7 +44,7 @@ execv
 ~~~~~~~~~~
 `Linux内核之execve函数-BugMan-ChinaUnix博客  <http://blog.chinaunix.net/uid-69947851-id-5825847.html>`__
 
-.. figure:: /images/execv.jpg
+.. figure:: /images/main/execv.jpg
 
    execv x86_64
 

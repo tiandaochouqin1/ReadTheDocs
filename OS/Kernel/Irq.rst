@@ -133,7 +133,7 @@ arm异常向量表
 
 
 
-.. figure:: /images/exception_vector_table.png
+.. figure:: /images/Irq/exception_vector_table.png
    :alt: exception_vector_table
 
 3. 如果发生异常会导致exception level切换，并且比目的exception level低一级的exception level运行在AARCH64模式，那么使用第三张异常向量表。
@@ -341,7 +341,7 @@ thread_fn : 中断线程，类似于中断下半部
 
 https://zhuanlan.zhihu.com/p/296750228
 
-.. figure:: /images/kernel_stack.png
+.. figure:: /images/Irq/kernel_stack.png
    :scale: 70%
 
 

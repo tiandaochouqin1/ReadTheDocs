@@ -17,7 +17,7 @@ PCIE拓扑
 
 pcie树形拓扑
 ~~~~~~~~~~~~~~
-.. figure:: /images/PCIE_structure.png
+.. figure:: /images/Pcie/PCIE_structure.png
    :scale: 70 %
 
    PCIE_structure
@@ -62,7 +62,7 @@ pcie分层
 1. 与PCI总线不同（PCI设备共享总线），PCIe总线使用端到端的连接方式，互为接收端和发送端，全双工，基于数据包的传输；
 2. 物理底层采用差分信号（PCI链路采用并行总线，而PCIe链路采用串行总线），一条Lane中有两组差分信号，共四根信号线，而PCIe Link可以由多条Lane组成(1/2/4/8/12/16/32)；
 
-.. figure:: /images/PCIE_layer.png
+.. figure:: /images/Pcie/PCIE_layer.png
 
    PCIE_layer
 
@@ -87,7 +87,7 @@ tlp
 假设某个设备要对另一个设备进行读取数据的操作，首先这个设备（称之为Requester）需要向另一个设备发送一个Request，
 然后另一个设备（称之为Completer）通过Completion Packet返回数据或者错误信息。
 
-.. figure:: /images/PCIE_tlp.png
+.. figure:: /images/Pcie/PCIE_tlp.png
    :scale: 70 %
 
    PCIE_tlp
@@ -103,7 +103,7 @@ pcie数据包最大可支持4K。
 ~~~~~~~~~~~~
 DLLP层有重传buffer，通过ack/nack机制来重传。
 
-.. figure:: /images/pcie_dllp.jpg
+.. figure:: /images/Pcie/pcie_dllp.jpg
    :scale: 100 %
 
    pcie_dllp
@@ -121,13 +121,13 @@ pci配置空间和配置请求
 2. x86 CPU无法直接访问配置空间，通过IO映射的数据端口和地址端口间接访问PCI的配置空间；
 3. Bridge或Device类型的PCIE设备拥有不同的配置空间header。其中的Base Address Register BAR空间，当PCI设备的配置空间被初始化后，该设备在PCI总线上就会拥有一个独立的PCI总线地址空间即bar空间，BAR空间可以存放IO地址空间，也可以存放存储器地址空间。
 
-.. figure:: /images/PCIE_reg_conf.png
+.. figure:: /images/Pcie/PCIE_reg_conf.png
    :scale: 50 %
 
    io映射的地址端口
 
 
-.. figure:: /images/pcie_cfg_space.png
+.. figure:: /images/Pcie/pcie_cfg_space.png
    :scale: 80 %
 
    pcie配置空间
@@ -155,7 +155,7 @@ pci配置空间和配置请求
 
 
 
-.. figure:: /images/pcie_enumeration.jpg
+.. figure:: /images/Pcie/pcie_enumeration.jpg
    :scale: 100 %
 
    pcie_enumeration
@@ -166,13 +166,13 @@ inbound outbound
 1. `pcie inbound、outbound及EP、RC间的互相訪问 - blfshiye - 博客园  <https://www.cnblogs.com/blfshiye/p/4377496.html>`__
 2. `PCIe总线-存储器域和PCIe总线域访问流程分析（二）_pcie atu-CSDN博客  <https://blog.csdn.net/u011037593/article/details/137697527>`__
 
-.. figure:: /images/pcie_outbound_inbound.png
+.. figure:: /images/Pcie/pcie_outbound_inbound.png
    :scale: 70 %
 
    inbound outbound
 
 
-.. figure:: /images/pcie_atu_outbound_inbound.png
+.. figure:: /images/Pcie/pcie_atu_outbound_inbound.png
    :scale: 100 %
 
    pcie_atu_outbound_inbound
@@ -207,7 +207,7 @@ bar的请求写入使用：
 3. 当设备发现一个请求事务的地址是映射到自己的一个BAR时，它就会接收这个请求事务
 
 
-.. figure:: /images/pcie_type01_bar.jpg
+.. figure:: /images/Pcie/pcie_type01_bar.jpg
    :scale: 100 %
 
    pcie_type01_bar
@@ -221,7 +221,7 @@ Base/Limit寄存器只表示Bridge下方存在的地址空间,分配给下游设
 每个Bridge（例如Switch的端口和RC端口）都需要知道它下方所存在的可用地址范围，这样Bridge才能确定哪些请求需要从它的主接口（Primary interface，它在上方）被转发到它的次级接口（Secondary interface，它在下方）。
 
 
-.. figure:: /images/pcie_bars_base_limit.jpg
+.. figure:: /images/Pcie/pcie_bars_base_limit.jpg
    :scale: 100 %
 
    pcie_bars_base_limit
@@ -264,19 +264,19 @@ tlp类型
 3. 隐式路由。减少边带信号，减少pin脚。message使用
 
 
-.. figure:: /images/pcie_tlp_route.jpg
+.. figure:: /images/Pcie/pcie_tlp_route.jpg
    :scale: 100 %
 
    pcie_tlp_route
 
 
-.. figure:: /images/pcie_tlp_header_address.jpg
+.. figure:: /images/Pcie/pcie_tlp_header_address.jpg
    :scale: 100 %
 
    pcie_tlp_header_address
 
 
-.. figure:: /images/pcie_tlp_header_id.jpg
+.. figure:: /images/Pcie/pcie_tlp_header_id.jpg
    :scale: 100 %
 
    pcie_tlp_header_id

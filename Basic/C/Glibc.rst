@@ -132,12 +132,12 @@ mall bins和large bins中索引的内存块是在内存分配的过程中被添�
 
 malloc将内存分成了大小不同的chunk，使用双向链表将其组成成bin。
 
-.. figure:: /images/malloc_sbrk_mmap.png
+.. figure:: /images/Glibc/malloc_sbrk_mmap.png
 
     malloc_sbrk_mmap
 
 
-.. figure:: /images/malloc_bin_trunk.jpg
+.. figure:: /images/Glibc/malloc_bin_trunk.jpg
 
     malloc_bin_trunk
 

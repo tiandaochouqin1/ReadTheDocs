@@ -9,7 +9,7 @@ ELF、Compile & Main
 ==============
 1. Linux/UNIX系统编程手册(TLPI)
 
-2. :download:`gcc 9.2 manual </files/gcc_9.2_manuals.pdf>`
+2. :download:`gcc 9.2 manual </files/Elf/gcc_9.2_manuals.pdf>`
 
 
 反汇编常用命令
@@ -47,7 +47,7 @@ readelf
 10. strings: 查看可打印字符串
 11. size exe: 查看text、data、bss的长度。
 
-.. figure:: /images/Elf-layout.png
+.. figure:: /images/Elf/Elf-layout.png
    :scale: 70%
 
    ELF结构
@@ -107,7 +107,7 @@ ELF Header
   52 or 64 bytes long for 32-bit and 64-bit binaries respectively.
 
 
-.. figure:: /images/elf_header.png
+.. figure:: /images/Elf/elf_header.png
 
       开头的16B Magic number
 
@@ -290,7 +290,7 @@ st_info
       #define ELF_ST_TYPE(x)		(((unsigned int) x) & 0xf)
 
 
-.. figure:: /images/elf_st_info.png
+.. figure:: /images/Elf/elf_st_info.png
    :alt: elf_st_info
 
 
@@ -368,16 +368,16 @@ elf可执行文件的装载：load_elf_binary()位于fs/Binfmt_elf.C
 3. strip移除symtab和strtab(都属于non-alloctable)，GNU strip discards all symbols from object files objfile. 
 
 
-.. figure:: /images/Elf_Obj_Sections.png
+.. figure:: /images/Elf/Elf_Obj_Sections.png
    :scale: 70%
    :alt: Elf_Obj_Sections
 
-.. figure:: /images/Elf_Exe_Sections.png
+.. figure:: /images/Elf/Elf_Exe_Sections.png
    :scale: 70%
    :alt: Elf_Exe_Sections
 
 
-.. figure:: /images/Procee_Vm_Sections.png
+.. figure:: /images/Elf/Procee_Vm_Sections.png
    :scale: 70%
    :alt: Procee_Vm_Sections
 

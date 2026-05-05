@@ -102,7 +102,7 @@ Subject Areas:
 
 分布式系统关键技术
 ~~~~~~~~~~~~~~~~~~~~~
-.. figure:: /images/distributed_system_stack.png
+.. figure:: /images/CoolShell/distributed_system_stack.png
 
    distributed_system_stack
 
@@ -126,14 +126,14 @@ CAP 定理: 一致性、可用性、分区容忍
 
 
 
-.. figure:: /images/Programming_paradigm_a.png
+.. figure:: /images/CoolShell/Programming_paradigm_a.png
    :scale: 40%
 
    Programming_paradigm_a
 
 
 
-.. figure:: /images/Programming_paradigm_b.png
+.. figure:: /images/CoolShell/Programming_paradigm_b.png
 
    Programming_paradigm_b
 
@@ -212,7 +212,7 @@ decorator
 control和logic耦合导致程序复杂混乱。
 
 
-.. figure:: /images/logic_control.png
+.. figure:: /images/CoolShell/logic_control.png
 
    logic_control
 

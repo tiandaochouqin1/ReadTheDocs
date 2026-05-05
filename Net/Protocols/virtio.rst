@@ -26,7 +26,7 @@ virtio的框架
 
 通过总线特定的方法发现和识别一个virtio设备(见总线特定部分：4.1通过PCI总线，4.2通过MMIO和4.3通过通道I/O)
 
-.. figure:: /images/virtio_framwork.jpg
+.. figure:: /images/virtio/virtio_framwork.jpg
    :scale: 40%
 
    virtio_framwork.jpg
@@ -47,7 +47,7 @@ virtio设备和驱动很灵活，可支持多种不同的架构、场景。包�
 2. virtio-user:device 在host user
 3. virtio-user with userland driver: device 在host user + driver在guest user。
 
-.. figure:: /images/virtio-net.png
+.. figure:: /images/virtio/virtio-net.png
 
    virtio-net
 

@@ -24,11 +24,11 @@ Packet Send & Recieve
 2. `极客时间-趣谈Linux操作系统 <https://zter.ml/>`__
 3. 《深入linux内核架构》 ：大体框架
 
-4.  :download:`ULNI </books/Understanding_Linux_Network_Internals.pdf>` 
+4.  :download:`ULNI </books/Pkt_Snd&Rcv/Understanding_Linux_Network_Internals.pdf>` 
 5. `图解Linux网络包接收过程 <https://zhuanlan.zhihu.com/p/256428917>`__ 
-    :download:`理解了实现再谈网络性能 </books/理解了实现再谈网络性能.pdf>` 
+    :download:`理解了实现再谈网络性能 </books/Pkt_Snd&Rcv/理解了实现再谈网络性能.pdf>` 
     
-6. :download:`追踪Linux.TCP／IP代码运行：基于2.6内核 </books/追踪Linux.TCP／IP代码运行：基于2.6内核.pdf>` 
+6. :download:`追踪Linux.TCP／IP代码运行：基于2.6内核 </books/Pkt_Snd&Rcv/追踪Linux.TCP／IP代码运行：基于2.6内核.pdf>` 
 
 
 
@@ -44,7 +44,7 @@ Linux网络IO模式
 1. `Linux IO模式及 select、poll、epoll详解 <https://segmentfault.com/a/1190000003063859>`__
 
 
-.. figure:: /images/IO_models.png
+.. figure:: /images/Pkt_Snd&Rcv/IO_models.png
 
    IO 模式比较
 
@@ -113,7 +113,7 @@ socket收包过程
 6. poll函数将收到的包送到协议栈注册的ip_rcv函数中
 7. ip_rcv函数再讲包送到udp_rcv函数中（对于tcp包就送到tcp_rcv）
 
-.. figure:: /images/pkt_rcv.png
+.. figure:: /images/Pkt_Snd&Rcv/pkt_rcv.png
 
    收包过程
 
@@ -236,7 +236,7 @@ netif_rx
 
 1. https://www.cnblogs.com/hustcat/archive/2009/09/26/1574371.html
 
-.. figure:: /images/netif_rx.png
+.. figure:: /images/Pkt_Snd&Rcv/netif_rx.png
 
 
 在传统的收包方式中，数据帧向网络协议栈中传递发生在中断上下文（在接收数据帧时）中调用netif_rx的函数中。
@@ -321,11 +321,11 @@ libpcap原理
 --------------
 
 
-.. figure:: /images/pkt_tx.png
+.. figure:: /images/Pkt_Snd&Rcv/pkt_tx.png
 
     pkt_tx
 
-.. figure:: /images/net_dev_layer.png
+.. figure:: /images/Pkt_Snd&Rcv/net_dev_layer.png
 
     net_dev_layer
 
