@@ -2,6 +2,10 @@
 
 main之前
 ==========
+
+.. admonition:: 摘要
+
+   拆解 C 程序从 execvp 到 main 的启动全流程：``execvp → preinit → _start → __libc_start_main → __libc_csu_init → _init → main``。适合需要理解 ELF 加载、glibc 启动过程以及链接器细节的系统开发者。
 1. 英文版 `Linux x86 Program Start Up <http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html>`__ ;
    翻译不怎么样 `Linux X86 程序启动 <https://luomuxiaoxiao.com/?p=516>`__
 2. glibc源码位置: https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129
@@ -382,4 +386,15 @@ _do_global_ctors_aux
       my_atexit
       fini
       destructor
+
+
+.. _main_takeaways:
+
+关键要点
+========
+
+1. **envp 不需要显式传入** — ``envp = &argv[argc + 1]``，envp 紧挨在 argv 数组末尾之后。这就是为什么 main 的第三个参数可以省略。
+2. **``.init_array`` / ``.fini_array`` 取代了 ``.ctors`` / ``.dtors``** — 新版 GCC 不再使用 ``.ctors`` 段，而是用 ``.init_array`` 存放构造函数指针数组，``__libc_csu_init`` 遍历调用。
+3. **执行顺序** — preinit_array → ``__attribute__((constructor))`` → init_array → main → atexit（LIFO）→ fini_array → destructor。atexit 注册的函数按注册顺序反向执行（栈式）。
+4. **``LD_SHOW_AUXV=1``** — 最简单的查看 ELF 辅助向量的方法，可以获取 AT_HWCAP、AT_PAGESZ、AT_ENTRY 等内核传递给动态链接器的关键信息。
 

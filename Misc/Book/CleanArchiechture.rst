@@ -4,6 +4,10 @@ Clean Architecture
 
 :Date:   2022-07-02 14:39:00
 
+.. admonition:: 摘要
+
+   《架构整洁之道》读书笔记：两个价值维度（行为/架构价值）、编程范式（结构化/OO/函数式）、SOLID 原则详解和组件构建/耦合原则。适合有一定经验的软件工程师和技术负责人。
+
 
 :download:`Clean Architecture </files/CleanArchiechture/Clean Architecture_ A Craftsman’s Guide to Software Structure and Design.PDF>`
 

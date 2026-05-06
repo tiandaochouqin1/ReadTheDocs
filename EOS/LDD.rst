@@ -5,6 +5,10 @@ Linux Drive Develop
 
 :Date:   2022-06-18 23:02:43
 
+.. admonition:: 摘要
+
+   Linux 设备驱动开发的系统性笔记：总线-设备-驱动模型、设备树（dts/dtb）、platform match 机制、probe 流程（really_probe）、字符/块/网络设备驱动框架和用户态/内核态驱动对比。适合嵌入式驱动开发者。
+
 
 总线设备驱动模型
 ===================

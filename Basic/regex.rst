@@ -4,6 +4,10 @@ Regex
 
 :Date:   2020-09-28 23:10:37
 
+.. admonition:: 摘要
+
+   正则表达式从入门到引擎原理：基本语法、捕获与断言、贪婪/惰性匹配、DFA/NFA 引擎对比以及 PCRE/POSIX 风格差异。适合需要系统掌握正则并理解其性能特性的开发者。
+
 References
 ==========
 
@@ -376,3 +380,14 @@ Rgex应用
 url匹配
 -------
 1. `In search of the perfect URL validation regex  <https://mathiasbynens.be/demo/url-regex>`__
+
+
+.. _regex_takeaways:
+
+关键要点
+========
+
+1. **贪婪 vs 惰性** — 贪婪（默认）匹配尽可能长，惰性（加 ``?``）匹配尽可能短。``<.+>`` 匹配整个 ``<div>hello</div>``，``<.+?>`` 只匹配 ``<div>``。
+2. **NFA 支持回溯和反向引用，DFA 不支持** — 所有主流语言（JS/Python/Java/C#）都用 NFA 引擎。NFA 匹配速度 O(mn) 但功能强；DFA 建图慢 O(n²) 但匹配快 O(m)。
+3. **避免量词嵌套** — ``(.*)+`` 这类嵌套量词是灾难性回溯的根源，一个不匹配的字符串可能让 CPU 跑满。用非捕获组 ``(?:)`` 替代不必要的捕获也能减少回溯。
+4. **PCRE vs POSIX 的实际影响** — grep 默认 POSIX-BRE（特殊符号需要转义），``grep -E`` 切到 POSIX-ERE（类似 PCRE），``grep -P`` 才是完整 PCRE。写 shell 脚本时注意语法差异：``+``、``?``、``|`` 在 BRE 下需要 ``\\`` 转义。

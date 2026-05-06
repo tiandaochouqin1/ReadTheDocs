@@ -4,6 +4,10 @@ Vim
 
 :Date:   2021-06-05 21:29:25
 
+.. admonition:: 摘要
+
+   Vim 全功能配置手册：从基本编辑、寄存器/宏、缓冲区/标签/分屏管理到 ctags/cscope/tagbar 代码导航和 calltree 函数调用关系分析。适合想让 Vim 成为 C/内核开发 IDE 的工程师。
+
 
 参考资料
 ==========
@@ -969,3 +973,21 @@ Shell Pattern Matching
 find、locate
 
 https://www.gnu.org/software/findutils/manual/html_node/find_html/Shell-Pattern-Matching.html
+
+
+.. _vim_takeaways:
+
+关键要点
+========
+
+1. **缓冲区是核心，标签和分屏只是视图** — 一个 buffer 对应一个文件，一个 window 是一个 buffer 的视口，一个 tab 是一组 window 的布局。掌握了 ``:ls`` / ``:b <tab>`` / ``Ctrl-^`` 就掌握了多文件编辑的基础。
+2. **cscope 是 C 内核开发的标配** — ``Ctrl-]``（跳定义）+ ``Ctrl-T``（返回）的配合是代码导航的最快方式。cscope 比 ctags 多了「谁调用了这个函数」和「这个函数调用了谁」的查询。
+3. **寄存器是无价的** — ``"+y`` 复制到系统剪切板，``"+p`` 粘贴出来。``q + reg`` 录制宏，``@ + reg`` 播放。对于重复性编辑操作，宏可以节省大量时间。
+4. **无 sudo 保存** — ``:w !sudo tee %`` 是最常用的技巧之一。可以映射为 ``cmap w!! w !sudo tee > /dev/null %``，之后 ``:w!!`` 就能以 root 保存。
+
+调试技巧
+========
+
+- 排查配置问题：``vim -u NONE -N`` 以最小配置启动，确认问题是否出在 vimrc
+- 查看当前设置：``:set all`` 或 ``:verbose set <option>?`` （查看设置来源）
+- 性能分析：``:profile start /tmp/vimprof.txt`` → ``:profile func *`` → 执行慢操作 → ``:profile pause``

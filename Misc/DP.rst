@@ -4,6 +4,10 @@ DynamicProgramming
 
 :Date:   2019-5-29
 
+.. admonition:: 摘要
+
+   动态规划算法系统性笔记：最优子结构与重叠子问题、自顶向下（备忘录）vs 自底向上（递推）、五种经典 DP 模型（线性/区间/背包/状态压缩/树形）和状态转移方程复杂度分类。适合准备算法面试的软件工程师。
+
 
 
 `动态规划 <http://cppblog.com/menjitianya/archive/2015/10/23/212084.html>`__

@@ -2,6 +2,10 @@
 RTOS
 ==============
 
+.. admonition:: 摘要
+
+   实时操作系统学习笔记 [WIP]：RTOS 与 Linux 差异分析、内核/调度器/IPC 对比、VxWorks/Ti-RTOS/ROS 简介。目前为框架阶段，后续补充。
+
 
 RTOS与linux差异分析
 ======================

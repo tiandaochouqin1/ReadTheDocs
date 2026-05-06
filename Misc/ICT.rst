@@ -2,7 +2,9 @@
 ICT
 ===
 
-Information and Communications Technology
+.. admonition:: 摘要
+
+   信息与通信技术笔记：传输网络演进（PDH→SDH→MSTP→PTN→IPRAN→WDM→OTN）、基带与射频架构、调制方式（ASK/FSK/PSK/QAM）、香农定理/奈奎斯特准则以及傅里叶变换与卷积的直观解释。适合需要理解通信底层的技术人员。
 
 :Date:   2020-07-15 22:26:48
 

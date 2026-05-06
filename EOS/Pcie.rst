@@ -1,6 +1,10 @@
 
 PCIE
 ======
+
+.. admonition:: 摘要
+
+   PCIe 总线协议的深度笔记：拓扑结构（RC/Switch/Bridge）、协议分层（TLP/DLLP/PLP）、配置空间（Type0/Type1）、地址路由与 ID 路由、MSI-X 中断以及 UCIe chiplet 互连。适合 SoC/FPGA 和板级开发工程师。
 驱动：
 1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
 2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__

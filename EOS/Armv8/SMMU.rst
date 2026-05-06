@@ -1,6 +1,10 @@
 ============
 MMU和SMMU
 ============
+
+.. admonition:: 摘要
+
+   系统 MMU 深度分析：ARM MMU 两级转换（VA→IPA→PA）、ASID/VMID 隔离、SMMU 架构（STE/CD/页表遍历）、SMMUv3 驱动初始化和 MMU-700 硬件微架构（TBU/TCU/DTI）。适合虚拟化和 IOMMU 驱动开发者。
 1. :download:`Arm System Memory Management Unit Architecture Specification v3.3 </files/SMMU/ARM_IHI_0070_D_b_System_Memory_Management_Unit_Architecture_Specification.pdf>`
 
 

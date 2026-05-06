@@ -4,6 +4,10 @@ ELF、Compile & Main
 
 :Date:   2020-07-15 22:45:43
 
+.. admonition:: 摘要
+
+   ELF 文件格式全解析：从 ELF 头、程序头表、节头表到编译/链接的全流程，以及 GOT/PLT 重定位和 Tiny ELF 压缩技巧。适合需要理解可执行文件底层结构或做二进制分析的开发者。
+
 
 参考文章
 ==============
@@ -454,5 +458,23 @@ ld链接脚本：控制输入段如何变成输出段。ld使用默认链接脚�
 6. 使用最小elf:elf header + program header + 自定义.text。52+32+x
 
 7. 识别ehdr、phdr中未使用字段，将.text、phdr重叠到ehdr
+
+
+.. _elf_takeaways:
+
+关键要点
+========
+
+1. **ELF 三张表** — ELF Header（文件整体信息）→ Program Header Table（运行时需要，告诉内核怎么映射段）→ Section Header Table（链接时需要，调试/反汇编依赖）。strip 后可以去掉 Section Header Table。
+2. **PLT 的本质** — 过程链接表是一个跳转桩数组，每个外部函数一条桩指令。首次调用触发 ``ld.so`` 符号解析，写入 GOT 后后续调用直达目标函数。
+3. **Tiny ELF 的原理** — 将 .text 内容重叠到 ELF header 和 Program header 的未使用字段中，利用操作系统加载时不会校验这些字段的事实，可以把可执行体压缩到极限。
+
+.. seealso::
+
+   `Dynamic Linkage <./DynamicLink.rst>`_
+      PLT/GOT 延迟绑定和符号解析的详细流程。
+
+   `main之前 <../Basic/C/main.rst>`_
+      ELF 加载后的启动流程。
 
 

@@ -5,6 +5,10 @@ Embeded OS Concept
 
 :Date:   2022-03-01 22:25:43
 
+.. admonition:: 摘要
+
+   嵌入式系统概念辨析笔记：/dev/mem、NUMA 调度域、僵尸进程/守护进程、ioctl、tmpfs、IPC（POSIX vs System V）、SPI/I2C/UART 总线协议对比和 SerDes/PLL 等硬件基础概念。适合需要快速查阅嵌入式专业术语的开发者。
+
 概念辨析
 =========
 /dev/mem

@@ -5,6 +5,10 @@ Armv8-a PG
 
 :Date:   2022-03-23 00:57:00
 
+.. admonition:: 摘要
+
+   ARMv8-A 架构编程指南的系统性笔记：异常级别（EL0-EL3）、MMU 页表（TTBRx/TCR）、内存排序与屏障（DMB/DSB/ISB）、AMBA 总线（AXI/CHI）、通用定时器和 Cortex-A77 微架构。适合 SoC 架构师和系统级固件开发者。
+
 
 Fundamentals of Armv8
 ==========================

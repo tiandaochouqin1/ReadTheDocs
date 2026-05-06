@@ -4,6 +4,10 @@ Linux Cmd
 
 :Date:   2019-12-16 13:28:13
 
+.. admonition:: 摘要
+
+   Linux 常用命令速查：进程管理（top/pgrep/screen）、文件操作（find/stat/lsof/ln）、文本处理（awk/sed/grep）、网络诊断（ss/curl/ip）及系统配置。适合日常运维和 Shell 脚本编写时快速查阅。
+
 
 参考资料
 ========
@@ -1176,3 +1180,15 @@ no login shell
 
 -  no login shell: 加载.bashrc。Mobaxterm
 -  login shell: 加载.profile。SecureCRT
+
+
+.. _linux_cmd_takeaways:
+
+关键要点
+========
+
+1. **ripgrep(rg) > ag > ack > grep** — rg 是目前最快的文本搜索工具，支持全平台。默认跳过 .gitignore 中的文件，自动识别二进制文件。日常替代 grep 的最佳选择。
+2. **awk 是文本分析的瑞士军刀** — 记住三个结构：``BEGIN{初始化}`` → ``pattern{处理每行}`` → ``END{汇总输出}``。内置变量 NR（行号）、NF（列数）、FS（分隔符）是日常最常用的。
+3. **sed 的 pattern space vs hold space** — 处理复杂文本变换时，hold space 是 sed 的「暂存区」，通过 h/H/g/G/x 在 pattern space 和 hold space 之间交换数据，可实现行逆序、多行合并等操作。
+4. **lsof -i :port** — 排查端口占用的最快方式。``lsof -i :80`` 直接列出占用某端口的所有进程，比 ``netstat -tlnp | grep :80`` 更直观。
+5. **find -exec {} \; vs -exec {} +** — 前者对每个匹配文件执行一次命令，后者将所有匹配文件作为参数一起传给命令（类似 xargs），效率更高但部分命令不支持。

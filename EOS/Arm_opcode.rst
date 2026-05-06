@@ -5,6 +5,10 @@ Arm Opcode
 
 :Date:   2021-09-29 19:28:27
 
+.. admonition:: 摘要
+
+   ARM64 指令编码深度解析：A64 定长 32 位指令格式、立即数编码（wide immediate/bitmask immediate）、movk/ret 跳转桩和无条件分支的二进制编码。适合工具链开发者和二进制分析人员。
+
 
 arm简介
 ===============

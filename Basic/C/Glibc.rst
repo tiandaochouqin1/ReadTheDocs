@@ -3,6 +3,10 @@
 glibc
 ==========
 
+.. admonition:: 摘要
+
+   glibc malloc 内存管理器的内部实现：arena/bin/chunk 三层结构、fastbin/smallbin/largebin 的分配优先级以及 sbrk/mmap 的底层机制。适合需要排查内存分配性能问题或理解堆布局的系统开发者。
+
 malloc原理
 ----------
 1. https://code.woboq.org/userspace/glibc/malloc/malloc.c.html#1059
@@ -163,3 +167,13 @@ calloc 与 malloc+memset的区别
 
    1) 内核把内存交给进程前会清零，所以calloc不用再清零；(用户态也会管理内存池)
    2) 写时复制，calloc时并未真实分配内存，即在使用时才会 清零+赋值，cache友好。
+
+
+.. _glibc_takeaways:
+
+关键要点
+========
+
+1. **malloc chunk 的双向链表** — 已分配的 chunk 只有 size 字段（prev_size + size），释放后才在 mem 区域存储 fd/bk 双向链表指针。这就是 free 后指针仍可访问旧数据的原因——那块内存确实还在进程堆上。
+2. **分配优先级链条** — fastbin → small bins → unsorted bin → large bins → top chunk → sbrk → mmap。fastbin 是 LIFO（后进先出），small/large bin 是 FIFO——理解这个对分析 malloc 性能问题至关重要。
+3. **calloc vs malloc+memset** — 大内存（>128KB）分配时 calloc 远优于 malloc+memset：内核预清零 + 写时复制，避免了立即分配物理页和 cache 污染。

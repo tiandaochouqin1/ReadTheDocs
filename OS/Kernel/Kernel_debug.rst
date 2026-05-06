@@ -2,6 +2,10 @@
 Kernel Debug & Trace
 =====================
 
+.. admonition:: 摘要
+
+   Linux 内核调试与追踪工具全景：printk/ftrace/kprobe/kgdb/kdump+crash/perf 的适用场景和对比。适合需要建立内核问题排查工具箱的内核/驱动开发者。
+
 
 :Date:   2021-07-18 18:52:25
 

@@ -1,6 +1,10 @@
 
 gcov
 =======
+
+.. admonition:: 摘要
+
+   GCC gcov 代码覆盖率测试的原理与实践：gcov 插桩机制、汇编伪指令、lcov 可视化。适合需要建立 C 项目测试覆盖率体系的嵌入式/系统开发者。
 1. `GCC Coverage代码分析 <https://blog.csdn.net/livelylittlefish/category_826830.html>`__
 2. `gcov代码覆盖率测试-原理和实践总结 <https://blog.csdn.net/yanxiangyfg/article/details/80989680>`__
 3. https://github.com/yanxiangyfg/gcov 与上个文章中汇编不一样，因为是32位系统？
@@ -211,3 +215,14 @@ jump指令：
     cmd[1]=offset&0xff
     .......
     cmd[5]=(offset>>24)%0xff
+
+
+.. _coverage_takeaways:
+
+关键要点
+========
+
+1. **gcov 的插桩原理** — 编译时（``-fprofile-arcs -ftest-coverage``）在每个基本块的入边插入计数器汇编指令，生成 .gcno（块图结构）；运行时计数器累加，退出时 ``__gcov_exit()`` 写入 .gcda。
+2. **增量覆盖率的核心** — 用 ``git diff`` 获取变更的文件路径和行号，在 lcov tracefile 中按 DA 字段匹配，即可计算增量覆盖率。diff-cover 工具已实现此逻辑。
+3. **cmockery 适合嵌入式 C** — 不依赖其他库、侵入小，但受限于 C 的链接符号唯一性：被 mock 的函数必须在单独文件中（不参与编译），否则链接冲突。mockcpp 通过运行时修改机器码绕过了这个限制。
+4. **侵入式 Mock 的 ARM64 挑战** — ARM64 为定长 32 位指令，单条 mov 无法立即载入 64 位地址，需要用 movk + br 组合（见 Arm_opcode 文章）。x86-64 变长指令则容易得多。

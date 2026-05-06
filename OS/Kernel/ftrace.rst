@@ -3,6 +3,10 @@
 ftrace
 ============
 
+.. admonition:: 摘要
+
+   ftrace 内核追踪工具实战：function tracer、function_graph tracer、动态过滤（set_ftrace_pid/tracing_cpumask）以及 trace_printk 的使用。适合需要无侵入追踪内核函数调用路径的内核开发者。
+
 Reference
 -----------
 

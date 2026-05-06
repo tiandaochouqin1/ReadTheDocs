@@ -1,6 +1,10 @@
 
 信号
 ==========
+
+.. admonition:: 摘要
+
+   Linux 信号机制：可靠信号与不可靠信号的区别、信号递送流程（pending/blocked/sighand）、常见信号的触发场景和默认行为。适合需要正确处理进程间异步通知的系统/应用开发者。
 1. `Linux信号（signal) 机制分析 <https://www.cnblogs.com/hoys/archive/2012/08/19/2646377.html>`__
 
 

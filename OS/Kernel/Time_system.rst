@@ -1,6 +1,11 @@
 
 时间子系统 
 ============
+
+.. admonition:: 摘要
+
+   Linux 时间子系统全貌：时间源(clock source)、时间基准(timekeeping)、高精度定时器(hrtimer)、低精度定时器(timer wheel)和多级时间轮级联机制。适合需要理解内核时间管理和定时器调度的开发者。
+
 1. 这个系列非常好！ `Linux时间子系统之（二）：软件架构 <http://www.wowotech.net/timer_subsystem/time-subsyste-architecture.html>`__
 2. `Linux 时钟管理 <https://blog.csdn.net/johnson4303/article/details/7664182>`__
 3. `Linux 时间系统分析 <https://www.binss.me/blog/linux-time-system-analysis/>`__

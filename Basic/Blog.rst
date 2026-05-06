@@ -4,6 +4,10 @@ Blog
 
 :Date:   2019-11-24 17:28:53
 
+.. admonition:: 摘要
+
+   记录本站的搭建历程：Sphinx + RST 语法、Read the Docs 自动发布、PDF 构建、多版本管理以及从 Markdown 迁移的踩坑经验。适合想用 Sphinx 搭建个人技术文档站点的开发者。
+
 
 
 --------------
@@ -794,3 +798,14 @@ Google\ **无法获取站点地图**\ ：
 
 1. 在线 http://asciiflow.com/
 2. 本地软件 Graph Easy
+
+
+.. _blog_takeaways:
+
+关键要点
+========
+
+1. **Sphinx 的优势** — 比 Markdown 更强的交叉引用（``:ref:``、``:doc:``）、目录树（toctree）和多格式输出（HTML/PDF/ePub），适合大型技术文档项目。缺点是 VSCode 插件支持较弱。
+2. **中文 PDF 构建的关键配置** — 必须使用 XeLaTeX 引擎并在 preamble 中加载 ctex 宏包（``\\usepackage[UTF8]{ctex}``），pdflatex 对中文不友好。
+3. **Markdown 转 RST 的坑** — Pandoc 转换后需要手动处理：列表和标题前加空行、图片链接正则替换、转义字符改为 inline code。建议逐步手工迁移，自动化只能解决 80%。
+4. **多版本发布** — RTD 自动识别 git tag 构建对应版本，``git tag -a v1.0 -m "comment"`` 然后 push tag 即可。stable 版本指向最新 tag。

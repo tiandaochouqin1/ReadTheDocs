@@ -2,6 +2,10 @@
 TrustZone
 ==============
 
+.. admonition:: 摘要
+
+   ARM TrustZone 安全扩展笔记：TF-A 固件框架（BL1→BL2→BL31→BL32→BL33）、冷启动流程、从核启动（PSCI/SCP）和动态 TrustZone（RME/CCA）。适合固件和安全工程师。
+
 
 
 

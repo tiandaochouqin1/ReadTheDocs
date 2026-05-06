@@ -2,6 +2,10 @@
 syslog & printk
 ====================
 
+.. admonition:: 摘要
+
+   printk 内核日志机制：环形缓冲区（log_buf）、日志级别（loglevel）、console驱动和 8250 串口驱动分析。适合需要理解内核日志输出机制和调试串口问题的驱动开发者。
+
 `内核printk原理介绍 - 知乎  <https://zhuanlan.zhihu.com/p/521094976?utm_id=0>`__
 
 核心是一个叫做log buffer的循环缓冲区，printk作为生产者将消息存入该缓冲区，右边的log服务模块作为消费者可从log buffer中读取消息。

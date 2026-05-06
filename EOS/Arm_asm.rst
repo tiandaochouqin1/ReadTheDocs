@@ -4,6 +4,10 @@ Arm Assembly
 
 :Date:   2021-09-29 19:28:27
 
+.. admonition:: 摘要
+
+   ARM64 汇编编程速查：寄存器约定（x0-x30/SP/PC）、寻址模式（偏移/前变址/后变址）、调用约定（ATPCS）和栈帧布局（stp/ldp 对）。适合需要编写或阅读 ARM64 汇编的系统/嵌入式开发者。
+
 
 1. ☆ 速查表 `ARM64 Assembly Language Notes <https://cit.dixie.edu/cs/2810/arm64-assembly.html>`__     :download:`arm-assembly </files/Arm_asm/syshella_arm-assembly.pdf>`
 2. ☆ 栈回溯 `A Guide to ARM64 <https://modexp.wordpress.com/2018/10/30/arm64-assembly/#registers>`__

@@ -1,6 +1,10 @@
 =============
 Misc Note
 =============
+
+.. admonition:: 摘要
+
+   杂项笔记：阅读体系与笔记工具（Calibre/Notion/Obsidian）、AI 与读书的哲学思考、以及 Fiber Channel、时序数据库、TIPC 协议等技术概念的简要记录。
 .. important:: 让工具成为思想的延伸。
 
 

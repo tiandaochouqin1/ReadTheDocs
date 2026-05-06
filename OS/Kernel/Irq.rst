@@ -2,6 +2,11 @@
 中断 
 ============
 
+
+.. admonition:: 摘要
+
+   Linux 中断子系统的完整梳理：硬件中断架构（GIC/APIC）、内核中断子系统（irq_desc/irqaction）、中断处理流程（顶半部/底半部/软中断/tasklet/workqueue）。适合需要理解内核中断全貌的驱动/内核开发者。
+
 1. ☆☆ `Linux中断管理 (1)Linux中断管理机制 - ArnoldLu - 博客园  <https://www.cnblogs.com/arnoldlu/p/8659981.html>`__
 2. ☆ 系列文章 `【原创】Linux中断子系统（三）-softirq和tasklet - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/13124803.html>`__
 3. `Linux kernel的中断子系统之（二）：IRQ Domain介绍  <http://www.wowotech.net/irq_subsystem/irq-domain.html>`__

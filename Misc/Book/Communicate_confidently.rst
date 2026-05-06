@@ -1,5 +1,9 @@
 Communicate with confidence
 ================================
+
+.. admonition:: 摘要
+
+   自信沟通技巧笔记：视觉(55%) > 声音(38%) > 语言(7%) 的沟通权重模型，以及眼神交流、腹式呼吸、停顿、减少填充词等实用演讲建议。
 visual(55%) > vocal(38%) > verbal(7%)
 
 .. figure:: /images/Communicate_confidently/Communicate_with_confidence.png

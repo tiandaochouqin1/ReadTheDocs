@@ -4,6 +4,10 @@ x86 Assembly
 
 :Date:   2020-07-12 18:28:27
 
+.. admonition:: 摘要
+
+   x86 汇编编程参考：寄存器约定（64/32 位）、AT&T vs Intel 语法、调用约定（cdecl/stdcall/fastcall）、内联汇编（基本/扩展 asm）和指令编码（ModR/M、SIB 字节）。适合需要编写 x86 内联汇编的系统开发者。
+
 
 
 参考链接

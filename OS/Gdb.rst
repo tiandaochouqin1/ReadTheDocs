@@ -4,6 +4,10 @@ GDB
 
 :Date:   2021-07-20 00:52:25
 
+.. admonition:: 摘要
+
+   GDB 调试实战手册：从基本断点/监视点到 TUI 图形模式、远程调试（gdbserver）、core dump 分析到 stripped 程序的逆向定位技巧。适合 C/内核开发的日常调试参考。
+
 基本使用
 ===============
 参考文档
@@ -348,3 +352,21 @@ __libc_start_main() is not in the source standard; it is only in the binary stan
 1. info file 找到 Entry point ，并运行到该处；
 2. 找到 __libc_start_main (libc.so.6)，其入参即为 main 地址，断点该地址；
 3. 如何找到特定函数地址？
+
+
+.. _gdb_takeaways:
+
+关键要点
+========
+
+1. **TUI 模式** — ``Ctrl+X A`` 进入图形化源码窗口，``layout split`` 同时显示源码和汇编。是最被低估的 GDB 功能之一。
+2. **stripped 程序调试** — 通过 ``info file`` 找到 Entry point → 运行到 main 附近 → 找到 ``__libc_start_main`` 的入参获取真实 main 地址。或者用 ``LD_SHOW_AUXV=1`` 辅助。
+3. **core dump 分析三件套** — ``ulimit -c unlimited`` 开启 core → ``bt full`` 查看完整栈帧 → ``info registers`` 查看寄存器 → ``frame N`` 切换到任一栈帧查看局部变量。
+
+.. seealso::
+
+   `main之前 <../Basic/C/main.rst>`_
+      ``__libc_start_main`` 的调用约定和 main 地址传递。
+
+   `Kernel Debug <./Kernel/Kernel_debug.rst>`_
+      内核调试工具链：kgdb、kdump+crash。
