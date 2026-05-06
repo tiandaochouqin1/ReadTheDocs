@@ -5,6 +5,19 @@ Packet Send & Recieve
 
 :Date:   2021-07-31 15:17:13
 
+.. admonition:: 摘要
+
+   从 Linux 内核视角拆解网络数据包的完整收发路径：NAPI 收包、软中断调度、netif_rx 传统路径以及 tcpdump/libpcap 的抓包原理。适合需要理解内核网络栈 internals 或排查网络性能问题的系统/内核开发者。
+
+.. admonition:: 阅读路线图
+
+   - **第一部分**：Linux I/O 模式总览（阻塞/非阻塞、同步/异步、select/poll/epoll）
+   - **第二部分**：NAPI 收包路径（napi_schedule → net_rx_action → 驱动 poll）
+   - **第三部分**：传统收包路径（netif_rx → enqueue_to_backlog）
+   - **第四部分**：tcpdump 抓包原理（libpcap 虚拟协议、收发抓包点）
+
+   如果你只关心抓包原理，可以直接跳到 :ref:`tcpdump原理 <pkt_tcpdump>`。
+
 
 参考文档TODO
 =============
@@ -300,6 +313,8 @@ netif_rx可用于中断和进程上下文；__netif_rx用于中断上下文。
 
 
 
+.. _pkt_tcpdump:
+
 tcpdump原理
 ============
 1. `用户态 tcpdump 如何实现抓到内核网络包的?  <https://mp.weixin.qq.com/s/ZX8Jluh-RgJXcVh3OvycRQ>`__
@@ -379,6 +394,98 @@ dev_queue_xmit->   : Queue a buffer for transmission to a network device
 
       return rc;
    }
+
+
+.. _pkt_debug:
+
+调试技巧
+========
+
+查看软中断处理情况
+------------------
+
+.. code-block:: bash
+
+   # 查看每个 CPU 的 NET_RX_SOFTIRQ 和 NET_TX_SOFTIRQ 次数
+   cat /proc/softirqs | grep NET
+
+   # 监控 ksoftirqd 的 CPU 占用（软中断繁忙时这里会飙升）
+   top -H | grep ksoftirqd
+
+检查 Ring Buffer 和丢包
+------------------------
+
+.. code-block:: bash
+
+   # 查看网卡统计（rx_dropped 表示 Ring Buffer 溢出导致的丢包）
+   ethtool -S eth0 | grep -E "rx_dropped|rx_missed|rx_over_errors|tx_busy"
+
+   # 查看 Ring Buffer 当前大小和最大可设值
+   ethtool -g eth0
+
+   # 增大 Ring Buffer（需要 root）
+   ethtool -G eth0 rx 4096 tx 4096
+
+查看 NAPI 的 budget 和 poll 效率
+---------------------------------
+
+.. code-block:: bash
+
+   # 查看软中断 budget（默认 300，所有 NAPI 设备共用）
+   sysctl net.core.netdev_budget
+
+   # 查看驱动 poll 的 weight（默认 64）
+   sysctl net.core.dev_weight
+
+   # 查看总收包数和软中断处理次数（可判断每轮 poll 的平均收包量）
+   grep eth0 /proc/net/dev
+   cat /proc/softirqs | grep NET_RX
+
+追踪收包路径中的丢包点
+----------------------
+
+.. code-block:: bash
+
+   # /proc/net/softnet_stat —— 每 CPU 一行的收包统计
+   # 第2列: dropped (软中断队列满导致的丢包)
+   # 第3列: time_squeeze (budget 耗尽但包还没处理完)
+   cat /proc/net/softnet_stat
+
+.. note::
+
+   如果 ``time_squeeze`` 持续增长，说明 NAPI budget 不够用，可以增大 ``net.core.netdev_budget``。但更常见的原因是应用层来不及消费，此时应增加 ``net.core.netdev_budget_usecs`` 或使用 RPS/RFS 将包分散到多 CPU。
+
+tcpdump 排查实战
+----------------
+
+.. code-block:: bash
+
+   # 确认抓包点是否被经过 —— 对比 tcpdump 和网卡统计
+   tcpdump -i eth0 -nn -c 1000 > /tmp/dump.txt
+   # 同时查看网卡收包数
+   ethtool -S eth0 | grep rx_packets
+
+   # 抓取特定来源的 SYN 包（排查 SYN Flood）
+   tcpdump -i eth0 -nn 'tcp[tcpflags] & tcp-syn != 0 and not src net 10.0.0.0/24'
+
+
+.. _pkt_takeaways:
+
+关键要点
+========
+
+1. **NAPI 的本质** — 不是单纯的轮询或中断，而是「中断触发 + 轮询消费」的混合模式。第一个包触发硬中断 → 关中断 → 软中断轮询 → 预算耗尽或队列清空后重开中断。
+2. **softnet_data 是每 CPU 的** — 传统收包路径中，netif_rx 将 skb 放入当前 CPU 的 input_pkt_queue，通过 backlog napi_struct 调度软中断。NAPI 设备则有自己私有的 poll 队列。
+3. **tcpdump 的双重抓包点** — 收包路径在 ``__netif_receive_skb_core`` 中遍历 ``ptype_all`` 链表；发包路径在 ``dev_queue_xmit_nit`` 中同样遍历。理解这两个抓包点有助于分析「包在哪个方向丢了」。
+4. **抓包性能开销** — libpcap 的 ``AF_PACKET`` 套接字在收包路径上会对每个包进行 skb 克隆，高流量场景下开销显著。BPF filter 在 kernel 中过滤可以减少不必要的克隆。
+
+.. seealso::
+
+   `Socket <./Socket.rst>`_
+      从应用层视角理解套接字编程和 TCP 调优。
+
+   `Net Performance <./Net_performance.rst>`_
+      网络性能分析工具链和 60 秒快速诊断方法。
 
 
 

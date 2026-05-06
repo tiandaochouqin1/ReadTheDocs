@@ -2,6 +2,10 @@
 PHY及其驱动架构
 ====================
 
+.. admonition:: 摘要
+
+   PHY 芯片硬件基础与 Linux PHY 驱动架构：MII/GMII 接口、MDIO 总线、设备树绑定以及 MAC-PHY 的层次关系。适合嵌入式开发者和 PHY 驱动维护者。
+
 
 phy芯片
 ------------
@@ -119,3 +123,75 @@ MDIO 设备与 PHY 驱动的匹配机制类似 PCI/I2C，但使用 phy_id 而非
 
 
 这种架构保证了 MDIO 设备（PHY）独立于 SoC 的硬件平台，而且能够适配不同厂商的 PHY 设备，同时兼容 Linux 设备驱动模型。
+
+
+.. _phy_debug:
+
+调试技巧
+========
+
+查看 PHY 链路详情
+
+.. code-block:: bash
+
+   # 查看 PHY 的完整信息（速度、双工、自协商、链路伙伴能力）
+   ethtool eth0
+
+   # 查看单个 PHY 设备的寄存器 dump
+   phytool read eth0/0:0x01
+
+   # 图形化查看 PHY 状态
+   ethtool -m eth0
+
+强制重启自协商
+
+.. code-block:: bash
+
+   # 通过 ethtool 触发重新自协商
+   ethtool -r eth0
+
+   # 拉低再拉高网口（重置 PHY）
+   ip link set eth0 down && ip link set eth0 up
+
+检查设备树中的 PHY 绑定
+
+.. code-block:: bash
+
+   # 查看 PHY 设备和驱动绑定情况
+   ls /sys/bus/mdio_bus/devices/
+   cat /sys/bus/mdio_bus/devices/*/phy_id
+
+   # 查看 MAC 通过 phy-handle 绑定的 PHY
+   ls -la /sys/class/net/eth0/device/phydev/
+
+排查 PHY 驱动问题
+
+.. code-block:: bash
+
+   # 内核启动时 PHY 驱动的日志
+   dmesg | grep -i phy
+
+   # 查看已注册的 PHY 驱动
+   ls /sys/bus/mdio_bus/drivers/
+
+.. note::
+
+   PHY 寄存器地址空间只有 5 位（0-31），很多新 PHY 芯片通过分页技术扩展。读取非标准寄存器需要先设置 page 寄存器，这在 phytool 中可以通过 ``-s`` 开关指定。
+
+
+.. _phy_takeaways:
+
+关键要点
+========
+
+1. **MDIO 不是标准总线** — 它不使用 Linux 的 ``bus_type`` 模型，而是通过 ``mii_bus`` 自行管理。PHY 驱动匹配不通过 bus_type.match()，而是基于 phy_id。
+2. **PHY 是模数混合，MAC 是纯数字** — PHY 处理模拟信号（编码/解码、A/D 转换），MAC 处理数字帧（封装/解析/CSMA/CD）。两者通过 MII/GMII/RGMII/SGMII 桥接。
+3. **设备树三要素** — MDIO 控制器节点（reg 地址）、PHY 设备节点（ethernet-phy@x，reg 为 MDIO 地址）、MAC 节点（phy-handle 和 phy-mode）。
+
+.. seealso::
+
+   `802.3 <./802.3.rst>`_
+      MAC 层功能、CSMA/CD 和自协商的协议细节。
+
+   `LDD <../EOS/LDD.rst>`_
+      Linux 设备驱动模型（总线-设备-驱动框架），与 PHY 驱动架构互补。

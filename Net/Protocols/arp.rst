@@ -2,6 +2,10 @@
 arp原理与源码
 =============
 
+.. admonition:: 摘要
+
+   从 ARP 协议原理出发，深入 Linux 邻居子系统的 NUD 状态机转换逻辑和关键函数（neigh_timer_handler、neigh_update）的源码分析。适合需要调试 ARP 表项、理解 ``ip neigh`` 输出或排查邻居不可达问题的内核/网络工程师。
+
 ARP具有MAC头，消息体包含网络层地址和MAC地址，故有重复信息。
 
 ARP地址解析协议
@@ -277,4 +281,97 @@ net\core\neighbour.c : neigh_periodic_work -> neigh_rand_reach_time
    {
       return base ? (prandom_u32() % base) + (base >> 1) : 0;
    }
+
+
+.. _arp_debug:
+
+调试技巧
+========
+
+查看邻居表
+
+.. code-block:: bash
+
+   # 查看当前 ARP/邻居表及各表项状态
+   ip neigh show
+
+   # 按 dev 过滤
+   ip neigh show dev eth0
+
+   # 使用 ss 查看邻居表统计
+   nstat -az | grep Arp
+
+各状态含义速查
+
+.. list-table::
+   :header-rows: 1
+
+   * - 状态
+     - 含义
+     - 触发动作
+   * - REACHABLE
+     - 可达，已确认
+     - 无需 ARP 请求
+   * - STALE
+     - 可达但超过 reachable_time 未确认
+     - 使用时直接 reachable（下次定时器才检查）
+   * - DELAY
+     - STALE 后的短暂缓冲期（5s）
+     - 等待 TCP ACK 等 L4 确认
+   * - PROBE
+     - DELAY 超时，开始主动探测
+     - 发送单播 ARP 请求（最多 3 次）
+   * - FAILED
+     - PROBE 失败（3s 无应答）
+     - 删除表项，下次发包重新 ARP
+   * - INCOMPLETE
+     - 正在发出 ARP 请求
+     - 等待 ARP 应答
+
+手动操作邻居表
+
+.. code-block:: bash
+
+   # 添加静态 ARP 表项
+   ip neigh add 192.168.1.100 lladdr aa:bb:cc:dd:ee:ff dev eth0 nud permanent
+
+   # 删除表项（强制重新 ARP）
+   ip neigh del 192.168.1.100 dev eth0
+
+   # 刷新指定表项状态
+   ip neigh replace 192.168.1.100 lladdr aa:bb:cc:dd:ee:ff dev eth0 nud reachable
+
+   # 用 arping 主动探测
+   arping -I eth0 192.168.1.100
+
+查看和调整 ARP 参数
+
+.. code-block:: bash
+
+   # 查看 eth0 的 ARP 配置
+   cat /proc/sys/net/ipv4/neigh/eth0/base_reachable_time_ms
+   cat /proc/sys/net/ipv4/neigh/eth0/gc_stale_time
+   cat /proc/sys/net/ipv4/neigh/eth0/delay_first_probe_time
+
+   # 调短 ARP 不可达检测时间（加快故障切换）
+   echo 15000 > /proc/sys/net/ipv4/neigh/eth0/base_reachable_time_ms
+
+
+.. _arp_takeaways:
+
+关键要点
+========
+
+1. **REACHABLE → STALE 不是因为超时不可达** — 而是因为超过 reachable_time 没被任何方式确认。STALE 状态下首次使用时直接当做可达，不需要重新 ARP。这是「乐观」策略。
+2. **neigh_rand_reach_time 的抖动** — ``reachable_time = base/2 + rand(base)``，即 15s~44s（base=30s）。这个设计避免了多个表项在同一时刻超时导致 ARP 风暴。
+3. **广播 ARP 回复设置 STALE** — 源码中 ``arp->ar_op != ARPOP_REPLY || pkt_type != PACKET_HOST`` → NUD_STALE。因为广播回复可能来自任何代理 ARP 设备，不可信。
+4. **gc_stale_time=60s 不一定生效** — 还需满足 refcnt=1（无引用）。应用程序持续发包会让 refcnt 保持 >1，表项始终不回收。
+
+.. seealso::
+
+   `Computer Network <../ComputerNetwork.rst>`_
+      计算机网络五层模型中链路层地址解析的系统性讲解。
+
+   `802.3 <../802.3.rst>`_
+      以太网标准的 MAC 层和自协商细节。
    

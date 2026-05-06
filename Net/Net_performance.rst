@@ -4,6 +4,10 @@ Performance
 
 :Date:   2021-07-11 15:08:08
 
+.. admonition:: 摘要
+
+   整理 Linux 网络性能分析和调优的工具链：Brendan Gregg 的性能观测图、60 秒快速诊断、NAPI 收包性能瓶颈以及 BPF/iperf 等测量手段。适合 SRE/DevOps 和需要排查网络性能问题的系统开发者。
+
 参考资料
 ================
 
@@ -152,3 +156,22 @@ iperf
 
 
 类似工具dperf https://github.com/baidu/dperf
+
+
+.. _perf_takeaways:
+
+关键要点
+========
+
+1. **60 秒诊断的优先级** — uptime → dmesg → vmstat → mpstat → pidstat → iostat → free → sar 网络 → top。先看宏观（负载、错误日志），再逐步收敛到 CPU、内存、IO，最后定位到具体进程。
+2. **NAPI budget 是最容易的调优项** — ``netdev_budget`` 默认 300、``weight_p`` 默认 64。高吞吐场景下增大 budget 可以明显减少中断次数，但会增加延迟（软中断占用 CPU 更久）。
+3. **iperf3 的实用参数** — ``-b 100M -u`` 测 UDP 带宽、``-t 60`` 设置时长、``-R`` 反向测试（对端发送）。注意 iperf3 是单线程模型，高带宽测试时 CPU 可能成为瓶颈。
+4. **BPF 是网络性能分析的未来方向** — tcpdump 背后的 BPF filter 只是冰山一角。现代工具如 bpftrace、Cilium 用 eBPF 实现了无侵入的内核 TCP 状态追踪和流量分析。
+
+.. seealso::
+
+   `Packet Send & Recieve <./Pkt_Snd&Rcv.rst>`_
+      深入内核收发包路径和软中断机制。
+
+   `Net Tools <./Net_tools.rst>`_
+      ip/iptables/nmap 等网络工具的命令速查。

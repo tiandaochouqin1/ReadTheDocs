@@ -4,7 +4,9 @@ Socket编程及调优
 
 :Date:   2021-07-31 15:17:13
 
+.. admonition:: 摘要
 
+   梳理 TCP/UDP Socket 编程的系统调用、套接字选项配置以及 Nagle/DelayAck 调优策略，适合需要编写高性能网络应用或排查连接问题的后端/系统开发者。配合 `Packet Send & Recieve <./Pkt_Snd&Rcv.rst>`__ 阅读效果更佳。
 
 socket
 ============
@@ -132,8 +134,12 @@ fork(): 实现网络多线程
 1. 需要处理SIGCHLD信号，使用waitpid避免留下僵死进程。waitpid可指定子进程和是否阻塞，wait不能；
 2. 捕获信号时，需处理被中断的系统调用。返回值为EINTR则重启socket函数（connect除外）.
 
+.. _socket_nagle:
+
 nagle算法与delay ack
 ---------------------
+
+上面梳理了套接字的基本操作和选项配置，但在实际调优中，影响 TCP 小包性能最直接的就是 Nagle 算法和 Delay Ack 的相互作用。下面分别拆解。
 
 nagle算法：
 ~~~~~~~~~~~~~~~~~~
@@ -188,8 +194,12 @@ Duplicate selective ack
 
 Linux 下可以通过net.ipv4.tcp_dsack参数开启/关闭这个功能。
 
+.. _socket_io_multiplex:
+
 I/O复用：select和poll
 ------------------------
+
+了解了 TCP 的可靠性机制后，接下来看一个服务端必须面对的问题：如何同时管理成千上万个连接。I/O 复用是答案。
 io模型
 ~~~~~~~~~~~
 同步IO模型：其真正的IO操作会阻塞进程。包括阻塞式IO、非阻塞式IO、IO复用、信号驱动式IO。
@@ -476,3 +486,105 @@ tcp重传相关的攻击
 1. 低速率dos攻击：使target感知拥塞，持续处于超时重传状态，无法正常使用网络带宽。
 2. 使target rtt估计过大，减慢target发送。
 3. 使target rtt估计过小，造成大量无效传输。
+
+
+.. _socket_debug:
+
+调试技巧
+========
+
+排查连接问题
+------------
+
+**检查监听端口和连接状态：**
+
+.. code-block:: bash
+
+   # 列出所有 TCP 监听端口及对应进程
+   ss -nltp
+
+   # 列出所有已建立的 TCP 连接
+   ss -ntp state established
+
+   # 查看 TIME_WAIT 状态的连接数
+   ss -ant | grep TIME_WAIT | wc -l
+
+**追踪套接字选项生效情况：**
+
+.. code-block:: bash
+
+   # 查看某个进程的套接字选项（如 SO_REUSEADDR、TCP_NODELAY）
+   ss -ntpoe | grep <pid>
+
+**排查半开连接：**
+
+.. code-block:: bash
+
+   # 查看 CLOSE_WAIT 堆积（服务端未正确 close）
+   ss -antp state close-wait
+
+   # 查看 FIN_WAIT2 堆积（服务端未发送 FIN）
+   ss -antp state fin-wait-2
+
+调优 Nagle 和 Delay Ack
+------------------------
+
+.. code-block:: bash
+
+   # 关闭 Nagle 算法（减少小包延迟，适合交互式应用）
+   int flag = 1;
+   setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
+
+   # 关闭 Delay Ack（减少 ack 等待时间，与 TCP_NODELAY 搭配使用）
+   int flag = 1;
+   setsockopt(fd, IPPROTO_TCP, TCP_QUICKACK, &flag, sizeof(flag));
+
+.. note::
+
+   TCP_NODELAY 和 TCP_QUICKACK 配对禁用能有效降低延迟，但会增加小包数量。适合 Redis、SSH 等延迟敏感场景；不适合大文件传输。
+
+抓包验证
+
+.. code-block:: bash
+
+   # 抓取特定端口的 TCP 包，观察 Nagle 行为（小包是否合并）
+   tcpdump -i eth0 -nn port 8080 -A
+
+   # 观察三次握手和选项协商（MSS、窗口缩放、SACK 等）
+   tcpdump -i eth0 -nn 'tcp[tcpflags] & (tcp-syn|tcp-fin) != 0'
+
+查看内核 TCP 参数
+
+.. code-block:: bash
+
+   # 查看当前 TCP 调优参数
+   sysctl -a | grep net.ipv4.tcp | grep -E "sack|nodelay|rmem|wmem"
+
+   # 查看套接字缓冲区大小
+   sysctl net.ipv4.tcp_rmem net.ipv4.tcp_wmem
+
+追踪套接字系统调用
+
+.. code-block:: bash
+
+   # strace 追踪进程的 socket 调用（connect/bind/listen/setsockopt）
+   strace -e trace=network -p <pid>
+
+
+.. _socket_takeaways:
+
+关键要点
+========
+
+1. **listen 的 backlog** — 影响的是已完成三次握手的连接队列（全连接队列），不是半连接队列。队列溢出时内核默认丢弃，可通过 ``net.core.somaxconn`` 调大。
+2. **SO_REUSEADDR vs SO_REUSEPORT** — 前者允许绑定不同 IP 的相同端口；后者允许多个进程绑定完全相同的 IP+端口，常用于多进程负载均衡（如 Nginx worker）。
+3. **Nagle + Delay Ack 互斥效应** — 当写入的数据小于 MSS 且对端启用了 Delay Ack 时，Nagle 会等 ack，Delay Ack 会等数据，形成 200ms 的僵持。解决方案就是同时禁用两者。
+4. **UDP 已连接套接字** — 连接后使用 write/read 而非 sendto/recvfrom，可减少 1/3 的传输开销（避免每次复制目标地址），且能接收异步错误（ICMP 端口不可达）。
+
+.. seealso::
+
+   `Packet Send & Recieve <./Pkt_Snd&Rcv.rst>`_
+      深入内核收发包路径，理解 Ring Buffer、NAPI、软中断的完整流程。
+
+   `Computer Network <./ComputerNetwork.rst>`_
+      计算机网络各层协议的系统性讲解，与本文 TCP 状态机、RTT 计算部分互补。

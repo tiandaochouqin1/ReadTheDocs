@@ -2,6 +2,10 @@
 Computer Network
 ================
 
+.. admonition:: 摘要
+
+   以《计算机网络——自顶向下方法》为框架，按五层模型系统梳理从应用层到链路层的核心协议与概念。适合需要建立完整网络知识体系或复习面试考点的读者。建议配合 `Socket <./Socket.rst>`__ 和 `ARP <./Protocols/arp.rst>`__ 分别深入传输层和链路层的实现细节。
+
 常用报文头
 ==============
 1. `Info-Finder（在线工具） 报文格式  <https://info.support.huawei.com/info-finder/tool/zh/enterprise/packetformat>`__
@@ -1601,3 +1605,26 @@ mininet： Emulator for rapid prototyping of Software Defined Networks
 学习方式： https://www.zhihu.com/question/21834316
 
 《重构网络 sdn架构与实现》
+
+
+.. _cn_takeaways:
+
+关键要点
+========
+
+1. **为什么同时需要 IP 和 MAC** — IP 是分地域的（方便路由聚合），MAC 是厂商分配的（即插即用、协议无关）。两者解耦让网络层不需要为每类链路层协议单独设计寻址方案。
+2. **TCP 三次握手的核心原因** — 阻止历史重复连接的初始化（最主要的）。三次正好是「请求 → 确认请求 + 服务端请求 → 确认服务端」的最小往返次数。
+3. **CRC vs Checksum** — 链路层用 CRC（硬件实现，模二除法，检错能力强）；传输层用 Checksum（软件计算，反码求和，实现简单）。两者处理不同层次的差错类型。
+4. **LS vs DV 路由算法** — LS（链路状态）收敛快、抗震荡，但需全拓扑信息；DV（距离向量）通信开销小，但慢收敛和计数到无穷问题难以根除。OSPF 用 LS，BGP 更接近路径向量（DV 的变体）。
+5. **交换机 vs 路由器** — 交换机即插即用但广播风暴需要生成树协议控制；路由器需配置但天然隔离广播域。大型网络两者互补。
+
+.. seealso::
+
+   `Socket <./Socket.rst>`_
+      TCP/UDP 编程接口和调优的实践视角。
+
+   `ARP <./Protocols/arp.rst>`_
+      深入邻居子系统源码，理解链路层地址解析的 kernel 实现。
+
+   `802.3 <./802.3.rst>`_
+      以太网标准的硬件视角：MAC、自协商和物理层细节。

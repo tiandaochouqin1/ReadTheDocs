@@ -1,6 +1,10 @@
 Virtio
 =============
 
+.. admonition:: 摘要
+
+   半虚拟化 I/O 框架 virtio 的协议和队列机制：前端/后端驱动模型、split queue 与 packed queue 的对比、智能网卡的硬件卸载。适合虚拟化/云基础设施开发者。
+
 Virtio
 -----------
 
@@ -170,5 +174,21 @@ split vq结构的三个部分在内存中是分散存储的，无法有效利用
 2. 智能网卡：具备硬件卸载功能的网卡设备。报文直接在网卡转发，使用SRIOV、virtio等协议。
 
 SRIOV：将pcie设备的pf分为多个vf给多个虚拟机使用，虚拟机可以绕过中间虚拟层，直接使用pcie设备处理IO和传输数据。
+
+
+.. _virtio_takeaways:
+
+关键要点
+========
+
+1. **全虚拟化 vs 半虚拟化** — 全虚拟化：Guest OS 无需修改，但每次 I/O 都要 trap-and-emulate，开销大；半虚拟化（virtio）：Guest 需安装前端驱动，通过共享内存的 vq 与后端通信，接近原生性能。
+2. **split queue 的三块分离内存** — descriptor table（buffer 地址/长度）、available ring（guest → host 的 desc 索引）、used ring（host → guest 的已处理 desc）。三块分离导致 cache 利用率低，是 packed queue 的改进动机。
+3. **packed queue 的核心思想** — 三环合一 + wrap counter，减少 PCI 传输次数和 cache miss。AVAIL != USED 表示可用，AVAIL == USED 表示已用。
+4. **智能网卡的价值** — 绕过 Host 内核的 bridge/OVS，直接在网卡硬件上转发，结合 SR-IOV 让每个 VM 直接使用 vf，兼顾性能与隔离。
+
+.. seealso::
+
+   `PCIe <../../EOS/Pcie.rst>`_
+      PCIe 拓扑和配置空间——SR-IOV 的硬件基础。
 
 

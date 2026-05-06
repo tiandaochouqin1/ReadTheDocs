@@ -5,6 +5,10 @@ Linux Route
 
 :Date:   2020-04-01 15:37:13
 
+.. admonition:: 摘要
+
+   网络配置与诊断工具的实战速查：``ip`` 命令、iptables/netfilter 防火墙、端口连通性测试（telnet/nc/nmap）、ping/tcping 及抓包工具。适合日常运维和网络问题排障时快速查阅。
+
 
 参考资料
 ==============
@@ -794,4 +798,44 @@ netcat可发包
 
 ss
 -----
+
+.. list-table:: 排障工具速查
+   :header-rows: 1
+
+   * - 场景
+     - 推荐工具
+     - 示例命令
+   * - 测试 TCP 端口是否可达
+     - telnet / nc
+     - ``nc -zv 10.0.0.1 8080``
+   * - 测试 UDP 端口是否可达
+     - nc
+     - ``echo "test" | nc -u -w1 10.0.0.1 53``
+   * - 扫描主机所有开放端口
+     - nmap
+     - ``nmap -sT 10.0.0.1``
+   * - 查看本机监听端口及进程
+     - ss
+     - ``ss -nltp``
+   * - 追踪网络路径
+     - traceroute/mtr
+     - ``mtr -r -c 10 10.0.0.1``
+   * - 测试带宽
+     - iperf3
+     - ``iperf3 -c 10.0.0.1 -b 100M -t 30``
+   * - 抓包分析
+     - tcpdump
+     - ``tcpdump -i eth0 -nn host 10.0.0.1``
+   * - DNS 解析诊断
+     - dig
+     - ``dig +short example.com``
+
+
+.. seealso::
+
+   `Net Performance <./Net_performance.rst>`_
+      60 秒快速性能诊断和 BPF/iperf 进阶分析。
+
+   `Socket <./Socket.rst>`_
+      ss/netstat 输出的状态字段含义及调优。
 
