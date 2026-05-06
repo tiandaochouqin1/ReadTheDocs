@@ -5,6 +5,7 @@ PCIE
 .. admonition:: 摘要
 
    PCIe 总线协议的深度笔记：拓扑结构（RC/Switch/Bridge）、协议分层（TLP/DLLP/PLP）、配置空间（Type0/Type1）、地址路由与 ID 路由、MSI-X 中断以及 UCIe chiplet 互连。适合 SoC/FPGA 和板级开发工程师。
+
 驱动：
 1. ☆ `【原创】Linux PCI驱动框架分析（一） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14165852.html>`__
 2. `【原创】Linux PCI驱动框架分析（二） - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/14209318.html>`__
@@ -154,8 +155,7 @@ pci配置空间和配置请求
 枚举过程
 
 1. 配置软件分配总线号的过程中，首先从Bus 0/Device 0/Function 0开始搜索其他的Bridges。当找到一个Bridge之后，软件就给这个Bridge产生的新总线分配一个与上一级总线的总线号不同的、数字更大的编号。一旦新总线被分配了一个总线号之后，软件就会从新总线继续搜索更新的Bridges，而不是在上一级总线上继续搜索。
-2. 从Device 0开始，枚举软件将会尝试去读取Bus 0上的32个可能存在的Device，读取的内容为它们各自的Function中的Vendor ID。如果Bus 0—Device 0—Function 0返回了一个有效的Vendor ID，那么就认为这个设备存在并至少含有一个Function。
-若Bus 0—Device 0—Function 0没有返回一个有效的Vendor ID，则继续去探测Bus 0—Device 1—Function 0。
+2. 从Device 0开始，枚举软件将会尝试去读取Bus 0上的32个可能存在的Device，读取的内容为它们各自的Function中的Vendor ID。如果Bus 0—Device 0—Function 0返回了一个有效的Vendor ID，那么就认为这个设备存在并至少含有一个Function。若Bus 0—Device 0—Function 0没有返回一个有效的Vendor ID，则继续去探测Bus 0—Device 1—Function 0。
 
 
 
@@ -249,7 +249,7 @@ switch/function如何知道自己的bus id、device id?  从接收到的type0 �
 
 
 tlp类型
-^^^^^^^^^
+~~~~~~~~~
 
 - non-posted: 有完成包
 - posted: 无完成包，不等待。仅内存写和message会使用。

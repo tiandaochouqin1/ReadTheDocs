@@ -5,6 +5,7 @@ Generic Interrupt Controller v3
 .. admonition:: 摘要
 
    GICv3 中断控制器深度分析：Distributor/Redistributor/CPU Interface/ITS 四组件架构、SPI/PPI/SGI/LPI 四种中断类型、Linux 中断处理流程（从 ``vector_irq`` 到 ``handle_irq_event``）和 ``/proc/interrupts`` 解读。适合需要深入理解 ARM 中断子系统的内核/驱动开发者。
+
 1. `6.分析request_irq和free_irq函数如何注册注销中断(详解) - 诺谦 - 博客园  <https://www.cnblogs.com/lifexy/p/7506613.html>`__
 2. `Linux内核网络收包角度——浅入中断(1)  <https://mp.weixin.qq.com/s/H4YOd9IaLQBvNWc8Z7dSAg>`__
 3. `7_Linux硬件中断处理 - 最后一只晴天小猪的博客  <https://santapasserby.com/2021/07/06/ldd/7_Linux%E7%A1%AC%E4%BB%B6%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/>`__

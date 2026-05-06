@@ -877,7 +877,7 @@ https
 
 1. **reset vs revert 的核心区别** — reset 是「回退指针」（HEAD 向后移），revert 是「新增反提交」（HEAD 向前走）。后续合并老分支时，reset 删掉的提交会被重新引入，revert 不会。
 2. **merge vs rebase** — merge 保留完整历史但会产生分叉；rebase 让提交线变干净但会改写历史。公共分支禁 rebase，个人分支随意。
-3. **暂存区是 Git 的核心概念** — ``git add`` 将工作区改动复制到暂存区，``git commit`` 将暂存区打包为提交。``git reset --mixed``（默认）只清暂存区不动工作区，是最安全的回退方式。
-4. **大仓库克隆** — ``--depth 1`` 只下载最新提交；``--no-single-branch`` 保留切换分支能力。切换新分支需要 ``git remote set-branches`` + ``git fetch --depth 1``。
+3. **暂存区是 Git 的核心概念** — ``git add`` 将工作区改动复制到暂存区，``git commit`` 将暂存区打包为提交。``git reset --mixed``\ （默认）只清暂存区不动工作区，是最安全的回退方式。
+4. **大仓库克隆** — ``--depth 1``\  只下载最新提交；``--no-single-branch``\  保留切换分支能力。切换新分支需要 ``git remote set-branches`` + ``git fetch --depth 1``。
 5. **SSH 多账号** — 通过 ``~/.ssh/config`` 的 Host 字段为不同服务（GitHub/Gerrit/自建）指定不同私钥（IdentityFile），``IdentitiesOnly yes`` 确保只使用指定密钥。
 

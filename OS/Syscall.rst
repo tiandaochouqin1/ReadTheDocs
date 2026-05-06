@@ -5,6 +5,7 @@ Syscall
 .. admonition:: 摘要
 
    Linux 系统调用的实现机制：从用户态 ``int 0x80`` / ``sysenter`` / ``syscall`` 到内核态 ``entry_SYSCALL_64`` 的完整路径，以及 vDSO 加速和 ASLR 的影响。适合需要理解用户态-内核态切换边界的系统开发者。
+
 1. `the-definitive-guide-to-linux-system-calls  <https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/>`__
    `系统调用权威指南 <https://arthurchiao.art/blog/system-call-definitive-guide-zh>`__
 

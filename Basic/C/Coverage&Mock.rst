@@ -5,6 +5,7 @@ gcov
 .. admonition:: 摘要
 
    GCC gcov 代码覆盖率测试的原理与实践：gcov 插桩机制、汇编伪指令、lcov 可视化。适合需要建立 C 项目测试覆盖率体系的嵌入式/系统开发者。
+
 1. `GCC Coverage代码分析 <https://blog.csdn.net/livelylittlefish/category_826830.html>`__
 2. `gcov代码覆盖率测试-原理和实践总结 <https://blog.csdn.net/yanxiangyfg/article/details/80989680>`__
 3. https://github.com/yanxiangyfg/gcov 与上个文章中汇编不一样，因为是32位系统？

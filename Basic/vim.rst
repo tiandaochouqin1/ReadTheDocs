@@ -981,7 +981,7 @@ https://www.gnu.org/software/findutils/manual/html_node/find_html/Shell-Pattern-
 ========
 
 1. **缓冲区是核心，标签和分屏只是视图** — 一个 buffer 对应一个文件，一个 window 是一个 buffer 的视口，一个 tab 是一组 window 的布局。掌握了 ``:ls`` / ``:b <tab>`` / ``Ctrl-^`` 就掌握了多文件编辑的基础。
-2. **cscope 是 C 内核开发的标配** — ``Ctrl-]``（跳定义）+ ``Ctrl-T``（返回）的配合是代码导航的最快方式。cscope 比 ctags 多了「谁调用了这个函数」和「这个函数调用了谁」的查询。
+2. **cscope 是 C 内核开发的标配** — ``Ctrl+]``\ （跳定义）+ ``Ctrl+T``\ （返回）的配合是代码导航的最快方式。cscope 比 ctags 多了「谁调用了这个函数」和「这个函数调用了谁」的查询。
 3. **寄存器是无价的** — ``"+y`` 复制到系统剪切板，``"+p`` 粘贴出来。``q + reg`` 录制宏，``@ + reg`` 播放。对于重复性编辑操作，宏可以节省大量时间。
 4. **无 sudo 保存** — ``:w !sudo tee %`` 是最常用的技巧之一。可以映射为 ``cmap w!! w !sudo tee > /dev/null %``，之后 ``:w!!`` 就能以 root 保存。
 

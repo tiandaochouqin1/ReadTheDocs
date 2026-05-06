@@ -6,6 +6,7 @@ main之前
 .. admonition:: 摘要
 
    拆解 C 程序从 execvp 到 main 的启动全流程：``execvp → preinit → _start → __libc_start_main → __libc_csu_init → _init → main``。适合需要理解 ELF 加载、glibc 启动过程以及链接器细节的系统开发者。
+
 1. 英文版 `Linux x86 Program Start Up <http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html>`__ ;
    翻译不怎么样 `Linux X86 程序启动 <https://luomuxiaoxiao.com/?p=516>`__
 2. glibc源码位置: https://code.woboq.org/userspace/glibc/csu/libc-start.c.html#129

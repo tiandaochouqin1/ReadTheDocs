@@ -70,7 +70,6 @@ https://page.838281.xyz/NoteApps/
 
 文本、markdown？
 
-======
 1. coca 12000。
 2. book
 3. movies words(MuJing)
