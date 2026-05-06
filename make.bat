@@ -1,35 +1,31 @@
 @ECHO OFF
-
 pushd %~dp0
 
 REM Command file for Sphinx documentation
 
-if "%SPHINXBUILD%" == "" (
-	set SPHINXBUILD=sphinx-build
-)
 set SOURCEDIR=.
 set BUILDDIR=_build
 
-if "%1" == "" goto help
-
-%SPHINXBUILD% >NUL 2>NUL
-if errorlevel 9009 (
-	echo.
-	echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
-	echo.installed, then set the SPHINXBUILD environment variable to point
-	echo.to the full path of the 'sphinx-build' executable. Alternatively you
-	echo.may add the Sphinx directory to PATH.
-	echo.
-	echo.If you don't have Sphinx installed, grab it from
-	echo.http://sphinx-doc.org/
-	exit /b 1
+REM -- Try sphinx-build, then py/python -m sphinx as fallback --
+set SPHINXCMD=
+for %%C in (sphinx-build.exe sphinx-build) do (
+    where %%C >NUL 2>NUL && set SPHINXCMD=%%C && goto :found
+)
+for %%P in (py python3 python) do (
+    %%P -c "import sphinx" >NUL 2>NUL && set SPHINXCMD=%%P -m sphinx && goto :found
 )
 
-%SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto end
+echo.
+echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
+echo.installed:  pip install sphinx
+echo.
+exit /b 1
 
-:help
-%SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+:found
+if "%~1"=="" (
+    %SPHINXCMD% -M help "%SOURCEDIR%" "%BUILDDIR%" %SPHINXOPTS% %O%
+) else (
+    %SPHINXCMD% -M %1 "%SOURCEDIR%" "%BUILDDIR%" %SPHINXOPTS% %O%
+)
 
-:end
 popd

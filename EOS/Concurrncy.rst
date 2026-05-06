@@ -1,14 +1,13 @@
 
 ====================
-Concurrency 
+Concurrency
 ====================
 
 :Date:   2021-07-31 13:37:13
 
-
-todo read:
-:download:`xv6 code-lab1 </files/Concurrncy/concurrency-primer.pdf>`
-
+本文梳理并发编程的核心概念与 Linux 内核同步机制：从线程/进程模型、原子操作、
+无锁编程，到自旋锁、互斥量、信号量、RCU 的选型与实现原理，以及可重入与线程
+安全的区别。适合需要系统理解并发控制机制的底层开发者。
 
 并发编程
 ===========
@@ -17,12 +16,21 @@ todo read:
 
 多进程
 -------
+进程间天然拥有独立地址空间，隔离性最强。代价是进程创建（fork）需复制页表，
+切换开销高于线程。适合需要强隔离的场景，如 Chrome 的每个 tab 各自跑在独立
+进程中。详见 `Process_scheduler </OS/Kernel/Process_scheduler.html>`__。
 
 多路IO复用
 ----------
+单线程内通过 select/poll/epoll 轮询多个 fd 实现并发处理，避免了线程创建与
+上下文切换的开销。适合 IO 密集型场景（如 Nginx、Redis）。详见 `Socket
+</Net/Socket.html>`__ 中 select/poll 部分。
 
 多线程
 ---------
+共享同一地址空间，切换开销小，但需自行处理数据竞争。Linux 使用
+clone(CLONE_VM|CLONE_FS|...) 创建线程，其在内核中本质上是一种共享资源
+的进程。适合 CPU 密集型或需要频繁共享数据的场景。
 
 多线程编程
 ============
@@ -74,7 +82,7 @@ pthread_t
 无锁编程
 ========
 
-1. `无锁队列的实现 <https://coolshell.cn/articles/8239.html>`__\ ：？？
+1. `无锁队列的实现 <https://coolshell.cn/articles/8239.html>`__
 2. `An Introduction to Lock-Free Programming <https://preshing.com/20120612/an-introduction-to-lock-free-programming/>`__:有图！
 3. `ARM体系架构下的同步操作 <https://www.cnblogs.com/shangdawei/p/3915735.html>`__
 
@@ -114,8 +122,9 @@ https://www.cnblogs.com/jyfyonghu/p/11256608.html
 X86 CAS实现
 ------------
 
-X86对应一个原子命令cmpxchgl，arm则使用内存屏障dmb+原子加载ldxr+原子存贮stlxr
-实现。
+X86 使用 lock cmpxchgl 单条指令实现 CAS；ARM 则需内存屏障 dmb + 独占加载
+ldxr + 独占存储 stlxr 三条指令配合完成。以下 C 代码及其对应 x86 汇编展示了
+CAS 的实际编译结果：
 
 ::
 
@@ -123,30 +132,20 @@ X86对应一个原子命令cmpxchgl，arm则使用内存屏障dmb+原子加载ld
 
    int main()
    {
-
        int a = 10 ;
        int b = __sync_val_compare_and_swap (&a, 10, 9);
-   //    int c = __sync_val_compare_and_swap (&a, 9, 8);
-
        return 0;
    }
 
-
-
-汇编
-
+编译后的核心汇编（x86-64）—— 注意 lock 前缀确保原子性：
 
 ::
 
-   pushq   %rbp
-   movq    %rsp, %rbp
    movl    $10, -8(%rbp)
    movl    $10, %eax
    movl    $9, %edx
    lock cmpxchgl   %edx, -8(%rbp)
    movl    %eax, -4(%rbp)
-   movl    $0, %eax
-   popq    %rbp
 
 
 
@@ -179,18 +178,14 @@ LL操作返回一个内存地址上当前存储的值，后面的SC操作，会�
 
 LDXR
 ~~~~~~~
-LDXR (load exclusive register 和STXR （store exclusive register）及其变种指令。
+LDXR (load exclusive register) 和STXR（store exclusive register）及其变种指令。
 
-stlxr失败后会重试。
-
+stlxr失败后会重试。以下为与 X86 示例等价的 arm64 CAS 汇编（armv8-a，LL/SC 路径）：
 
 ::
 
            .arch armv8-a
-
    main:
-   .LFB0:
-
            sub     sp, sp, #16
            mov     w0, 10
            str     w0, [sp, 8]
@@ -207,13 +202,7 @@ stlxr失败后会重试。
            str     w0, [sp, 12]
            mov     w0, 0
            add     sp, sp, 16
-           .cfi_def_cfa_offset 0
            ret
-           .cfi_endproc
-   .LFE0:
-           .size   main, .-main
-           .ident  "GCC: (Debian 8.3.0-6) 8.3.0"
-           .section        .note.GNU-stack,"",@progbits
 
 
 
@@ -251,11 +240,9 @@ ABA问题
 
 指令集与性能
 ============
-1. armv8.1 lse扩展将原先的原先的LL+SC（load link、store conditional）两条指令和为一条，同时效率更高。
-2. gcc中原来的_sync_系列指令不在推荐，现使用_atomic(如_atomic_add_fetch),指令内部实现与架构相关，如armv8.1则使用lxadd。
-
-
-x86?
+1. armv8.1 lse扩展将原有的LL+SC（load link、store conditional）两条指令合为一条，效率更高。
+2. gcc中原来的_sync_系列指令已不推荐，现使用_atomic(如_atomic_add_fetch)，指令内部实现与架构相关，如armv8.1则使用ldadd。
+3. x86 的原子操作基于 lock 前缀（如 lock cmpxchgl），通过锁住总线或缓存行实现原子性。
 
 锁
 ==========
@@ -303,9 +290,16 @@ mutex
 ----------------
 1. `【原创】Linux Mutex机制分析 - LoyenWang - 博客园  <https://www.cnblogs.com/LoyenWang/p/12826811.html>`__
 
-互斥锁是一种 **休眠锁** ，锁争用时可能存在进程的睡眠与唤醒，context的切换带来的代价较高，适用于加锁时间较长的场景；
+互斥锁是一种 **休眠锁** ，锁争用时可能存在进程的睡眠与唤醒，context 切换带来
+的代价较高，适用于加锁时间较长的场景；
 
-每次只允许一个进程进入临界区，有点类似于二值信号量；与信号量相比，互斥锁的性能与扩展性都更好，因此，在内核中总是会 **优先考虑互斥锁** ；
+每次只允许一个进程进入临界区，类似于二值信号量；与信号量相比，互斥锁的性能
+与扩展性都更好，因此在内核中总是会 **优先考虑互斥锁** ；
+
+.. tip:: 选型指南
+
+   信号量适合控制有限资源的访问数量（N 个并发），mutex 适合保护临界区（互斥）。
+   内核新代码中优先使用 mutex。
 
 缺点是互斥锁对象的结构较大，会占用更多的CPU缓存和内存空间；
 
@@ -335,6 +329,9 @@ spinlock
 2. `Linux 单/多处理器下的内核同步与实现---自旋锁 <https://zhuanlan.zhihu.com/p/115748853>`__
 
 
+spinlock 用于极短的临界区，忙等期间不可睡眠。适合中断上下文、tasklet 等不能
+休眠的场景。
+
 spinlock的核心思想是基于tickets的机制：
 
 1. 每个锁的数据结构arch_spinlock_t中维护两个字段：next和owner，只有当next和owner(local保存next自加前的值)相等时才能获取锁；
@@ -343,10 +340,13 @@ spinlock的核心思想是基于tickets的机制：
 
 rwlock
 ~~~~~~~~~~~
-写者饿死
+读写锁允许多个读者并发持有，但写者独占。读者优先策略下，持续有读者时写者
+可能饿死。适合读多写少的场景（如内核中的 tasklist_lock）。
 
 seqlock
 ~~~~~~~~~~
+顺序锁，写者不阻塞读者，读者通过序号检测写入冲突并重试。写者之间仍需互斥。
+比 rwlock 更轻量，适合读者远多于写者且临界区极短的场景（如 jiffies 读取）。
 
 stadda与spinlock的实现
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -429,7 +429,10 @@ RCU的基本思想是：先创建一个旧数据的copy，然后writer更新这�
 
 RCU, Read-Copy-Update，是Linux内核中的一种同步机制。
 
-RCU常被描述为读写锁的替代品，特点是 **读者并不需要直接与写者进行同步**，读写能并发的执行。最大程度来减少 ``读者`` 侧的开销.
+RCU常被描述为读写锁的替代品，特点是 **读者并不需要直接与写者进行同步**，读写能
+并发的执行，最大程度减少读者侧的开销。代价是写者需要复制-更新-等待优雅周期
+（grace period），写者开销更高。因此 RCU 特别适合 **读极多写极少** 的数据结构
+（如内核中的路由表、文件系统 dentry cache）。
 
 .. figure:: /images/Concurrncy/rcu.png
 
@@ -446,6 +449,12 @@ volatile 3种使用场景：(在当前线程之外被改变的变量。一些场
 1. accessing memory mapped peripherals
 2. sharing global variables between multiple threads
 3. accessing global variables in an interrupt routine or signal handler.
+
+.. warning:: volatile 不等于原子性
+
+   内核文档明确指出 volatile 不应用于内核同步。volatile 只保证编译器不优化
+   该变量的访问，但不保证 CPU 级别的内存序和原子性。应使用 READ_ONCE /
+   WRITE_ONCE 或明确的同步原语替代。
 
 sequence point: 两个seq point之间只允许对同一个变量改变一次。
 
@@ -509,3 +518,18 @@ asm volatile("" ::: "memory");
 
 1. 可重入函数；
 2. 对临界区进行保护(解决的是并发问题)；
+
+
+锁机制选型速查
+==============
+
+.. csv-table::
+   :header: 锁, 类型, 可睡眠, 适用场景, 典型开销
+   :widths: 12, 20, 8, 22, 18
+
+   自旋锁 (spinlock), 忙等, 不可, 极短临界区 / 中断上下文, CPU忙等
+   互斥锁 (mutex), 休眠锁, 可, 较长临界区, 上下文切换
+   信号量 (semaphore), 计数休眠锁, 可, 限制N个并发访问, 上下文切换
+   读写锁 (rwlock), 读者并发 写者独占, 可, 读多写少, 读者无竞争
+   顺序锁 (seqlock), 写者互斥 读者无锁, 可, 读极多写极少, 读者重试
+   RCU, 读者无锁 写者复制, 可, 读极多写极少, 写者复制+等待
